@@ -87,7 +87,9 @@ async def game_rnd_one_handler(message: types.Message, bot: Bot, state: FSMConte
     await bot.send_message(message.chat.id, _("So my number is {bot}. Who guessed? Hmm...").format(bot=bot_var))
 
     if winners:
-        answer = _("Well... the title of winner goes to: {winners}. Congratulations!").format(winners=", ".join(winners))
+        answer = _("Well... the title of winner goes to: {winners}. Congratulations!").format(
+            winners=", ".join(winners)
+        )
     else:
         answer = _("Well... no one guessed right. Heh.")
 
