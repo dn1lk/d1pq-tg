@@ -1,0 +1,821 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-05-17 15:20+0300\n"
+"PO-Revision-Date: 2022-05-14 13:14+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.1\n"
+
+#: keyboards.py:13
+msgid "Back"
+msgstr "Назад"
+
+#: keyboards.py:18
+msgid "Add command"
+msgstr "Добавить команду"
+
+#: keyboards.py:19
+msgid "Change language"
+msgstr "Изменить язык"
+
+#: keyboards.py:20
+msgid "Change generation chance"
+msgstr "Изменить шанс генерации"
+
+#: keyboards.py:21
+msgid "Change generation accuracy"
+msgstr "Изменить точность генерации"
+
+#: keyboards.py:22
+msgid "Change data policy"
+msgstr "Изменить политику данных"
+
+#: keyboards.py:96
+msgid "messages"
+msgstr "сообщений"
+
+#: keyboards.py:97
+msgid "members"
+msgstr "участников"
+
+#: keyboards.py:104
+msgid "{req} recording {item}"
+msgstr "{req} запись {item}"
+
+#: keyboards.py:104
+msgid "Decline"
+msgstr "Запретить"
+
+#: keyboards.py:104
+msgid "Allow"
+msgstr "Разрешить"
+
+#: keyboards.py:109
+msgid "Delete all data"
+msgstr "Удалить все данные"
+
+#: keyboards.py:121 keyboards.py:123
+msgid "Rock"
+msgstr "Камень"
+
+#: keyboards.py:121 keyboards.py:122
+msgid "Scissors"
+msgstr "Ножницы"
+
+#: keyboards.py:122 keyboards.py:123
+msgid "Paper"
+msgstr "Бумага"
+
+#: handlers/__init__.py:9
+msgid ""
+"\n"
+"\n"
+"Write a request together with command in one message.\n"
+"For example: /{command} {args}"
+msgstr ""
+"\n"
+"\n"
+"Напиши запрос вместе с командой одним сообщением.\n"
+"Например: /{command} {args}"
+
+#: handlers/actions.py:41
+msgid "All bacchanalia, with you {username}!"
+msgstr "Всем вакханалия, с вами {username}!"
+
+#: handlers/actions.py:42
+msgid "You don't have to clap, {username} is with us."
+msgstr "Можете не хлопать, {username} теперь с нами."
+
+#: handlers/actions.py:43
+msgid "Do not meet, now we have {username}!"
+msgstr "Не встречайте, с нами {username}!"
+
+#: handlers/actions.py:53
+msgid "AAAND..."
+msgstr "ИИИ..."
+
+#: handlers/actions.py:54
+msgid "But that's not all!"
+msgstr "Но это ещё не все!"
+
+#: handlers/actions.py:55
+msgid "Well, that's not all... Oh, yes!"
+msgstr "Так-с, это ещё не все... Ох, да!"
+
+#: handlers/actions.py:65
+msgid "Greetings, {username}!"
+msgstr "Приветствую, {username}!"
+
+#: handlers/actions.py:66
+msgid "Welcome, {username}!"
+msgstr "Добро пожаловать, {username}!"
+
+#: handlers/actions.py:67
+msgid "{username}... Who is it?"
+msgstr "{username}... А кто это?"
+
+#: handlers/actions.py:89
+msgid "I'll miss :(."
+msgstr "Я буду скучать :(."
+
+#: handlers/actions.py:90
+msgid "We've lost a great man... Wait, was that a man?"
+msgstr "Мы потеряли замечательного человека... Стоп, это был человек?"
+
+#: handlers/actions.py:91
+msgid "Let's remember."
+msgstr "Мы будем помнить."
+
+#: handlers/actions.py:92
+msgid "Get out of here, user!"
+msgstr "Ну и иди отсюда, пользователь!"
+
+#: handlers/actions.py:93
+msgid "And it all started so nicely..."
+msgstr "А всё начиналось так прекрасно..."
+
+#: handlers/actions.py:96
+msgid "Ha, and so be it!"
+msgstr "Ха, так и надо!"
+
+#: handlers/actions.py:97
+msgid "Nothing to chat here."
+msgstr "Нечего писать тут."
+
+#: handlers/actions.py:98
+msgid "Bye-bye."
+msgstr "Пока-пока."
+
+#: handlers/actions.py:113
+msgid ""
+"{title}, hello! Let's start with answering the obvious questions:\n"
+"- What am I? Bot.\n"
+"- What can I do? Some things after which something happens...\n"
+"\n"
+msgstr ""
+"{title}, привет! Начну с ответа на типичные вопросы:\n"
+"- Что я есть? Бот.\n"
+"- Что я могу? Некоторые вещи, после которых что-то происходит...\n"
+"\n"
+
+#: handlers/commands.py:21
+msgid ""
+"Hello, {username}. I am a text generator bot and in some cases a great "
+"conversationalist.\n"
+"\n"
+"If you write me a message or a command, something might happen.\n"
+"\n"
+msgstr ""
+"Привет, {username}. Я бот, генерирующий сообщения и в некоторых случаях "
+"отличный собеседник.\n"
+"\n"
+"Если мне написать сообщение или команду, что-то может произойти.\n"
+"\n"
+
+#: handlers/commands.py:45
+msgid ""
+"List of my main commands - I only accept them together with the required "
+"request, in one message:\n"
+"\n"
+msgstr ""
+"Список моих основных команд - я их принимаю только вместе с необходимым "
+"запросом, одним сообщением:\n"
+"\n"
+
+#: handlers/commands.py:72
+msgid "I choose <b>{choice}</b>."
+msgstr "Я выбираю <b>{choice}</b>."
+
+#: handlers/commands.py:84
+msgid "<b>What to choose?</b>"
+msgstr "<b>Что выбрать?</b>"
+
+#: handlers/commands.py:93
+msgid "{args[0]} or {args[1]}"
+msgstr "{args[0]} или {args[1]}"
+
+#: handlers/commands.py:100
+msgid "This command only works in <b>chats</b>, alas =(."
+msgstr "Эта команда работает только в <b>чатах</b>, увы =(."
+
+#: handlers/commands.py:114
+msgid "Hmmm, I think {username} {args}"
+msgstr "Хммм, я думаю, {username} {args}"
+
+#: handlers/commands.py:122
+msgid ""
+"<b>This command requires permission to record chat participants.</b>\n"
+"\n"
+"/settings - give permission."
+msgstr ""
+"<b>Для этой команды требуется разрешение записи участников чата.</b>\n"
+"\n"
+"/settings - дать разрешение."
+
+#: handlers/commands.py:127
+msgid "Oh, I don't know you guys... Give me a time."
+msgstr "Ох, я не знаю вас ребят... Дайте мне время."
+
+#: handlers/commands.py:141
+msgid "<b>Who???</b>"
+msgstr "<b>Кто???</b>"
+
+#: handlers/commands.py:159
+msgid "Ha! Invalid request, try again."
+msgstr "Ха! А вот и нет, попробуй ещё."
+
+#: handlers/commands.py:160
+msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
+msgstr "Удача явно тебе НЕ благоволит. Ты не угадал игру!"
+
+#: handlers/commands.py:161
+msgid "The game is not recognized. I'll give it another try!"
+msgstr "Игра не распознана. Даю ещё попытку!"
+
+#: handlers/commands.py:162
+msgid "And here it is not. This game has a different name ;)."
+msgstr "А вот и нет. У этой игры другая команда ;)."
+
+#: handlers/commands.py:171
+msgid ""
+"<b>And what do you want to play?</b>\n"
+"\n"
+"Try to guess the game by writing the right words right after the command."
+msgstr ""
+"<b>И во что же ты хочешь поиграть?</b>\n"
+"\n"
+"Попробуй угадать игру, написав нужный запрос сразу после команды."
+
+#: handlers/commands.py:186
+msgid ""
+"Hm, {args}?\n"
+"Ok, I need to think..."
+msgstr ""
+"Хм, {args}?\n"
+"Ок, мне нужно подумать..."
+
+#: handlers/commands.py:191
+msgid "Let's do it sooner!"
+msgstr "Давай покороче!"
+
+#: handlers/commands.py:205
+msgid "<b>So what's the question?</b>"
+msgstr "<b>Так какой вопросик?</b>"
+
+#: handlers/commands.py:227
+msgid "In short, "
+msgstr "Короче, "
+
+#: handlers/commands.py:258
+msgid "<b>On coffee grounds?</b>"
+msgstr "<b>На кофейной гуще?</b>"
+
+#: handlers/games/__init__.py:22
+msgid "You know I won't play with you! Maybe..."
+msgstr "Знаешь, я не буду с тобой играть! Возможно..."
+
+#: handlers/games/cts.py:20
+msgid "Victory for me."
+msgstr "Победа за мной."
+
+#: handlers/games/cts.py:21
+msgid "I am a winner."
+msgstr "Я - победитель."
+
+#: handlers/games/cts.py:22
+msgid "I am the winner in this game."
+msgstr "Я оказываюсь победителем в этой игре."
+
+#: handlers/games/cts.py:63
+msgid "Your time is up. "
+msgstr "Твоё время вышло. "
+
+#: handlers/games/cts.py:74
+msgid "Hmm."
+msgstr "Хмм."
+
+#: handlers/games/cts.py:75
+msgid "And you're smarter than you look."
+msgstr "А ты умнее, чем кажешься."
+
+#: handlers/games/cts.py:76
+msgid "Right!"
+msgstr "Верно!"
+
+#: handlers/games/cts.py:79
+msgid " My word: {bot_var}."
+msgstr " Моё слово: {bot_var}."
+
+#: handlers/games/cts.py:85
+msgid "Okay, I have nothing to write on {letter}... Victory is yours."
+msgstr "Ладно, мне нечего написать на {letter}... Победа за тобой."
+
+#: handlers/games/cts.py:86
+msgid "Can't find the right title on {letter}... My defeat."
+msgstr "Не могу найти нужное название на {letter}... Моё поражение."
+
+#: handlers/games/cts.py:87
+msgid ""
+"VICTORY... yours. I can't remember that name... You know, it also starts "
+"with {letter}..."
+msgstr ""
+"ПОБЕДА... твоя. Не могу вспомнить то название... Знаешь, оно ещё "
+"начинается на {letter}..."
+
+#: handlers/games/cts.py:98
+msgid ""
+"\n"
+"Remaining attempts: {failed}"
+msgstr ""
+"\n"
+"Осталось попыток: {failed}"
+
+#: handlers/games/cts.py:102
+msgid "We have already used this name. Choose another!"
+msgstr "Мы уже использовали это название. Выбери другое!"
+
+#: handlers/games/cts.py:103
+msgid "I remember exactly that we already used this. Let's try something else."
+msgstr "Я точно помню, что мы уже использовали это. Попробуй что-нибудь ещё."
+
+#: handlers/games/cts.py:104
+msgid ""
+"But no, you can’t fool me - this name was already in the game. Be "
+"original!"
+msgstr ""
+"А нет, ты меня не проведёшь - это название уже было в игре. Будь "
+"оригинальнее!"
+
+#: handlers/games/cts.py:108
+msgid "I do not understand something or your word is WRONG!"
+msgstr "Либо я что-то не понимаю, либо твоё слово НЕВЕРНО!"
+
+#: handlers/games/cts.py:109
+msgid "And here it is not. Think better, user!"
+msgstr "А вот и нет. Думай лучше, пользователь!"
+
+#: handlers/games/cts.py:110
+msgid "My algorithms do not deceive me - you are mistaken!"
+msgstr "Мои алгоритмы меня не обманывают - ты ошибся!"
+
+#: handlers/games/cts.py:117
+msgid "You have no attempts left. "
+msgstr "У тебя не осталось попыток. "
+
+#: handlers/games/cts.py:118
+msgid "Looks like all attempts have been spent. "
+msgstr "Похоже, все попытки истрачены. "
+
+#: handlers/games/cts.py:119
+msgid ""
+"Where is an ordinary user up to artificial intelligence. All attempts "
+"have ended. "
+msgstr ""
+"Куда простому пользователю до искусственного интеллекта. Все попытки "
+"закончились. "
+
+#: handlers/games/rnd.py:19
+msgid "You have already made your choice."
+msgstr "Ты уже выбрал свой вариант."
+
+#: handlers/games/rnd.py:20
+msgid "Cunning, but you already used your try."
+msgstr "Хитро, но ты уже использовал свою попытку."
+
+#: handlers/games/rnd.py:21
+msgid "So let's write it down ... Seen in a scam."
+msgstr "Так и запишем... Замечен в жульничестве."
+
+#: handlers/games/rnd.py:28
+msgid "Your choice has been accepted."
+msgstr "Твой вариант принят."
+
+#: handlers/games/rnd.py:29
+msgid "Do you really think that I will choose THIS number? Well, let's see ;)."
+msgstr "Ты действительно думаешь, что я выберу ЭТО число? Ну посмотрим ;)."
+
+#: handlers/games/rnd.py:30
+msgid "So let's write..."
+msgstr "Так и запишем..."
+
+#: handlers/games/rnd.py:41
+msgid "So you won’t guess for sure, choose a number from 1 to 10!"
+msgstr "Так ты точно не угадаешь, выбери число от 1 до 10!"
+
+#: handlers/games/rnd.py:42
+msgid "Somebody can't read. It was clearly written, from 1 to 10!"
+msgstr "Кто-то не умеет читать. Было чётко написано, от 1 до 10!"
+
+#: handlers/games/rnd.py:43
+msgid "Between 1 and 10, what's so difficult?!"
+msgstr "От 1 до 10, что сложного то?!"
+
+#: handlers/games/rps.py:25
+msgid ""
+"\n"
+"\n"
+"Score: {loses}-{wins}.\n"
+"Play again?"
+msgstr ""
+"\n"
+"\n"
+"Счёт: {loses}-{wins}.\n"
+"Сыграем ещё раз?"
+
+#: handlers/games/rps.py:28
+msgid "Draw."
+msgstr "Ничья."
+
+#: handlers/games/rps.py:31
+msgid "My win!"
+msgstr "Моя победа!"
+
+#: handlers/games/rps.py:34
+msgid "My defeat..."
+msgstr "Моё поражение..."
+
+#: handlers/games/rps.py:50
+msgid "Well don't play with me!"
+msgstr "Ну и не играй со мной!"
+
+#: handlers/games/rps.py:51
+msgid "I thought we were playing..."
+msgstr "Я думал мы играли..."
+
+#: handlers/games/rps.py:52
+msgid "I won't play with you!"
+msgstr "Я не буду играть с тобой!"
+
+#: handlers/games/start.py:20
+msgid ""
+"Oh, the game of cities. Well, let's try!\n"
+"\n"
+"The rules are as follows: you need to answer the name of the settlement, "
+"starting with the last letter of the name of the previous settlement.\n"
+"You have 60 seconds to think."
+msgstr ""
+"О, игра в города. Ну давай попробуем!\n"
+"\n"
+"Правила такие: нужно ответить название населённого пункта, начинающееся "
+"на последнюю букву названия предыдущего населённого пункта.\n"
+"На раздумья - 60 секунд."
+
+#: handlers/games/start.py:30
+msgid "I start! My word: {bot_var}."
+msgstr "Я начинаю! Моё слово: {bot_var}."
+
+#: handlers/games/start.py:33
+msgid "You start! Your word?"
+msgstr "Ты начинаешь! Твоё слово?"
+
+#: handlers/games/start.py:45
+msgid ""
+"Mm, {username} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, "
+"pay attention!\n"
+"\n"
+"Enter any number between 1 and 10 and I'll choose my own in 60 seconds "
+"and we'll we'll see which one of you is right."
+msgstr ""
+"Мм, {username} испытывает свою удачу... Ну что же, ВСЕ, ВСЕ, ВСЕ, "
+"внимайте!\n"
+"\n"
+"Введите любое число от 1 до 10 - а я через 60 секунд выберу своё и мы "
+"узнаем, кто из вас окажется прав."
+
+#: handlers/games/start.py:61
+msgid "LET THE BATTLE BEGIN!"
+msgstr "ДА НАЧНЁТСЯ ЖЕ БИТВА!"
+
+#: handlers/games/start.py:85
+msgid "So my number is {bot}. Who guessed? Hmm..."
+msgstr "Итак, моё число - {bot}. Кто же угадал? Хм-м..."
+
+#: handlers/games/start.py:90
+msgid "Well... the title of winner goes to: {winners}. Congratulations!"
+msgstr "Что ж... звание победителя достаётся: {winners}. Поздравим же!"
+
+#: handlers/games/start.py:95
+msgid "Well... no one guessed right. Heh."
+msgstr "Что ж... никто не угадал. Хе."
+
+#: handlers/games/start.py:105
+msgid "Eh, classic. Your move?"
+msgstr "Ех, классика. Твой ход?"
+
+#: handlers/settings/__init__.py:12
+msgid ""
+"\n"
+"\n"
+"Update:"
+msgstr ""
+"Обновить:\n"
+"\n"
+"Update:"
+
+#: handlers/settings/__init__.py:13
+msgid ""
+"\n"
+"\n"
+"Update again:"
+msgstr ""
+"\n"
+"\n"
+"Обновить ещё раз:"
+
+#: handlers/settings/accuracy.py:25
+msgid "Text generation accuracy updated successfully: <b>{markov_state}</b>."
+msgstr "Точность генерации текста успешно обновлена: <b>{markov_state}</b>."
+
+#: handlers/settings/accuracy.py:39
+msgid ""
+"Current text generation accuracy: <b>{accuracy}</b>.\n"
+"\n"
+"The larger the value, the more accurate, but the text generation will "
+"take longer."
+msgstr ""
+"Текущая точность генерации текста: <b>{accuracy}</b>.\n"
+"\n"
+"Чем больше значение - тем точнее, но дольше будет осуществляться "
+"генерация текста."
+
+#: handlers/settings/chance.py:31
+msgid ""
+"The chance of text generation has reached the limit: <b>{chance}%</b>, "
+"below is impossible."
+msgstr "Шанс генерации текста достиг лимит: <b>{chance}%</b>, ниже нельзя."
+
+#: handlers/settings/chance.py:35
+msgid ""
+"The chance of text generation has reached the limit: <b>{chance}%</b>, "
+"higher is impossible."
+msgstr "Шанс генерации текста достиг лимит: <b>{chance}%</b>, выше нельзя."
+
+#: handlers/settings/chance.py:39
+msgid "Text generation chance successfully updated: <b>{chance}%</b>."
+msgstr "Шанс генерации текста успешно обновлён: <b>{chance}%</b>."
+
+#: handlers/settings/chance.py:56
+msgid "Current text generation chance: <b>{chance}%</b>."
+msgstr "Текущий шанс генерации текста: <b>{chance}%</b>."
+
+#: handlers/settings/commands.py:34
+msgid "missing."
+msgstr "отсутствуют."
+
+#: handlers/settings/commands.py:44
+msgid ""
+"<b>Tired of writing preset commands?</b>{no_args} - and I will answer "
+"this command."
+msgstr ""
+"<b>Надоело мне писать предустановленные команды?</b>{no_args} - и я буду "
+"отвечать на эту команду."
+
+#: handlers/settings/commands.py:55
+msgid ""
+"Current custom commands:\n"
+"\n"
+msgstr ""
+"Текущие кастомные настройки:\n"
+"\n"
+
+#: handlers/settings/commands.py:76
+msgid "The /{args} command is already in my database. Try another."
+msgstr "Команда /{args} уже есть в моей базе. Попробуй ещё."
+
+#: handlers/settings/commands.py:86
+msgid ""
+"<b>Command /{args} added successfully!</b>\n"
+"\n"
+"Now in this chat you can write it instead of the /{command} command."
+msgstr ""
+"<b>Команда /{args} успешно добавлена!</b>\n"
+"\n"
+"Теперь в этом чате можно писать её вместо команды /{command}."
+
+#: handlers/settings/commands.py:92
+msgid "No, I can only record one custom command. You'll have to choose!"
+msgstr "Нет, я могу записать только одну кастомную команду. Придётся выбирать!"
+
+#: handlers/settings/commands.py:103
+msgid "<b>Custom command not recognized.</b>"
+msgstr "<b>Кастомная команда не распознана.</b>"
+
+#: handlers/settings/commands.py:116
+msgid ""
+"<b>Default command not recognized.</b>\n"
+"\n"
+"/settings - repeat the procedure."
+msgstr ""
+"<b>Предустановленная команда не распознана.</b>\n"
+"\n"
+"/settings - повторить процедуру."
+
+#: handlers/settings/data.py:21
+msgid "<b>The data was successfully deleted.</b>"
+msgstr "<b>Данные успешно удалены.</b>"
+
+#: handlers/settings/data.py:33
+msgid "Members"
+msgstr "участников"
+
+#: handlers/settings/data.py:37
+msgid "Messages"
+msgstr "сообщений"
+
+#: handlers/settings/data.py:46
+msgid "enabled"
+msgstr "включена"
+
+#: handlers/settings/data.py:49
+msgid "disabled"
+msgstr "отключена"
+
+#: handlers/settings/data.py:54
+msgid "<b>{item} recording {status}.</b>"
+msgstr "<b>Запись {item} {status}.</b>"
+
+#: handlers/settings/data.py:66
+msgid ""
+"<b>I am logging some information about this chat.</b>\n"
+"\n"
+"This is necessary for my correct work. What am I recording?\n"
+"\n"
+"- <b>message list</b> - for more accurate and relevant message "
+"generation.\n"
+"Default: enabled.\n"
+"\n"
+msgstr ""
+"<b>Я записываю некоторую информацию об этом чате.</b>\n"
+"\n"
+"Это необходимо для моей корректной работы. Так что я записываю?\n"
+"\n"
+"- <b>список сообщений</b> - для более точной и релевантной генерации "
+"сообщений.\n"
+"По умолчанию: включено.\n"
+"\n"
+
+#: handlers/settings/data.py:72
+msgid ""
+"- <b>list of participants</b> - to execute the /who command.\n"
+"Default: disabled.\n"
+"\n"
+msgstr ""
+"- <b>список участников</b> - для работы команды /who.\n"
+"По умолчанию: выключено.\n"
+"\n"
+
+#: handlers/settings/locale.py:23
+msgid ""
+"<b>The language has been successfully updated.</b>\n"
+"\n"
+"Already the next message will be in the language: {locale}."
+msgstr ""
+"<b>Язык успешно обновлён.</b>\n"
+"\n"
+"Уже следующее сообщение будет на языке: {locale}."
+
+#: handlers/settings/locale.py:33
+msgid ""
+"<b>Update bot language.</b>\n"
+"\n"
+"Current language: <b>{locale}</b>. Available languages:"
+msgstr ""
+"<b>Обновить язык бота.</b>\n"
+"\n"
+"Текущий язык: <b>{locale}</b>. Доступные языки:"
+
+#: handlers/settings/start.py:12
+msgid "These commands are only available to the administrator."
+msgstr "Эти команды доступны только администратору."
+
+#: handlers/settings/start.py:17
+msgid "dialogue"
+msgstr "диалога"
+
+#: handlers/settings/start.py:19
+msgid "chat - they are only available to the administrator - {admins}"
+msgstr "чата - к ним имеет доступ только администратор - {admins}"
+
+#: handlers/settings/start.py:28
+msgid "only I don't know who it is... So"
+msgstr "только я не знаю, кто это... Итак"
+
+#: handlers/settings/start.py:32
+msgid "My settings for this {chat}:"
+msgstr "Мои настройки для этого {chat}:"
+
+#: utils/aiobalaboba.py:27
+msgid "I think I wanted to write something, but I don't remember what... x)."
+msgstr "Мне кажется, я хотел написать что-то, но не могу вспомнить, что... x)."
+
+#: utils/aiobalaboba.py:28
+msgid "I had some request... but I can't remember which one..."
+msgstr "У меня был какой-то запрос... но я не могу вспомнить, какой..."
+
+#: utils/aiobalaboba.py:29
+msgid "I still can't remember... who are you?"
+msgstr "Я всё ещё не могу вспомнить... ты кто?"
+
+#: utils/aiobalaboba.py:30
+msgid "What do you want from me?"
+msgstr "Что тебе от меня нужно?"
+
+#: utils/aiobalaboba.py:31
+msgid "What a wonderful day for doing nothing!"
+msgstr "Какой замечательный день, чтобы ничего не делать!"
+
+#: utils/aiobalaboba.py:32
+msgid "Zzzz... What?"
+msgstr "Zzzz... Что?"
+
+#: utils/aiobalaboba.py:33
+msgid "Zzzz... I'm sleeping."
+msgstr "Zzzz... Я сплю."
+
+#: utils/aiobalaboba.py:34
+msgid "Zzzz... ZZZzz... ZzzZz..."
+msgstr "Zzzz... ZZZzz... ZzzZz..."
+
+#: utils/aiobalaboba.py:41
+msgid "I feel dark energy. Now it's better not to write anything..."
+msgstr "Я чувствую тёмную энергию. Сейчас лучше ничего не писать..."
+
+#: utils/aiobalaboba.py:42
+msgid ""
+"Evil forces took away my mind, now I can only write about the fact that I"
+" can’t do anything..."
+msgstr ""
+"Тёмные силы поработили мой разум, сейчас и могу писать только о том, что "
+"я ничего не могу писать..."
+
+#: utils/aiobalaboba.py:43
+msgid ""
+"Coldly. Possible precipitation in the form of errors on the server. "
+"Carefully."
+msgstr "Холодно. Возможны осадки в виде ошибок на сервере. Осторожно."
+
+#: utils/aiobalaboba.py:44
+msgid "Today I will have a day off from all of you!"
+msgstr "Сегодня у меня будет выходной ото всех вас!"
+
+#: utils/aiobalaboba.py:45
+msgid "I'm waiting for an answer..."
+msgstr "В ожидании ответа..."
+
+#: utils/aiobalaboba.py:46
+msgid "The wait is over."
+msgstr "Ожидание закончилось."
+
+#: utils/aiobalaboba.py:47
+msgid "So-ooo, goodbye!"
+msgstr "Так-с, пока!"
+
+#: utils/aiobalaboba.py:48
+msgid "I was limited in functionality =(."
+msgstr "Я был ограничен в функционале =(."
+
+#: utils/markov.py:89
+msgid "How to write?"
+msgstr "Как писать?"
+
+#: utils/markov.py:90
+msgid "How are you?"
+msgstr "Как дела?"
+
+#: utils/markov.py:91
+msgid "I do not know what to write..."
+msgstr "Я не знаю, что написать..."
+
+#: utils/markov.py:92
+msgid "I... I, can't write anything..."
+msgstr "Я... я не могу ничего написать..."
+
+#: utils/markov.py:93
+msgid "Sending a message... Error, an error message has been sent."
+msgstr "Отправка сообщения... Ошибка, отправлено сообщение об ошибке."
+
+#: utils/markov.py:94
+msgid "An error has been detected..."
+msgstr "Обнаружена ошибка..."
+
+#: utils/markov.py:95
+msgid "Generation error..."
+msgstr "Ошибка генерации..."
+
+#: utils/markov.py:96
+msgid "Generation interrupted. ERROR."
+msgstr "Генерация прервана. ОШИБКА."
+
