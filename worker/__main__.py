@@ -26,8 +26,12 @@ async def main():
 
         bot.sql = await sql.setup()
 
+        await bot.send_message(bot.owner_id, 'Bot started.')
+
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
+        await bot.send_message(bot.owner_id, 'Bot stopped.')
+
         await dp.storage.close()
         await bot.sql.pool.close()
         await bot.session.close()

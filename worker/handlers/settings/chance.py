@@ -12,13 +12,18 @@ router.callback_query.filter(k.SettingsData.filter(F.name == 'chance'))
 
 
 @router.callback_query(k.SettingsData.filter(F.value))
+@flags.data('chance')
 async def settings_chance_two_handler(
         query: types.CallbackQuery,
         callback_data: k.SettingsData,
         bot: Bot,
+        chance: float,
         state: Optional[FSMContext] = None
 ):
-    chance = round(float(callback_data.value), 2)
+    chance = round(
+        chance / await bot.get_chat_member_count(query.message.chat.id) * 100 + float(callback_data.value),
+        2
+    )
 
     await bot.sql.set_data(
         query.message.chat.id,
