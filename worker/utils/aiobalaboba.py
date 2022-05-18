@@ -2,7 +2,7 @@ from typing import Optional
 
 from aiohttp import ClientSession, ContentTypeError
 
-from markov import get_none_data
+from worker.utils.markov import get_none_data
 
 
 async def fetch(query: str, intro: int, session: ClientSession) -> str:
