@@ -3,7 +3,6 @@ from random import choice
 from typing import Optional, Union
 
 import markovify
-from aiogram.utils.i18n import gettext as _
 
 from worker import config
 
@@ -31,24 +30,36 @@ def set_data(text: str, messages: Optional[list] = None) -> Optional[list]:
         return messages
 
 
-def get_base_data(locale):
-    with open(config.BASE_DIR / 'locales' / locale / 'war-and-peace.json', 'r', encoding='UTF-8') as f:
-        return load(f)
+def get_base_data(state_size: Optional[int] = 1, locale: Optional[str] = None):
+    with open(
+            config.BASE_DIR / 'locales' / locale or config.i18n.current_locale / 'war-and-peace.json',
+            'r',
+            encoding='UTF-8'
+    ) as f:
+        return markovify.Text(
+            None,
+            parsed_sentences=load(f)[::choice(range(1, int(10 / state_size)))],
+            state_size=state_size
+        )
+
+
+def get_none_data():
+    with open(
+            config.BASE_DIR / 'locales' / config.i18n.current_locale / 'none.json',
+            'r',
+            encoding='UTF-8'
+    ) as f:
+        return markovify.Text(None, parsed_sentences=load(f))
 
 
 async def get(
-        locale: str,
         messages: Optional[Union[str, list]] = None,
         text: Optional[str] = None,
         state_size: Optional[int] = 2,
         min_words: Optional[int] = None,
         max_words: Optional[int] = 20,
 ) -> str:
-    model = markovify.Text(
-        None,
-        parsed_sentences=get_base_data(locale)[::choice(range(1, int(10 / state_size)))],
-        state_size=state_size
-    )
+    model = get_base_data(state_size)
 
     if messages:
         model = markovify.combine(
@@ -79,16 +90,4 @@ async def get(
     except (markovify.text.ParamError, LookupError, TypeError):
         answer = model.make_sentence(tries=state_size * 10, min_words=min_words, max_words=max_words)
 
-    return answer or markovify.Text(
-        [
-            _("How to write?"),
-            _("How are you?"),
-            _("I do not know what to write..."),
-            _("I... I, can't write anything..."),
-            _("Sending a message... Error, an error message has been sent."),
-            _("An error has been detected..."),
-            _("Generation error..."),
-            _("Generation interrupted. ERROR."),
-        ],
-        retain_original=False
-    ).make_sentence()
+    return answer or get_none_data().make_sentence()

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-05-17 15:20+0300\n"
+"POT-Creation-Date: 2022-05-18 13:39+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,87 +177,87 @@ msgid ""
 "\n"
 msgstr ""
 
-#: handlers/commands.py:72
+#: handlers/commands.py:71
 msgid "I choose <b>{choice}</b>."
 msgstr ""
 
-#: handlers/commands.py:84
+#: handlers/commands.py:82
 msgid "<b>What to choose?</b>"
 msgstr ""
 
-#: handlers/commands.py:93
+#: handlers/commands.py:91
 msgid "{args[0]} or {args[1]}"
 msgstr ""
 
-#: handlers/commands.py:100
+#: handlers/commands.py:98
 msgid "This command only works in <b>chats</b>, alas =(."
 msgstr ""
 
-#: handlers/commands.py:114
+#: handlers/commands.py:112
 msgid "Hmmm, I think {username} {args}"
 msgstr ""
 
-#: handlers/commands.py:122
+#: handlers/commands.py:120
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
 "/settings - give permission."
 msgstr ""
 
-#: handlers/commands.py:127
+#: handlers/commands.py:125
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr ""
 
-#: handlers/commands.py:141
+#: handlers/commands.py:138
 msgid "<b>Who???</b>"
 msgstr ""
 
-#: handlers/commands.py:159
+#: handlers/commands.py:155
 msgid "Ha! Invalid request, try again."
 msgstr ""
 
-#: handlers/commands.py:160
+#: handlers/commands.py:156
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr ""
 
-#: handlers/commands.py:161
+#: handlers/commands.py:157
 msgid "The game is not recognized. I'll give it another try!"
 msgstr ""
 
-#: handlers/commands.py:162
+#: handlers/commands.py:158
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/commands.py:171
+#: handlers/commands.py:167
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/commands.py:186
+#: handlers/commands.py:183
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/commands.py:191
+#: handlers/commands.py:189
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/commands.py:205
+#: handlers/commands.py:202
 msgid "<b>So what's the question?</b>"
 msgstr ""
 
-#: handlers/commands.py:227
+#: handlers/commands.py:222
 msgid "In short, "
 msgstr ""
 
-#: handlers/commands.py:258
+#: handlers/commands.py:252
 msgid "<b>On coffee grounds?</b>"
 msgstr ""
 
-#: handlers/games/__init__.py:22
+#: handlers/games/__init__.py:21
 msgid "You know I won't play with you! Maybe..."
 msgstr ""
 
@@ -438,7 +438,7 @@ msgstr ""
 msgid "You start! Your word?"
 msgstr ""
 
-#: handlers/games/start.py:45
+#: handlers/games/start.py:47
 msgid ""
 "Mm, {username} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, "
 "pay attention!\n"
@@ -447,11 +447,11 @@ msgid ""
 "and we'll we'll see which one of you is right."
 msgstr ""
 
-#: handlers/games/start.py:61
+#: handlers/games/start.py:63
 msgid "LET THE BATTLE BEGIN!"
 msgstr ""
 
-#: handlers/games/start.py:85
+#: handlers/games/start.py:87
 msgid "So my number is {bot}. Who guessed? Hmm..."
 msgstr ""
 
@@ -459,7 +459,7 @@ msgstr ""
 msgid "Well... the title of winner goes to: {winners}. Congratulations!"
 msgstr ""
 
-#: handlers/games/start.py:95
+#: handlers/games/start.py:94
 msgid "Well... no one guessed right. Heh."
 msgstr ""
 
@@ -493,19 +493,19 @@ msgid ""
 "take longer."
 msgstr ""
 
-#: handlers/settings/chance.py:31
+#: handlers/settings/chance.py:24
 msgid ""
 "The chance of text generation has reached the limit: <b>{chance}%</b>, "
 "below is impossible."
 msgstr ""
 
-#: handlers/settings/chance.py:35
+#: handlers/settings/chance.py:28
 msgid ""
 "The chance of text generation has reached the limit: <b>{chance}%</b>, "
 "higher is impossible."
 msgstr ""
 
-#: handlers/settings/chance.py:39
+#: handlers/settings/chance.py:32
 msgid "Text generation chance successfully updated: <b>{chance}%</b>."
 msgstr ""
 
@@ -630,105 +630,5 @@ msgstr ""
 
 #: handlers/settings/start.py:32
 msgid "My settings for this {chat}:"
-msgstr ""
-
-#: utils/aiobalaboba.py:27
-msgid "I think I wanted to write something, but I don't remember what... x)."
-msgstr ""
-
-#: utils/aiobalaboba.py:28
-msgid "I had some request... but I can't remember which one..."
-msgstr ""
-
-#: utils/aiobalaboba.py:29
-msgid "I still can't remember... who are you?"
-msgstr ""
-
-#: utils/aiobalaboba.py:30
-msgid "What do you want from me?"
-msgstr ""
-
-#: utils/aiobalaboba.py:31
-msgid "What a wonderful day for doing nothing!"
-msgstr ""
-
-#: utils/aiobalaboba.py:32
-msgid "Zzzz... What?"
-msgstr ""
-
-#: utils/aiobalaboba.py:33
-msgid "Zzzz... I'm sleeping."
-msgstr ""
-
-#: utils/aiobalaboba.py:34
-msgid "Zzzz... ZZZzz... ZzzZz..."
-msgstr ""
-
-#: utils/aiobalaboba.py:41
-msgid "I feel dark energy. Now it's better not to write anything..."
-msgstr ""
-
-#: utils/aiobalaboba.py:42
-msgid ""
-"Evil forces took away my mind, now I can only write about the fact that I"
-" can’t do anything..."
-msgstr ""
-
-#: utils/aiobalaboba.py:43
-msgid ""
-"Coldly. Possible precipitation in the form of errors on the server. "
-"Carefully."
-msgstr ""
-
-#: utils/aiobalaboba.py:44
-msgid "Today I will have a day off from all of you!"
-msgstr ""
-
-#: utils/aiobalaboba.py:45
-msgid "I'm waiting for an answer..."
-msgstr ""
-
-#: utils/aiobalaboba.py:46
-msgid "The wait is over."
-msgstr ""
-
-#: utils/aiobalaboba.py:47
-msgid "So-ooo, goodbye!"
-msgstr ""
-
-#: utils/aiobalaboba.py:48
-msgid "I was limited in functionality =(."
-msgstr ""
-
-#: utils/markov.py:89
-msgid "How to write?"
-msgstr ""
-
-#: utils/markov.py:90
-msgid "How are you?"
-msgstr ""
-
-#: utils/markov.py:91
-msgid "I do not know what to write..."
-msgstr ""
-
-#: utils/markov.py:92
-msgid "I... I, can't write anything..."
-msgstr ""
-
-#: utils/markov.py:93
-msgid "Sending a message... Error, an error message has been sent."
-msgstr ""
-
-#: utils/markov.py:94
-msgid "An error has been detected..."
-msgstr ""
-
-#: utils/markov.py:95
-msgid "Generation error..."
-msgstr ""
-
-#: utils/markov.py:96
-msgid "Generation interrupted. ERROR."
 msgstr ""
 

@@ -25,7 +25,6 @@ async def get_gen_args(
 
             return {
                 'text': await markov.get(
-                    locale=i18n.current_locale,
                     messages=messages,
                     text=message.text,
                     state_size=accuracy

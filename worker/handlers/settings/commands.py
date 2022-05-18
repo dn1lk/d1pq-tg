@@ -33,7 +33,7 @@ async def settings_commands_one_handler(
     else:
         commands = _("missing.")
 
-    args = markov.get_base_data(choice(i18n.available_locales))
+    args = markov.get_base_data(locale=choice(i18n.available_locales)).parsed_sentences
 
     if messages:
         args = messages + args
@@ -94,7 +94,7 @@ async def settings_commands_two_handler(
         await message.answer(answer)
 
     else:
-        args = markov.get_base_data(choice(i18n.available_locales))
+        args = markov.get_base_data(locale=choice(i18n.available_locales)).parsed_sentences
         messages = await bot.sql.get_data(message.chat.id, 'messages', state)
 
         if messages:

@@ -47,12 +47,11 @@ async def help_handler(message: types.Message, bot: Bot, i18n: I18n):
     )
 
 
-async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
+async def get_command_args(command: filters.CommandObject, **kwargs) -> dict:
     return {
         'command': command.command,
         'args': (
             await markov.get(
-                locale=i18n.current_locale,
                 text=command.command,
                 max_words=5,
                 **kwargs
@@ -79,11 +78,10 @@ async def choose_handler(
 async def choose_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
-        i18n: I18n,
         messages: Optional[list] = None):
     message = await message.answer(_("<b>What to choose?</b>"))
 
-    args = markov.get_base_data(i18n.current_locale)
+    args = markov.get_base_data().parsed_sentences
     if messages:
         args = messages + args
 
@@ -135,7 +133,6 @@ async def who_chat_handler(
 async def who_chat_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
-        i18n: I18n,
         messages: Optional[list] = None,
 ):
     message = await message.answer(_("<b>Who???</b>"))
@@ -143,7 +140,6 @@ async def who_chat_no_args_handler(
         NO_ARGS.format(
             **await get_command_args(
                 command,
-                i18n,
                 messages=messages)
         )
     )
@@ -201,7 +197,6 @@ async def question_handler(
 async def question_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
-        i18n: I18n,
         messages: Optional[list] = None
 ):
     message = await message.answer(_("<b>So what's the question?</b>"))
@@ -209,7 +204,6 @@ async def question_no_args_handler(
         NO_ARGS.format(
             **await get_command_args(
                 command,
-                i18n,
                 messages=messages)
         )
     )
@@ -221,7 +215,6 @@ async def question_no_args_handler(
 async def history_handler(
         message: types.Message,
         command: filters.CommandObject,
-        i18n: I18n,
         messages: Optional[list] = None,
 ):
     """tell a story, рассказать историю"""
@@ -234,7 +227,7 @@ async def history_handler(
     # await message.answer(await aiobalaboba.get(query, 6))
 
     await message.answer(
-        await markov.get(i18n.current_locale, messages, query, 2, min_words=25, max_words=100)
+        await markov.get(messages, query, 2, min_words=25, max_words=100)
     )
 
 
@@ -255,14 +248,12 @@ async def future_handler(
 async def future_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
-        i18n: I18n,
         messages: Optional[list] = None):
     message = await message.answer(_("<b>On coffee grounds?</b>"))
     await message.answer(
         NO_ARGS.format(
             **await get_command_args(
                 command,
-                i18n,
                 messages=messages)
         )
     )
