@@ -521,9 +521,9 @@ msgid ""
 "\n"
 "Update:"
 msgstr ""
-"Обновить:\n"
 "\n"
-"Update:"
+"\n"
+"Обновить:"
 
 #: handlers/settings/__init__.py:13
 msgid ""
