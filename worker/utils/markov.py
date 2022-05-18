@@ -49,7 +49,7 @@ def get_none_data(locale: str):
             'r',
             encoding='UTF-8'
     ) as f:
-        return markovify.Text(None, parsed_sentences=load(f))
+        return markovify.Text(None, parsed_sentences=load(f), retain_original=False)
 
 
 async def get(
