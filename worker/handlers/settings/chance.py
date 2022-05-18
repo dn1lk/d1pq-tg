@@ -12,25 +12,13 @@ router.callback_query.filter(k.SettingsData.filter(F.name == 'chance'))
 
 
 @router.callback_query(k.SettingsData.filter(F.value))
-@flags.data('chance')
 async def settings_chance_two_handler(
         query: types.CallbackQuery,
         callback_data: k.SettingsData,
         bot: Bot,
-        chance: float,
         state: Optional[FSMContext] = None
 ):
-    chance = round(
-        chance / await bot.get_chat_member_count(query.message.chat.id) * 100 + float(callback_data.value),
-        2
-    )
-
-    await bot.sql.set_data(
-        query.message.chat.id,
-        'chance',
-        chance * await bot.get_chat_member_count(query.message.chat.id) / 100,
-        state
-    )
+    chance = round(float(callback_data.value), 2)
 
     if chance <= 10:
         answer = _(
@@ -45,18 +33,25 @@ async def settings_chance_two_handler(
             "Text generation chance successfully updated: <b>{chance}%</b>."
         )
 
-    await query.message.edit_text(text=answer.format(chance=chance) + str(UPDATE_AGAIN), reply_markup=k.chance(chance))
+    answer = answer.format(chance=chance) + str(UPDATE_AGAIN)
+
+    if query.message.text != answer:
+        await query.message.edit_text(text=answer, reply_markup=k.chance(chance))
+
+        await bot.sql.set_data(
+            query.message.chat.id,
+            'chance',
+            chance * await bot.get_chat_member_count(query.message.chat.id) / 100,
+            state
+        )
 
 
 @router.callback_query()
 @flags.data('chance')
 async def settings_chance_one_handler(
         query: types.CallbackQuery,
-        bot: Bot,
         chance: float
 ):
-    chance = round(chance / await bot.get_chat_member_count(query.message.chat.id) * 100, 2)
-
     await query.message.edit_text(
         text=_(
             "Current text generation chance: <b>{chance}%</b>."

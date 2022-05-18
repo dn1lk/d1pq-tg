@@ -57,10 +57,10 @@ def chance(markov_chance: Union[int, float]):
         math = round(markov_chance / i, 2)
 
         if markov_chance > 10:
-            datas.append(('-' + str(math), -math))
+            datas.append(('-' + str(math), markov_chance - math))
 
         if markov_chance < 90:
-            datas.append(('+' + str(math), math))
+            datas.append(('+' + str(math), markov_chance + math))
 
     builder = InlineKeyboardBuilder()
 
