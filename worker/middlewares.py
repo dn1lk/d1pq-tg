@@ -34,7 +34,7 @@ class InnerDataMiddleware(BaseMiddleware):
                 if isinstance(value, str) and key in ('members', 'commands'):
                     value = loads(value)
                 elif key == 'chance':
-                    value = float(round(value / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2))
+                    value = round(float(value) / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
 
                 data[key] = value
 
