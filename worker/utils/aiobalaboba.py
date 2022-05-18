@@ -17,9 +17,9 @@ async def fetch(query: str, intro: int, session: ClientSession) -> str:
         return r["answers"]
 
 
-async def get(query: str, intro: Optional[int] = 0) -> str:
+async def get(locale: str, query: str, intro: Optional[int] = 0) -> str:
     try:
         async with ClientSession(trust_env=True) as session:
             return await fetch(query, intro=intro, session=session)
     except (ContentTypeError, LookupError):
-        return get_none_data().make_sentence()
+        return get_none_data(locale).make_sentence()

@@ -25,6 +25,7 @@ async def get_gen_args(
 
             return {
                 'text': await markov.get(
+                    locale=i18n.current_locale,
                     messages=messages,
                     text=message.text,
                     state_size=accuracy
@@ -37,7 +38,7 @@ async def get_gen_args(
 
     async def gen_balaboba() -> dict:  # not working too :(
         async with ChatActionSender.typing(chat_id=message.chat.id):
-            return {'text': await aiobalaboba.get(message.text, choice([4, 3, 5, 7, 11]))}
+            return {'text': await aiobalaboba.get(i18n.current_locale, message.text, choice([4, 3, 5, 7, 11]))}
 
     async def gen_sticker() -> dict:
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=1):

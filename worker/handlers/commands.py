@@ -78,10 +78,11 @@ async def choose_handler(
 async def choose_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
+        i18n: I18n,
         messages: Optional[list] = None):
     message = await message.answer(_("<b>What to choose?</b>"))
 
-    args = markov.get_base_data().parsed_sentences
+    args = markov.get_base_data(i18n.current_locale).parsed_sentences
     if messages:
         args = messages + args
 
@@ -176,6 +177,7 @@ async def game_no_args_handler(message: types.Message):
 async def question_handler(
         message: types.Message,
         command: filters.CommandObject,
+        i18n: I18n,
 ):
     """answer the question, ответить на вопрос"""
 
@@ -184,7 +186,7 @@ async def question_handler(
     )
 
     if len(command.args) < 20:
-        answer = await aiobalaboba.get(command.args, 8)
+        answer = await aiobalaboba.get(i18n.current_locale, command.args, 8)
     else:
         answer = _("Let's do it sooner!")
 
@@ -215,6 +217,7 @@ async def question_no_args_handler(
 async def history_handler(
         message: types.Message,
         command: filters.CommandObject,
+        i18n: I18n,
         messages: Optional[list] = None,
 ):
     """tell a story, рассказать историю"""
@@ -227,7 +230,7 @@ async def history_handler(
     # await message.answer(await aiobalaboba.get(query, 6))
 
     await message.answer(
-        await markov.get(messages, query, 2, min_words=25, max_words=100)
+        await markov.get(i18n.current_locale, messages, query, 2, min_words=25, max_words=100)
     )
 
 
@@ -236,10 +239,11 @@ async def history_handler(
 async def future_handler(
         message: types.Message,
         command: filters.CommandObject,
+        i18n: I18n,
 ):
     """predict the future, предсказать будущее"""
 
-    await message.answer(await aiobalaboba.get(command.args, 10))
+    await message.answer(await aiobalaboba.get(i18n.current_locale, command.args, 10))
 
 
 @router.message(commands=['future', 'погадай'], commands_ignore_case=True)

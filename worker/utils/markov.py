@@ -30,9 +30,9 @@ def set_data(text: str, messages: Optional[list] = None) -> Optional[list]:
         return messages
 
 
-def get_base_data(state_size: Optional[int] = 1, locale: Optional[str] = None):
+def get_base_data(locale: str, state_size: Optional[int] = 1):
     with open(
-            config.BASE_DIR / 'locales' / locale or config.i18n.current_locale / 'war-and-peace.json',
+            config.BASE_DIR / 'locales' / locale / 'war-and-peace.json',
             'r',
             encoding='UTF-8'
     ) as f:
@@ -43,9 +43,9 @@ def get_base_data(state_size: Optional[int] = 1, locale: Optional[str] = None):
         )
 
 
-def get_none_data():
+def get_none_data(locale: str):
     with open(
-            config.BASE_DIR / 'locales' / config.i18n.current_locale / 'none.json',
+            config.BASE_DIR / 'locales' / locale / 'none.json',
             'r',
             encoding='UTF-8'
     ) as f:
@@ -53,13 +53,14 @@ def get_none_data():
 
 
 async def get(
+        locale: str,
         messages: Optional[Union[str, list]] = None,
         text: Optional[str] = None,
         state_size: Optional[int] = 2,
         min_words: Optional[int] = None,
         max_words: Optional[int] = 20,
 ) -> str:
-    model = get_base_data(state_size)
+    model = get_base_data(locale, state_size)
 
     if messages:
         model = markovify.combine(
@@ -90,4 +91,4 @@ async def get(
     except (markovify.text.ParamError, LookupError, TypeError):
         answer = model.make_sentence(tries=state_size * 10, min_words=min_words, max_words=max_words)
 
-    return answer or get_none_data().make_sentence()
+    return answer or get_none_data(locale).make_sentence()
