@@ -11,8 +11,8 @@ async def errors_handler(event: types.Update, bot: Bot, exception: Exception):
         await bot.send_message(
             chat_id=bot.owner_id,
             text=(
-                f'ERROR while event <b>{event.event_type}</b>:'
-                f'\n\n<b>- exception</b>: {exception}.'
+                f'ERROR while event <b>{event.event_type}</b>:\n\n'
+                f'- <b>exception</b>: {exception}.'
             )
         )
     except exceptions.TelegramBadRequest:

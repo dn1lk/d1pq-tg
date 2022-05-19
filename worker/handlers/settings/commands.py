@@ -56,7 +56,7 @@ async def settings_commands_one_handler(
 
 
 async def settings_commands_two_filter(message: types.Message, bot: Bot, i18n: I18n) -> bool:
-    return await f.AddCommand(
+    return await filters.Command(
         commands=[command.command for command in bot.commands[i18n.current_locale]],
         commands_ignore_case=True,
     )(message=message, bot=bot)

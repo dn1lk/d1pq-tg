@@ -10,8 +10,6 @@ from worker.handlers import get_command_list, USERNAME, NO_ARGS
 from worker.utils import markov, aiobalaboba
 
 router = Router(name="commands")
-router.message.filters[1] = f.AddCommand
-router.edited_message.filters[1] = f.AddCommand
 
 
 @router.message(~F.from_user.is_bot, f.LevenshteinFilter(lev={'hello', 'hey', 'здравствуйте', 'привет'}, lev_str=True))
@@ -169,8 +167,8 @@ async def game_handler(message: types.Message):
 async def game_no_args_handler(message: types.Message):
     await message.answer(
         _(
-            "<b>And what do you want to play?</b>"
-            "\n\nTry to guess the game by writing the right words right after the command."
+            "<b>And what do you want to play?</b>\n\n"
+            "Try to guess the game by writing the right words right after the command."
         )
     )
 

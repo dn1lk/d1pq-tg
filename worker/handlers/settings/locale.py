@@ -21,8 +21,8 @@ async def settings_locale_two_handler(
     await bot.sql.set_data(query.message.chat.id, 'locales', callback_data.value, state)
     await query.message.edit_text(
         _(
-            "<b>The language has been successfully updated.</b>"
-            "\n\nAlready the next message will be in the language: {locale}."
+            "<b>The language has been successfully updated.</b>\n\n"
+            "Already the next message will be in the language: {locale}."
         ).format(locale=dict(k.get_locale_var(i18n.available_locales))[callback_data.value])
     )
 

@@ -1,6 +1,6 @@
 import logging
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, filters
 
 import config
 import handlers
@@ -45,6 +45,10 @@ if __name__ == "__main__":
 
     types.Message.answer_sticker = AddMessage.answer_sticker
     types.Message.answer_voice = AddMessage.answer_voice
+
+    from worker.filters import AddCommand
+
+    filters.Command.__call__ = AddCommand.__call__
 
     try:
         import asyncio

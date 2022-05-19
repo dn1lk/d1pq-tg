@@ -22,19 +22,22 @@ async def game_rps_two_handler(message: types.Message, state: FSMContext):
 
     wins, loses = (await state.get_data()).get('game_rps', (0, 0))
 
-    again = _("\n\nScore: {loses}-{wins}.\nPlay again?")
-
     if bot_var[1].lower() in user_var:
-        answer = _("Draw.") + again.format(loses=loses, wins=wins)
+        answer = _("Draw.")
     elif k.get_game_rps_args()[bot_var][1].lower() in user_var:
         wins += 1
-        answer = _("My win!") + again.format(loses=loses, wins=wins)
+        answer = _("My win!")
     else:
         loses += 1
-        answer = _("My defeat...") + again.format(loses=loses, wins=wins)
+        answer = _("My defeat...")
+
+    again = _("\n\nScore: {loses}-{wins}.\nPlay again?")
 
     await state.update_data({'game_rps': (wins, loses)})
-    await message.reply(f'{" ".join(bot_var)}! {answer}', reply_markup=k.game_rps())
+    await message.reply(
+        f'{" ".join(bot_var)}! {answer + again.format(loses=loses, wins=wins)}',
+        reply_markup=k.game_rps()
+    )
 
     if not await state.get_state() == GameState.RPS:
         await state.set_state(GameState.RPS.state)

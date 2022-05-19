@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-05-18 13:39+0300\n"
+"POT-Creation-Date: 2022-05-19 17:07+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -171,7 +171,7 @@ msgstr ""
 "- Что я могу? Некоторые вещи, после которых что-то происходит...\n"
 "\n"
 
-#: handlers/commands.py:21
+#: handlers/commands.py:19
 msgid ""
 "Hello, {username}. I am a text generator bot and in some cases a great "
 "conversationalist.\n"
@@ -185,7 +185,7 @@ msgstr ""
 "Если мне написать сообщение или команду, что-то может произойти.\n"
 "\n"
 
-#: handlers/commands.py:45
+#: handlers/commands.py:43
 msgid ""
 "List of my main commands - I only accept them together with the required "
 "request, in one message:\n"
@@ -195,7 +195,7 @@ msgstr ""
 "запросом, одним сообщением:\n"
 "\n"
 
-#: handlers/commands.py:71
+#: handlers/commands.py:70
 msgid "I choose <b>{choice}</b>."
 msgstr "Я выбираю <b>{choice}</b>."
 
@@ -229,27 +229,27 @@ msgstr ""
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr "Ох, я не знаю вас ребят... Дайте мне время."
 
-#: handlers/commands.py:138
+#: handlers/commands.py:139
 msgid "<b>Who???</b>"
 msgstr "<b>Кто???</b>"
 
-#: handlers/commands.py:155
+#: handlers/commands.py:157
 msgid "Ha! Invalid request, try again."
 msgstr "Ха! А вот и нет, попробуй ещё."
 
-#: handlers/commands.py:156
+#: handlers/commands.py:158
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr "Удача явно тебе НЕ благоволит. Ты не угадал игру!"
 
-#: handlers/commands.py:157
+#: handlers/commands.py:159
 msgid "The game is not recognized. I'll give it another try!"
 msgstr "Игра не распознана. Даю ещё попытку!"
 
-#: handlers/commands.py:158
+#: handlers/commands.py:160
 msgid "And here it is not. This game has a different name ;)."
 msgstr "А вот и нет. У этой игры другая команда ;)."
 
-#: handlers/commands.py:167
+#: handlers/commands.py:169
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
@@ -259,7 +259,7 @@ msgstr ""
 "\n"
 "Попробуй угадать игру, написав нужный запрос сразу после команды."
 
-#: handlers/commands.py:183
+#: handlers/commands.py:186
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
@@ -267,19 +267,19 @@ msgstr ""
 "Хм, {args}?\n"
 "Ок, мне нужно подумать..."
 
-#: handlers/commands.py:189
+#: handlers/commands.py:192
 msgid "Let's do it sooner!"
 msgstr "Давай покороче!"
 
-#: handlers/commands.py:202
+#: handlers/commands.py:206
 msgid "<b>So what's the question?</b>"
 msgstr "<b>Так какой вопросик?</b>"
 
-#: handlers/commands.py:222
+#: handlers/commands.py:228
 msgid "In short, "
 msgstr "Короче, "
 
-#: handlers/commands.py:252
+#: handlers/commands.py:260
 msgid "<b>On coffee grounds?</b>"
 msgstr "<b>На кофейной гуще?</b>"
 
@@ -423,7 +423,19 @@ msgstr "Кто-то не умеет читать. Было чётко напис
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr "От 1 до 10, что сложного то?!"
 
-#: handlers/games/rps.py:25
+#: handlers/games/rps.py:26
+msgid "Draw."
+msgstr "Ничья."
+
+#: handlers/games/rps.py:29
+msgid "My win!"
+msgstr "Моя победа!"
+
+#: handlers/games/rps.py:32
+msgid "My defeat..."
+msgstr "Моё поражение..."
+
+#: handlers/games/rps.py:34
 msgid ""
 "\n"
 "\n"
@@ -435,27 +447,15 @@ msgstr ""
 "Счёт: {loses}-{wins}.\n"
 "Сыграем ещё раз?"
 
-#: handlers/games/rps.py:28
-msgid "Draw."
-msgstr "Ничья."
-
-#: handlers/games/rps.py:31
-msgid "My win!"
-msgstr "Моя победа!"
-
-#: handlers/games/rps.py:34
-msgid "My defeat..."
-msgstr "Моё поражение..."
-
-#: handlers/games/rps.py:50
+#: handlers/games/rps.py:53
 msgid "Well don't play with me!"
 msgstr "Ну и не играй со мной!"
 
-#: handlers/games/rps.py:51
+#: handlers/games/rps.py:54
 msgid "I thought we were playing..."
 msgstr "Я думал мы играли..."
 
-#: handlers/games/rps.py:52
+#: handlers/games/rps.py:55
 msgid "I won't play with you!"
 msgstr "Я не буду играть с тобой!"
 
