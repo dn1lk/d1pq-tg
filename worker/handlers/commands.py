@@ -10,6 +10,8 @@ from worker.handlers import get_command_list, USERNAME, NO_ARGS
 from worker.utils import markov, aiobalaboba
 
 router = Router(name="commands")
+router.message.filters[1] = f.AddCommand
+router.edited_message.filters[1] = f.AddCommand
 
 
 @router.message(~F.from_user.is_bot, f.LevenshteinFilter(lev={'hello', 'hey', 'здравствуйте', 'привет'}, lev_str=True))
