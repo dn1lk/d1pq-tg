@@ -23,28 +23,30 @@ async def main():
     dp: Dispatcher = middlewares.setup(dp)
 
     try:
-        await bot.set_webhook(
-            url=config.webhook + bot.token,
-            allowed_updates=dp.resolve_used_update_types()
-        )
-
         bot.owner_id = int(config.bot.owner)
         bot.commands = await set_bot_commands(bot, dp, config.i18n.available_locales)
 
         bot.sql = await sql.setup()
 
-        await bot.send_message(bot.owner_id, 'Bot started.')
+        await bot.set_webhook(
+            url=config.webhook + '/webhook/' + bot.token,
+            allowed_updates=dp.resolve_used_update_types()
+        )
 
         app = web.Application()
-        SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path='/' + bot.token)
+        SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path='/webhook/' + bot.token)
         runner = web.AppRunner(app)
         await runner.setup()
-        site = web.TCPSite(runner)
+        site = web.TCPSite(runner, host='0.0.0.0', port=int(config.port))
         await site.start()
+
+        await bot.send_message(bot.owner_id, 'Bot started.')
 
         await asyncio.Event().wait()
     finally:
         await bot.send_message(bot.owner_id, 'Bot stopped.')
+
+        await bot.delete_webhook()
 
         await dp.storage.close()
         await bot.sql.pool.close()
