@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-05-19 17:07+0300\n"
+"POT-Creation-Date: 2022-05-21 07:17+0300\n"
 "PO-Revision-Date: 2022-05-15 18:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -162,7 +162,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: handlers/commands.py:19
+#: handlers/commands.py:21
 msgid ""
 "Hello, {username}. I am a text generator bot and in some cases a great "
 "conversationalist.\n"
@@ -171,90 +171,90 @@ msgid ""
 "\n"
 msgstr ""
 
-#: handlers/commands.py:43
+#: handlers/commands.py:45
 msgid ""
 "List of my main commands - I only accept them together with the required "
 "request, in one message:\n"
 "\n"
 msgstr ""
 
-#: handlers/commands.py:70
+#: handlers/commands.py:72
 msgid "I choose <b>{choice}</b>."
 msgstr ""
 
-#: handlers/commands.py:82
+#: handlers/commands.py:84
 msgid "<b>What to choose?</b>"
 msgstr ""
 
-#: handlers/commands.py:91
+#: handlers/commands.py:93
 msgid "{args[0]} or {args[1]}"
 msgstr ""
 
-#: handlers/commands.py:98
+#: handlers/commands.py:100
 msgid "This command only works in <b>chats</b>, alas =(."
 msgstr ""
 
-#: handlers/commands.py:112
+#: handlers/commands.py:114
 msgid "Hmmm, I think {username} {args}"
 msgstr ""
 
-#: handlers/commands.py:120
+#: handlers/commands.py:122
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
 "/settings - give permission."
 msgstr ""
 
-#: handlers/commands.py:125
+#: handlers/commands.py:127
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr ""
 
-#: handlers/commands.py:139
+#: handlers/commands.py:141
 msgid "<b>Who???</b>"
 msgstr ""
 
-#: handlers/commands.py:157
+#: handlers/commands.py:159
 msgid "Ha! Invalid request, try again."
 msgstr ""
 
-#: handlers/commands.py:158
+#: handlers/commands.py:160
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr ""
 
-#: handlers/commands.py:159
+#: handlers/commands.py:161
 msgid "The game is not recognized. I'll give it another try!"
 msgstr ""
 
-#: handlers/commands.py:160
+#: handlers/commands.py:162
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/commands.py:169
+#: handlers/commands.py:171
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/commands.py:186
+#: handlers/commands.py:188
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/commands.py:192
+#: handlers/commands.py:194
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/commands.py:206
+#: handlers/commands.py:208
 msgid "<b>So what's the question?</b>"
 msgstr ""
 
-#: handlers/commands.py:228
+#: handlers/commands.py:230
 msgid "In short, "
 msgstr ""
 
-#: handlers/commands.py:260
+#: handlers/commands.py:262
 msgid "<b>On coffee grounds?</b>"
 msgstr ""
 
