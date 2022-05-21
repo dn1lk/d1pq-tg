@@ -106,7 +106,7 @@ async def on_member_leave_handler(
         await bot.sql.update_data(message.chat.id, 'members', dumps(members), state)
 
 
-@router.my_chat_member(member_status_changed=filters.JOIN_TRANSITION)
+@router.my_chat_member(~(F.chat.type == 'private'), member_status_changed=filters.JOIN_TRANSITION)
 async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18n):
     await bot.send_message(
         event.chat.id,
