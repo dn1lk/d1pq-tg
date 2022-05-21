@@ -55,7 +55,7 @@ class SQL:
 
 
 async def setup():
-    pool = await asyncpg.create_pool(config.sql, max_size=20)
+    pool = await asyncpg.create_pool(config.heroku.database_url, max_size=20)
 
     await pool.execute(
         """CREATE TABLE IF NOT EXISTS data (
