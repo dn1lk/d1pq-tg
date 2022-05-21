@@ -29,15 +29,17 @@ async def main():
         bot.sql = await sql.setup()
 
         await bot.set_webhook(
-            url=config.webhook + '/webhook/' + bot.token,
+            url=config.heroku.domain_url + '/webhook/' + bot.token,
             allowed_updates=dp.resolve_used_update_types()
         )
 
         app = web.Application()
         SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path='/webhook/' + bot.token)
+
         runner = web.AppRunner(app)
         await runner.setup()
-        site = web.TCPSite(runner, host='0.0.0.0', port=int(config.port))
+
+        site = web.TCPSite(runner, host=config.heroku.host, port=int(config.heroku.port))
         await site.start()
 
         await bot.send_message(bot.owner_id, 'Bot started.')

@@ -1,1 +1,1 @@
-web: python worker/__main__.py
+worker: python worker/__main__.py
