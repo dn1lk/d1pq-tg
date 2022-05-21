@@ -11,6 +11,7 @@ class Bot(BaseModel):
 
 class Settings(BaseSettings):
     bot: Bot
+    webhook_url: str
     database_url: str
     google_client: str
 
@@ -19,6 +20,7 @@ CONFIG = Settings(_env_nested_delimiter='__')
 BASE_DIR = Path(__file__).parent
 
 bot = CONFIG.bot
+webhook = CONFIG.webhook_url
 sql = CONFIG.database_url
 google = CONFIG.google_client
 

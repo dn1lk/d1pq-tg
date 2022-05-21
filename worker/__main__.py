@@ -1,6 +1,8 @@
 import logging
 
 from aiogram import Bot, Dispatcher, types
+from aiogram.dispatcher.webhook.aiohttp_server import SimpleRequestHandler
+from aiohttp import web
 
 import config
 import handlers
@@ -21,6 +23,11 @@ async def main():
     dp: Dispatcher = middlewares.setup(dp)
 
     try:
+        await bot.set_webhook(
+            url=config.webhook + bot.token,
+            allowed_updates=dp.resolve_used_update_types()
+        )
+
         bot.owner_id = int(config.bot.owner)
         bot.commands = await set_bot_commands(bot, dp, config.i18n.available_locales)
 
@@ -28,7 +35,14 @@ async def main():
 
         await bot.send_message(bot.owner_id, 'Bot started.')
 
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        app = web.Application()
+        SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path='/' + bot.token)
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner)
+        await site.start()
+
+        await asyncio.Event().wait()
     finally:
         await bot.send_message(bot.owner_id, 'Bot stopped.')
 
