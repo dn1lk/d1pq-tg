@@ -72,7 +72,7 @@ async def get(
                 ),
                 model
             ),
-            weights=(10000, 1)
+            weights=(3, 0.5)
         )
 
     model.compile(inplace=True)
