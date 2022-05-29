@@ -63,17 +63,22 @@ async def get(
     model = get_base_data(locale, state_size)
 
     if messages:
-        model = markovify.combine(
-            models=(
-                markovify.Text(
+        model_messages = markovify.Text(
                     None,
                     parsed_sentences=[message.split() for message in messages],
                     state_size=state_size
+                )
+
+        if len(messages) > 100:
+            model = model_messages
+        else:
+            model = markovify.combine(
+                models=(
+                    model_messages,
+                    model
                 ),
-                model
-            ),
-            weights=(3, 0.5)
-        )
+                weights=(100, 0.01)
+            )
 
     model.compile(inplace=True)
 
@@ -87,7 +92,12 @@ async def get(
                 max_words=max_words,
             )
         else:
-            raise markovify.text.ParamError('No text')
+            err_msg = (
+                f"`make_sentence_with_start` for this model requires a string "
+                f"containing 1 to {state_size} words. "
+                f"Yours has 0 words"
+            )
+            raise markovify.text.ParamError(err_msg)
     except (markovify.text.ParamError, LookupError, TypeError):
         answer = model.make_sentence(tries=state_size * 10, min_words=min_words, max_words=max_words)
 
