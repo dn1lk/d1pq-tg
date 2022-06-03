@@ -9,9 +9,10 @@ from worker import config
 
 
 class GameState(StatesGroup):
-    CTS = State('game_cts')
-    RND = State('game_rnd')
-    RPS = State('game_rps')
+    UNO = State('uno')
+    CTS = State('cts')
+    RND = State('rnd')
+    RPS = State('rps')
 
 
 async def game_timer(message: types.Message, state: FSMContext) -> None:
@@ -30,12 +31,14 @@ def get_game_cts(locale: str) -> list:
 def setup():
     router = Router(name='game')
 
+    from .uno import setup as uno_rt
     from .cts import router as cts_rt
     from .rnd import router as rnd_rt
     from .rps import router as rps_rt
     from .start import router as start_rt
 
     sub_routers = (
+        uno_rt(),
         cts_rt,
         rnd_rt,
         rps_rt,

@@ -1,5 +1,5 @@
 from asyncio import sleep
-from random import choice
+from random import choice, random
 
 from aiogram import Router, Bot, F, types, flags
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -12,6 +12,40 @@ from worker.handlers.games import GameState, game_timer, get_game_cts
 
 router = Router(name='game_start')
 router.message.filter(commands=['play', 'поиграем'], commands_ignore_case=True)
+
+
+@router.message(F.text.lower().endswith(('uno', 'уно')))
+async def game_uno_one_handler(message: types.Message, bot: Bot, state: FSMContext):
+    data = {message.from_user.id: message.from_user.first_name}
+
+    message = await message.answer(
+        _(
+            "<b>Поиграем в UNO!</b>\n\n"
+            'Как будете готовы, нажмите на кнопку "Начать игру".\n\n'
+            "В ожидании начала:\n{users}"
+        ).format(
+            users='\n'.join([USERNAME.format(id=user_id, name=user_name) for user_id, user_name in data.items()])
+        ),
+        reply_markup=k.game_uno_start()
+    )
+
+    if random() <= 2 / await bot.get_chat_member_count(message.chat.id):
+        data[bot.id] = (await bot.get_me()).first_name
+        await message.edit_text(
+            message.html_text + '\n' + USERNAME.format(id=bot.id, name=data[bot.id]),
+            reply_markup=message.reply_markup
+        )
+        await message.answer(
+            choice(
+                (
+                    _("Да-да, я тоже играю!"),
+                    _("Поиграю с вами."),
+                    _("А в игре и я тоже!")
+                )
+            )
+        )
+
+    await state.update_data({'game_uno': data})
 
 
 @router.message(F.text.lower().endswith(('cts', 'грд')))

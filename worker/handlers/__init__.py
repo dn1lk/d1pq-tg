@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.dispatcher.fsm.strategy import FSMStrategy
 from aiogram.utils.i18n import lazy_gettext as __
 
-USERNAME = "<a href='tg://user?id={id}'>{name}</a>"
+USERNAME = '<a href="tg://user?id={id}">{name}</a>'
 
 NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: /{command} {args}")
 

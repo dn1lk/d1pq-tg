@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from aiogram.utils.i18n import I18n
 from pydantic import BaseSettings, SecretStr
@@ -13,10 +14,11 @@ class Bot(BaseSettings):
 
 
 class Heroku(BaseSettings):
-    domain_url: str
-    database_url: str
+    domain_url: Optional[str] = None
     host: str = '0.0.0.0'
     port: int = 8080
+
+    database_url: str
 
 
 class Google(BaseSettings):

@@ -3,15 +3,16 @@ import logging
 
 from aiogram import Bot, Dispatcher, types
 
-import config
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(levelname)s - %(name)s - %(message)s")
 logging.info("Start bot")
 
 
 async def main():
+    import config
+
     bot: Bot = Bot(token=config.bot.token.get_secret_value(), parse_mode="HTML")
 
     import handlers
@@ -30,13 +31,19 @@ async def main():
 
         await bot.send_message(bot.owner_id, 'Bot started.')
 
-        import webhook
+        if config.heroku.domain_url:
+            import webhook
 
-        await webhook.start(dp, bot)
+            await webhook.start(dp, bot)
+        else:
+            await bot.delete_webhook()
+
+            await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         await bot.send_message(bot.owner_id, 'Bot stopped.')
 
-        await bot.delete_webhook()
+        if config.heroku.database_url:
+            await bot.delete_webhook()
 
         await dp.storage.close()
         await bot.sql.pool.close()

@@ -116,6 +116,45 @@ def data(chat_type: str, members: Optional[dict] = None, messages: Optional[list
     return builder.as_markup()
 
 
+class GamesData(CallbackData, prefix='game'):
+    game: str
+    value: Any = None
+
+
+def game_uno_start():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(text=_("Присоединиться к игре"), callback_data=GamesData(game='uno', value='join'))
+    builder.button(text=_("Отказаться от игры"), callback_data=GamesData(game='uno', value='decline'))
+    builder.button(text=_("Начать игру"), callback_data=GamesData(game='uno', value='start'))
+
+    builder.adjust(1)
+
+    return builder.as_markup()
+
+
+def game_uno_show_cards():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(text=_("Показать карты"), switch_inline_query_current_chat=_("uno"))
+
+    return builder.as_markup()
+
+
+COLORS = {'b': __("синий"), 'g': __("зелёный"), 'r': __("красный"), 'y': __("жёлтый")}
+
+
+def game_uno_choose():
+    builder = ReplyKeyboardBuilder()
+
+    for color in COLORS.values():
+        builder.button(text=_("Я выбираю {color} цвет").format(color=color))
+
+    builder.adjust(1)
+
+    return builder.as_markup(selective=True)
+
+
 def get_game_rps_args() -> dict:
     return {
         ("🪨", _("Rock")): _("Scissors").lower(),
@@ -132,4 +171,5 @@ def game_rps():
 
     builder.adjust(1)
 
-    return builder.as_markup(resize_keyboard=True)
+    return builder.as_markup(resize_keyboard=True, input_field_placeholder=_("What will you choose?"))
+

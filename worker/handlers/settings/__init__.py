@@ -2,8 +2,6 @@ from aiogram import Router, F
 from aiogram.dispatcher.fsm.state import StatesGroup, State
 from aiogram.utils.i18n import lazy_gettext as __
 
-from worker import keyboards as k
-
 
 class BaseSettingsState(StatesGroup):
     COMMAND = State('commands')
@@ -14,6 +12,8 @@ UPDATE_AGAIN = __("\n\nUpdate again:")
 
 
 def setup():
+    from worker import keyboards as k
+
     router = Router(name='settings')
     router.callback_query.filter(k.SettingsData.filter(F.name))
 
