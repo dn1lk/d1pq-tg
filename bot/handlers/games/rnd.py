@@ -31,7 +31,7 @@ async def game_rnd_answer_handler(message: types.Message, state: FSMContext):
 
         answer = (
             _("Your choice has been accepted."),
-            _("Do you really think that I will choose THIS number? Well, let's see ;)."),
+            _("Do you really think that I will choose THIS emoji? Well, let's see ;)."),
             _("So let's write..."),
         )
 
@@ -43,7 +43,7 @@ async def game_rnd_mistake_handler(message: types.Message):
     await message.reply(
         choice(
             (
-                _("So you won’t guess for sure, choose a number from 1 to 10!"),
+                _("So you won’t guess for sure, choose a emoji from 1 to 10!"),
                 _("Somebody can't read. It was clearly written, from 1 to 10!"),
                 _("Between 1 and 10, what's so difficult?!"),
             )

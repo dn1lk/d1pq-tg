@@ -1,4 +1,4 @@
-from asyncio import create_task
+import asyncio
 from random import choice
 
 from aiogram import Router, types
@@ -39,7 +39,7 @@ def timer(message: types.Message, state: FSMContext, coroutine):
 
             return True
 
-    return create_task(waiter())
+    return asyncio.create_task(waiter())
 
 
 async def cts_timeout(message: types.Message):

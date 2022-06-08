@@ -141,18 +141,17 @@ def game_uno_show_cards():
     return builder.as_markup()
 
 
-COLORS = {'b': __("синий"), 'g': __("зелёный"), 'r': __("красный"), 'y': __("жёлтый")}
-
-
 def game_uno_color():
+    from .handlers.games.uno.cards import UnoColors
+
     builder = ReplyKeyboardBuilder()
 
-    for color in COLORS.values():
-        builder.button(text=_("Я выбираю {color} цвет").format(color=color))
+    for emoji, color in (color.value for color in tuple(UnoColors)[:-1]):
+        builder.button(text=_("{color} цвет").format(color=' '.join((emoji, str(color).capitalize()))))
 
     builder.adjust(1)
 
-    return builder.as_markup(one_time_keyboard=True, selective=True)
+    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True, selective=True)
 
 
 def get_game_rps_args() -> dict:

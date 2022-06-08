@@ -1,4 +1,4 @@
-from aiogram import Router, Bot, F, types, flags
+from aiogram import Router, Bot, F, types, flags, exceptions
 from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
@@ -34,9 +34,11 @@ async def chance_update_handler(
 
     answer = answer.format(chance=chance) + str(UPDATE_AGAIN)
 
-    if query.message.text != answer:
+    try:
         await query.message.edit_text(text=answer, reply_markup=k.chance(chance))
         await db.set_data(chance=chance * await bot.get_chat_member_count(query.message.chat.id) / 100)
+    except exceptions.TelegramBadRequest:
+        await query.answer(_("Не так быстро! Я за тобой не поспеваю..."))
 
 
 @router.callback_query()

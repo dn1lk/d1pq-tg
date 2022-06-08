@@ -61,6 +61,7 @@ class LogMiddleware(BaseMiddleware):
             data: Dict[str, Any]
     ) -> Any:
         logging.debug(f'New event - {event.event_type}:\n{event}')
+        print(await data['state'].get_state())
         return await handler(event, data)
 
 
@@ -105,7 +106,7 @@ class Middleware:
 def setup(dp: Dispatcher):
     from bot import config
 
-    from locales.middleware import DataBaseLocaleMiddleware
+    from locales.middleware import I18nContextMiddleware
     from utils.database.middleware import DataBaseContextMiddleware
 
     middlewares = (
@@ -113,7 +114,7 @@ def setup(dp: Dispatcher):
         Middleware(inner=FlagsDataMiddleware(), observers=('message', 'callback_query')),
         Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage)),
-        Middleware(outer=DataBaseLocaleMiddleware(i18n=config.i18n)),
+        Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
         Middleware(outer=UnhandledMiddleware(), observers=('message',)),
     )
 

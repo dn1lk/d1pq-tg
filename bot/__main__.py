@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, exceptions
 
 
 logging.basicConfig(
@@ -20,7 +20,7 @@ async def main():
 
     from utils import database as db
 
-    db_pool = await db.setup()
+    dp['db_pool'] = db_pool = await db.setup()
 
     import middlewares
     import handlers
@@ -37,13 +37,22 @@ async def main():
         if config.heroku.domain_url:
             import webhook
 
-            await webhook.setup(dp, bot, db_pool=db_pool)
+            await webhook.setup(dp, bot)
         else:
             await bot.delete_webhook()
-            await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types(), db_pool=db_pool)
+            await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
-        await db_pool.close()
-        await bot.send_message(bot.owner_id, 'Bot stopped.')
+        try:
+            await bot.send_message(bot.owner_id, 'Bot stopped.')
+
+        except exceptions.TelegramNetworkError:
+            logging.exception(exceptions.TelegramNetworkError)
+
+        finally:
+            await bot.session.close()
+            await db_pool.close()
+
+            await asyncio.sleep(1)
 
 
 if __name__ == "__main__":

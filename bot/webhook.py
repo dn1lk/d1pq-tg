@@ -9,7 +9,7 @@ from aiohttp import web
 import config
 
 
-async def setup(dp: Dispatcher, bot: Bot, db_pool):
+async def setup(dp: Dispatcher, bot: Bot):
     user: User = await bot.me()
     webhook_logger = logging.getLogger("aiogram.webhook")
     webhook_logger.info(
@@ -25,7 +25,7 @@ async def setup(dp: Dispatcher, bot: Bot, db_pool):
     aiohttp_logger.setLevel(logging.CRITICAL)
 
     app = web.Application()
-    SimpleRequestHandler(dispatcher=dp, bot=bot, dp_pool=db_pool).register(app, path='/webhook/' + bot.token)
+    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path='/webhook/' + bot.token)
 
     runner = web.AppRunner(app)
     await runner.setup()

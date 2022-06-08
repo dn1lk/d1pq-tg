@@ -64,7 +64,7 @@ class AdminFilter(filters.BaseFilter):
             return False
 
         if obj.from_user.id in (chat_id, bot.owner_id) or \
-                obj.from_user.id in map(lambda user: user.user.id, await bot.get_chat_administrators(chat_id)):
+                obj.from_user.id in map(lambda user: user.uno_user.id, await bot.get_chat_administrators(chat_id)):
             return self.is_admin
         else:
             return not self.is_admin

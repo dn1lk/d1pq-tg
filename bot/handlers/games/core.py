@@ -1,4 +1,4 @@
-from asyncio import sleep, create_task
+import asyncio
 from random import choice
 
 from aiogram import Router, Bot, F, types, flags
@@ -71,7 +71,7 @@ async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stick
     message = await message.answer(
         _(
             "Mm, {username} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
-            "Enter any number between 1 and 10 and I'll choose "
+            "Enter any emoji between 1 and 10 and I'll choose "
             "my own in 60 seconds and we'll we'll see which one of you is right."
         ).format(
             username=get_username(message.from_user)
@@ -79,17 +79,17 @@ async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stick
         )
 
     async with ChatActionSender.typing(chat_id=message.chat.id, interval=2):
-        await sleep(2)
+        await asyncio.sleep(2)
 
         await state.set_state(Game.rnd)
         await message.answer(_("LET THE BATTLE BEGIN!"))
 
-    create_task(rnd_finish_handler(message, bot, state, stickers))
+    asyncio.create_task(rnd_finish_handler(message, bot, state, stickers))
 
 
 async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list):
     async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=20):
-        await sleep(60)
+        await asyncio.sleep(60)
 
         stickers = sum(
             [(await bot.get_sticker_set(sticker_set)).stickers for sticker_set in stickers + ['TextAnimated']],
@@ -102,7 +102,7 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
 
     bot_var = str(choice(range(1, 11)))
 
-    message = await message.reply(_("So my number is {bot}. Who guessed? Hmm...").format(bot=bot_var))
+    message = await message.reply(_("So my emoji is {bot}. Who guessed? Hmm...").format(bot=bot_var))
 
     await state.set_state()
     data = await state.get_data()

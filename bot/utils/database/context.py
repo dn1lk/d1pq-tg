@@ -1,4 +1,4 @@
-from asyncio import Task, create_task, all_tasks, sleep
+import asyncio
 from typing import Any, Union, Optional
 
 from aiogram import Bot
@@ -26,7 +26,6 @@ class DataBaseContext:
                        await conn.fetchval(f"""SELECT {key} FROM data WHERE ids = 0;""")
 
                 await self.storage.update_data(bot=self.bot, key=self.key, data={key: data or 'NULL'})
-                print(timer(self, storage=key))
 
         return data
 
@@ -60,7 +59,7 @@ class DataBaseContext:
             await conn.execute(f"DELETE FROM data WHERE ids = $1;", self.key.chat_id)
 
         await self.storage.set_data(bot=self.bot, key=self.key, data={})
-        for task in all_tasks():
+        for task in asyncio.all_tasks():
             if f'storage:{self.key.chat_id}' in task.get_name():
                 task.cancel()
 
@@ -69,9 +68,9 @@ def timer(
         self: Union[FSMContext, DataBaseContext],
         timeout: Optional[int] = 60 * 60 * 60 * 24 * 7,
         **kwargs: Any,
-) -> Task[Any]:
+) -> asyncio.Task[Any]:
     async def waiter() -> Any:
-        await sleep(timeout)
+        await asyncio.sleep(timeout)
 
         data = await self.storage.get_data(bot=self.bot, key=self.key)
         if data.pop(key, None):
@@ -81,12 +80,12 @@ def timer(
     for group, key in kwargs.items():
         task_name = f'{group}:{self.key.chat_id}:{key}'
 
-        for task in all_tasks():
+        for task in asyncio.all_tasks():
             if task.get_name() == task_name:
                 task.cancel()
                 break
 
-        return create_task(waiter(), name=task_name)
+        return asyncio.create_task(waiter(), name=task_name)
 
 
 FSMContext.timer = timer

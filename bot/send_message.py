@@ -15,7 +15,7 @@ from aiogram.types import (
 
 
 def text_check(text: str) -> str:
-    text = text[0].upper() + text[1:]
+    text = (text[0].upper() + text[1:]).strip()
 
     sub(r'[^!?:.()]$', '.', text)
 
@@ -26,7 +26,7 @@ def text_check(text: str) -> str:
 
 
 def date_check(date, message_id) -> int:
-    if datetime.now(tz=date.tzinfo) - date > timedelta(seconds=5):
+    if datetime.now(tz=date.tzinfo) - date > timedelta(seconds=15):
         return message_id
 
 

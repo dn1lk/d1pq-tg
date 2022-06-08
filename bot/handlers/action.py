@@ -11,6 +11,30 @@ from . import get_username, get_command_list
 router = Router(name='action')
 
 
+@router.my_chat_member(~(F.chat.type == 'private'), member_status_changed=filters.JOIN_TRANSITION)
+async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18n):
+    await bot.send_message(
+        event.chat.id,
+        _(
+            "{title}, hello! Let's start with answering the obvious questions:\n"
+            "- What am I? Bot.\n"
+            "- What can I do? Some things after which something happens...\n\n"
+        ).format(title=event.chat.title) + get_command_list(bot, i18n.current_locale, slice(2)))
+
+
+@router.message(
+    content_types=types.ContentType.LEFT_CHAT_MEMBER,
+    magic_data=~(F.event.left_chat_member.id == F.bot.id),
+)
+async def on_me_leave_message_handler(_):
+    pass
+
+
+@router.my_chat_member(member_status_changed=filters.LEAVE_TRANSITION)
+async def on_me_leave_handler(_, db: DataBaseContext):
+    await db.clear()
+
+
 @router.message(content_types=types.ContentType.NEW_CHAT_MEMBERS)
 @flags.data('members')
 async def on_member_join_handler(
@@ -67,10 +91,7 @@ async def on_member_join_handler(
         )
 
 
-@router.message(
-    content_types=types.ContentType.LEFT_CHAT_MEMBER,
-    magic_data=~(F.event.left_chat_member.id == F.bot.id),
-)
+@router.message(content_types=types.ContentType.LEFT_CHAT_MEMBER)
 @flags.data('members')
 async def on_member_leave_handler(
         message: types.Message,
@@ -97,19 +118,3 @@ async def on_member_leave_handler(
         )
 
     await message.answer(choice(answer))
-
-
-@router.my_chat_member(~(F.chat.type == 'private'), member_status_changed=filters.JOIN_TRANSITION)
-async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18n):
-    await bot.send_message(
-        event.chat.id,
-        _(
-            "{title}, hello! Let's start with answering the obvious questions:\n"
-            "- What am I? Bot.\n"
-            "- What can I do? Some things after which something happens...\n\n"
-        ).format(title=event.chat.title) + get_command_list(bot, i18n.current_locale, slice(2)))
-
-
-@router.my_chat_member(member_status_changed=filters.LEAVE_TRANSITION)
-async def on_me_leave_handler(_, db: DataBaseContext):
-    await db.clear()
