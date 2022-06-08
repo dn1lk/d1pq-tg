@@ -18,7 +18,6 @@ async def main():
     bot = Bot(token=config.bot.token.get_secret_value(), parse_mode="HTML")
     dp = Dispatcher(
         name='dispatcher',
-        storage=RedisStorage.from_url(config.heroku.redis_url),
         fsm_strategy=FSMStrategy.CHAT
     )
 
