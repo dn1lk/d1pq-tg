@@ -8,7 +8,6 @@ def setup():
 
     router = Router(name='game:uno')
     router.message.filter(Game.uno)
-    router.inline_query.filter(F.query.lower().in_(('uno', 'уно')))
     router.callback_query.filter(k.GamesData.filter(F.game == 'uno'))
 
     from .user import router as action_rt

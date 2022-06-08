@@ -2,14 +2,16 @@ import asyncio
 from random import choice
 
 from aiogram import types
+from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
 from .action import UnoAction
+from .exceptions import UnoNoCardsException
 from .manager import UnoManager
 
 
 async def special_color(data_uno: UnoAction) -> UnoManager:
-    color = choice(data_uno.data.users[data_uno.bot.id]).color
+    color = choice(data_uno.data.now_user_cards).color
     data_uno.data.now_card.color = color
 
     await data_uno.move(_(
@@ -19,9 +21,9 @@ async def special_color(data_uno: UnoAction) -> UnoManager:
     return data_uno.data
 
 
-def get_cards(data_uno: UnoAction, bot_user: types.User):
-    for card in data_uno.data.users[data_uno.bot.id]:
-        card, action, decline = data_uno.data.filter_card(bot_user, card)
+async def get_cards(data_uno: UnoAction, bot_user: types.User):
+    for card in data_uno.data.now_user_cards:
+        card, action, decline = await data_uno.data.filter_card(data_uno.bot, data_uno.message.chat, bot_user, card)
         if action:
             yield card, action
 
@@ -30,23 +32,25 @@ async def gen(data_uno: UnoAction) -> UnoManager:
     bot_user = await data_uno.bot.get_me()
 
     while data_uno.data.now_user.id == data_uno.bot.id:
-        bot_cards = tuple(get_cards(data_uno, bot_user))
+        async with ChatActionSender.choose_sticker(chat_id=data_uno.message.chat.id, interval=1):
+            await asyncio.sleep(choice(range(0, 3)))
 
-        print('- bot', data_uno.data.users.keys(), len(data_uno.data.users[data_uno.data.now_user.id]), data_uno.data.now_user.first_name, (data_uno.data.now_card.color, data_uno.data.now_card.emoji, data_uno.data.now_card.special) if data_uno.data.now_card else None, data_uno.data.now_special)
+            data_uno.data.now_user_cards = await data_uno.data.get_now_user_cards(
+                data_uno.bot,
+                data_uno.state,
+                bot_user
+            )
 
-        if bot_cards:
-            data_uno.data.now_card, action = choice(bot_cards)
-            print(data_uno.data.now_card)
-            data_uno.message = await data_uno.message.answer_sticker(data_uno.data.now_card.file_id)
+            if not data_uno.data.now_user_cards:
+                raise UnoNoCardsException
 
-            await data_uno.update(data_uno.data.now_card, action)
-            await asyncio.sleep(choice(range(1, 5)))
-        else:
-            await data_uno.next(await data_uno.data.add_card(data_uno.bot))
+            bot_cards = [card async for card in get_cards(data_uno, bot_user)]
+            if bot_cards:
+                data_uno.data.now_card, action = choice(bot_cards)
+                data_uno.message = await data_uno.message.answer_sticker(data_uno.data.now_card.file_id)
 
-    print('- bot:end', data_uno.data.users.keys(), len(data_uno.data.users[data_uno.data.now_user.id]),
-          data_uno.data.now_user.first_name, (data_uno.data.now_card.color, data_uno.data.now_card.emoji,
-                                              data_uno.data.now_card.special) if data_uno.data.now_card else None,
-          data_uno.data.now_special)
+                await data_uno.update(data_uno.data.now_card, action)
+            else:
+                await data_uno.next(await data_uno.data.add_card(data_uno.bot, data_uno.state))
 
     return data_uno.data

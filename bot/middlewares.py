@@ -44,10 +44,10 @@ class FlagsDataMiddleware(BaseMiddleware):
         result = await handler(event, data)
 
         if data['event_chat'].type != 'private':
-            members: Optional[dict] = data.get('members', await db.get_data('members'))
+            members: Optional[list] = data.get('members', await db.get_data('members'))
 
-            if members and not members.get(data['event_from_user'].id):
-                members[data['event_from_user'].id] = data['event_from_user'].first_name
+            if members and data['event_from_user'].id not in members:
+                members.append(data['event_from_user'].id)
                 await db.update_data(members=members)
 
         return result
@@ -61,7 +61,6 @@ class LogMiddleware(BaseMiddleware):
             data: Dict[str, Any]
     ) -> Any:
         logging.debug(f'New event - {event.event_type}:\n{event}')
-        print(await data['state'].get_state())
         return await handler(event, data)
 
 

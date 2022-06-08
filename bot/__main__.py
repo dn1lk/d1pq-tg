@@ -34,6 +34,8 @@ async def main():
         bot.owner_id = int(config.bot.owner)
         bot.commands = await set_bot_commands(bot, dp)
 
+        await bot.send_message(bot.owner_id, 'Bot starting...')
+
         if config.heroku.domain_url:
             import webhook
 
@@ -43,7 +45,7 @@ async def main():
             await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         try:
-            await bot.send_message(bot.owner_id, 'Bot stopped.')
+            await bot.send_message(bot.owner_id, 'Bot stopping...')
 
         except exceptions.TelegramNetworkError:
             logging.exception(exceptions.TelegramNetworkError)

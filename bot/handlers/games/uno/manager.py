@@ -1,32 +1,48 @@
 from random import choices, choice
-from typing import Optional, List, Dict, Union
+from typing import Optional, List, Union
 
 from aiogram import Bot, types
+from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.dispatcher.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 from pydantic import BaseModel
 
 from .cards import UnoCard, UnoSpecials, UnoColors, UnoDraw, get_cards
+from .exceptions import UnoNoCardsException
 from ... import get_username
 
 
 class UnoManager(BaseModel):
-    users: Dict[int, List[UnoCard]]
+    users: List[int]
     now_user: types.User
     now_card: Optional[UnoCard]
     now_special: UnoSpecials
 
-    async def next_user(self, bot: Bot, chat: types.Chat):
-        users_id = tuple(self.users)
+    now_user_cards: Optional[List[UnoCard]]
 
+    async def next_user(self, bot: Bot, chat: types.Chat):
         try:
-            user_id = users_id[users_id.index(self.now_user.id) + 1]
+            user_id = self.users[self.users.index(self.now_user.id) + 1]
         except (IndexError, ValueError):
-            user_id = users_id[0]
+            user_id = self.users[0]
 
         self.now_user = (await bot.get_chat_member(chat.id, user_id)).user
 
-    def remove_user(self, bot) -> str:
-        del self.users[self.now_user.id]
+    async def prev_user(self, bot, chat: types.Chat, user: Optional[types.User] = None):
+        user = user or self.now_user.id
+
+        try:
+            user_id = self.users[self.users.index(user) - 1]
+        except (IndexError, ValueError):
+            user_id = self.users[-1]
+
+        return (await bot.get_chat_member(chat.id, user_id)).user
+
+    async def remove_user(self, bot: Bot, state: FSMContext) -> str:
+        self.users.remove(self.now_user.id)
+        self.now_user_cards = None
+
+        await self.update_now_user_cards(bot, state)
 
         if self.now_user.id == bot.id:
             answer = _("Что-ж, у меня закончились карты, вынужден остаться лишь наблюдателем =(.")
@@ -37,9 +53,19 @@ class UnoManager(BaseModel):
 
         return answer
 
-    async def add_card(self, bot: Bot, user: types.User = None, amount: Optional[int] = 1) -> str:
+    async def add_card(
+            self,
+            bot: Bot,
+            state: FSMContext,
+            user: Optional[types.User] = None,
+            amount: Optional[int] = 1
+    ) -> str:
         user = user or self.now_user
-        self.users[user.id].extend(choices(await get_cards(bot), k=amount))
+
+        now_user_cards = await self.get_now_user_cards(bot, state, user)
+        now_user_cards.extend(choices(await get_cards(bot), k=amount))
+
+        await self.update_now_user_cards(bot, state, user.id, now_user_cards)
 
         if user.id == bot.id:
             return _("Я беру {amount} карты =(.").format(amount=amount)
@@ -51,18 +77,50 @@ class UnoManager(BaseModel):
                 amount=amount
             )
 
-    def update_card(self, bot: Bot, card: UnoCard) -> Optional[str]:
-        self.users[self.now_user.id].remove(card)
+    @staticmethod
+    async def get_now_user_cards(bot: Bot, state: FSMContext, user: types.User) -> Optional[List[UnoCard]]:
+        return (
+            await state.storage.get_data(
+                bot,
+                StorageKey(bot.id, user.id, user.id),
+            )
+        ).get('uno_cards')
+
+    async def update_now_user_cards(
+            self,
+            bot: Bot,
+            state: FSMContext,
+            user_id: Optional[int] = None,
+            cards: Optional[List[UnoCard]] = None
+    ):
+        user_id = user_id or self.now_user.id
+        cards = cards or self.now_user_cards
+
+        await state.storage.update_data(
+            bot,
+            StorageKey(bot.id, user_id, user_id),
+            {'uno_cards': cards}
+        )
+
+    async def update_card(self, bot: Bot, state: FSMContext, card: UnoCard):
+        self.now_user_cards.remove(card)
         self.now_card = card
 
-        if not self.users[self.now_user.id]:
-            if self.now_special.draw and self.now_user != self.now_special.draw.user:
-                return self.remove_user(bot)
+        await self.update_now_user_cards(bot, state)
 
-    def filter_card(self, user: types.User, sticker: Union[types.Sticker, UnoCard]) -> Optional[tuple]:
+        if not self.now_user_cards:
+            if not self.now_special.draw or self.now_special.draw.user != self.now_user:
+                raise UnoNoCardsException("The user has run out of cards in UNO game")
+
+    async def filter_card(
+            self,
+            bot: Bot,
+            chat: types.Chat,
+            user: types.User,
+            sticker: Union[types.Sticker, UnoCard]
+    ) -> Optional[tuple]:
         def get_card() -> Optional[UnoCard]:
-            for user_card in self.users[user.id]:
-                print(user_card)
+            for user_card in self.now_user_cards:
                 if user_card.id == sticker.file_unique_id:
                     return user_card
 
@@ -76,12 +134,12 @@ class UnoManager(BaseModel):
         else:
             card = sticker
 
-        if user.id == self.now_user.id or self.now_special.skip and user.id == self.now_special.skip.id:
+        if user.id == self.now_user.id or user.id == (await self.prev_user(bot, chat, user)).id:
             if not self.now_card:
                 action = _("Первый ход сделан.")
             elif card.color is UnoColors.special:
                 action = _("Специальная карта!")
-            elif card.color == self.now_card.color:
+            elif card.color is self.now_card.color:
                 action = _("Так-с...")
 
                 if self.now_special.color:
@@ -110,7 +168,6 @@ class UnoManager(BaseModel):
         if action:
             self.now_user = user
             self.now_special.skip = None
-            print('- filter', self.now_user.first_name, card.id)
 
         return card, action, decline
 
@@ -134,6 +191,7 @@ class UnoManager(BaseModel):
             special = card_draw()
 
             await self.next_user(bot, chat)
+
             self.now_special.skip = self.now_card
             self.now_special.draw = UnoDraw(
                 user=self.now_user,
@@ -149,7 +207,7 @@ class UnoManager(BaseModel):
                 self.now_special.color = self.now_card.color
                 special = _("Ох, что за стиль! Новый цвет, новый свет - by {user}.")
             elif self.now_card.special.reverse:
-                self.users = {user_id: self.users[user_id] for user_id in reversed(tuple(self.users))}
+                self.users = list(reversed(self.users))
                 special = _("И всё наоборот! {user} меняет очередь.")
             elif self.now_card.special.skip:
                 await self.next_user(bot, chat)

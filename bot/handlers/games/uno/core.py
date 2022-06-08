@@ -1,5 +1,4 @@
 from random import choice, random, choices
-from typing import List
 
 from aiogram import Router, F, types, Bot
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -20,8 +19,7 @@ router = Router(name='game:uno:core')
 
 @router.callback_query(k.GamesData.filter(F.value == 'start'))
 async def game_uno_start(query: types.CallbackQuery, bot: Bot, state: FSMContext):
-    data = await state.get_data()
-    users: List[int] = data.get('uno', [])
+    users = [entity.user.id for entity in query.message.entities if entity.user]
 
     if bot.id not in users and random() <= 2 / await bot.get_chat_member_count(query.message.chat.id):
         bot_user = await bot.get_me()
@@ -44,16 +42,19 @@ async def game_uno_start(query: types.CallbackQuery, bot: Bot, state: FSMContext
     if len(users) > 1:
         await query.message.delete_reply_markup()
 
-        cards = await get_cards(bot)
-
-        data_users = {user_id: choices(cards, k=6) for user_id in users}
-        data_now_user = (await bot.get_chat_member(query.message.chat.id, choice(tuple(data_users)))).user
+        data_now_user = (await bot.get_chat_member(query.message.chat.id, choice(users))).user
 
         data_uno = UnoAction(
             message=query.message,
             bot=bot,
-            data=UnoManager(users=data_users, now_user=data_now_user, now_special=UnoSpecials())
+            state=state,
+            data=UnoManager(users=users, now_user=data_now_user, now_special=UnoSpecials())
         )
+
+        cards = await get_cards(bot)
+
+        for user_id in users:
+            await data_uno.data.update_now_user_cards(bot, state, user_id, choices(cards, k=6))
 
         await state.set_state(Game.uno)
         answer = _("Итак, <b>начнём игру.</b>\n\n")
@@ -70,17 +71,14 @@ async def game_uno_start(query: types.CallbackQuery, bot: Bot, state: FSMContext
                 reply_markup=k.game_uno_show_cards(),
             )
 
-        print(await state.get_state())
-        print(data_uno.data)
         await state.update_data(uno=data_uno.data)
     else:
         await query.answer(_("А с кем играть то? =)"))
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'join'))
-async def game_uno_join(query: types.CallbackQuery, state: FSMContext):
-    data = await state.get_data()
-    users = data.get('uno', [])
+async def game_uno_join(query: types.CallbackQuery):
+    users = [entity.user.id for entity in query.message.entities if entity.user]
 
     if query.from_user.id in users:
         await query.answer(_("Ты уже участвуешь!"))
@@ -92,14 +90,10 @@ async def game_uno_join(query: types.CallbackQuery, state: FSMContext):
 
         await query.answer(_("Теперь участников стало на один больше!"))
 
-        users.append(query.from_user.id)
-        await state.update_data(uno=users)
-
 
 @router.callback_query(k.GamesData.filter(F.value == 'decline'))
-async def game_uno_decline(query: types.CallbackQuery, state: FSMContext):
-    data = await state.get_data()
-    users: List[int] = data.get('uno', [])
+async def game_uno_decline(query: types.CallbackQuery):
+    users = [entity.user.id for entity in query.message.entities if entity.user]
 
     if query.from_user.id in users:
         users.remove(query.from_user.id)
@@ -113,6 +107,5 @@ async def game_uno_decline(query: types.CallbackQuery, state: FSMContext):
         )
 
         await query.answer(_("Теперь участников стало на один меньше!"))
-        await state.update_data(uno=users)
     else:
         await query.answer(_("Ты ещё не участвуешь!"))

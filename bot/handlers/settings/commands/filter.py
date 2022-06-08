@@ -9,9 +9,9 @@ class CustomCommandFilter(filters.Command):
             self,
             message: types.Message,
             bot: Bot,
-            commands: Optional[dict] = None
+            custom_commands: Optional[dict] = None
     ) -> Union[bool, Dict[str, Any]]:
-        if commands and commands.get(self.commands[0]):
-            self.commands.append(commands[self.commands[0]])
+        if custom_commands and custom_commands.get(self.commands[0]):
+            self.commands.append(custom_commands[self.commands[0]])
 
         return await super().__call__(message, bot)

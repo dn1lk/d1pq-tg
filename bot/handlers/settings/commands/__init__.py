@@ -11,11 +11,17 @@ from bot import filters as f, keyboards as k
 from bot.utils import markov
 from bot.utils.database.context import DataBaseContext
 
+from .middleware import CustomCommandsMiddleware
 from ... import NO_ARGS
 from ...settings import Settings
 
 router = Router(name='settings:commands')
 router.message.filter(f.AdminFilter(is_admin=True), Settings.command)
+
+router.message.outer_middleware(CustomCommandsMiddleware())
+router.edited_message.outer_middleware(CustomCommandsMiddleware())
+
+router.callback_query.outer_middleware(CustomCommandsMiddleware())
 
 
 @router.callback_query(k.SettingsData.filter(F.name == 'commands'))
@@ -26,7 +32,7 @@ async def commands_handler(
         bot: Bot,
         i18n: I18n,
         messages: Optional[list] = None,
-        commands: Optional[dict] = None,
+        custom_commands: Optional[dict] = None,
 ):
     await state.set_state(Settings.command)
 
@@ -46,12 +52,12 @@ async def commands_handler(
         )
     )
 
-    if commands:
-        commands = '\n'.join(map(lambda command: f'/{command[0]} - /{command[1]}', commands.items()))
+    if custom_commands:
+        custom_commands = '\n'.join(map(lambda command: f'/{command[0]} - /{command[1]}', custom_commands.items()))
     else:
-        commands = _("missing.")
+        custom_commands = _("missing.")
 
-    await message.answer(_("Current custom commands:\n\n") + commands)
+    await message.answer(_("Current custom commands:\n\n") + custom_commands)
 
 
 async def commands_setup_no_args_filter(
@@ -76,19 +82,19 @@ async def commands_setup_handler(
         command: filters.CommandObject,
         db: DataBaseContext,
         state: FSMContext,
-        commands: Optional[dict] = None
+        custom_commands: Optional[dict] = None
 ):
     if len(command.args.split()) == 1:
-        if not commands:
-            commands = {}
+        if not custom_commands:
+            custom_commands = {}
 
-        if command.args in commands.values():
+        if command.args in custom_commands.values():
             answer = _("The /{args} command is already in my database. Try another.").format(args=command.args)
         else:
-            commands[command.command] = command.args
+            custom_commands[command.command] = command.args
 
             await state.set_state()
-            await db.set_data(commands=commands)
+            await db.set_data(commands=custom_commands)
 
             answer = _(
                 "<b>Command /{args} added successfully!</b>\n\n"

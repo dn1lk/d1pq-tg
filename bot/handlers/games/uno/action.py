@@ -1,35 +1,34 @@
 from typing import Optional
 
 from aiogram import Bot, types
+from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
+from .exceptions import UnoNoUsersException, UnoNoCardsException
 
 from .manager import UnoManager
 from .cards import UnoCard
 from ... import get_username
 
 
-class UnoNoUsersException(BaseException):
-    pass
-
-
 class UnoAction:
-    def __init__(self, message: types.Message, bot: Bot, data: UnoManager):
+    def __init__(self, message: types.Message, bot: Bot, state: FSMContext, data: UnoManager):
         self.message: types.Message = message
         self.bot: Bot = bot
 
+        self.state = state
         self.data = data
 
     async def update(self, card: UnoCard, action: str):
-        no_card = self.data.update_card(self.bot, card)
-        if no_card:
-            await self.message.answer(no_card)
+        try:
+            await self.data.update_card(self.bot, self.state, card)
+            await self.special(action)
+        except UnoNoCardsException:
+            await self.message.answer(await self.data.remove_user(self.bot, self.state))
 
             if len(self.data.users) == 1:
                 raise UnoNoUsersException("Only one user remained in UNO game")
-
-        await self.special(action)
 
     async def special(self, action: str):
         special = await self.data.card_special(self.bot, self.message.chat)
@@ -38,6 +37,7 @@ class UnoAction:
             await self.message.answer(
                 await self.data.add_card(
                     self.bot,
+                    self.state,
                     self.data.now_special.draw.user,
                     self.data.now_special.draw.amount
                 )
@@ -48,7 +48,7 @@ class UnoAction:
         await self.next(special or action)
 
     async def next(self, answer: str):
-        if self.data.now_card.special.color:
+        if self.data.now_special.color:
             if self.message.from_user.id == self.bot.id:
                 from .bot import special_color
 
@@ -64,22 +64,22 @@ class UnoAction:
     async def move(self, answer: Optional[str] = ''):
         await self.data.next_user(self.bot, self.message.chat)
 
-        if self.data.now_user.id != self.bot.id:
+        if self.data.now_user.id == self.bot.id:
+            from .bot import gen
+
+            self.data = await gen(self)
+        else:
             await self.message.reply(
                 answer + _("\n\n{user}, твоя очередь.").format(user=get_username(self.data.now_user)),
                 reply_markup=k.game_uno_show_cards()
             )
-        else:
-            from .bot import gen
 
-            self.data = await gen(self)
-
-    async def remove(self, state, data):
+    async def remove(self):
         await self.data.next_user(self.bot, self.message.chat)
         await self.message.answer(
             _(
                 "<b>Игра закончена.</b>\n\n{user} остался последним игроком."
             ).format(user=get_username(self.data.now_user)))
 
-        await state.set_state()
-        await state.set_data(data)
+        await self.state.set_state()
+        await self.data.remove_user(self.bot, self.state)

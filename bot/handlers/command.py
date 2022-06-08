@@ -100,7 +100,7 @@ async def who_private_handler(message: types.Message):
     await message.answer(_("This command only works in <b>chats</b>, alas =(."))
 
 
-@router.message(commands=['who', 'кто'], commands_ignore_case=True, command_magic=F.args, magic_data=F.members)
+@router.message(commands=['who', 'кто'], commands_ignore_case=True, command_magic=F.args)
 @flags.data('members')
 async def who_chat_handler(
         message: types.Message,
@@ -110,19 +110,25 @@ async def who_chat_handler(
 ):
     """find the desired participant, найти участника чата по описанию"""
 
-    if len(members) > 1:
-        member = await bot.get_chat_member(message.chat.id, choice(members))
-        answer = _("Hmmm, I think {username} {args}").format(
-            username=get_username(member.user),
-            args=command.args,
-        )
+    if members:
+        if len(members) > 1:
+            member = await bot.get_chat_member(message.chat.id, choice(members))
+            answer = _("Hmmm, I think {username} {args}").format(
+                username=get_username(member.user),
+                args=command.args,
+            )
+        else:
+            answer = (_("Oh, I don't know you guys... Give me a time."))
     else:
-        answer = (_("Oh, I don't know you guys... Give me a time."))
+        answer = _(
+                "<b>This command requires permission to record chat participants.</b>\n\n"
+                "/settings - give permission."
+            )
 
     await message.answer(answer)
 
 
-@router.message(commands=['who', 'кто'], commands_ignore_case=True, magic_data=F.members)
+@router.message(commands=['who', 'кто'], commands_ignore_case=True)
 @flags.data('messages')
 @flags.chat_action("typing")
 async def who_chat_no_args_handler(
@@ -138,16 +144,6 @@ async def who_chat_no_args_handler(
                 command,
                 i18n,
                 messages=messages)
-        )
-    )
-
-
-@router.message(commands=['who', 'кто'], commands_ignore_case=True)
-async def who_chat_no_members_handler(message: types.Message):
-    await message.answer(
-        _(
-            "<b>This command requires permission to record chat participants.</b>\n\n"
-            "/settings - give permission."
         )
     )
 

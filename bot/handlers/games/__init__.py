@@ -33,7 +33,7 @@ def timer(message: types.Message, state: FSMContext, coroutine):
         current_state = (await state.get_state()).lower().split(':', maxsplit=1)
 
         if await state.timer(timeout=60, **{current_state[0]: current_state[1]}):
-            if current_state[1] == await state.get_state() and current_state[1] != 'uno':
+            if current_state[1] in await state.get_state() and current_state[1] != 'uno':
                 await state.set_state()
                 await coroutine(message)
 

@@ -15,7 +15,7 @@ async def get_answer(chat_id: int, user_id: int, bot: Bot) -> dict:
         chat = _("chat - they are only available to the administrator - {admins}").format(
             admins=', '.join(
                 map(
-                    lambda admin: get_username(admin.uno_user),
+                    lambda admin: get_username(admin.user),
                     await bot.get_chat_administrators(chat_id)
                 )
             ) or _("only I don't know who it is... So")

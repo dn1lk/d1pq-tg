@@ -15,12 +15,13 @@ from aiogram.types import (
 
 
 def text_check(text: str) -> str:
-    text = (text[0].upper() + text[1:]).strip()
+    if text:
+        text = (text[0].upper() + text[1:]).strip()
 
-    sub(r'[^!?:.()]$', '.', text)
+        sub(r'[^!?:.()]$', '.', text)
 
-    if text[-1] not in '!?:.()>':
-        text += '.'
+        if text[-1] not in '!?:.()>':
+            text += '.'
 
     return text
 

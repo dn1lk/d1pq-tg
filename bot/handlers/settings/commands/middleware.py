@@ -13,7 +13,7 @@ class CustomCommandsMiddleware(BaseMiddleware):
             data: Dict[str, Any]
     ) -> Any:
         db: DataBaseContext = data['db']
-        custom_commands: Optional[str] = await db.get_data('commands')
+        custom_commands: Optional[dict] = await db.get_data('commands')
 
         if custom_commands:
             data['custom_commands'] = custom_commands

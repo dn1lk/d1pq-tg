@@ -29,7 +29,7 @@ async def data_update_handler(
 
     if value[0] == 'members':
         item = _("Members")
-        data = {query.from_user.id: query.from_user.first_name}, None
+        data = [query.from_user.id], None
 
     else:
         item = _("Messages")

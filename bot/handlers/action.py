@@ -22,17 +22,17 @@ async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18
         ).format(title=event.chat.title) + get_command_list(bot, i18n.current_locale, slice(2)))
 
 
-@router.message(
-    content_types=types.ContentType.LEFT_CHAT_MEMBER,
-    magic_data=~(F.event.left_chat_member.id == F.bot.id),
-)
-async def on_me_leave_message_handler(_):
-    pass
-
-
 @router.my_chat_member(member_status_changed=filters.LEAVE_TRANSITION)
 async def on_me_leave_handler(_, db: DataBaseContext):
     await db.clear()
+
+
+@router.message(
+    content_types=types.ContentType.LEFT_CHAT_MEMBER,
+    magic_data=F.event.left_chat_member.id == F.bot.id,
+)
+async def on_me_leave_message_handler(_):
+    pass
 
 
 @router.message(content_types=types.ContentType.NEW_CHAT_MEMBERS)
