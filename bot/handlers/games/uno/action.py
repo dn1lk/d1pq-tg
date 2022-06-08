@@ -5,11 +5,10 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
-from .exceptions import UnoNoUsersException, UnoNoCardsException
-
-from .manager import UnoManager
+from bot.handlers import get_username
 from .cards import UnoCard
-from ... import get_username
+from .exceptions import UnoNoUsersException, UnoNoCardsException
+from .manager import UnoManager
 
 
 class UnoAction:

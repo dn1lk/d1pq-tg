@@ -4,14 +4,11 @@ from aiogram import Router, F, types, Bot
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.handlers import get_username
-
 from bot import keyboards as k
-
-from .manager import UnoManager
+from bot.handlers import get_username
 from .action import UnoAction
 from .cards import UnoSpecials, get_cards
-
+from .manager import UnoManager
 from .. import Game
 
 router = Router(name='game:uno:core')

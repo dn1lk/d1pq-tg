@@ -5,15 +5,13 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 from bot.handlers import get_username
-
 from .action import UnoAction, UnoNoUsersException
+from .cards import UnoColors, UnoCard, DRAW_CARD
 from .manager import UnoManager
-from .cards import UnoColors, UnoCard
 
 router = Router(name='game:uno:user')
 
-
-DRAW_CARD = __("Беру карту.")
+DRAW_CARD_TEXT = __("Беру карту.")
 
 
 async def uno_timeout(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoManager):
@@ -42,9 +40,9 @@ async def uno_inline(inline: types.InlineQuery, state: FSMContext):
             ) for enum, card in enumerate(uno_cards)
         ] + [
             types.InlineQueryResultCachedSticker(
-                id='add:AgADlhYAAtYJCUk',
-                sticker_file_id='CAACAgIAAxkBAAJ99mKgyaLsi0LGnwOdUI_DhzgN7H1CAAKWFgAC1gkJSZxwlQOpRW3PJAQ',
-                input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD))
+                id='add' + ':' + DRAW_CARD.id,
+                sticker_file_id=DRAW_CARD.file_id,
+                input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD_TEXT))
             )
         ]
     else:
@@ -81,7 +79,7 @@ async def uno_user(message: types.Message, bot: Bot, state: FSMContext):
     await state.update_data(uno=data_uno.data)
 
 
-@router.message(F.text == DRAW_CARD)
+@router.message(F.text == DRAW_CARD_TEXT)
 async def uno_add_card(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoAction = UnoAction(message, bot, state, data['uno'])

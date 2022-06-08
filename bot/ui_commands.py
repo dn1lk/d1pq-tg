@@ -1,4 +1,4 @@
-from aiogram import Dispatcher, Router, Bot
+from aiogram import Bot, Dispatcher, Router
 
 import config
 

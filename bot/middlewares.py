@@ -7,7 +7,7 @@ from aiogram.dispatcher.flags.getter import get_flag
 from aiogram.utils.chat_action import ChatActionMiddleware
 
 from utils import markov
-from bot.utils.database.context import DataBaseContext
+from utils.database.context import DataBaseContext
 
 
 class FlagsDataMiddleware(BaseMiddleware):
