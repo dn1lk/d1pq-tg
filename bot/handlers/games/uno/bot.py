@@ -52,6 +52,7 @@ class UnoBot:
                     action.data.current_card, accept = choice(cards)
                     action.message = await action.message.answer_sticker(action.data.current_card.file_id)
                     await action.prepare(action.data.current_card, accept)
-                    await state.update_data(uno=action.data)
                 else:
                     await action.move(await action.data.add_card(action.bot))
+
+        await state.update_data(uno=action.data)
