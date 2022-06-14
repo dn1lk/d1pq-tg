@@ -6,6 +6,7 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
+from .exceptions import UnoNoUsersException
 from .manager import UnoManager
 
 
@@ -42,16 +43,20 @@ class UnoBot:
         action = UnoAction(self.message, state, self.data)
         user = await self.bot.get_me()
 
-        while self.data.current_user.id == self.bot.id:
-            async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id, interval=1):
-                await asyncio.sleep(choice(range(0, 3)))
+        async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id, interval=1):
+            await asyncio.sleep(choice(range(0, 3)))
 
-                cards = [card async for card in self.get_cards(user)]
+            cards = [card async for card in self.get_cards(user)]
 
-                if cards:
-                    action.data.current_card, accept = choice(cards)
-                    action.message = await action.message.answer_sticker(action.data.current_card.file_id)
+            if cards:
+                action.data.current_card, accept = choice(cards)
+                action.message = await action.message.answer_sticker(action.data.current_card.file_id)
+
+                try:
                     await action.prepare(action.data.current_card, accept)
-                    await state.update_data(uno=action.data)
-                else:
-                    await action.move(await action.data.add_card(action.bot))
+                except UnoNoUsersException:
+                    await action.end()
+
+                await state.update_data(uno=action.data)
+            else:
+                await action.move(await action.data.add_card(self.bot))

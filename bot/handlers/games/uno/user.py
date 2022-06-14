@@ -16,11 +16,11 @@ router = Router(name='game:uno:user')
 DRAW_CARD = __("Беру карту.")
 
 
-@router.inline_query(F.query.lower().in_(('uno', 'уно')), state='*')
+@router.inline_query(F.query.lower().in_(('uno', 'уно')))
 async def inline_handler(inline: types.InlineQuery, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoManager = data.get('uno')
-
+    print(data_uno)
     if data_uno:
         cards = data_uno.users.get(inline.from_user.id)
 
@@ -81,7 +81,7 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
     elif decline:
         await data_uno.data.add_card(bot, message.from_user)
         await message.answer(decline)
-
+    print(2, data_uno.data)
     await state.update_data(uno=data_uno.data)
 
 
@@ -142,6 +142,7 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
         data_uno.kick_polls[poll_answer.poll_id].amount += 1
 
         if data_uno.kick_polls[poll_answer.poll_id].amount >= len(data_uno.users) / 2:
+            await bot.delete_message(state.key.chat_id, data_uno.kick_polls[poll_answer.poll_id].message_id)
             message = await bot.send_message(
                 state.key.chat_id,
                 _("{user} исключён из игры.").format(
@@ -157,9 +158,9 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
             )
 
             try:
-                await data_uno.remove_user(state, data_uno.kick_polls[poll_answer.poll_id].user_id)
+                await data_uno.remove_user(state, data_uno.kick_polls.pop(poll_answer.poll_id).user_id)
             except UnoNoUsersException:
                 action = UnoAction(message, state, data_uno)
-                await action.end()
+                data_uno = await action.end()
 
         await state.update_data(uno=data_uno)

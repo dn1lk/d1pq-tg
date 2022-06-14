@@ -35,7 +35,7 @@ def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
     async def waiter():
         state_raw = await state.get_state()
 
-        if await state.timer(timeout=10, game=(state_raw or 'game:none').lower().split(':', maxsplit=1)[1]):
+        if await state.timer(timeout=5, game=(state_raw or 'game:none').lower().split(':', maxsplit=1)[1]):
             if state_raw == await state.get_state():
                 return await coroutine(state=state, **kwargs)
 
@@ -79,9 +79,11 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoMa
         )
 
         action = UnoAction(message, state, data_uno)
+        print(1, action.data.current_user.first_name)
+        await asyncio.sleep(3)
 
         await action.move()
-        await state.update_data(uno=data_uno)
+        await state.update_data(uno=action.data)
 
 
 def setup():

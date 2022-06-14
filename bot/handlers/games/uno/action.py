@@ -94,20 +94,15 @@ class UnoAction:
 
     async def move(self, answer: Optional[str] = ""):
         self.data.current_user = await self.data.next_user(self.state.bot, self.message.chat.id)
-
+        print(self.data.current_user.first_name)
         if self.data.current_user.id == self.state.bot.id or \
                 self.data.current_card in self.data.users[self.state.bot.id]:
-            for task in asyncio.all_tasks():
-                if task is not asyncio.current_task() and task.get_name() == self.bot.task_name:
-                    task.cancel()
-                    break
-
             if self.data.current_card in self.data.users[self.state.bot.id]:
                 await asyncio.sleep(choice(range(5)))
 
-            print(1, self.data.current_user.first_name, self.data.current_card.emoji)
+            print(1, self.data.current_user.first_name, self.data.current_card)
             asyncio.create_task(self.bot.gen(self.state), name=self.bot.task_name)
-            print(1, self.data.current_user.first_name, self.data.current_card.emoji)
+            print(1, self.data.current_user.first_name, self.data.current_card)
         else:
             self.message = await self.message.reply(
                 answer + "\n\n" + choice(
@@ -122,9 +117,9 @@ class UnoAction:
                 reply_markup=k.game_uno_show_cards()
             )
 
-            from .. import timer, uno_timeout
+        from .. import timer, uno_timeout
 
-            timer(self.state, uno_timeout, message=self.message, data_uno=self.data)
+        timer(self.state, uno_timeout, message=self.message, data_uno=self.data)
 
     async def end(self):
         for task in asyncio.all_tasks():
