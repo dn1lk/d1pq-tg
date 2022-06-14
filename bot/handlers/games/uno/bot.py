@@ -56,7 +56,7 @@ class UnoBot:
                     await action.prepare(action.data.current_card, accept)
                 except UnoNoUsersException:
                     await action.end()
-
-                await state.update_data(uno=action.data)
             else:
                 await action.move(await action.data.add_card(self.bot))
+
+        await state.update_data(uno=action.data)
