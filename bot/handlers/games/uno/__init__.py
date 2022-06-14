@@ -1,21 +1,34 @@
-from aiogram import Router, F
+from typing import List
 
-from bot import keyboards as k
+from aiogram import Router
+from pydantic import BaseModel
+
+
+class UnoPoll(BaseModel):
+    poll_id: str
+    message_id: int
+    owner_id: int
+
+    users_id: List[int] = list()
 
 
 def setup():
-    from bot.handlers.games import Game
-
     router = Router(name='game:uno')
-    router.message.filter(Game.uno)
-    router.callback_query.filter(k.GamesData.filter(F.game == 'uno'))
 
-    from .user import router as action_rt
-    from .core import router as start_rt
+    from .. import Game
+
+    router.message.filter(Game.uno)
+
+    from .middleware import UnoFSMContextMiddleware
+
+    router.inline_query.outer_middleware(UnoFSMContextMiddleware())
+
+    from .user import router as user_rt
+    from .core import router as core_rt
 
     sub_routers = (
-        action_rt,
-        start_rt,
+        user_rt,
+        core_rt,
     )
 
     for sub_router in sub_routers:

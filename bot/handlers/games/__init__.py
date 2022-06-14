@@ -1,5 +1,6 @@
 import asyncio
 from random import choice
+from typing import Optional
 
 from aiogram import Router, types
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -7,6 +8,8 @@ from aiogram.dispatcher.fsm.state import StatesGroup, State
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 from bot import config
+from .uno.action import UnoAction
+from .uno.manager import UnoManager, UnoKickPoll
 
 
 class Game(StatesGroup):
@@ -16,7 +19,7 @@ class Game(StatesGroup):
     rps = State()
 
 
-CTS_WIN = (
+WINNER = (
     __("Victory for me."),
     __("I am a winner."),
     __("I am the winner in this game."),
@@ -28,38 +31,57 @@ def get_cts(locale: str) -> list:
         return f.read().splitlines()
 
 
-def timer(message: types.Message, state: FSMContext, coroutine):
+def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
     async def waiter():
-        current_state = (await state.get_state()).lower().split(':', maxsplit=1)
+        state_raw = await state.get_state()
 
-        if await state.timer(timeout=60, **{current_state[0]: current_state[1]}):
-            if current_state[1] in await state.get_state() and current_state[1] != 'uno':
-                await state.set_state()
-                await coroutine(message)
-
-            return True
+        if await state.timer(timeout=10, game=(state_raw or 'game:none').lower().split(':', maxsplit=1)[1]):
+            if state_raw == await state.get_state():
+                return await coroutine(state=state, **kwargs)
 
     return asyncio.create_task(waiter())
 
 
-async def cts_timeout(message: types.Message):
-    await message.reply(
-        text=_("Your time is up. ") + str(choice(CTS_WIN)),
-    )
+async def win_timeout(message: types.Message, state: FSMContext):
+    await close_timeout(message, state, answer=_("Your time is up. ") + str(choice(WINNER)))
 
 
-async def rps_timeout(message):
-    await message.reply(
-        choice(
+async def close_timeout(message: types.Message, state: FSMContext, answer: Optional[str] = None):
+    answer = answer or choice(
             (
                 _("You know I won't play with you! Maybe..."),
                 _("Well don't play with me!"),
                 _("I thought we were playing..."),
                 _("It's too slow, I won't play with you!"),
             )
-        ),
-        reply_markup=types.ReplyKeyboardRemove(),
     )
+
+    await message.reply(answer, reply_markup=types.ReplyKeyboardRemove())
+    await state.set_state()
+
+
+async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoManager):
+    if len(data_uno.users) != 2 and state.bot.id in data_uno.users.keys():
+        await close_timeout(message, state)
+        await data_uno.remove_user(state)
+    else:
+        message = await message.reply(_("Время вышло.") + " " + await data_uno.add_card(state.bot))
+        poll = await message.answer_poll(
+            _("Исключить игрока из игры?"),
+            options=[_("Yes"), _("No, keep playing")],
+            is_anonymous=False,
+        )
+
+        data_uno.kick_polls[poll.poll.id] = UnoKickPoll(
+            message_id=poll.message_id,
+            user_id=data_uno.current_user.id,
+            amount=0,
+        )
+
+        action = UnoAction(message, state, data_uno)
+
+        await action.move()
+        await state.update_data(uno=data_uno)
 
 
 def setup():
@@ -69,14 +91,14 @@ def setup():
     from .cts import router as cts_rt
     from .rnd import router as rnd_rt
     from .rps import router as rps_rt
-    from .core import router as start_rt
+    from .core import router as core_rt
 
     sub_routers = (
         uno_rt(),
         cts_rt,
         rnd_rt,
         rps_rt,
-        start_rt,
+        core_rt,
     )
 
     for sub_router in sub_routers:

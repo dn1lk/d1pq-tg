@@ -19,21 +19,21 @@ def get_command_list(
 
 
 def setup(dp):
-    from .settings import setup as settings_rt
-    from .games import setup as games_rt
+    from .settings import setup as setting_rt
+    from .games import setup as game_rt
 
-    from .action import router as actions_rt
-    from .command import router as commands_rt
-    from .error import router as errors_rt
-    from .other import router as others_rt
+    from .action import router as action_rt
+    from .command import router as command_rt
+    from .error import router as error_rt
+    from .other import router as other_rt
 
     sub_routers = (
-        settings_rt(),
-        games_rt(),
-        commands_rt,
-        actions_rt,
-        others_rt,
-        errors_rt,
+        setting_rt(),
+        game_rt(),
+        command_rt,
+        action_rt,
+        other_rt,
+        error_rt,
     )
 
     for sub_router in sub_routers:

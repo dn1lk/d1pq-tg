@@ -8,7 +8,7 @@ from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import keyboards as k
 
-from . import Game, timer, get_cts, cts_timeout, rps_timeout
+from . import Game, timer, get_cts, win_timeout, close_timeout
 from .. import get_username
 from ..settings.commands.filter import CustomCommandFilter
 from ..settings.commands.middleware import CustomCommandsMiddleware
@@ -24,19 +24,21 @@ router.message.filter(commands=['play', 'поиграем'], commands_ignore_cas
 
 
 @router.message(F.text.lower().endswith(('uno', 'уно')))
-async def uno_handler(message: types.Message, state: FSMContext):
-    await state.update_data(uno=[message.from_user.id])
-
-    await message.answer(
+async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
+    message = await message.answer(
         _(
-            "<b>Поиграем в UNO!</b>\n\n"
-            'Как будете готовы, нажмите на кнопку "Начать игру".\n\n'
-            "В ожидании начала:\n{user}"
-        ).format(
-            user=get_username(message.from_user)
-        ),
-        reply_markup=k.game_uno_start()
+            "<b>Поиграем в UNO?</b>\n\n"
+            "Минута на принятие решения!\n"
+            "Вручную начать игру может {user}.\n\n"
+            "<b>Уже в игре:</b>\n"
+            "{user}"
+        ).format(user=get_username(message.from_user)),
+        reply_markup=k.game_uno_start(),
     )
+
+    from .uno.core import start_handler
+
+    timer(state, start_handler, query=message, bot=bot)
 
 
 @router.message(F.text.lower().endswith(('cts', 'грд')))
@@ -62,7 +64,7 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
 
     message = await message.answer(answer)
 
-    timer(message, state, cts_timeout)
+    timer(state, win_timeout, message=message)
 
 
 @router.message(F.text.lower().endswith(('rnd', 'рнд')))
@@ -128,4 +130,4 @@ async def rps_handler(message: types.Message, state: FSMContext):
 
     await message.answer(_("Eh, classic. Your move?"), reply_markup=k.game_rps())
 
-    timer(message, state, rps_timeout)
+    timer(state, close_timeout, message=message)

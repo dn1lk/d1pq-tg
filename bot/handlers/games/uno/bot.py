@@ -1,56 +1,57 @@
 import asyncio
 from random import choice
 
-from aiogram import types
+from aiogram import types, Bot
+from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from .action import UnoAction
-from .exceptions import UnoNoCardsException
 from .manager import UnoManager
 
 
-async def special_color(data_uno: UnoAction) -> UnoManager:
-    color = choice(data_uno.data.now_user_cards).color
-    data_uno.data.now_card.color = color
+class UnoBot:
+    def __init__(self, message: types.Message, bot: Bot, data: UnoManager):
+        self.message = message
+        self.bot = bot
 
-    await data_uno.move(_(
-        "Я выбираю {color} цвет."
-    ).format(color=' '.join((color.value[0], str(color.value[1])))))
+        self.data = data
 
-    return data_uno.data
+        self.task_name = f'game:{self.message.chat.id}:uno:bot'
 
+    async def uno(self):
+        async with ChatActionSender.typing(chat_id=self.message.chat.id, interval=1):
+            await asyncio.sleep(choice(range(3)))
 
-async def get_cards(data_uno: UnoAction, bot_user: types.User):
-    for card in data_uno.data.now_user_cards:
-        card, action, decline = await data_uno.data.filter_card(data_uno.bot, data_uno.message.chat, bot_user, card)
-        if action:
-            yield card, action
+            self.data.uno_users_id.remove(self.bot.id)
+            await self.message.answer(_("УНО!"), reply_markup=types.ReplyKeyboardRemove())
 
+    async def get_color(self) -> str:
+        color = self.data.current_card.color = choice(self.data.users[self.bot.id]).color
+        return _("Я выбираю {color} цвет.").format(color=color.value[0] + " " + str(color.value[1]))
 
-async def gen(data_uno: UnoAction) -> UnoManager:
-    bot_user = await data_uno.bot.get_me()
+    async def get_cards(self, user: types.User):
+        for card in self.data.users[user.id]:
+            card, accept, decline = await self.data.filter_card(self.bot, self.message.chat, user, card)
 
-    while data_uno.data.now_user.id == data_uno.bot.id:
-        async with ChatActionSender.choose_sticker(chat_id=data_uno.message.chat.id, interval=1):
-            await asyncio.sleep(choice(range(0, 3)))
+            if accept:
+                yield card, accept
 
-            data_uno.data.now_user_cards = await data_uno.data.get_now_user_cards(
-                data_uno.bot,
-                data_uno.state,
-                bot_user
-            )
+    async def gen(self, state: FSMContext):
+        from .action import UnoAction
 
-            if not data_uno.data.now_user_cards:
-                raise UnoNoCardsException
+        action = UnoAction(self.message, state, self.data)
+        user = await self.bot.get_me()
 
-            bot_cards = [card async for card in get_cards(data_uno, bot_user)]
-            if bot_cards:
-                data_uno.data.now_card, action = choice(bot_cards)
-                data_uno.message = await data_uno.message.answer_sticker(data_uno.data.now_card.file_id)
+        while self.data.current_user.id == self.bot.id:
+            async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id, interval=1):
+                await asyncio.sleep(choice(range(0, 3)))
 
-                await data_uno.update(data_uno.data.now_card, action)
-            else:
-                await data_uno.next(await data_uno.data.add_card(data_uno.bot, data_uno.state))
+                cards = [card async for card in self.get_cards(user)]
 
-    return data_uno.data
+                if cards:
+                    action.data.current_card, accept = choice(cards)
+                    action.message = await action.message.answer_sticker(action.data.current_card.file_id)
+                    await action.prepare(action.data.current_card, accept)
+                    await state.update_data(uno=action.data)
+                else:
+                    await action.move(await action.data.add_card(action.bot))

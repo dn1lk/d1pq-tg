@@ -6,7 +6,7 @@ from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
 
-from . import Game, timer, rps_timeout
+from . import Game, timer, close_timeout
 
 router = Router(name='game:rps')
 
@@ -40,7 +40,7 @@ async def game_rps_answer_handler(message: types.Message, state: FSMContext):
 
     await state.update_data(rps=(wins, loses))
 
-    timer(message, state, rps_timeout)
+    timer(state, close_timeout, message=message)
 
 
 @router.message(F.reply_to_message.text.lower().func(game_rps_answer_filter))

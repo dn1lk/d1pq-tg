@@ -1,7 +1,9 @@
 from random import choice, random, choices
+from typing import Union, Optional
 
-from aiogram import Router, F, types, Bot
+from aiogram import Bot, Router, F, types
 from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.dispatcher.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
@@ -9,24 +11,47 @@ from bot.handlers import get_username
 from .action import UnoAction
 from .cards import UnoSpecials, get_cards
 from .manager import UnoManager
-from .. import Game
+from .. import Game, timer, uno_timeout
 
 router = Router(name='game:uno:core')
 
 
-@router.callback_query(k.GamesData.filter(F.value == 'start'))
-async def game_uno_start(query: types.CallbackQuery, bot: Bot, state: FSMContext):
+def start_filter(query: types.CallbackQuery):
     users = [entity.user.id for entity in query.message.entities if entity.user]
 
-    if bot.id not in users and random() <= 2 / await bot.get_chat_member_count(query.message.chat.id):
-        bot_user = await bot.get_me()
-        users.append(bot.id)
+    if len(users) > 1:
+        return {'users': users}
 
-        await query.message.edit_text(
-            query.message.html_text + '\n' + get_username(bot_user),
-            reply_markup=query.message.reply_markup
+
+@router.callback_query(
+    k.GamesData.filter(F.value == 'start'),
+    F.from_user.id == F.message.entities[1].user.id,
+    start_filter
+)
+async def start_handler(
+    query: Union[types.CallbackQuery, types.Message],
+    bot: Bot,
+    state: FSMContext,
+    users: Optional[list] = None
+):
+    message = query.message if isinstance(query, types.CallbackQuery) else query
+    message = await message.delete_reply_markup()
+
+    if not users:
+        users = [entity.user.id for entity in message.entities if entity.user]
+
+        if len(users) <= 1:
+            return await start_no_users_handler(message)
+
+    if random() < 2 / len(users):
+        user = await bot.get_me()
+        users.append(user.id)
+
+        await message.edit_text(
+            message.html_text + '\n' + get_username(user),
+            reply_markup=message.reply_markup
         )
-        await query.message.answer(
+        await message.answer(
             choice(
                 (
                     _("Да-да, я тоже играю!"),
@@ -36,69 +61,101 @@ async def game_uno_start(query: types.CallbackQuery, bot: Bot, state: FSMContext
             )
         )
 
-    if len(users) > 1:
-        await query.message.delete_reply_markup()
+    cards = await get_cards(bot)
+    users_dict = {}
 
-        data_now_user = (await bot.get_chat_member(query.message.chat.id, choice(users))).user
-
-        data_uno = UnoAction(
-            message=query.message,
+    for user_id in set(users):
+        users_dict[user_id] = choices(cards, k=6)
+        user_state = FSMContext(
             bot=bot,
-            state=state,
-            data=UnoManager(users=users, now_user=data_now_user, now_special=UnoSpecials())
+            storage=state.storage,
+            key=StorageKey(
+                bot_id=state.key.bot_id,
+                chat_id=user_id,
+                user_id=user_id,
+                destiny=state.key.destiny
+            )
         )
 
-        cards = await get_cards(bot)
+        await user_state.set_state(Game.uno)
+        await user_state.update_data(uno_chat_id=state.key.chat_id)
 
-        for user_id in users:
-            await data_uno.data.update_now_user_cards(bot, state, user_id, choices(cards, k=6))
+    data_uno = UnoAction(
+        message=message,
+        state=state,
+        data=UnoManager(
+            users=users_dict,
+            current_user=(await bot.get_chat_member(message.chat.id, choice(users))).user,
+            current_special=UnoSpecials()
+        )
+    )
 
-        await state.set_state(Game.uno)
-        answer = _("Итак, <b>начнём игру.</b>\n\n")
+    await state.set_state(Game.uno)
 
-        if data_uno.data.now_user.id == bot.id:
-            data_uno.message = await query.message.reply(answer + _("Какая неожиданность, мой ход."))
+    answer = _("Итак, <b>начнём игру.</b>\n\n")
 
-            from .bot import gen
+    if data_uno.data.current_user.id == bot.id:
+        message = await message.reply(answer + _("Какая неожиданность, мой ход."))
 
-            data_uno.data = await gen(data_uno)
-        else:
-            await query.message.reply(
-                answer + _("{user}, твой ход.").format(user=get_username(data_uno.data.now_user)),
-                reply_markup=k.game_uno_show_cards(),
-            )
+        from .bot import UnoBot
 
-        await state.update_data(uno=data_uno.data)
+        bot = UnoBot(message, bot, data_uno.data)
+        await bot.gen(state)
     else:
-        await query.answer(_("А с кем играть то? =)"))
+        message = await message.reply(
+            answer + _("{user}, твой ход.").format(user=get_username(data_uno.data.current_user)),
+            reply_markup=k.game_uno_show_cards(),
+        )
+
+        timer(state, uno_timeout, message=message, data_uno=data_uno.data)
+
+    await state.update_data(uno=data_uno.data)
+
+
+@router.callback_query(k.GamesData.filter(F.value == 'start'), F.from_user.id == F.message.entities[1].user.id)
+async def start_no_users_handler(query: Union[types.CallbackQuery, types.Message]):
+    await query.answer(_("А с кем играть то? =)"))
+
+
+@router.callback_query(k.GamesData.filter(F.value == 'start'))
+async def start_no_owner_handler(query: types.CallbackQuery):
+    await query.answer(_("Ты не можешь начать эту игру."))
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'join'))
 async def game_uno_join(query: types.CallbackQuery):
     users = [entity.user.id for entity in query.message.entities if entity.user]
 
-    if query.from_user.id in users:
+    if query.from_user.id in users[1:]:
         await query.answer(_("Ты уже участвуешь!"))
     else:
+        if len(users) == 1:
+            text = query.message.html_text.replace(
+                get_username(query.message.entities[1].user),
+                get_username(query.from_user)
+            )
+        else:
+            text = query.message.html_text
+
         await query.message.edit_text(
-            query.message.html_text + '\n' + get_username(query.from_user),
+            text + '\n' + get_username(query.from_user),
             reply_markup=query.message.reply_markup
         )
 
         await query.answer(_("Теперь участников стало на один больше!"))
 
 
-@router.callback_query(k.GamesData.filter(F.value == 'decline'))
-async def game_uno_decline(query: types.CallbackQuery):
+@router.callback_query(k.GamesData.filter(F.value == 'leave'))
+async def game_uno_leave(query: types.CallbackQuery):
     users = [entity.user.id for entity in query.message.entities if entity.user]
 
-    if query.from_user.id in users:
+    if query.from_user.id in users[1:]:
         users.remove(query.from_user.id)
 
         await query.message.edit_text(
             query.message.html_text.replace(
                 "\n" + get_username(query.from_user),
-                '',
+                "",
             ),
             reply_markup=query.message.reply_markup
         )

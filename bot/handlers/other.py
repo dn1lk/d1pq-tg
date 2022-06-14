@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from random import choice, random
 from typing import Optional
 
-from aiogram import Router, Bot, F, types, filters, flags
+from aiogram import Router, Bot, F, types, flags
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n
 
@@ -11,6 +11,7 @@ from bot.utils import (balaboba, markov, voice, sticker)
 from bot.utils.database.context import DataBaseContext
 
 router = Router(name='message')
+router.message.filter(~F.from_user.is_bot)
 
 
 async def get_gen_args(
@@ -44,7 +45,7 @@ async def get_gen_args(
     return await choice([gen_markov, gen_sticker])()
 
 
-@router.message(~F.from_user.is_bot, filters.MagicData(magic_data=F.event.reply_to_message.from_user.id == F.bot.id))
+@router.message(magic_data=F.reply_to_message.from_user.id == F.bot.id)
 async def gen_reply_handler(
         message: types.Message,
         bot: Bot,
@@ -71,8 +72,8 @@ async def gen_chance_filter(message: types.Message, bot: Bot, db: DataBaseContex
 
 
 @router.message(F.chat.type == 'private')
-@router.message(~F.from_user.is_bot, f.LevenshteinFilter(lev=('delete', 'делите')))
-@router.message(~F.from_user.is_bot, gen_chance_filter)
+@router.message(f.LevenshteinFilter(lev=('delete', 'делите')))
+@router.message(gen_chance_filter)
 @flags.data('messages')
 @flags.gen
 @flags.chat_action("typing")

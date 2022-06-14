@@ -49,7 +49,7 @@ class UnoCard(BaseModel):
     special: UnoSpecials
 
 
-DRAW_CARD = UnoCard(
+draw_card = UnoCard(
     id='AgADlhYAAtYJCUk',
     file_id='CAACAgIAAxkBAAJ99mKgyaLsi0LGnwOdUI_DhzgN7H1CAAKWFgAC1gkJSZxwlQOpRW3PJAQ',
     emoji='➕',
@@ -61,8 +61,8 @@ DRAW_CARD = UnoCard(
 def check_value_card(color: UnoColors, emoji: str) -> dict:
     specials = {
         '➕': UnoSpecials(
-            **{'draw': UnoDraw(amount=4), 'color': True} if color == UnoColors.special else
-            {'draw': UnoDraw(amount=2)}
+            skip=True,
+            **{'draw': UnoDraw(amount=4), 'color': True} if color == UnoColors.special else {'draw': UnoDraw(amount=2)}
         ),
         '🏳️\u200d🌈': UnoSpecials(color=True),
         '🚫': UnoSpecials(skip=True),

@@ -124,11 +124,11 @@ class GamesData(CallbackData, prefix='game'):
 def game_uno_start():
     builder = InlineKeyboardBuilder()
 
-    builder.button(text=_("Присоединиться к игре"), callback_data=GamesData(game='uno', value='join'))
-    builder.button(text=_("Отказаться от игры"), callback_data=GamesData(game='uno', value='decline'))
-    builder.button(text=_("Начать игру"), callback_data=GamesData(game='uno', value='start'))
+    builder.button(text=_("Yes"), callback_data=GamesData(game='uno', value='join'))
+    builder.button(text=_("No"), callback_data=GamesData(game='uno', value='leave'))
+    builder.button(text=_("Start UNO"), callback_data=GamesData(game='uno', value='start'))
 
-    builder.adjust(1)
+    builder.adjust(2)
 
     return builder.as_markup()
 
@@ -151,7 +151,22 @@ def game_uno_color():
 
     builder.adjust(1)
 
-    return builder.as_markup(resize_keyboard=True, one_time_keyboard=True, selective=True)
+    return builder.as_markup(resize_keyboard=True, selective=True)
+
+
+UNO = __("Уно!")
+
+
+def game_uno_uno():
+    builder = ReplyKeyboardBuilder()
+
+    builder.button(text=str(UNO))
+
+    return builder.as_markup(
+        resize_keyboard=True,
+        one_time_keyboard=True,
+        input_field_placeholder=_("Добавишь карту в колоду соперника?")
+    )
 
 
 def get_game_rps_args() -> dict:

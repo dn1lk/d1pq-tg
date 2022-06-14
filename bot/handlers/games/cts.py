@@ -7,7 +7,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters as f
-from . import Game, CTS_WIN, get_cts, timer, cts_timeout
+from . import Game, WINNER, get_cts, timer, win_timeout
 
 router = Router(name='game:cts')
 router.message.filter(Game.cts)
@@ -59,7 +59,7 @@ async def game_cts_answer_yes_handler(
             ) + _(" My word: {bot_var}.").format(bot_var=bot_var)
         )
 
-        timer(message, state, cts_timeout)
+        timer(state, win_timeout, message=message)
     else:
         await message.reply(choice(
             (
@@ -96,7 +96,7 @@ async def game_cts_two_no_handler(message: types.Message, state: FSMContext):
 
         await state.update_data(cts=(bot_var, cities, failed - 1))
     else:
-        end = str(choice(CTS_WIN))
+        end = str(choice(WINNER))
         answer = (
             _("You have no attempts left. "),
             _("Looks like all attempts have been spent. "),

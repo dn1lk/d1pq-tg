@@ -73,9 +73,11 @@ def timer(
         await asyncio.sleep(timeout)
 
         data = await self.storage.get_data(bot=self.bot, key=self.key)
+
         if data.pop(key, None):
             await self.storage.set_data(bot=self.bot, key=self.key, data=data)
-            return data
+
+        return data
 
     for group, key in kwargs.items():
         task_name = f'{group}:{self.key.chat_id}:{key}'
