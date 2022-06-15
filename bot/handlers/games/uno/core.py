@@ -1,3 +1,4 @@
+import asyncio
 from random import choice, random, choices
 
 from aiogram import Bot, Router, F, types
@@ -19,6 +20,11 @@ def start_filter(query: types.CallbackQuery):
     users = [entity.user.id for entity in query.message.entities if entity.user]
 
     if len(users) > 1:
+        for task in asyncio.all_tasks():
+            if task.get_name() == f'game:{query.message.chat.id}none':
+                task.cancel()
+                break
+
         return {'users': users}
 
 

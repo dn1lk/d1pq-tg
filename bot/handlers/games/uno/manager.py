@@ -25,8 +25,8 @@ class UnoManager(BaseModel):
     current_card: UnoCard | None
     current_special: UnoSpecials
 
-    kick_polls: dict[str, UnoKickPoll] | None = dict()
-    uno_users_id: list[int] | None = list()
+    kick_polls: dict[str, UnoKickPoll] = dict()
+    uno_users_id: list[int] = list()
 
     timer_amount: int = 0
 
