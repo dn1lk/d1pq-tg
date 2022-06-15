@@ -49,15 +49,12 @@ class UnoAction:
         self.data.uno_users_id.append(self.data.current_user.id)
 
         if self.data.current_user.id == self.state.bot.id:
-            asyncio.create_task(
-                self.bot.uno(),
-                name=str(self.bot) + ':uno'
-            )
-
             await self.message.answer(
                 _("У меня осталась одна карта!"),
                 reply_markup=k.game_uno_uno(),
             )
+
+            asyncio.create_task(self.bot.uno(), name=str(self.bot) + ':uno')
         else:
             await self.message.answer(
                 _("У игрока {user} осталась одна карта!").format(user=get_username(self.data.current_user)),
@@ -66,6 +63,7 @@ class UnoAction:
 
     async def process(self, accept: str):
         answer = await self.data.card_special(self.state.bot, self.message.chat) or accept
+        print(self.data.current_special)
 
         if self.data.current_special.draw and not self.data.current_card.special.draw:
             await self.message.answer(
@@ -90,6 +88,7 @@ class UnoAction:
         await self.move(answer)
 
     async def move(self, answer: str | None = ""):
+        print(self.data.current_user, self.data.next_user)
         if self.state.bot.id == self.data.next_user.id:
             asyncio.create_task(self.bot.gen(self.state), name=str(self.bot))
 

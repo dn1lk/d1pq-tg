@@ -89,7 +89,10 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoMa
 
         await asyncio.sleep(3)
 
+        action.data.current_user = action.data.next_user
+        action.data.next_user = await action.data.user_next(state.bot, message.chat.id)
         await action.move()
+
         await state.update_data(uno=action.data)
 
 

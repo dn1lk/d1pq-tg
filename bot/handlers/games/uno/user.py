@@ -90,9 +90,9 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoAction = UnoAction(message=message, state=state, data=data['uno'])
 
-    if message.from_user.id == data_uno.data.current_user.id:
+    if message.from_user.id == data_uno.data.next_user.id:
         data_uno.data.current_user = data_uno.data.next_user
-        data_uno.data.next_user = data_uno.data.user_next(bot, message.chat.id)
+        data_uno.data.next_user = await data_uno.data.user_next(bot, message.chat.id)
         await data_uno.move(await data_uno.data.user_card_add(bot))
 
         await state.update_data(uno=data_uno.data)
@@ -135,7 +135,10 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
                         task.cancel()
                         break
 
-            await message.reply(await data_uno.data.user_card_add(bot), reply_markup=types.ReplyKeyboardRemove())
+            await message.reply(
+                await data_uno.data.user_card_add(bot, message.reply_to_message.from_user),
+                reply_markup=types.ReplyKeyboardRemove()
+            )
 
         await state.update_data(uno=data_uno.data)
     else:

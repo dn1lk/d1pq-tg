@@ -163,6 +163,7 @@ class UnoManager(BaseModel):
         async def skip():
             self.current_special.skip = self.next_user
             self.next_user = await self.user_next(bot, chat.id, self.next_user.id)
+
             return choice(
                 (
                     _("{user} лишается хода?"),

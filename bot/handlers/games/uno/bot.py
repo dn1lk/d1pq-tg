@@ -58,6 +58,8 @@ class UnoBot:
                 except UnoNoUsersException:
                     await action.end()
             else:
-                return
+                action.data.current_user = action.data.next_user
+                action.data.next_user = await action.data.user_next(self.bot, self.message.chat.id)
+                await action.move(await action.data.user_card_add(self.bot, user))
 
         await state.update_data(uno=action.data)
