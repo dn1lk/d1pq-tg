@@ -73,6 +73,7 @@ class UnoAction:
             self.data.current_special.draw = 0
 
         self.data.current_special.skip = False
+        self.data.current_special.color = False
 
         await self.next(await self.data.card_special(self.state.bot, self.message.chat) or accept)
 

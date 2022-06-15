@@ -114,8 +114,6 @@ class UnoManager(BaseModel):
                 accept = _("Так-с...")
 
                 if self.current_special.color:
-                    self.current_special.color = None
-
                     color = choice([color for color in UnoColors.tuple() if color is not self.current_card.color]).value
                     accept = _("Ех, нужно было брать {color} цвет.").format(color=color[0] + ' ' + str(color[1]))
             elif card.emoji == self.current_card.emoji:
@@ -130,7 +128,8 @@ class UnoManager(BaseModel):
         elif card.emoji == self.current_card.emoji:
             if self.current_user and user.id == self.current_user.id:
                 accept = _("Продолжаем накидывать карты...")
-            elif self.current_special.skip and user.id == self.current_special.skip.id:
+            elif self.current_special.skip and user.id == self.current_special.skip.id and \
+                    (not self.current_card.special.color or card.color is self.current_card.color):
                 accept = _("Ха, перекидываем ход.")
             elif card == self.current_card:
                 accept = choice(
