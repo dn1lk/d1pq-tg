@@ -40,14 +40,13 @@ async def start_handler(
     users: list | None = None
 ):
     message = query.message if isinstance(query, types.CallbackQuery) else query
+    message = await message.delete_reply_markup()
 
     if not users:
         users = [entity.user.id for entity in message.entities if entity.user]
 
         if len(users) <= 1:
-            return await start_no_users_handler(message)
-
-    await message.delete_reply_markup()
+            return await start_no_users_handler(await message.edit_reply_markup(k.game_uno_start()))
 
     if random() < 2 / len(users):
         user = await bot.get_me()
