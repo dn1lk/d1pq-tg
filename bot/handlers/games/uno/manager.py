@@ -106,7 +106,6 @@ class UnoManager(BaseModel):
             card = sticker
 
         if user.id == self.next_user.id:
-            print(1)
             if not self.current_card:
                 accept = _("Первый ход сделан.")
             elif card.color is UnoColors.special:
@@ -130,13 +129,10 @@ class UnoManager(BaseModel):
                 )
         elif card.emoji == self.current_card.emoji:
             if self.current_user and user.id == self.current_user.id:
-                print(2, card.emoji)
                 accept = _("Продолжаем накидывать карты...")
             elif self.current_special.skip and user.id == self.current_special.skip.id:
-                print(3, card.special.skip)
                 accept = _("Ха, перекидываем ход.")
             elif card == self.current_card:
-                print(4, card)
                 accept = choice(
                     (
                         _("Игроку {user} удалось перебить ход!"),
