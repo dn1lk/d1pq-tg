@@ -172,11 +172,7 @@ class UnoManager(BaseModel):
             )
 
         def draw():
-            if self.current_special.draw:
-                self.current_card.special.draw += self.current_special.draw
-
-            self.current_special.draw = self.current_card.special.draw
-
+            self.current_special.draw += self.current_card.special.draw
             return choice(
                 (
                     _("Как жестоко!"),

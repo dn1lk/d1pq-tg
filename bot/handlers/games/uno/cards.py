@@ -28,7 +28,7 @@ class UnoColors(Enum, metaclass=UnoEnumMeta):
 
 
 class UnoSpecials(BaseModel):
-    draw: int | None
+    draw: int = 0
     color: bool | None
     skip: bool | types.User | None
     reverse: bool | None
