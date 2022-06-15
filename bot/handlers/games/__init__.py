@@ -8,8 +8,8 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 from bot import config
 from .uno.action import UnoAction
-from .uno.manager import UnoManager, UnoKickPoll
 from .uno.exceptions import UnoNoUsersException
+from .uno.manager import UnoManager, UnoKickPoll
 
 
 class Game(StatesGroup):
@@ -39,7 +39,7 @@ def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
             if raw_state == await state.get_state():
                 return await coroutine(state=state, **kwargs)
 
-    return asyncio.create_task(waiter())
+    return asyncio.create_task(waiter(), name=f'game:{state.key.chat_id}:waiter')
 
 
 async def win_timeout(message: types.Message, state: FSMContext):

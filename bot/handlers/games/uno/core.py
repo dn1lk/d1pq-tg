@@ -1,4 +1,3 @@
-import asyncio
 from random import choice, random, choices
 
 from aiogram import Bot, Router, F, types

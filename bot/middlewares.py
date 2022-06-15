@@ -4,8 +4,8 @@ from typing import Dict, Any, Awaitable, Callable, Union, Optional
 
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
 from aiogram.dispatcher.flags.getter import get_flag
+from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionMiddleware
-from cachetools import TTLCache
 
 from utils import markov
 from utils.database.context import DataBaseContext
@@ -66,8 +66,8 @@ class LogMiddleware(BaseMiddleware):
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    caches = {
-        "gen": TTLCache(maxsize=10_000, ttl=1)
+    timeouts = {
+        'gen': 1,
     }
 
     async def __call__(
@@ -76,13 +76,17 @@ class ThrottlingMiddleware(BaseMiddleware):
             event: types.Message,
             data: Dict[str, Any],
     ) -> Any:
-        throttling = get_flag(data, "throttling")
+        state: FSMContext = data.get('state')
+        throttling = get_flag(data, 'throttling')
 
-        if throttling:
-            if event.chat.id in self.caches[throttling]:
+        if state and throttling:
+            throttling = f'throttling:{throttling}'
+
+            if (await state.get_data()).get(throttling):
                 return
             else:
-                self.caches[throttling][event.chat.id] = None
+                await state.update_data({throttling: True})
+                state.timer(timeout=self.timeouts[throttling.split(':')[-1]], throttling=throttling)
 
         return await handler(event, data)
 
@@ -136,7 +140,7 @@ def setup(dp: Dispatcher):
         Middleware(inner=ThrottlingMiddleware(), observers=('message',)),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
-        Middleware(outer=LogMiddleware()),
+        # Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage)),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
         Middleware(outer=UnhandledMiddleware(), observers=('message',)),

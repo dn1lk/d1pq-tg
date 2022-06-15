@@ -26,6 +26,7 @@ class DataBaseContext:
                        await conn.fetchval(f"""SELECT {key} FROM data WHERE ids = 0;""")
 
                 await self.storage.update_data(bot=self.bot, key=self.key, data={key: data or 'NULL'})
+                timer(self, storage=key)
 
         return data
 
@@ -66,7 +67,7 @@ class DataBaseContext:
 
 def timer(
         self: Union[FSMContext, DataBaseContext],
-        timeout: Optional[int] = 60 * 60 * 60 * 24 * 7,
+        timeout: Optional[int] = 60 * 60 * 24 * 7,
         **kwargs: Any,
 ) -> asyncio.Task[Any]:
     async def waiter() -> Any:
