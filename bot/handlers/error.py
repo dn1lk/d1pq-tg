@@ -1,6 +1,8 @@
+import asyncio
 import logging
 
 from aiogram import Router, Bot, types, exceptions
+from aiogram.utils.i18n import gettext as _
 
 router = Router(name='error')
 

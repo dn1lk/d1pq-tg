@@ -5,19 +5,23 @@ from aiogram import types, Bot
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
+from pydantic import BaseModel
 
 from .exceptions import UnoNoUsersException
 from .manager import UnoManager
 
 
-class UnoBot:
-    def __init__(self, message: types.Message, bot: Bot, data: UnoManager):
-        self.message = message
-        self.bot = bot
+class UnoBot(BaseModel):
+    message: types.Message
+    bot: Bot
 
-        self.data = data
+    data: UnoManager
 
-        self.task_name = f'game:{self.message.chat.id}:uno:bot'
+    class Config:
+        arbitrary_types_allowed = True
+
+    def __str__(self):
+        return f'game:{self.message.chat.id}:uno:bot'
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id, interval=1):
@@ -32,7 +36,7 @@ class UnoBot:
 
     async def get_cards(self, user: types.User):
         for card in self.data.users[user.id]:
-            card, accept, decline = await self.data.filter_card(self.bot, self.message.chat, user, card)
+            card, accept, decline = await self.data.card_filter(self.bot, self.message.chat.id, user, card)
 
             if accept:
                 yield card, accept
@@ -40,7 +44,7 @@ class UnoBot:
     async def gen(self, state: FSMContext):
         from .action import UnoAction
 
-        action = UnoAction(self.message, state, self.data)
+        action = UnoAction(message=self.message, state=state, data=self.data)
         user = await self.bot.get_me()
 
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id, interval=1):
@@ -57,6 +61,6 @@ class UnoBot:
                 except UnoNoUsersException:
                     await action.end()
             else:
-                await action.move(await action.data.add_card(self.bot))
+                return
 
         await state.update_data(uno=action.data)

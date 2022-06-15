@@ -35,7 +35,7 @@ def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
     async def waiter():
         state_raw = await state.get_state()
 
-        if await state.timer(timeout=5, game=(state_raw or 'game:none').lower().split(':', maxsplit=1)[1]):
+        if await state.timer(timeout=60, game=(state_raw or 'game:none').lower().split(':', maxsplit=1)[1]):
             if state_raw == await state.get_state():
                 return await coroutine(state=state, **kwargs)
 
@@ -63,9 +63,15 @@ async def close_timeout(message: types.Message, state: FSMContext, answer: Optio
 async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoManager):
     if len(data_uno.users) != 2 and state.bot.id in data_uno.users.keys():
         await close_timeout(message, state)
-        await data_uno.remove_user(state)
+        await data_uno.user_remove(state)
     else:
-        message = await message.reply(_("Время вышло.") + " " + await data_uno.add_card(state.bot))
+        message = await message.reply(_("Время вышло.") + " " + await data_uno.user_card_add(state.bot))
+        for poll_id, poll_data in data_uno.kick_polls.items():
+            if data_uno.current_user.id == poll_data.user_id:
+                await state.bot.delete_message(state.key.chat_id, poll_data.message_id)
+                del data_uno.kick_polls[poll_id]
+                break
+
         poll = await message.answer_poll(
             _("Исключить игрока из игры?"),
             options=[_("Yes"), _("No, keep playing")],
@@ -78,8 +84,10 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoMa
             amount=0,
         )
 
+        await state.update_data(uno=data_uno)
+
         action = UnoAction(message, state, data_uno)
-        print(1, action.data.current_user.first_name)
+
         await asyncio.sleep(3)
 
         await action.move()

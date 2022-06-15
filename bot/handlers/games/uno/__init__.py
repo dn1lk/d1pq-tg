@@ -18,10 +18,12 @@ def setup():
     from .. import Game
 
     router.message.filter(Game.uno)
+    router.poll_answer.filter(Game.uno)
 
     from .middleware import UnoFSMContextMiddleware
 
     router.inline_query.outer_middleware(UnoFSMContextMiddleware())
+    router.poll_answer.outer_middleware(UnoFSMContextMiddleware())
 
     from .user import router as user_rt
     from .core import router as core_rt

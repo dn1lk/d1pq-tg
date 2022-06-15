@@ -28,13 +28,8 @@ class UnoColors(Enum, metaclass=UnoEnumMeta):
     special = '⚫', __('special')
 
 
-class UnoDraw(BaseModel):
-    user: Optional[types.User]
-    amount: int
-
-
 class UnoSpecials(BaseModel):
-    draw: Optional[UnoDraw]
+    draw: Optional[int]
     color: Optional[bool]
     skip: Optional[Union[types.User, bool]]
     reverse: Optional[bool]
@@ -62,7 +57,7 @@ def check_value_card(color: UnoColors, emoji: str) -> dict:
     specials = {
         '➕': UnoSpecials(
             skip=True,
-            **{'draw': UnoDraw(amount=4), 'color': True} if color == UnoColors.special else {'draw': UnoDraw(amount=2)}
+            **{'draw': 4, 'color': True} if color == UnoColors.special else {'draw': 2}
         ),
         '🏳️\u200d🌈': UnoSpecials(color=True),
         '🚫': UnoSpecials(skip=True),

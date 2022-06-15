@@ -66,19 +66,15 @@ async def start_handler(
 
     for user_id in set(users):
         users_dict[user_id] = choices(cards, k=6)
-        user_state = FSMContext(
-            bot=bot,
-            storage=state.storage,
-            key=StorageKey(
-                bot_id=state.key.bot_id,
-                chat_id=user_id,
-                user_id=user_id,
-                destiny=state.key.destiny
-            )
+        key = StorageKey(
+            bot_id=state.key.bot_id,
+            chat_id=user_id,
+            user_id=user_id,
+            destiny=state.key.destiny
         )
 
-        await user_state.set_state(Game.uno)
-        await user_state.update_data(uno_chat_id=state.key.chat_id)
+        await state.storage.set_state(bot, key, Game.uno)
+        await state.storage.update_data(bot, key, {'uno_chat_id': state.key.chat_id})
 
     data_uno = UnoAction(
         message=message,
@@ -99,7 +95,7 @@ async def start_handler(
 
         from .bot import UnoBot
 
-        bot = UnoBot(message, bot, data_uno.data)
+        bot = UnoBot(message=message, bot=bot, data=data_uno.data)
         await bot.gen(state)
     else:
         message = await message.reply(
