@@ -16,12 +16,12 @@ from .. import Game, timer, uno_timeout
 router = Router(name='game:uno:core')
 
 
-def start_filter(query: types.CallbackQuery):
+async def start_filter(query: types.CallbackQuery):
     users = [entity.user.id for entity in query.message.entities if entity.user]
 
     if len(users) > 1:
         for task in asyncio.all_tasks():
-            if task.get_name() == f'game:{query.message.chat.id}none':
+            if task.get_name() == f'game:{query.message.chat.id}:none':
                 task.cancel()
                 break
 
