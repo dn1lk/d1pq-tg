@@ -81,7 +81,7 @@ class UnoAction:
             if self.message.from_user.id == self.state.bot.id:
                 answer = await self.bot.get_color()
             else:
-                return await self.message.answer(
+                return await self.message.reply(
                     answer,
                     reply_markup=k.game_uno_color()
                 )
@@ -91,9 +91,8 @@ class UnoAction:
     async def move(self, answer: str | None = ""):
         self.data.next_user = await self.data.user_next(self.state.bot, self.message.chat.id)
         cards = tuple(self.bot.get_cards(await self.state.bot.get_me()))
-        print(self.data.next_user.first_name, cards)
+
         if cards or self.state.bot.id == self.data.next_user.id:
-            await asyncio.sleep(choice(range(5)))
             asyncio.create_task(self.bot.gen(self.state, cards), name=str(self.bot))
         else:
             self.message = await self.message.reply(
@@ -135,7 +134,8 @@ class UnoAction:
                 "<b>Игра закончена.</b>\n\n{user} остался последним игроком."
             ).format(
                 user=get_username(self.data.current_user)
-                )
+                ),
+            reply_markup=types.ReplyKeyboardRemove()
             )
 
         self.data = None

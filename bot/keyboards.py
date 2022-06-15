@@ -151,7 +151,11 @@ def game_uno_color():
 
     builder.adjust(1)
 
-    return builder.as_markup(resize_keyboard=True, selective=True)
+    return builder.as_markup(
+        resize_keyboard=True,
+        selective=True,
+        input_field_placeholder=_("Какой ты выберешь цвет?")
+    )
 
 
 UNO = __("Уно!")
@@ -164,7 +168,6 @@ def game_uno_uno():
 
     return builder.as_markup(
         resize_keyboard=True,
-        one_time_keyboard=True,
         input_field_placeholder=_("Добавишь карту в колоду соперника?")
     )
 

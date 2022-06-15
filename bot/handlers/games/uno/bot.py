@@ -6,6 +6,7 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
+from bot import keyboards as k
 from .exceptions import UnoNoUsersException
 from .manager import UnoManager
 
@@ -25,7 +26,7 @@ class UnoBot:
             await asyncio.sleep(choice(range(3)))
 
             self.data.uno_users_id.remove(self.bot.id)
-            await self.message.answer(_("УНО!"), reply_markup=types.ReplyKeyboardRemove())
+            await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
 
     async def get_color(self) -> str:
         color = self.data.current_card.color = choice(self.data.users[self.bot.id]).color
@@ -44,6 +45,8 @@ class UnoBot:
         action = UnoAction(message=self.message, state=state, data=self.data)
 
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id, interval=1):
+            await asyncio.sleep(choice(range(3)))
+
             if cards:
                 action.data.current_card, accept = choice(cards)
                 action.message = self.message = await self.message.answer_sticker(action.data.current_card.file_id)
