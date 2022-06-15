@@ -136,10 +136,12 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoAction = UnoAction(message=message, state=state, data=data['uno'])
 
-    for user in [message.reply_to_message.from_user] + [
-        entities.user for entities in
-        message.reply_to_message.entities if message.reply_to_message.entities and entities.user
-    ]:
+    users = [message.reply_to_message.from_user]
+
+    if message.reply_to_message.entities:
+        users += [entities.user for entities in message.reply_to_message.entities if entities.user]
+
+    for user in users:
         if user.id in data_uno.data.uno_users_id:
             data_uno.data.uno_users_id.remove(user.id)
 

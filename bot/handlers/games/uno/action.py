@@ -40,6 +40,7 @@ class UnoAction:
                         user=get_username(self.data.current_user))
                 )
 
+            self.data.next_user = await self.data.user_prev(self.state.bot, self.message.chat.id)
             await self.data.user_remove(self.state)
 
         await self.process(accept)
@@ -53,7 +54,7 @@ class UnoAction:
                 reply_markup=k.game_uno_uno(),
             )
 
-            asyncio.create_task(self.bot.uno(), name=str(self.bot) + ':uno')
+            asyncio.create_task(self.bot.uno(), name=str(self.bot) + ':' + 'uno')
         else:
             await self.message.answer(
                 _("У игрока {user} осталась одна карта!").format(user=get_username(self.data.current_user)),
@@ -91,7 +92,10 @@ class UnoAction:
 
     async def move(self, answer: str | None = ""):
         self.data.next_user = await self.data.user_next(self.state.bot, self.message.chat.id)
-        cards = tuple(self.bot.get_cards(await self.state.bot.get_me()))
+        try:
+            cards = tuple(self.bot.get_cards(await self.state.bot.get_me()))
+        except KeyError:
+            cards = None
 
         if cards or self.state.bot.id == self.data.next_user.id:
             asyncio.create_task(self.bot.gen(self.state, cards), name=str(self.bot))

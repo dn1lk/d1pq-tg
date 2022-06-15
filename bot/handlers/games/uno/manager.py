@@ -41,6 +41,17 @@ class UnoManager(BaseModel):
 
         return (await bot.get_chat_member(chat_id, user_id)).user
 
+    async def user_prev(self, bot: Bot, chat_id: int, user_id: int | None = None) -> types.User:
+        user_id = user_id or self.current_user.id
+        users = tuple(self.users)
+
+        try:
+            user_id = users[users.index(user_id) - 1]
+        except IndexError:
+            user_id = users[-1]
+
+        return (await bot.get_chat_member(chat_id, user_id)).user
+
     async def user_remove(self, state: FSMContext, user_id: int | None = None):
         user_id = user_id or self.current_user.id
 
