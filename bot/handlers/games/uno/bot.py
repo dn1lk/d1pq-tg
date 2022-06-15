@@ -23,7 +23,7 @@ class UnoBot:
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id, interval=1):
-            await asyncio.sleep(choice(range(3, 8)))
+            await asyncio.sleep(choice(range(2, 10)))
 
             self.data.uno_users_id.remove(self.bot.id)
             await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
@@ -45,7 +45,7 @@ class UnoBot:
         action = UnoAction(message=self.message, state=state, data=self.data)
 
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id, interval=1):
-            await asyncio.sleep(choice(range(3, 5)))
+            await asyncio.sleep(choice(range(1, 5)))
 
             if cards:
                 action.data.current_card, accept = choice(cards)
