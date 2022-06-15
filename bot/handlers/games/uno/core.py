@@ -1,5 +1,4 @@
 from random import choice, random, choices
-from typing import Union, Optional
 
 from aiogram import Bot, Router, F, types
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -29,10 +28,10 @@ def start_filter(query: types.CallbackQuery):
     start_filter
 )
 async def start_handler(
-    query: Union[types.CallbackQuery, types.Message],
+    query: types.CallbackQuery | types.Message,
     bot: Bot,
     state: FSMContext,
-    users: Optional[list] = None
+    users: list | None = None
 ):
     message = query.message if isinstance(query, types.CallbackQuery) else query
     message = await message.delete_reply_markup()
@@ -109,7 +108,7 @@ async def start_handler(
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'start'), F.from_user.id == F.message.entities[1].user.id)
-async def start_no_users_handler(query: Union[types.CallbackQuery, types.Message]):
+async def start_no_users_handler(query: types.CallbackQuery | types.Message):
     await query.answer(_("А с кем играть то? =)"))
 
 

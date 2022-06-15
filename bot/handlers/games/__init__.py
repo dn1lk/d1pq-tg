@@ -1,6 +1,5 @@
 import asyncio
 from random import choice
-from typing import Optional
 
 from aiogram import Router, types
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -46,7 +45,7 @@ async def win_timeout(message: types.Message, state: FSMContext):
     await close_timeout(message, state, answer=_("Your time is up. ") + str(choice(WINNER)))
 
 
-async def close_timeout(message: types.Message, state: FSMContext, answer: Optional[str] = None):
+async def close_timeout(message: types.Message, state: FSMContext, answer: str | None = None):
     answer = answer or choice(
             (
                 _("You know I won't play with you! Maybe..."),

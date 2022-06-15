@@ -1,6 +1,5 @@
 from random import choice
 from re import findall
-from typing import Optional
 
 from aiogram import Router, Bot, F, types, flags
 from aiogram.dispatcher import filters
@@ -31,8 +30,8 @@ async def commands_handler(
         state: FSMContext,
         bot: Bot,
         i18n: I18n,
-        messages: Optional[list] = None,
-        custom_commands: Optional[dict] = None,
+        messages: list | None = None,
+        custom_commands: dict | None = None,
 ):
     await state.set_state(Settings.command)
 
@@ -63,7 +62,7 @@ async def commands_handler(
 async def commands_setup_no_args_filter(
         message: types.Message,
         bot: Bot,
-        command_magic: Optional[filters.CommandObject.args] = None
+        command_magic: F | None = None
 ):
     return await filters.Command(
         commands=[command.command for command in bot.commands['en']],
@@ -82,7 +81,7 @@ async def commands_setup_handler(
         command: filters.CommandObject,
         db: DataBaseContext,
         state: FSMContext,
-        custom_commands: Optional[dict] = None
+        custom_commands: dict | None = None
 ):
     if len(command.args.split()) == 1:
         if not custom_commands:
@@ -113,7 +112,7 @@ async def commands_setup_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: Optional[list] = None,
+        messages: list | None = None,
 ):
     args = markov.get_base(locale=choice(i18n.available_locales)).parsed_sentences
 

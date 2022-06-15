@@ -1,5 +1,4 @@
 from random import choices, choice
-from typing import Optional, List, Union, Dict
 
 from aiogram import Bot, types
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -19,17 +18,17 @@ class UnoKickPoll(BaseModel):
 
 
 class UnoManager(BaseModel):
-    users: Dict[int, List[UnoCard]]
+    users: dict[int, list[UnoCard]]
     current_user: types.User
-    next_user: Optional[types.User]
+    next_user: types.User | None
 
-    current_card: Optional[UnoCard]
+    current_card: UnoCard | None
     current_special: UnoSpecials
 
-    kick_polls: Optional[Dict[str, UnoKickPoll]] = dict()
-    uno_users_id: Optional[List[int]] = list()
+    kick_polls: dict[str, UnoKickPoll] | None = dict()
+    uno_users_id: list[int] | None = list()
 
-    async def user_next(self, bot: Bot, chat_id: int, user_id: Optional[int] = None) -> types.User:
+    async def user_next(self, bot: Bot, chat_id: int, user_id: int | None = None) -> types.User:
         user_id = user_id or self.current_user.id
         users = tuple(self.users)
 
@@ -40,7 +39,7 @@ class UnoManager(BaseModel):
 
         return (await bot.get_chat_member(chat_id, user_id)).user
 
-    async def user_remove(self, state: FSMContext, user_id: Optional[int] = None):
+    async def user_remove(self, state: FSMContext, user_id: int | None = None):
         user_id = user_id or self.current_user.id
 
         await self.user_remove_state(state, user_id)
@@ -49,7 +48,7 @@ class UnoManager(BaseModel):
         if len(self.users) == 1:
             raise UnoNoUsersException("Only one user remained in UNO game")
 
-    async def user_remove_state(self, state: FSMContext, user_id: Optional[int] = None):
+    async def user_remove_state(self, state: FSMContext, user_id: int | None = None):
         user_id = user_id or self.current_user.id
         key = StorageKey(
             bot_id=state.key.bot_id,
@@ -61,7 +60,7 @@ class UnoManager(BaseModel):
         await state.storage.set_state(state.bot, key)
         await state.storage.update_data(state.bot, key, {'uno_chat_id': None})
 
-    async def user_card_add(self, bot: Bot, user: Optional[types.User] = None, amount: Optional[int] = 1) -> str:
+    async def user_card_add(self, bot: Bot, user: types.User | None = None, amount: int | None = 1) -> str:
         user = user or self.current_user
 
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
@@ -90,9 +89,9 @@ class UnoManager(BaseModel):
             bot: Bot,
             chat_id: int,
             user: types.User,
-            sticker: Union[types.Sticker, UnoCard]
-    ) -> Optional[tuple]:
-        def get_card() -> Optional[UnoCard]:
+            sticker: types.Sticker | UnoCard
+    ) -> tuple | None:
+        def get_card() -> UnoCard | None:
             for user_card in self.users[user.id]:
                 if user_card.id == sticker.file_unique_id:
                     return user_card

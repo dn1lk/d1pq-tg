@@ -1,5 +1,4 @@
 from enum import Enum, EnumMeta
-from typing import Optional, List, Tuple, Union
 
 from aiogram import types, Bot
 from aiogram.utils.i18n import lazy_gettext as __
@@ -29,10 +28,10 @@ class UnoColors(Enum, metaclass=UnoEnumMeta):
 
 
 class UnoSpecials(BaseModel):
-    draw: Optional[int]
-    color: Optional[bool]
-    skip: Optional[Union[types.User, bool]]
-    reverse: Optional[bool]
+    draw: int | None
+    color: bool | None
+    skip: bool | types.User | None
+    reverse: bool | None
 
 
 class UnoCard(BaseModel):
@@ -70,8 +69,8 @@ def check_value_card(color: UnoColors, emoji: str) -> dict:
     }
 
 
-async def get_cards(bot: Bot) -> Tuple[UnoCard]:
-    def get(stickers: List[types.Sticker]):
+async def get_cards(bot: Bot) -> tuple[UnoCard]:
+    def get(stickers: list[types.Sticker]):
         for sticker in stickers[8:10]:
             color = UnoColors.special
             stickers.remove(sticker)

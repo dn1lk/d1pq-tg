@@ -1,5 +1,3 @@
-from typing import Optional
-
 from aiogram import Bot, types
 from aiogram.utils.i18n import lazy_gettext as __
 
@@ -13,7 +11,7 @@ def get_username(user: types.User) -> str:
 def get_command_list(
         bot: Bot,
         locale: str,
-        index: Optional[slice] = None,
+        index: slice | None = None,
 ) -> str:
     return '\n'.join(map(lambda command: f'/{command.command} - {command.description}', bot.commands[locale][index]))
 

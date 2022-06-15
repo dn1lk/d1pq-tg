@@ -1,5 +1,3 @@
-from typing import Union, Optional, Any
-
 from aiogram.dispatcher.filters.callback_data import CallbackData
 from aiogram.utils.i18n import I18n, gettext as _, lazy_gettext as __
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
@@ -7,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 class SettingsData(CallbackData, prefix='set'):
     name: str
-    value: Any = None
+    value: object = None
 
 
 BACK = __("Back")
@@ -50,7 +48,7 @@ def locale(i18n: I18n):
     return builder.as_markup()
 
 
-def chance(markov_chance: Union[int, float]):
+def chance(markov_chance: int | float):
     datas = []
 
     for i in (6, 10):
@@ -91,7 +89,7 @@ def accuracy(markov_state: int):
     return builder.as_markup()
 
 
-def data(chat_type: str, members: Optional[dict] = None, messages: Optional[list] = None):
+def data(chat_type: str, members: dict | None = None, messages: list | None = None):
     datas = (
         ('messages', _('messages'), not messages or 'DECLINE' == messages),
         ('members', _('members'), bool(members)),
@@ -118,7 +116,7 @@ def data(chat_type: str, members: Optional[dict] = None, messages: Optional[list
 
 class GamesData(CallbackData, prefix='game'):
     game: str
-    value: Any = None
+    value: object = None
 
 
 def game_uno_start():

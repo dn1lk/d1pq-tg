@@ -1,11 +1,9 @@
 import asyncio
 from random import choice
-from typing import Optional
 
 from aiogram import types
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
-from pydantic import BaseModel
 
 from bot import keyboards as k
 from bot.handlers import get_username
@@ -14,15 +12,16 @@ from .exceptions import UnoNoCardsException
 from .manager import UnoManager
 
 
-class UnoAction(BaseModel):
-    message: types.Message
-    state: FSMContext
+class UnoAction:
+    def __init__(self, message: types.Message, state: FSMContext, data: UnoManager):
+        self.message: types.Message = message
+        self.state: FSMContext = state
 
-    data: Optional[UnoManager]
+        self.data: UnoManager | None = data
 
-    from .bot import UnoBot
+        from .bot import UnoBot
 
-    bot: UnoBot = UnoBot
+        self.bot: UnoBot = UnoBot(message, state.bot, data)
 
     class Config:
         arbitrary_types_allowed = True
@@ -90,7 +89,7 @@ class UnoAction(BaseModel):
 
         await self.move(answer)
 
-    async def move(self, answer: Optional[str] = ""):
+    async def move(self, answer: str | None = ""):
         if self.state.bot.id == self.data.next_user.id:
             asyncio.create_task(self.bot.gen(self.state), name=str(self.bot))
 

@@ -1,5 +1,4 @@
 from random import choice
-from typing import Union
 
 from aiogram import Router, types
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -13,7 +12,7 @@ router = Router(name='game:cts')
 router.message.filter(Game.cts)
 
 
-async def game_cts_filter(message: types.Message, state: FSMContext, i18n: I18n) -> Union[dict, bool]:
+async def game_cts_filter(message: types.Message, state: FSMContext, i18n: I18n) -> dict | bool:
     def get() -> str:
         for city in game_vars:
             if city[0].lower() == message.text[-1].lower() and city not in cities:

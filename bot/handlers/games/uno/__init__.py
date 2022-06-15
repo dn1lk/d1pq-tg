@@ -1,5 +1,3 @@
-from typing import List
-
 from aiogram import Router
 from pydantic import BaseModel
 
@@ -9,7 +7,7 @@ class UnoPoll(BaseModel):
     message_id: int
     owner_id: int
 
-    users_id: List[int] = list()
+    users_id: list[int] = list()
 
 
 def setup():

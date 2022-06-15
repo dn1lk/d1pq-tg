@@ -1,6 +1,5 @@
 from random import choices, choice
 from re import findall, split
-from typing import Optional
 
 from aiogram import Router, Bot, F, types, filters, flags
 from aiogram.utils.i18n import I18n, gettext as _
@@ -80,7 +79,7 @@ async def choose_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: Optional[list] = None):
+        messages: list | None = None):
     message = await message.answer(_("<b>What to choose?</b>"))
 
     args = markov.get_base(i18n.current_locale).parsed_sentences
@@ -106,7 +105,7 @@ async def who_chat_handler(
         message: types.Message,
         bot: Bot,
         command: filters.CommandObject,
-        members: Optional[list] = None,
+        members: list | None = None,
 ):
     """find the desired participant, найти участника чата по описанию"""
 
@@ -135,7 +134,7 @@ async def who_chat_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: Optional[list] = None,
+        messages: list | None = None,
 ):
     message = await message.answer(_("<b>Who???</b>"))
     await message.answer(
@@ -202,7 +201,7 @@ async def question_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: Optional[list] = None
+        messages: list | None = None
 ):
     message = await message.answer(_("<b>So what's the question?</b>"))
     await message.answer(
@@ -222,7 +221,7 @@ async def history_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: Optional[list] = None,
+        messages: list | None = None,
 ):
     """tell a story, рассказать историю"""
 
@@ -256,7 +255,7 @@ async def future_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: Optional[list] = None):
+        messages: list | None = None):
     message = await message.answer(_("<b>On coffee grounds?</b>"))
     await message.answer(
         NO_ARGS.format(

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from random import choice, random
-from typing import Optional
 
 from aiogram import Router, Bot, F, types, flags
 from aiogram.utils.chat_action import ChatActionSender
@@ -19,11 +18,11 @@ async def get_gen_args(
         bot: Bot,
         i18n: I18n,
         db: DataBaseContext,
-        messages: Optional[list] = None,
+        messages: list | None = None,
 ) -> dict:
     async def gen_markov() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id):
-            accuracy: Optional[int] = await db.get_data('accuracy')
+            accuracy: int | None = await db.get_data('accuracy')
 
             return {
                 'text': await markov.gen(locale=i18n.current_locale, messages=messages, text=message.text,
@@ -51,7 +50,7 @@ async def gen_reply_handler(
         bot: Bot,
         i18n: I18n,
         db: DataBaseContext,
-        messages: Optional[list] = None,
+        messages: list | None = None,
 ):
     answer = await get_gen_args(message, bot, i18n, db, messages)
 
@@ -66,7 +65,7 @@ async def gen_reply_handler(
 async def gen_chance_filter(message: types.Message, bot: Bot, db: DataBaseContext) -> bool:
     if not message.left_chat_member:
         if datetime.now(tz=message.date.tzinfo) - message.date < timedelta(minutes=5):
-            chance: Optional[float] = await db.get_data('chance')
+            chance: float | None = await db.get_data('chance')
 
             return random() < (chance / await bot.get_chat_member_count(message.chat.id))
 
@@ -82,7 +81,7 @@ async def gen_answer_handler(
         bot: Bot,
         i18n: I18n,
         db: DataBaseContext,
-        messages: Optional[list] = None,
+        messages: list | None = None,
 ):
     answer = await get_gen_args(message, bot, i18n, db, messages)
 

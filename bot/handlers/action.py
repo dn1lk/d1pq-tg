@@ -1,5 +1,4 @@
 from random import choice
-from typing import Optional
 
 from aiogram import Router, Bot, F, filters, types, flags
 from aiogram.utils.i18n import I18n, gettext as _
@@ -41,7 +40,7 @@ async def on_member_join_handler(
         message: types.Message,
         bot: Bot,
         db: DataBaseContext,
-        members: Optional[list] = None
+        members: list | None = None
 ):
     answer = {'user': [], 'bot': []}
 
@@ -96,7 +95,7 @@ async def on_member_join_handler(
 async def on_member_leave_handler(
         message: types.Message,
         db: DataBaseContext,
-        members: Optional[list] = None,
+        members: list | None = None,
 ):
     if members and message.left_chat_member.id in members:
         members.remove(message.left_chat_member.id)

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from aiogram import Router, F, types, flags
 from aiogram.utils.i18n import gettext as _
 
@@ -53,8 +51,8 @@ async def data_update_handler(
 @flags.chat_action("typing")
 async def data_handler(
         query: types.CallbackQuery,
-        messages: Optional[list] = None,
-        members: Optional[dict] = None,
+        messages: list | None = None,
+        members: dict | None = None,
 ):
     answer = _(
         "<b>I am logging some information about this chat.</b>\n\n"

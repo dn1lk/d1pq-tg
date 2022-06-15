@@ -1,13 +1,12 @@
 from json import load
 from random import choice
-from typing import Optional, Union
 
 import markovify
 
 from bot import config
 
 
-def set_data(text: str, messages: Optional[list] = None) -> Optional[list]:
+def set_data(text: str, messages: list | None = None) -> list | None:
     if not messages:
         messages = []
     elif ['DECLINE'] == messages:
@@ -30,7 +29,7 @@ def set_data(text: str, messages: Optional[list] = None) -> Optional[list]:
         return messages
 
 
-def get_base(locale: str, state_size: Optional[int] = 1):
+def get_base(locale: str, state_size: int | None = 1):
     with open(
             config.BASE_DIR / 'locales' / locale / 'war-and-peace.json',
             'r',
@@ -54,11 +53,11 @@ def get_none(locale: str):
 
 async def gen(
         locale: str,
-        messages: Optional[Union[str, list]] = None,
-        text: Optional[str] = None,
-        state_size: Optional[int] = 2,
-        min_words: Optional[int] = None,
-        max_words: Optional[int] = 20,
+        messages: str | list | None = None,
+        text: str | None = None,
+        state_size: int | None = 2,
+        min_words: int | None = None,
+        max_words: int | None = 20,
 ) -> str:
     model = get_base(locale, state_size)
 

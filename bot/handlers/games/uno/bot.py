@@ -5,20 +5,17 @@ from aiogram import types, Bot
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
-from pydantic import BaseModel
 
 from .exceptions import UnoNoUsersException
 from .manager import UnoManager
 
 
-class UnoBot(BaseModel):
-    message: types.Message
-    bot: Bot
+class UnoBot:
+    def __init__(self, message: types.Message, bot: Bot, data: UnoManager):
+        self.message: types.Message = message
+        self.bot: Bot = bot
 
-    data: UnoManager
-
-    class Config:
-        arbitrary_types_allowed = True
+        self.data: UnoManager = data
 
     def __str__(self):
         return f'game:{self.message.chat.id}:uno:bot'
@@ -54,7 +51,7 @@ class UnoBot(BaseModel):
 
             if cards:
                 action.data.current_card, accept = choice(cards)
-                action.message = await action.message.answer_sticker(action.data.current_card.file_id)
+                action.message = await self.message.answer_sticker(action.data.current_card.file_id)
 
                 try:
                     await action.prepare(action.data.current_card, accept)

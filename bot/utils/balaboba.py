@@ -1,5 +1,3 @@
-from typing import Optional
-
 from aiohttp import ClientSession, ContentTypeError
 
 from .markov import get_none
@@ -17,7 +15,7 @@ async def fetch(query: str, intro: int, session: ClientSession) -> str:
         return r["answers"]
 
 
-async def gen(locale: str, query: str, intro: Optional[int] = 0) -> str:
+async def gen(locale: str, query: str, intro: int | None = 0) -> str:
     try:
         async with ClientSession(trust_env=True) as session:
             return await fetch(query, intro=intro, session=session)
