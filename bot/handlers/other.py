@@ -45,6 +45,10 @@ async def get_gen_args(
 
 
 @router.message(magic_data=F.reply_to_message.from_user.id == F.bot.id)
+@flags.throttling('gen')
+@flags.data('messages')
+@flags.gen
+@flags.chat_action("typing")
 async def gen_reply_handler(
         message: types.Message,
         bot: Bot,
@@ -73,6 +77,7 @@ async def gen_chance_filter(message: types.Message, bot: Bot, db: DataBaseContex
 @router.message(F.chat.type == 'private')
 @router.message(f.LevenshteinFilter(lev=('delete', 'делите')))
 @router.message(gen_chance_filter)
+@flags.throttling('gen')
 @flags.data('messages')
 @flags.gen
 @flags.chat_action("typing")

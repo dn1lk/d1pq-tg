@@ -29,9 +29,9 @@ class UnoColors(Enum, metaclass=UnoEnumMeta):
 
 class UnoSpecials(BaseModel):
     draw: int = 0
-    color: bool | None
-    skip: bool | types.User | None
-    reverse: bool | None
+    color: bool = False
+    skip: bool | types.User = False
+    reverse: bool = False
 
 
 class UnoCard(BaseModel):

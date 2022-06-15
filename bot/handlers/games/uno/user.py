@@ -1,4 +1,5 @@
 import asyncio
+from random import choice
 
 from aiogram import Router, F, types, Bot
 from aiogram.dispatcher.fsm.context import FSMContext
@@ -28,13 +29,13 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
             answer = [
                          types.InlineQueryResultCachedSticker(
                              id=str(enum) + ':' + card.id,
-                             sticker_file_id=card.file_id
+                             sticker_file_id=card.file_id,
                          ) for enum, card in enumerate(cards)
                      ] + [
                          types.InlineQueryResultCachedSticker(
                              id='add' + ':' + draw_card.id,
                              sticker_file_id=draw_card.file_id,
-                             input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD))
+                             input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD)),
                          )
                      ]
         else:
@@ -66,7 +67,9 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
     data_uno = UnoAction(message=message, state=state, data=data.pop('uno'))
 
-    card, accept, decline = await data_uno.data.card_filter(bot, message.chat.id, message.from_user, message.sticker)
+    data_uno.data.timer_amount = 0
+    card, accept, decline = data_uno.data.card_filter(message.from_user, message.sticker)
+
     if accept:
         for task in asyncio.all_tasks():
             if task.get_name() == str(data_uno.bot):
@@ -91,8 +94,6 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
     data_uno: UnoAction = UnoAction(message=message, state=state, data=data['uno'])
 
     if message.from_user.id == data_uno.data.next_user.id:
-        data_uno.data.current_user = data_uno.data.next_user
-        data_uno.data.next_user = await data_uno.data.user_next(bot, message.chat.id)
         await data_uno.move(await data_uno.data.user_card_add(bot))
 
         await state.update_data(uno=data_uno.data)
@@ -100,7 +101,7 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
         await message.reply(
             _(
                 "Я, конечно, не против, но сейчас очередь {user}. Придётся подождать =)."
-            ).format(user=get_username(data_uno.data.current_user))
+            ).format(user=get_username(data_uno.data.next_user))
         )
 
 
@@ -112,7 +113,19 @@ async def get_color_handler(message: types.Message, state: FSMContext):
     if data_uno.data.current_special.color and message.from_user.id == data_uno.data.current_user.id:
         data_uno.data.current_card.color = UnoColors[message.text.split()[0]]
 
+        message = await message.answer(
+            choice(
+                (
+                    _("Принято."),
+                    _("Меняем цвет..."),
+                    _("Хоть какой-то разнообразие!"),
+                )
+            ),
+            reply_markup=types.ReplyKeyboardRemove(),
+        )
+
         await data_uno.move()
+        await message.delete()
         await state.update_data(uno=data_uno.data)
     else:
         await message.answer(_("Хорошо.\nКогда получишь специальную карту, выберешь этот цвет ;)."))
@@ -123,24 +136,33 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoAction = UnoAction(message=message, state=state, data=data['uno'])
 
-    if message.reply_to_message.from_user.id in data_uno.data.uno_users_id:
-        data_uno.data.uno_users_id.remove(message.reply_to_message.from_user.id)
+    for user in [
+                    entities.user for entities in message.reply_to_message.entities if entities.user
+                ] + [
+        message.reply_to_message.from_user
+    ]:
+        if user.id in data_uno.data.uno_users_id:
+            data_uno.data.uno_users_id.remove(user.id)
 
-        if message.reply_to_message.from_user.id == message.from_user.id:
-            await message.reply(_("На реакции =)."), reply_markup=types.ReplyKeyboardRemove())
-        else:
-            if message.reply_to_message.from_user.id == bot.id:
-                for task in asyncio.all_tasks():
-                    if task.get_name() == str(data_uno.bot) + ':' + 'uno':
-                        task.cancel()
-                        break
+            if user.id == message.from_user.id:
+                await message.reply(
+                    _("На реакции =)."),
+                    reply_markup=types.ReplyKeyboardRemove()
+                )
+            else:
+                if user.id == bot.id:
+                    for task in asyncio.all_tasks():
+                        if task.get_name() == str(data_uno.bot) + ':' + 'uno':
+                            task.cancel()
+                            break
 
-            await message.reply(
-                await data_uno.data.user_card_add(bot, message.reply_to_message.from_user),
-                reply_markup=types.ReplyKeyboardRemove()
-            )
+                await message.reply(
+                    await data_uno.data.user_card_add(bot, user),
+                    reply_markup=types.ReplyKeyboardRemove()
+                )
 
-        await state.update_data(uno=data_uno.data)
+            await state.update_data(uno=data_uno.data)
+            break
     else:
         await message.answer(_("Сам ты уно!"))
 

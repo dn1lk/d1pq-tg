@@ -1,3 +1,4 @@
+import asyncio
 from random import choice, random, choices
 
 from aiogram import Bot, Router, F, types
@@ -80,7 +81,7 @@ async def start_handler(
         state=state,
         data=UnoManager(
             users=users_dict,
-            current_user=(await bot.get_chat_member(message.chat.id, choice(users))).user,
+            next_user=(await bot.get_chat_member(message.chat.id, choice(users))).user,
             current_special=UnoSpecials()
         )
     )
@@ -89,22 +90,23 @@ async def start_handler(
 
     answer = _("Итак, <b>начнём игру.</b>\n\n")
 
-    if data_uno.data.current_user.id == bot.id:
+    if data_uno.data.next_user.id == bot.id:
         message = await message.reply(answer + _("Какая неожиданность, мой ход."))
 
         from .bot import UnoBot
 
         bot = UnoBot(message=message, bot=bot, data=data_uno.data)
-        await bot.gen(state)
+        cards = tuple(bot.get_cards(await bot.bot.get_me()))
+
+        await bot.gen(state, cards)
     else:
         message = await message.reply(
-            answer + _("{user}, твой ход.").format(user=get_username(data_uno.data.current_user)),
+            answer + _("{user}, твой ход.").format(user=get_username(data_uno.data.next_user)),
             reply_markup=k.game_uno_show_cards(),
         )
 
-        timer(state, uno_timeout, message=message, data_uno=data_uno.data)
-
     await state.update_data(uno=data_uno.data)
+    timer(state, uno_timeout, message=message, data_uno=data_uno.data)
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'start'), F.from_user.id == F.message.entities[1].user.id)

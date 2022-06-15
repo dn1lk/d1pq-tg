@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiogram.dispatcher.filters.callback_data import CallbackData
 from aiogram.utils.i18n import I18n, gettext as _, lazy_gettext as __
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
@@ -5,7 +7,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 class SettingsData(CallbackData, prefix='set'):
     name: str
-    value: object = None
+    value: Any = None
 
 
 BACK = __("Back")
@@ -116,7 +118,7 @@ def data(chat_type: str, members: dict | None = None, messages: list | None = No
 
 class GamesData(CallbackData, prefix='game'):
     game: str
-    value: object = None
+    value: Any = None
 
 
 def game_uno_start():

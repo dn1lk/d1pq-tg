@@ -9,6 +9,7 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 from bot import config
 from .uno.action import UnoAction
 from .uno.manager import UnoManager, UnoKickPoll
+from .uno.exceptions import UnoNoUsersException
 
 
 class Game(StatesGroup):
@@ -32,10 +33,10 @@ def get_cts(locale: str) -> list:
 
 def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
     async def waiter():
-        state_raw = await state.get_state()
+        raw_state = await state.get_state()
 
-        if await state.timer(timeout=60, game=(state_raw or 'game:none').lower().split(':', maxsplit=1)[1]):
-            if state_raw == await state.get_state():
+        if await state.timer(timeout=60, game=str(raw_state).lower().split(':', maxsplit=1)[-1]):
+            if raw_state == await state.get_state():
                 return await coroutine(state=state, **kwargs)
 
     return asyncio.create_task(waiter())
@@ -60,13 +61,22 @@ async def close_timeout(message: types.Message, state: FSMContext, answer: str |
 
 
 async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoManager):
-    if len(data_uno.users) != 2 and state.bot.id in data_uno.users.keys():
+    data_uno.timer_amount += 1
+
+    if data_uno.timer_amount == 3 or len(data_uno.users) == 2 and data_uno.users.get(state.bot.id):
+        try:
+            for user_id in data_uno.users:
+                await data_uno.user_remove(state, user_id)
+        except UnoNoUsersException:
+            await data_uno.user_remove(state, tuple(data_uno.users)[0])
+
         await close_timeout(message, state)
-        await data_uno.user_remove(state)
+
     else:
         message = await message.reply(_("Время вышло.") + " " + await data_uno.user_card_add(state.bot))
+
         for poll_id, poll_data in data_uno.kick_polls.items():
-            if data_uno.current_user.id == poll_data.user_id:
+            if data_uno.next_user.id == poll_data.user_id:
                 await state.bot.delete_message(state.key.chat_id, poll_data.message_id)
                 del data_uno.kick_polls[poll_id]
                 break
@@ -79,20 +89,15 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoMa
 
         data_uno.kick_polls[poll.poll.id] = UnoKickPoll(
             message_id=poll.message_id,
-            user_id=data_uno.current_user.id,
+            user_id=data_uno.next_user.id,
             amount=0,
         )
 
-        await state.update_data(uno=data_uno)
-
-        action = UnoAction(message, state, data_uno)
-
         await asyncio.sleep(3)
 
-        action.data.current_user = action.data.next_user
-        action.data.next_user = await action.data.user_next(state.bot, message.chat.id)
-        await action.move()
+        action = UnoAction(message=message, state=state, data=data_uno)
 
+        await action.move()
         await state.update_data(uno=action.data)
 
 

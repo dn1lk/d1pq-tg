@@ -19,8 +19,8 @@ class UnoKickPoll(BaseModel):
 
 class UnoManager(BaseModel):
     users: dict[int, list[UnoCard]]
-    current_user: types.User
-    next_user: types.User | None
+    current_user: types.User | None
+    next_user: types.User
 
     current_card: UnoCard | None
     current_special: UnoSpecials
@@ -28,8 +28,10 @@ class UnoManager(BaseModel):
     kick_polls: dict[str, UnoKickPoll] | None = dict()
     uno_users_id: list[int] | None = list()
 
+    timer_amount: int = 0
+
     async def user_next(self, bot: Bot, chat_id: int, user_id: int | None = None) -> types.User:
-        user_id = user_id or self.current_user.id
+        user_id = user_id or self.next_user.id
         users = tuple(self.users)
 
         try:
@@ -61,7 +63,7 @@ class UnoManager(BaseModel):
         await state.storage.update_data(state.bot, key, {'uno_chat_id': None})
 
     async def user_card_add(self, bot: Bot, user: types.User | None = None, amount: int | None = 1) -> str:
-        user = user or self.current_user
+        user = user or self.next_user
 
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
 
@@ -79,18 +81,15 @@ class UnoManager(BaseModel):
         self.current_card = card
 
         if len(self.users[self.current_user.id]) == 1:
-            if not self.current_special.draw or self.current_special.skip.id != self.current_user.id:
-                raise UnoNoCardsException("The user has run out of cards in UNO game")
-        else:
-            self.users[self.current_user.id].remove(card)
+            raise UnoNoCardsException("The user has run out of cards in UNO game")
 
-    async def card_filter(
+        self.users[self.current_user.id].remove(card)
+
+    def card_filter(
             self,
-            bot: Bot,
-            chat_id: int,
             user: types.User,
             sticker: types.Sticker | UnoCard
-    ) -> tuple | None:
+    ) -> tuple:
         def get_card() -> UnoCard | None:
             for user_card in self.users[user.id]:
                 if user_card.id == sticker.file_unique_id:
@@ -106,9 +105,8 @@ class UnoManager(BaseModel):
         else:
             card = sticker
 
-        if user.id == self.current_user.id or \
-            self.next_user and user.id == self.next_user.id or \
-                self.current_special.skip and user.id == self.current_special.skip.id:
+        if user.id == self.next_user.id:
+            print(1)
             if not self.current_card:
                 accept = _("Первый ход сделан.")
             elif card.color is UnoColors.special:
@@ -124,20 +122,44 @@ class UnoManager(BaseModel):
             elif card.emoji == self.current_card.emoji:
                 accept = _("Смена цвета!")
             else:
-                decline = _(
-                    "Кто-нибудь, объясните этому игроку, как играть.\n\n"
-                    'Чтобы пропустить ход, выбери последнюю карту в своей колоде.'
+                decline = choice(
+                    (
+                        _("Попытка не засчитана, получай карту! =)."),
+                        _("Просто. Пропусти. Ход."),
+                    )
                 )
-        elif card == self.current_card:
-            accept = _("{user} перебил ход!").format(user=get_username(user))
+        elif card.emoji == self.current_card.emoji:
+            if self.current_user and user.id == self.current_user.id:
+                print(2, card.emoji)
+                accept = _("Продолжаем накидывать карты...")
+            elif self.current_special.skip and user.id == self.current_special.skip.id:
+                print(3, card.special.skip)
+                accept = _("Ха, перекидываем ход.")
+            elif card == self.current_card:
+                print(4, card)
+                accept = choice(
+                    (
+                        _("Игроку {user} удалось перебить ход!"),
+                        _("Даю пари, {user} выиграет эту игру!"),
+                        _("Внезапно, {user}.")
+                    )
+                ).format(user=get_username(user))
+            else:
+                decline = choice(
+                    (
+                        _("Попридержи коней, {user}. Сейчас не твой ход."),
+                        _("Хей, {user}, твоей карте не место на этом ходу."),
+                        _("Нет. Нет, нет, нет. Нет. {user}, ещё раз, нет!")
+                    )
+                ).format(user=get_username(user))
         else:
-            decline = _("Попридержи коней, ковбой. Твоей карте не место на этом ходу, за это ты получаешь к ней пару.")
-
-        if accept:
-            self.current_user = user
-            self.next_user = await self.user_next(bot, chat_id)
-
-            self.current_special.skip = None
+            decline = choice(
+                (
+                    _("Кто-нибудь, объясните этому игроку, как играть."),
+                    _("Давай я просто дам тебе карту и мы сделаем вид, что ничего не было?"),
+                    _("Делаю ставку на твоё поражение."),
+                )
+            )
 
         return card, accept, decline
 
@@ -161,9 +183,7 @@ class UnoManager(BaseModel):
             )
 
         async def skip():
-            self.current_special.skip = self.next_user
-            self.next_user = await self.user_next(bot, chat.id, self.next_user.id)
-
+            self.next_user = self.current_special.skip = await self.user_next(bot, chat.id)
             return choice(
                 (
                     _("{user} лишается хода?"),

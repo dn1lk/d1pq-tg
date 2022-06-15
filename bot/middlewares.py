@@ -5,12 +5,13 @@ from typing import Dict, Any, Awaitable, Callable, Union, Optional
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
 from aiogram.dispatcher.flags.getter import get_flag
 from aiogram.utils.chat_action import ChatActionMiddleware
+from cachetools import TTLCache
 
 from utils import markov
 from utils.database.context import DataBaseContext
 
 
-class FlagsDataMiddleware(BaseMiddleware):
+class DataMiddleware(BaseMiddleware):
     async def __call__(
             self,
             handler: Callable[[Union[types.Message, types.CallbackQuery], Dict[str, Any]], Awaitable[Any]],
@@ -64,6 +65,28 @@ class LogMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+class ThrottlingMiddleware(BaseMiddleware):
+    caches = {
+        "gen": TTLCache(maxsize=10_000, ttl=1)
+    }
+
+    async def __call__(
+            self,
+            handler: Callable[[types.Message, Dict[str, Any]], Awaitable[Any]],
+            event: types.Message,
+            data: Dict[str, Any],
+    ) -> Any:
+        throttling = get_flag(data, "throttling")
+
+        if throttling:
+            if event.chat.id in self.caches[throttling]:
+                return
+            else:
+                self.caches[throttling][event.chat.id] = None
+
+        return await handler(event, data)
+
+
 class UnhandledMiddleware(BaseMiddleware):
     async def __call__(
             self,
@@ -74,6 +97,7 @@ class UnhandledMiddleware(BaseMiddleware):
         result = await handler(event, data)
 
         from aiogram.dispatcher.event.bases import UNHANDLED
+
         if result is UNHANDLED:
             db: DataBaseContext = data['db']
 
@@ -109,8 +133,9 @@ def setup(dp: Dispatcher):
     from utils.database.middleware import DataBaseContextMiddleware
 
     middlewares = (
+        Middleware(inner=ThrottlingMiddleware(), observers=('message',)),
         Middleware(inner=ChatActionMiddleware()),
-        Middleware(inner=FlagsDataMiddleware(), observers=('message', 'callback_query')),
+        Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
         Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage)),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),

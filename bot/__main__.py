@@ -4,7 +4,7 @@ import logging
 from aiogram import Bot, Dispatcher, exceptions
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(levelname)s - %(name)s - %(message)s")
 logging.info("Start bot")
 

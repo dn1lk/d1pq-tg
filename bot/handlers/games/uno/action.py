@@ -23,10 +23,9 @@ class UnoAction:
 
         self.bot: UnoBot = UnoBot(message, state.bot, data)
 
-    class Config:
-        arbitrary_types_allowed = True
-
     async def prepare(self, card: UnoCard, accept: str):
+        self.data.current_user = self.data.next_user = self.message.from_user
+
         try:
             await self.data.current_card_update(card)
 
@@ -62,18 +61,20 @@ class UnoAction:
             )
 
     async def process(self, accept: str):
-        answer = await self.data.card_special(self.state.bot, self.message.chat) or accept
-        print(self.data.current_special)
-
         if self.data.current_special.draw and not self.data.current_card.special.draw:
             await self.message.answer(
-                await self.data.user_card_add(self.state.bot, self.data.current_special.skip,
-                                              self.data.current_special.draw)
+                await self.data.user_card_add(
+                    self.state.bot,
+                    self.data.current_special.skip,
+                    self.data.current_special.draw,
+                )
             )
 
-            self.data.current_special.draw = None
+            self.data.current_special.draw = 0
 
-        await self.next(answer)
+        self.data.current_special.skip = False
+
+        await self.next(await self.data.card_special(self.state.bot, self.message.chat) or accept)
 
     async def next(self, answer: str):
         if self.data.current_special.color:
@@ -88,19 +89,12 @@ class UnoAction:
         await self.move(answer)
 
     async def move(self, answer: str | None = ""):
-        print(self.data.current_user, self.data.next_user)
-        if self.state.bot.id == self.data.next_user.id:
-            asyncio.create_task(self.bot.gen(self.state), name=str(self.bot))
-
-        elif self.data.current_special.skip and self.state.bot.id == self.data.current_special.skip.id and \
-                any(card.special.skip for card in self.data.users[self.state.bot.id]):
-            await asyncio.sleep(choice(range(3)))
-            asyncio.create_task(self.bot.gen(self.state), name=str(self.bot))
-
-        elif self.data.current_card in self.data.users[self.state.bot.id]:
+        self.data.next_user = await self.data.user_next(self.state.bot, self.message.chat.id)
+        cards = tuple(self.bot.get_cards(await self.state.bot.get_me()))
+        print(self.data.next_user.first_name, cards)
+        if cards or self.state.bot.id == self.data.next_user.id:
             await asyncio.sleep(choice(range(5)))
-            asyncio.create_task(self.bot.gen(self.state), name=str(self.bot))
-
+            asyncio.create_task(self.bot.gen(self.state, cards), name=str(self.bot))
         else:
             self.message = await self.message.reply(
                 answer + "\n\n" + choice(
@@ -112,7 +106,7 @@ class UnoAction:
                         _("Передаю ход игроку {user}."),
                     )
                 ).format(user=get_username(self.data.next_user)),
-                reply_markup=k.game_uno_show_cards()
+                reply_markup=k.game_uno_show_cards(),
             )
 
         from .. import timer, uno_timeout
@@ -127,15 +121,21 @@ class UnoAction:
         for poll in self.data.kick_polls.values():
             await self.state.bot.delete_message(self.state.key.chat_id, poll.message_id)
 
-        await self.data.user_remove(self.state, self.data.next_user.id)
+        self.data.current_user = await self.data.user_next(
+            self.state.bot,
+            self.message.chat.id,
+            tuple(self.data.users)[0]
+        )
+
+        await self.data.user_remove(self.state)
         await self.state.set_state()
 
         await self.message.answer(
             _(
                 "<b>Игра закончена.</b>\n\n{user} остался последним игроком."
             ).format(
-                user=get_username(self.data.next_user)
+                user=get_username(self.data.current_user)
+                )
             )
-        )
 
         self.data = None
