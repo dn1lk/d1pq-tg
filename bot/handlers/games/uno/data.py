@@ -139,14 +139,14 @@ class UnoData(BaseModel):
                         _("Just. Skip. Move."),
                     )
                 )
-        elif self.current_user and user.id == self.current_user.id:
-            if card.emoji == self.current_card.emoji:
-                accept = _("Let's keep throwing cards...")
-            elif card.color is self.current_card.color:
+        elif self.current_special.skip and user.id == self.current_special.skip.id == self.current_user.id:
+            if card.color is self.current_card.color:
                 accept = _("Ha, you're in luck!")
             else:
                 decline = _("Good try.")
         elif card.emoji == self.current_card.emoji:
+            if self.current_user and user.id == self.current_user.id:
+                accept = _("Let's keep throwing cards...")
             if self.current_special.skip and user.id == self.current_special.skip.id and \
                     (not self.current_special.color or card.color is self.current_card.color):
                 accept = _("Ha, we throw over the move.")
