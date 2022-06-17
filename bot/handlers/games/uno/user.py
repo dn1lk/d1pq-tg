@@ -17,7 +17,7 @@ router = Router(name='game:uno:user')
 DRAW_CARD = __("Take a card.")
 
 
-@router.inline_query(F.query.lower().in_(('uno', 'уно')))
+@router.inline_query(F.query.lower() == "uno")
 async def inline_handler(inline: types.InlineQuery, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoData = data.get('uno')

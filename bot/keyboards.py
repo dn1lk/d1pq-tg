@@ -131,7 +131,7 @@ def game_uno_start():
 def game_uno_show_cards():
     builder = InlineKeyboardBuilder()
 
-    builder.button(text=_("Show maps"), switch_inline_query_current_chat=_("uno"))
+    builder.button(text=_("Show maps"), switch_inline_query_current_chat="uno")
 
     return builder.as_markup()
 

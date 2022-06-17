@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-17 11:45+0300\n"
+"POT-Creation-Date: 2022-06-17 11:51+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -80,10 +80,6 @@ msgstr ""
 
 #: keyboards.py:134
 msgid "Show maps"
-msgstr ""
-
-#: keyboards.py:134
-msgid "uno"
 msgstr ""
 
 #: keyboards.py:145
@@ -1354,5 +1350,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Не так быстро! Я за тобой не поспеваю..."
+#~ msgstr ""
+
+#~ msgid "uno"
 #~ msgstr ""
 
