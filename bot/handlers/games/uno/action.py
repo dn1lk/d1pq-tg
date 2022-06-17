@@ -46,7 +46,7 @@ class UnoAction:
                         user=get_username(self.data.current_user))
                 )
 
-        await self.process(accept)
+        await self.process(await self.data.card_special(self.state.bot, self.message.chat) or accept)
 
     async def uno(self):
         self.data.uno_users_id.append(self.data.current_user.id)
@@ -64,7 +64,7 @@ class UnoAction:
                 reply_markup=k.game_uno_uno(),
             )
 
-    async def process(self, accept: str):
+    async def process(self, answer: str):
         if self.data.current_special.draw and not self.data.current_card.special.draw:
             await self.message.answer(
                 await self.data.user_card_add(
@@ -79,11 +79,11 @@ class UnoAction:
         self.data.current_special.skip = False
         self.data.current_special.color = False
 
-        await self.next(await self.data.card_special(self.state.bot, self.message.chat) or accept)
+        await self.next(answer)
 
     async def next(self, answer: str):
         if self.data.current_special.color:
-            if self.message.from_user.id == self.state.bot.id:
+            if self.data.current_user.id == self.state.bot.id:
                 answer = await self.bot.get_color()
             else:
                 return await self.message.reply(answer, reply_markup=k.game_uno_color())
