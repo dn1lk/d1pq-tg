@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-17 11:51+0300\n"
+"POT-Creation-Date: 2022-06-17 11:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -768,7 +768,9 @@ msgstr ""
 
 #: handlers/games/uno/data.py:215
 msgid "<b>{amount}</b> card!"
-msgstr ""
+msgid_plural "<b>{amount}</b> cards!"
+msgstr[0] ""
+msgstr[1] ""
 
 #: handlers/games/uno/user.py:17
 msgid "Take a card."

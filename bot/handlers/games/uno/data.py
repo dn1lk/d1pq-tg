@@ -212,7 +212,7 @@ class UnoData(BaseModel):
                         _("{user} risks getting"),
                         _("{user} can get"),
                 )
-            ) + " " + _(
+            ) + " " + ___(
                 "<b>{amount}</b> card!",
                 "<b>{amount}</b> cards!",
                 self.current_special.draw,
