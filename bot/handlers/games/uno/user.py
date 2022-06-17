@@ -98,7 +98,7 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
 
         await action_uno.draw_check()
         await action_uno.move(await action_uno.data.user_card_add(bot))
-        action_uno.data.current_special.skip = message.from_user
+        action_uno.data.current_special.skip = action_uno.data.current_user = message.from_user
 
         await state.update_data(uno=action_uno.data)
     else:

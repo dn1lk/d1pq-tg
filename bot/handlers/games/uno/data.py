@@ -161,7 +161,7 @@ class UnoData(BaseModel):
                         _("No. No no no. No. {user}, again, no!")
                     )
                 ).format(user=get_username(user))
-        elif self.current_special.skip and user.id == self.current_special.skip.id:
+        elif self.current_special.skip and user.id == self.current_user.id == self.current_special.skip.id:
             if card.color is self.current_card.color:
                 accept = _("Ha, you're in luck!")
             else:
