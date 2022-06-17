@@ -4,7 +4,7 @@ from aiogram.utils.i18n import gettext as _
 from bot import keyboards as k
 from bot.utils.database.context import DataBaseContext
 
-from ..settings import UPDATE, UPDATE_AGAIN
+from . import UPDATE, UPDATE_AGAIN
 
 router = Router(name="settings:accuracy")
 router.callback_query.filter(k.SettingsData.filter(F.name == 'accuracy'))
@@ -20,7 +20,7 @@ async def accuracy_update_handler(
 
     await db.set_data(accuracy=accuracy)
     await query.message.edit_text(
-        text=_(
+        _(
             "Text generation accuracy updated successfully: <b>{markov_state}</b>."
         ).format(markov_state=accuracy) + str(UPDATE_AGAIN),
         reply_markup=k.accuracy(accuracy)
@@ -34,7 +34,7 @@ async def accuracy_handler(
         accuracy: int,
 ):
     await query.message.edit_text(
-        text=_(
+        _(
             "Current text generation accuracy: <b>{accuracy}</b>.\n\n"
             "The larger the value, the more accurate, but the text generation will take longer."
         ).format(accuracy=accuracy) + str(UPDATE),

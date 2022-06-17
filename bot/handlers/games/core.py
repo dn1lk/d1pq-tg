@@ -52,7 +52,7 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
         )
     )
 
-    if choice(['bot_var', 'user_var']) == 'bot_var':
+    if choice(('bot_var', 'user_var')) == 'bot_var':
         bot_var = choice(get_cts(i18n.current_locale))
         answer = _("I start! My word: {bot_var}.").format(bot_var=bot_var)
     else:
@@ -61,10 +61,7 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
 
     await state.set_state(Game.cts)
     await state.update_data(cts=(bot_var, [bot_var], 5))
-
-    message = await message.answer(answer)
-
-    timer(state, win_timeout, message=message)
+    timer(state, win_timeout, message=await message.answer(answer))
 
 
 @router.message(F.text.lower().endswith(('rnd', 'рнд')))
@@ -80,7 +77,7 @@ async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stick
             )
         )
 
-    async with ChatActionSender.typing(chat_id=message.chat.id, interval=2):
+    async with ChatActionSender.typing(chat_id=message.chat.id):
         await asyncio.sleep(2)
 
         await state.set_state(Game.rnd)
@@ -104,12 +101,12 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
 
     bot_var = str(choice(range(1, 11)))
 
+    await state.set_state()
     message = await message.reply(_("So my emoji is {bot}. Who guessed? Hmm...").format(bot=bot_var))
 
-    await state.set_state()
     data = await state.get_data()
     user_vars = data.pop('rnd', None)
-    winners = [get_username(user) for user in user_vars.get(bot_var, [])] if user_vars else None
+    winners = [get_username(user) for user in user_vars.get(bot_var, ())] if user_vars else None
 
     await state.set_data(data)
 
@@ -129,5 +126,4 @@ async def rps_handler(message: types.Message, state: FSMContext):
     await state.update_data(rps=(0, 0))
 
     await message.answer(_("Eh, classic. Your move?"), reply_markup=k.game_rps())
-
     timer(state, close_timeout, message=message)

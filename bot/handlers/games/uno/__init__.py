@@ -1,13 +1,4 @@
 from aiogram import Router
-from pydantic import BaseModel
-
-
-class UnoPoll(BaseModel):
-    poll_id: str
-    message_id: int
-    owner_id: int
-
-    users_id: list[int] = list()
 
 
 def setup():

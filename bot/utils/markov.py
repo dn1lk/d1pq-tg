@@ -55,9 +55,9 @@ async def gen(
         locale: str,
         messages: str | list | None = None,
         text: str | None = None,
-        state_size: int | None = 2,
+        state_size: int = 2,
         min_words: int | None = None,
-        max_words: int | None = 20,
+        max_words: int = 20,
 ) -> str:
     model = get_base(locale, state_size)
 

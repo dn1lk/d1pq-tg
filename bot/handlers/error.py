@@ -9,8 +9,8 @@ router = Router(name='error')
 async def errors_handler(event: types.Update, bot: Bot, exception: Exception):
     try:
         await bot.send_message(
-            chat_id=bot.owner_id,
-            text=(
+            bot.owner_id,
+            (
                 f'ERROR while event <b>{event.event_type}</b>:\n\n'
                 f'- <b>exception</b>: {exception}.'
             )

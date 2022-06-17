@@ -10,16 +10,15 @@ from bot import filters as f, keyboards as k
 from bot.utils import markov
 from bot.utils.database.context import DataBaseContext
 
+from bot.handlers import NO_ARGS
 from .middleware import CustomCommandsMiddleware
-from ... import NO_ARGS
-from ...settings import Settings
+from .. import Settings
 
 router = Router(name='settings:commands')
-router.message.filter(f.AdminFilter(is_admin=True), Settings.command)
+router.message.filter(Settings.command, f.AdminFilter(is_admin=True))
 
 router.message.outer_middleware(CustomCommandsMiddleware())
 router.edited_message.outer_middleware(CustomCommandsMiddleware())
-
 router.callback_query.outer_middleware(CustomCommandsMiddleware())
 
 
@@ -56,7 +55,7 @@ async def commands_handler(
     else:
         custom_commands = _("missing.")
 
-    await message.answer(_("Current custom commands:\n\n") + custom_commands)
+    await message.answer(_("Current custom commands:") + "\n\n" + custom_commands)
 
 
 async def commands_setup_no_args_filter(
@@ -131,5 +130,4 @@ async def commands_setup_no_args_handler(
 @router.message()
 async def commands_back_handler(message: types.Message, state: FSMContext):
     await state.clear()
-
     await message.answer(_("<b>Default command not recognized.</b>\n\n/settings - repeat the procedure."))

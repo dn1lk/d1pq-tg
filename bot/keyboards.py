@@ -10,21 +10,18 @@ class SettingsData(CallbackData, prefix='set'):
     value: Any = None
 
 
-BACK = __("Back")
-
-
 def settings():
-    datas = (
-        ('commands', _('Add command')),
-        ('locale', _('Change language')),
-        ('chance', _('Change generation chance')),
-        ('accuracy', _('Change generation accuracy')),
-        ('data', _('Change data policy')),
-    )
+    datas = {
+        'commands': _('Add command'),
+        'locale': _('Change language'),
+        'chance': _('Change generation chance'),
+        'accuracy': _('Change generation accuracy'),
+        'data': _('Change data policy'),
+    }
 
     builder = InlineKeyboardBuilder()
 
-    for name, text in datas:
+    for name, text in datas.items():
         builder.button(text=text, callback_data=SettingsData(name=name))
 
     builder.adjust(1)
@@ -36,6 +33,13 @@ def get_locale_var(locales: tuple) -> zip:
     return zip(locales, ('English', 'Русский'))
 
 
+BACK = __("Back")
+
+
+def back(builder):
+    return builder.button(text=str(BACK), callback_data=SettingsData(name='back'))
+
+
 def locale(i18n: I18n):
     builder = InlineKeyboardBuilder()
 
@@ -43,15 +47,14 @@ def locale(i18n: I18n):
         if code != i18n.current_locale:
             builder.button(text=language, callback_data=SettingsData(name='locale', value=code))
 
-    builder.button(text=str(BACK), callback_data=SettingsData(name='back'))
-
+    back(builder)
     builder.adjust(1)
 
     return builder.as_markup()
 
 
 def chance(markov_chance: int | float):
-    datas = []
+    datas = list()
 
     for i in (6, 10):
         math = round(markov_chance / i, 2)
@@ -65,13 +68,9 @@ def chance(markov_chance: int | float):
     builder = InlineKeyboardBuilder()
 
     for text, value in datas:
-        builder.button(
-            text=text,
-            callback_data=SettingsData(name='chance', value=value)
-        )
+        builder.button(text=text, callback_data=SettingsData(name='chance', value=value))
 
-    builder.button(text=str(BACK), callback_data=SettingsData(name='back'))
-
+    back(builder)
     builder.adjust(2)
 
     return builder.as_markup()
@@ -84,8 +83,7 @@ def accuracy(markov_state: int):
         if i != markov_state:
             builder.button(text=str(i), callback_data=SettingsData(name='accuracy', value=i))
 
-    builder.button(text=str(BACK), callback_data=SettingsData(name='back'))
-
+    back(builder)
     builder.adjust(3, 1)
 
     return builder.as_markup()
@@ -105,12 +103,9 @@ def data(chat_type: str, members: dict | None = None, messages: list | None = No
             callback_data=SettingsData(name='data', value=f'{value}-{"no" if req else "yes"}')
         )
 
-    builder.button(
-        text=_('Delete all data'),
-        callback_data=SettingsData(name='data', value='delete')
-    )
-    builder.button(text=str(BACK), callback_data=SettingsData(name='back'))
+    builder.button(text=_('Delete all data'), callback_data=SettingsData(name='data', value='delete'))
 
+    back(builder)
     builder.adjust(1)
 
     return builder.as_markup()
@@ -183,7 +178,7 @@ def get_game_rps_args() -> dict:
 def game_rps():
     builder = ReplyKeyboardBuilder()
 
-    for item in get_game_rps_args().keys():
+    for item in get_game_rps_args():
         builder.button(text=' '.join(item))
 
     builder.adjust(1)

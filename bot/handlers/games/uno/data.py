@@ -6,27 +6,27 @@ from aiogram.dispatcher.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 from pydantic import BaseModel
 
+from bot.handlers import get_username
 from .cards import UnoCard, UnoSpecials, UnoColors, get_cards
 from .exceptions import UnoNoCardsException, UnoNoUsersException
-from ... import get_username
 
 
-class UnoKickPoll(BaseModel):
+class UnoPollKick(BaseModel):
     message_id: int
     user_id: int
     amount: int
 
 
-class UnoManager(BaseModel):
+class UnoData(BaseModel):
     users: dict[int, list[UnoCard]]
     current_user: types.User | None
     next_user: types.User
 
     current_card: UnoCard | None
-    current_special: UnoSpecials
+    current_special: UnoSpecials = UnoSpecials()
 
-    kick_polls: dict[str, UnoKickPoll] = dict()
-    uno_users_id: list[int] = list()
+    polls_kick: dict[str, UnoPollKick] = {}
+    uno_users_id: list[int] = []
 
     timer_amount: int = 0
 
@@ -75,7 +75,6 @@ class UnoManager(BaseModel):
 
     async def user_card_add(self, bot: Bot, user: types.User | None = None, amount: int | None = 1) -> str:
         user = user or self.next_user
-
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
 
         if user.id == bot.id:
@@ -90,42 +89,40 @@ class UnoManager(BaseModel):
 
     async def current_card_update(self, card: UnoCard):
         self.current_card = card
-
-        if len(self.users[self.current_user.id]) == 1:
-            raise UnoNoCardsException("The user has run out of cards in UNO game")
-
         self.users[self.current_user.id].remove(card)
+
+        if not self.users[self.current_user.id]:
+            raise UnoNoCardsException("The user has run out of cards in UNO game")
 
     def card_filter(
             self,
             user: types.User,
             sticker: types.Sticker | UnoCard
     ) -> tuple:
-        def get_card() -> UnoCard | None:
-            for user_card in self.users[user.id]:
-                if user_card.id == sticker.file_unique_id:
-                    return user_card
-
         accept, decline = None, None
 
         if isinstance(sticker, types.Sticker):
-            card = get_card()
-
-            if not card:
-                return card, accept, _("Что за шутка, эта карта не из твоей колоды.")
+            for user_card in self.users[user.id]:
+                if user_card.id == sticker.file_unique_id:
+                    card = user_card
+                    break
+            else:
+                return sticker, accept, _("Что за шутка, эта карта не из твоей колоды.")
         else:
             card = sticker
 
         if user.id == self.next_user.id:
             if not self.current_card:
                 accept = _("Первый ход сделан.")
-            elif card.color is UnoColors.special:
-                accept = _("Специальная карта!")
+            elif card.color is UnoColors.black:
+                accept = _("Чёрная карта!")
             elif card.color is self.current_card.color:
                 accept = _("Так-с...")
 
                 if self.current_special.color:
-                    color = choice([color for color in UnoColors.tuple() if color is not self.current_card.color]).value
+                    color = choice(
+                        [color for color in UnoColors.names() if color is not self.current_card.color]
+                    ).value
                     accept = _("Ех, нужно было брать {color} цвет.").format(color=color[0] + ' ' + str(color[1]))
             elif card.emoji == self.current_card.emoji:
                 accept = _("Смена цвета!")
@@ -226,6 +223,4 @@ class UnoManager(BaseModel):
                 answer = draw()
 
         if answer:
-            answer = answer.format(user=get_username(self.current_special.skip or self.current_user))
-
-        return answer
+            return answer.format(user=get_username(self.current_special.skip or self.current_user))

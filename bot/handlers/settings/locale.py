@@ -27,7 +27,7 @@ async def locale_update_handler(
 @router.callback_query()
 async def locale_handler(query: types.CallbackQuery, i18n: I18n):
     await query.message.edit_text(
-        text=_("<b>Update bot language.</b>\n\nCurrent language: <b>{locale}</b>. Available languages:").format(
+        _("<b>Update bot language.</b>\n\nCurrent language: <b>{locale}</b>. Available languages:").format(
             locale=dict(k.get_locale_var(i18n.available_locales))[i18n.current_locale]
         ),
         reply_markup=k.locale(i18n)

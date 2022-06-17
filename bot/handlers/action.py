@@ -17,8 +17,8 @@ async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18
         _(
             "{title}, hello! Let's start with answering the obvious questions:\n"
             "- What am I? Bot.\n"
-            "- What can I do? Some things after which something happens...\n\n"
-        ).format(title=event.chat.title) + get_command_list(bot, i18n.current_locale, slice(2)))
+            "- What can I do? Some things after which something happens..."
+        ).format(title=event.chat.title) + "\n\n" + get_command_list(bot, i18n.current_locale, slice(2)))
 
 
 @router.my_chat_member(member_status_changed=filters.LEAVE_TRANSITION)

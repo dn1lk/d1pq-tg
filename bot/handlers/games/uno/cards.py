@@ -5,26 +5,26 @@ from aiogram.utils.i18n import lazy_gettext as __
 from pydantic import BaseModel
 
 
-class UnoEnumMeta(EnumMeta):
+class UnoColorsMeta(EnumMeta):
     def __getitem__(cls, item):
-        try:
+        if item in cls._member_map_:
             return cls._member_map_[item]
-        except KeyError:
+        else:
             for member in cls:
                 if item in member.value:
                     return member
 
-    def tuple(cls):
+    def names(cls):
         return tuple(cls)[:-1]
 
 
-class UnoColors(Enum, metaclass=UnoEnumMeta):
+class UnoColors(Enum, metaclass=UnoColorsMeta):
     blue = '🔵', __('blue')
     green = '🟢', __('green')
     red = '🔴', __('red')
     yellow = '🟡', __('yellow')
 
-    special = '⚫', __('special')
+    black = '⚫', __('black')
 
 
 class UnoSpecials(BaseModel):
@@ -47,48 +47,47 @@ draw_card = UnoCard(
     id='AgADlhYAAtYJCUk',
     file_id='CAACAgIAAxkBAAJ99mKgyaLsi0LGnwOdUI_DhzgN7H1CAAKWFgAC1gkJSZxwlQOpRW3PJAQ',
     emoji='➕',
-    color=UnoColors.special,
-    special=UnoSpecials()
+    color=UnoColors.black,
+    special=UnoSpecials(),
 )
 
 
-def check_value_card(color: UnoColors, emoji: str) -> dict:
+def check_special_card(color: UnoColors, emoji: str) -> dict[str, UnoSpecials]:
     specials = {
         '➕': UnoSpecials(
             skip=True,
-            **{'draw': 4, 'color': True} if color == UnoColors.special else {'draw': 2}
+            **{'draw': 4, 'color': True} if color is UnoColors.black else {'draw': 2}
         ),
         '🏳️\u200d🌈': UnoSpecials(color=True),
         '🚫': UnoSpecials(skip=True),
         '🔃': UnoSpecials(reverse=True),
     }
 
-    return {
-        'special': specials.get(emoji, UnoSpecials()),
-        'emoji': emoji
-    }
+    return {'special': specials.get(emoji, UnoSpecials())}
 
 
 async def get_cards(bot: Bot) -> tuple[UnoCard]:
     def get(stickers: list[types.Sticker]):
         for sticker in stickers[8:10]:
-            color = UnoColors.special
+            color = UnoColors.black
             stickers.remove(sticker)
 
             yield UnoCard(
                 id=sticker.file_unique_id,
                 file_id=sticker.file_id,
                 color=color,
-                **check_value_card(color, sticker.emoji)
+                emoji=sticker.emoji,
+                **check_special_card(color, sticker.emoji)
             )
 
-        for enum, color in enumerate(UnoColors.tuple()):
+        for enum, color in enumerate(UnoColors.names()):
             for sticker in stickers[enum::4]:
                 yield UnoCard(
                     id=sticker.file_unique_id,
                     file_id=sticker.file_id,
                     color=color,
-                    **check_value_card(color, sticker.emoji)
+                    emoji=sticker.emoji,
+                    **check_special_card(color, sticker.emoji)
                 )
 
     return tuple(get((await bot.get_sticker_set('uno_cards')).stickers))

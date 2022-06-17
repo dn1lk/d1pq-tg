@@ -26,8 +26,9 @@ async def hello_handler(message: types.Message, bot: Bot, i18n: I18n):
         _(
             "Hello, {username}. "
             "I am a text generator bot and in some cases a great conversationalist.\n\n"
-            "If you write me a message or a command, something might happen.\n\n"
+            "If you write me a message or a command, something might happen."
         ).format(username=get_username(message.from_user)) +
+        "\n\n" +
         get_command_list(bot, i18n.current_locale, slice(2)),
     )
 
@@ -46,7 +47,8 @@ async def help_handler(message: types.Message, bot: Bot, i18n: I18n):
     """get a list of main commands, получить список основных команд"""
 
     await message.answer(
-        _("List of my main commands - I only accept them together with the required request, in one message:\n\n") +
+        _("List of my main commands - I only accept them together with the required request, in one message:") +
+        "\n\n" +
         get_command_list(bot, i18n.current_locale, slice(2, None))
     )
 
@@ -182,9 +184,7 @@ async def question_handler(
 ):
     """answer the question, ответить на вопрос"""
 
-    message = await message.answer(
-        _("Hm, {args}?\nOk, I need to think...").format(args=command.args)
-    )
+    message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=command.args))
 
     if len(command.args) < 20:
         answer = await balaboba.gen(i18n.current_locale, command.args, 8)

@@ -25,8 +25,12 @@ async def get_gen_args(
             accuracy: int | None = await db.get_data('accuracy')
 
             return {
-                'text': await markov.gen(locale=i18n.current_locale, messages=messages, text=message.text,
-                                         state_size=accuracy)
+                'text': await markov.gen(
+                    locale=i18n.current_locale,
+                    messages=messages,
+                    text=message.text,
+                    state_size=accuracy,
+                )
             }
 
     async def gen_voice() -> dict:  # now working :(

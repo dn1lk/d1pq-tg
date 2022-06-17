@@ -22,7 +22,7 @@ async def game_rnd_answer_handler(message: types.Message, state: FSMContext):
             _("So let's write it down ... Seen in a scam."),
         )
     else:
-        if user_var.get(message.text):
+        if message.text in user_var:
             user_var[message.text].append(message.from_user)
         else:
             user_var[message.text] = message.from_user

@@ -8,16 +8,16 @@ from aiogram.utils.i18n import gettext as _
 from bot import keyboards as k
 from bot.handlers import get_username
 from .cards import UnoCard
+from .data import UnoData
 from .exceptions import UnoNoCardsException
-from .manager import UnoManager
 
 
 class UnoAction:
-    def __init__(self, message: types.Message, state: FSMContext, data: UnoManager):
+    def __init__(self, message: types.Message, state: FSMContext, data: UnoData):
         self.message: types.Message = message
         self.state: FSMContext = state
 
-        self.data: UnoManager | None = data
+        self.data: UnoData | None = data
 
         from .bot import UnoBot
 
@@ -31,17 +31,23 @@ class UnoAction:
 
             if len(self.data.users[self.data.current_user.id]) == 1:
                 await self.uno()
+
+        except ValueError:
+            return await self.message.delete()
+
         except UnoNoCardsException:
+            self.data.next_user = await self.data.user_prev(self.state.bot, self.message.chat.id)
+            await self.data.user_remove(self.state)
+
             if self.data.current_user.id == self.state.bot.id:
-                await self.message.answer(_("Что-ж, у меня закончились карты, вынужден остаться лишь наблюдателем =(."))
+                await self.message.answer(
+                    _("Что-ж, у меня закончились карты, вынужден остаться лишь наблюдателем =(.")
+                )
             else:
                 await self.message.answer(
                     _("{user} использует свою последнюю карту и выходит из игры победителем.").format(
                         user=get_username(self.data.current_user))
                 )
-
-            self.data.next_user = await self.data.user_prev(self.state.bot, self.message.chat.id)
-            await self.data.user_remove(self.state)
 
         await self.process(accept)
 
@@ -83,19 +89,13 @@ class UnoAction:
             if self.message.from_user.id == self.state.bot.id:
                 answer = await self.bot.get_color()
             else:
-                return await self.message.reply(
-                    answer,
-                    reply_markup=k.game_uno_color()
-                )
+                return await self.message.reply(answer, reply_markup=k.game_uno_color())
 
         await self.move(answer)
 
     async def move(self, answer: str | None = ""):
         self.data.next_user = await self.data.user_next(self.state.bot, self.message.chat.id)
-        try:
-            cards = tuple(self.bot.get_cards(await self.state.bot.get_me()))
-        except KeyError:
-            cards = None
+        cards = await self.bot.get_cards()
 
         if cards or self.state.bot.id == self.data.next_user.id:
             asyncio.create_task(self.bot.gen(self.state, cards), name=str(self.bot))
@@ -122,17 +122,18 @@ class UnoAction:
             if task is not asyncio.current_task() and 'uno' in task.get_name():
                 task.cancel()
 
-        for poll in self.data.kick_polls.values():
-            await self.state.bot.delete_message(self.state.key.chat_id, poll.message_id)
+        for poll in self.data.polls_kick.values():
+            await self.state.bot.delete_message(self.message.chat.id, poll.message_id)
 
-        self.data.current_user = await self.data.user_next(
-            self.state.bot,
-            self.message.chat.id,
-            tuple(self.data.users)[0]
-        )
+        self.data.current_user = (
+            await self.state.bot.get_chat_member(
+                self.message.chat.id,
+                tuple(self.data.users)[0],
+            )
+        ).user
 
-        await self.data.user_remove(self.state)
         await self.state.set_state()
+        await self.data.user_remove(self.state)
 
         await self.message.answer(
             _(

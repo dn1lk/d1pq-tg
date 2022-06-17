@@ -41,9 +41,7 @@ async def data_update_handler(
         data = data[1]
 
     await db.set_data({value[0]: data})
-    await query.message.edit_text(
-        text=_("<b>{item} recording {status}.</b>").format(item=item, status=status)
-    )
+    await query.message.edit_text(_("<b>{item} recording {status}.</b>").format(item=item, status=status))
 
 
 @router.callback_query()
@@ -62,7 +60,4 @@ async def data_handler(
     if query.message.chat.type != 'private':
         answer += _("- <b>list of participants</b> - to execute the /who command.\nDefault: disabled.\n\n")
 
-    await query.message.edit_text(
-        text=answer,
-        reply_markup=k.data(query.message.chat.type, members, messages)
-    )
+    await query.message.edit_text(answer, reply_markup=k.data(query.message.chat.type, members, messages))

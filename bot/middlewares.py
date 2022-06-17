@@ -19,12 +19,11 @@ class DataMiddleware(BaseMiddleware):
             data: Dict[str, Any]
     ) -> Any:
         db: DataBaseContext = data['db']
-
-        flag_data: Optional[Union[str, tuple]] = get_flag(data, 'data')
+        flag_data: Optional[Union[str, set]] = get_flag(data, 'data')
 
         if flag_data:
             if isinstance(flag_data, str):
-                flag_data = flag_data,
+                flag_data = {flag_data}
 
             for key in flag_data:
                 value = await db.get_data(key)
@@ -66,9 +65,7 @@ class LogMiddleware(BaseMiddleware):
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    timeouts = {
-        'gen': 1,
-    }
+    timeouts = {'gen': 1}
 
     async def __call__(
             self,

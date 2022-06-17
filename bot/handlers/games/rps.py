@@ -24,7 +24,7 @@ async def game_rps_answer_handler(message: types.Message, state: FSMContext):
     user_var = message.text.lower()
 
     data = await state.get_data()
-    wins, loses = data.pop('rps')
+    wins, loses = data['rps']
 
     if bot_var[1].lower() in user_var:
         result = _("Draw.")
@@ -35,11 +35,10 @@ async def game_rps_answer_handler(message: types.Message, state: FSMContext):
         loses += 1
         result = _("My defeat...")
 
-    answer = _("\n\nScore: {loses}-{wins}.\nPlay again?").format(loses=loses, wins=wins)
-    await message.reply(f'{" ".join(bot_var)}! {result + answer}', reply_markup=k.game_rps())
+    answer = _("Score: {loses}-{wins}.\nPlay again?").format(loses=loses, wins=wins)
+    await message.reply(" ".join(bot_var) + "! " + result + "\n\n" + answer, reply_markup=k.game_rps())
 
     await state.update_data(rps=(wins, loses))
-
     timer(state, close_timeout, message=message)
 
 
@@ -47,5 +46,4 @@ async def game_rps_answer_handler(message: types.Message, state: FSMContext):
 async def game_rps_reply_handler(message: types.Message, state: FSMContext):
     await state.set_state(Game.rps)
     await state.update_data(rps=(0, 0))
-
     return await game_rps_answer_handler(message, state)

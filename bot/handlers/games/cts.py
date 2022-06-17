@@ -77,8 +77,10 @@ async def game_cts_two_no_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     bot_var, cities, failed = data['cts']
 
-    if failed - 1 > 0:
-        end = _("\n\nRemaining attempts: {failed}").format(failed=failed - 1)
+    failed -= 1
+
+    if failed:
+        end = _("Remaining attempts: {failed}").format(failed=failed)
 
         if message.text in cities:
             answer = (
@@ -93,16 +95,16 @@ async def game_cts_two_no_handler(message: types.Message, state: FSMContext):
                 _("My algorithms do not deceive me - you are mistaken!"),
             )
 
-        await state.update_data(cts=(bot_var, cities, failed - 1))
+        await state.update_data(cts=(bot_var, cities, failed))
     else:
         end = str(choice(WINNER))
         answer = (
-            _("You have no attempts left. "),
-            _("Looks like all attempts have been spent. "),
-            _("Where is an ordinary user up to artificial intelligence. All attempts have ended. "),
+            _("You have no attempts left."),
+            _("Looks like all attempts have been spent."),
+            _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
         )
 
         await state.set_state()
         await state.set_data(data)
 
-    await message.reply(choice(answer) + end)
+    await message.reply(choice(answer) + "\n\n" + end)

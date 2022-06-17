@@ -8,8 +8,8 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 from bot import config
 from .uno.action import UnoAction
+from .uno.data import UnoData, UnoPollKick
 from .uno.exceptions import UnoNoUsersException
-from .uno.manager import UnoManager, UnoKickPoll
 
 
 class Game(StatesGroup):
@@ -60,10 +60,10 @@ async def close_timeout(message: types.Message, state: FSMContext, answer: str |
     await state.set_state()
 
 
-async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoManager):
+async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoData):
     data_uno.timer_amount += 1
 
-    if data_uno.timer_amount == 3 or len(data_uno.users) == 2 and data_uno.users.get(state.bot.id):
+    if data_uno.timer_amount >= 3 or len(data_uno.users) == 2 and state.bot.id in data_uno.users:
         try:
             for user_id in data_uno.users:
                 await data_uno.user_remove(state, user_id)
@@ -75,10 +75,10 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoMa
     else:
         message = await message.reply(_("Время вышло.") + " " + await data_uno.user_card_add(state.bot))
 
-        for poll_id, poll_data in data_uno.kick_polls.items():
+        for poll_id, poll_data in data_uno.polls_kick.items():
             if data_uno.next_user.id == poll_data.user_id:
-                await state.bot.delete_message(state.key.chat_id, poll_data.message_id)
-                del data_uno.kick_polls[poll_id]
+                await state.bot.delete_message(message.chat.id, poll_data.message_id)
+                del data_uno.polls_kick[poll_id]
                 break
 
         poll = await message.answer_poll(
@@ -87,7 +87,7 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoMa
             is_anonymous=False,
         )
 
-        data_uno.kick_polls[poll.poll.id] = UnoKickPoll(
+        data_uno.polls_kick[poll.poll.id] = UnoPollKick(
             message_id=poll.message_id,
             user_id=data_uno.next_user.id,
             amount=0,
