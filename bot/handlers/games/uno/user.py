@@ -128,7 +128,6 @@ async def get_color_handler(message: types.Message, state: FSMContext):
         action_uno = UnoAction(message=message, state=state, data=data_uno)
 
         await action_uno.move()
-        await message.delete()
         await state.update_data(uno=action_uno.data)
     else:
         await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
