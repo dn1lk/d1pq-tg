@@ -162,7 +162,7 @@ class UnoData(BaseModel):
                     )
                 ).format(user=get_username(user))
         elif self.current_special.skip and user.id == self.current_user.id == self.current_special.skip.id:
-            if card.color is self.current_card.color:
+            if card.color in (self.current_card.color, UnoColors.black):
                 accept = _("Ha, you're in luck!")
             else:
                 decline = _("Good try.")
