@@ -157,7 +157,7 @@ async def uno_answer(message: types.Message, state: FSMContext, user: types.User
         )
     else:
         await message.reply(
-            await action_uno.data.user_card_add(state.bot, user),
+            await action_uno.data.user_card_add(state.bot, user, 2),
             reply_markup=types.ReplyKeyboardRemove()
         )
 
