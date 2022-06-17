@@ -33,9 +33,6 @@ class UnoAction:
                 await self.uno()
 
         except UnoNoCardsException:
-            self.data.next_user = await self.data.user_prev(self.state.bot, self.message.chat.id)
-            await self.data.user_remove(self.state)
-
             if self.data.current_user.id == self.state.bot.id:
                 await self.message.answer(
                     _("Well, I have run out of cards. I have to remain only an observer =(.")
@@ -45,6 +42,9 @@ class UnoAction:
                     _("{user} puts his last card and leaves the game as the winner.").format(
                         user=get_username(self.data.current_user))
                 )
+
+            self.data.next_user = await self.data.user_prev(self.state.bot, self.message.chat.id)
+            await self.data.user_remove(self.state)
 
         await self.process(accept)
 
