@@ -147,17 +147,17 @@ async def get_color_handler(message: types.Message, state: FSMContext):
 async def uno_answer(message: types.Message, state: FSMContext, user: types.User, action_uno: UnoAction):
     action_uno.data.uno_users_id.remove(user.id)
 
+    for task in asyncio.all_tasks():
+        if task.get_name() == str(action_uno.bot) + ':' + str(user.id) + ':' + 'uno':
+            task.cancel()
+            break
+
     if user.id == message.from_user.id:
         await message.reply(
             _("On reaction =)."),
             reply_markup=types.ReplyKeyboardRemove()
         )
     else:
-        if user.id == state.bot.id:
-            for task in asyncio.all_tasks():
-                if task.get_name() == str(action_uno.bot) + ':' + 'uno':
-                    task.cancel()
-
         await message.reply(
             await action_uno.data.user_card_add(state.bot, user),
             reply_markup=types.ReplyKeyboardRemove()

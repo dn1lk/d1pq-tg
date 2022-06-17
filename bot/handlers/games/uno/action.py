@@ -57,14 +57,20 @@ class UnoAction:
                 reply_markup=k.game_uno_uno(),
             )
 
-            asyncio.create_task(self.bot.uno(), name=str(self.bot) + ':' + 'uno')
+            asyncio.create_task(
+                self.bot.uno(),
+                name=str(self.bot) + ':' + str(self.data.current_user.id) + ':' + 'uno',
+            )
         else:
             await self.message.answer(
                 _("Player {user} has one card left!").format(user=get_username(self.data.current_user)),
                 reply_markup=k.game_uno_uno(),
             )
 
-            asyncio.create_task(self.bot.uno_user(self.data.current_user), name=str(self.bot) + ':' + 'uno')
+            asyncio.create_task(
+                self.bot.uno_user(self.data.current_user),
+                name=str(self.bot) + ':' + str(self.data.current_user.id) + ':' + 'uno',
+            )
 
     async def process(self, accept: str):
         await self.draw_check()
