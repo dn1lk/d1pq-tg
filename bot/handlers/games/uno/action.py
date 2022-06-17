@@ -65,6 +65,12 @@ class UnoAction:
             )
 
     async def process(self, answer: str):
+        await self.draw_check()
+        await self.color_check(answer)
+
+        self.data.current_special.skip = self.data.current_special.color = False
+
+    async def draw_check(self):
         if self.data.current_special.draw and not self.data.current_card.special.draw:
             await self.message.answer(
                 await self.data.user_card_add(
@@ -76,13 +82,8 @@ class UnoAction:
 
             self.data.current_special.draw = 0
 
-        self.data.current_special.skip = False
-        self.data.current_special.color = False
-
-        await self.next(answer)
-
-    async def next(self, answer: str):
-        if self.data.current_special.color:
+    async def color_check(self, answer: str):
+        if self.data.current_special.color and self.message.sticker:
             if self.data.current_user.id == self.state.bot.id:
                 answer = await self.bot.get_color()
             else:
