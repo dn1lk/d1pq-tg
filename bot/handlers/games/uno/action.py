@@ -68,7 +68,9 @@ class UnoAction:
         await self.draw_check()
         await self.color_check(answer)
 
-        self.data.current_special.skip = self.data.current_special.color = False
+        self.data.current_special.color = False
+        if self.data.current_special.skip == self.message.from_user.id:
+            self.data.current_special.skip = False
 
     async def draw_check(self):
         if self.data.current_special.draw and not self.data.current_card.special.draw:
