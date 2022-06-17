@@ -78,7 +78,7 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
                 break
 
         try:
-            action_uno.data.timer_amount = 0
+            action_uno.data.timer_amount = 3
             await action_uno.prepare(card, accept)
         except UnoNoUsersException:
             await action_uno.end()

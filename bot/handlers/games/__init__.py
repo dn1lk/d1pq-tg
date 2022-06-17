@@ -61,9 +61,9 @@ async def close_timeout(message: types.Message, state: FSMContext, answer: str |
 
 
 async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoData):
-    data_uno.timer_amount += 1
+    data_uno.timer_amount -= 1
 
-    if data_uno.timer_amount >= 3 or len(data_uno.users) == 2 and state.bot.id in data_uno.users:
+    if not data_uno.timer_amount or len(data_uno.users) == 2 and state.bot.id in data_uno.users:
         try:
             for user_id in data_uno.users:
                 await data_uno.user_remove(state, user_id)

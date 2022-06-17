@@ -28,7 +28,7 @@ class UnoData(BaseModel):
     polls_kick: dict[str, UnoPollKick] = {}
     uno_users_id: set[int] = set()
 
-    timer_amount: int = 0
+    timer_amount: int = 3
 
     async def user_next(self, bot: Bot, chat_id: int, user_id: int | None = None) -> types.User:
         user_id = user_id or self.next_user.id
