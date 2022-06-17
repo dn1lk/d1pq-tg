@@ -116,14 +116,14 @@ async def start_no_owner_handler(query: types.CallbackQuery):
 
 @router.callback_query(k.GamesData.filter(F.value == 'join'))
 async def game_uno_join(query: types.CallbackQuery):
-    users = {entity.user.id for entity in query.message.entities[1:] if entity.user}
+    users = {entity.user.id for entity in query.message.entities[3:] if entity.user}
 
-    if query.from_user.id in users[1:]:
+    if query.from_user.id in users:
         await query.answer(_("You are already in the list!"))
     else:
         html_text = query.message.html_text
 
-        if len(users) == 1:
+        if not users:
             html_text = html_text.replace(
                 get_username(query.message.entities[1].user),
                 get_username(query.from_user)
@@ -139,11 +139,9 @@ async def game_uno_join(query: types.CallbackQuery):
 
 @router.callback_query(k.GamesData.filter(F.value == 'leave'))
 async def game_uno_leave(query: types.CallbackQuery):
-    users = [entity.user.id for entity in query.message.entities[1:] if entity.user]
+    users = {entity.user.id for entity in query.message.entities[3:] if entity.user}
 
-    if query.from_user.id in users[1:]:
-        users.remove(query.from_user.id)
-
+    if query.from_user.id in users:
         await query.message.edit_text(
             query.message.html_text.replace("\n" + get_username(query.from_user), ""),
             reply_markup=query.message.reply_markup
