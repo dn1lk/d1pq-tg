@@ -18,7 +18,7 @@ DRAW_CARD = __("Take a card.")
 
 
 @router.inline_query(F.query.lower() == "uno")
-async def inline_handler(inline: types.InlineQuery, state: FSMContext):
+async def inline_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoData = data.get('uno')
 
@@ -45,7 +45,7 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
                     title=_("Shall we play UNO?"),
                     input_message_content=types.InputMessageContent(message_text=_("Next time I'm with you!")),
                     description=_("State your desire to play."),
-                    thumb_url='https://upload.wikimedia.org/wikipedia/commons/f/f9/UNO_Logo.svg'
+                    thumb_url=f'https://api.telegram.org/file/bot{bot.token}/documents/file_0.png'
                 )
             ]
     else:
@@ -55,7 +55,7 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
                 title=_("Shall we play UNO?"),
                 input_message_content=types.InputMessageContent(message_text='/play uno'),
                 description=_("Start a new game."),
-                thumb_url='https://upload.wikimedia.org/wikipedia/commons/f/f9/UNO_Logo.svg'
+                thumb_url=f'https://api.telegram.org/file/bot{bot.token}/documents/file_0.png'
             )
         ]
 
