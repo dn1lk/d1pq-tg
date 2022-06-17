@@ -79,7 +79,7 @@ class UnoData(BaseModel):
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
 
         for task in asyncio.all_tasks():
-            if task is not asyncio.current_task() and task.get_name() == str(bot) + ':' + str(user.id) + ':' + 'uno':
+            if task is not asyncio.current_task() and task.get_name().endswith(str(user.id) + ':' + 'uno'):
                 task.cancel()
                 break
 
