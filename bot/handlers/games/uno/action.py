@@ -32,9 +32,6 @@ class UnoAction:
             if len(self.data.users[self.data.current_user.id]) == 1:
                 await self.uno()
 
-        except ValueError:
-            return await self.message.delete()
-
         except UnoNoCardsException:
             self.data.next_user = await self.data.user_prev(self.state.bot, self.message.chat.id)
             await self.data.user_remove(self.state)

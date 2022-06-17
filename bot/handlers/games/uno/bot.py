@@ -49,6 +49,8 @@ class UnoBot:
 
                 try:
                     await action_uno.prepare(action_uno.data.current_card, accept)
+                except ValueError:
+                    return await action_uno.message.delete()
                 except UnoNoUsersException:
                     await action_uno.end()
             else:
