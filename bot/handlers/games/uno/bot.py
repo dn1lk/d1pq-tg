@@ -54,8 +54,10 @@ class UnoBot:
                 except UnoNoUsersException:
                     await action_uno.end()
             else:
-                await action_uno.process(await action_uno.data.user_card_add(self.bot))
-                action_uno.data.current_special.skip = action_uno.data.current_user = action_uno.message.from_user.id
+                await action_uno.draw_check()
+                await action_uno.move(await action_uno.data.user_card_add(self.bot))
+                action_uno.data.current_user = self.message.from_user.id
+
                 await state.update_data(uno=action_uno.data)
 
         await state.update_data(uno=action_uno.data)
