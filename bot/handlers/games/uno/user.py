@@ -14,7 +14,7 @@ from .data import UnoData
 
 router = Router(name='game:uno:user')
 
-DRAW_CARD = __("Беру карту.")
+DRAW_CARD = __("Take a card.")
 
 
 @router.inline_query(F.query.lower().in_(('uno', 'уно')))
@@ -42,9 +42,9 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
             answer = [
                 types.InlineQueryResultArticle(
                     id='no_cards',
-                    title=_("Сыграем в UNO?"),
-                    input_message_content=types.InputMessageContent(message_text='В следующий раз я с вами!'),
-                    description=_("Заявить о желании сыграть."),
+                    title=_("Shall we play UNO?"),
+                    input_message_content=types.InputMessageContent(message_text=_("Next time I'm with you!")),
+                    description=_("State your desire to play."),
                     thumb_url='https://upload.wikimedia.org/wikipedia/commons/f/f9/UNO_Logo.svg'
                 )
             ]
@@ -52,9 +52,9 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
         answer = [
             types.InlineQueryResultArticle(
                 id='no_game',
-                title=_("Сыграем в UNO?"),
+                title=_("Shall we play UNO?"),
                 input_message_content=types.InputMessageContent(message_text='/play uno'),
-                description=_("Инициировать новую игру."),
+                description=_("Start a new game."),
                 thumb_url='https://upload.wikimedia.org/wikipedia/commons/f/f9/UNO_Logo.svg'
             )
         ]
@@ -101,7 +101,7 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
     else:
         await message.reply(
             _(
-                "Я, конечно, не против, но сейчас очередь {user}. Придётся подождать =)."
+                "Of course, I don't mind, but now it's {user}'s turn.\nWe'll have to wait =)."
             ).format(user=get_username(data_uno.next_user))
         )
 
@@ -117,9 +117,9 @@ async def get_color_handler(message: types.Message, state: FSMContext):
         message = await message.answer(
             choice(
                 (
-                    _("Принято."),
-                    _("Меняем цвет..."),
-                    _("Хоть какой-то разнообразие!"),
+                    _("Received."),
+                    _("Changing color..."),
+                    _("Some variety!"),
                 )
             ),
             reply_markup=types.ReplyKeyboardRemove(),
@@ -131,7 +131,7 @@ async def get_color_handler(message: types.Message, state: FSMContext):
         await message.delete()
         await state.update_data(uno=action_uno.data)
     else:
-        await message.answer(_("Хорошо.\nКогда получишь чёрную карту, выберешь этот цвет ;)."))
+        await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
 
 
 @router.message(F.text.in_(k.UNO), F.reply_to_message)
@@ -150,7 +150,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
 
             if user.id == message.from_user.id:
                 await message.reply(
-                    _("На реакции =)."),
+                    _("On reaction =)."),
                     reply_markup=types.ReplyKeyboardRemove()
                 )
             else:
@@ -168,7 +168,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
             await state.update_data(uno=action_uno.data)
             break
     else:
-        await message.answer(_("Сам ты уно!"))
+        await message.reply(_("Nope."))
 
 
 @router.poll_answer()
@@ -183,7 +183,7 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
             await bot.delete_message(state.key.chat_id, data_uno.polls_kick[poll_answer.poll_id].message_id)
             message = await bot.send_message(
                 state.key.chat_id,
-                _("{user} исключён из игры.").format(
+                _("{user} is kicked from the game.").format(
                     user=get_username(
                         (
                             await bot.get_chat_member(

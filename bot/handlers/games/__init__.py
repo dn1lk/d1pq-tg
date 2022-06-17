@@ -73,7 +73,7 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoDa
         await close_timeout(message, state)
 
     else:
-        message = await message.reply(_("Время вышло.") + " " + await data_uno.user_card_add(state.bot))
+        message = await message.reply(_("Time is over.") + " " + await data_uno.user_card_add(state.bot))
 
         for poll_id, poll_data in data_uno.polls_kick.items():
             if data_uno.next_user.id == poll_data.user_id:
@@ -82,7 +82,7 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoDa
                 break
 
         poll = await message.answer_poll(
-            _("Исключить игрока из игры?"),
+            _("Kick a player from the game?"),
             options=[_("Yes"), _("No, keep playing")],
             is_anonymous=False,
         )

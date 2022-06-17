@@ -27,10 +27,10 @@ router.message.filter(commands=['play', 'поиграем'], commands_ignore_cas
 async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     message = await message.answer(
         _(
-            "<b>Поиграем в UNO?</b>\n\n"
-            "Минута на принятие решения!\n"
-            "Вручную начать игру может {user}.\n\n"
-            "<b>Уже в игре:</b>\n"
+            "<b>Let's play UNO?</b>\n\n"
+            "One minute to make a decision!\n"
+            "Game initiator - {user}.\n\n"
+            "<b>Already in the game:</b>\n"
             "{user}"
         ).format(user=get_username(message.from_user)),
         reply_markup=k.game_uno_start(),
@@ -69,7 +69,7 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
 async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list):
     message = await message.answer(
         _(
-            "Mm, {username} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
+            "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
             "Enter any emoji between 1 and 10 and I'll choose "
             "my own in 60 seconds and we'll we'll see which one of you is right."
         ).format(
@@ -102,7 +102,7 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
     bot_var = str(choice(range(1, 11)))
 
     await state.set_state()
-    message = await message.reply(_("So my emoji is {bot}. Who guessed? Hmm...").format(bot=bot_var))
+    message = await message.reply(_("So my variant is {bot_var}. Who guessed? Hmm...").format(bot_var=bot_var))
 
     data = await state.get_data()
     user_vars = data.pop('rnd', None)

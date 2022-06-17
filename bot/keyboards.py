@@ -131,7 +131,7 @@ def game_uno_start():
 def game_uno_show_cards():
     builder = InlineKeyboardBuilder()
 
-    builder.button(text=_("Показать карты"), switch_inline_query_current_chat=_("uno"))
+    builder.button(text=_("Show maps"), switch_inline_query_current_chat=_("uno"))
 
     return builder.as_markup()
 
@@ -142,18 +142,18 @@ def game_uno_color():
     builder = ReplyKeyboardBuilder()
 
     for emoji, color in (color.value for color in tuple(UnoColors)[:-1]):
-        builder.button(text=_("{color} цвет").format(color=' '.join((emoji, str(color).capitalize()))))
+        builder.button(text=_("{color[0]} {color[1]} color").format(color=(emoji, str(color).capitalize())))
 
     builder.adjust(1)
 
     return builder.as_markup(
         resize_keyboard=True,
         selective=True,
-        input_field_placeholder=_("Какой ты выберешь цвет?")
+        input_field_placeholder=_("What color will you choose?")
     )
 
 
-UNO = __("Уно!")
+UNO = __("UNO!")
 
 
 def game_uno_uno():
@@ -163,7 +163,7 @@ def game_uno_uno():
 
     return builder.as_markup(
         resize_keyboard=True,
-        input_field_placeholder=_("Добавишь карту в колоду соперника?")
+        input_field_placeholder=_("Add a card to your opponent's deck?")
     )
 
 

@@ -31,7 +31,7 @@ async def game_rnd_answer_handler(message: types.Message, state: FSMContext):
 
         answer = (
             _("Your choice has been accepted."),
-            _("Do you really think that I will choose THIS emoji? Well, let's see ;)."),
+            _("Do you really think that I will choose THIS number? Well, let's see ;)."),
             _("So let's write..."),
         )
 

@@ -58,9 +58,9 @@ async def start_handler(
         await message.answer(
             choice(
                 (
-                    _("Да-да, я тоже играю!"),
-                    _("Поиграю с вами."),
-                    _("А в игре и я тоже!")
+                    _("Yes, I play too!"),
+                    _("I'll play with you."),
+                    _("I'm with you.")
                 )
             )
         )
@@ -87,16 +87,16 @@ async def start_handler(
 
     await state.set_state(Game.uno)
 
-    answer = _("Итак, <b>начнём игру.</b>\n\n")
+    answer = _("So, <b>let's start the game.</b>") + "\n\n"
 
     if data_uno.next_user.id == bot.id:
-        message = await message.reply(answer + _("Какая неожиданность, мой ход."))
+        message = await message.reply(answer + _("What a surprise, my move."))
         bot_uno = UnoBot(message=message, bot=bot, data=data_uno)
 
         await bot_uno.gen(state, await bot_uno.get_cards())
     else:
         message = await message.reply(
-            answer + _("{user}, твой ход.").format(user=get_username(data_uno.next_user)),
+            answer + _("{user}, your move.").format(user=get_username(data_uno.next_user)),
             reply_markup=k.game_uno_show_cards(),
         )
 
@@ -106,12 +106,12 @@ async def start_handler(
 
 @router.callback_query(k.GamesData.filter(F.value == 'start'), F.from_user.id == F.message.entities[1].user.id)
 async def start_no_users_handler(query: types.CallbackQuery | types.Message):
-    await query.answer(_("А с кем играть то? =)"))
+    await query.answer(_("And who do you play with? =)."))
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'start'))
 async def start_no_owner_handler(query: types.CallbackQuery):
-    await query.answer(_("Ты не можешь начать эту игру."))
+    await query.answer(_("You cannot start this game."))
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'join'))
@@ -119,7 +119,7 @@ async def game_uno_join(query: types.CallbackQuery):
     users = {entity.user.id for entity in query.message.entities[1:] if entity.user}
 
     if query.from_user.id in users[1:]:
-        await query.answer(_("Ты уже участвуешь!"))
+        await query.answer(_("You are already in the list!"))
     else:
         html_text = query.message.html_text
 
@@ -134,7 +134,7 @@ async def game_uno_join(query: types.CallbackQuery):
             reply_markup=query.message.reply_markup
         )
 
-        await query.answer(_("Теперь участников стало на один больше!"))
+        await query.answer(_("Now there are one more players!"))
 
 
 @router.callback_query(k.GamesData.filter(F.value == 'leave'))
@@ -149,6 +149,6 @@ async def game_uno_leave(query: types.CallbackQuery):
             reply_markup=query.message.reply_markup
         )
 
-        await query.answer(_("Теперь участников стало на один меньше!"))
+        await query.answer(_("Now there is one less player!"))
     else:
-        await query.answer(_("Ты ещё не участвуешь!"))
+        await query.answer(_("You are not in the list yet!"))

@@ -41,11 +41,11 @@ class UnoAction:
 
             if self.data.current_user.id == self.state.bot.id:
                 await self.message.answer(
-                    _("Что-ж, у меня закончились карты, вынужден остаться лишь наблюдателем =(.")
+                    _("Well, I have run out of cards. I have to remain only an observer =(.")
                 )
             else:
                 await self.message.answer(
-                    _("{user} использует свою последнюю карту и выходит из игры победителем.").format(
+                    _("{user} puts his last card and leaves the game as the winner.").format(
                         user=get_username(self.data.current_user))
                 )
 
@@ -56,14 +56,14 @@ class UnoAction:
 
         if self.data.current_user.id == self.state.bot.id:
             await self.message.answer(
-                _("У меня осталась одна карта!"),
+                _("I have one card left!"),
                 reply_markup=k.game_uno_uno(),
             )
 
             asyncio.create_task(self.bot.uno(), name=str(self.bot) + ':' + 'uno')
         else:
             await self.message.answer(
-                _("У игрока {user} осталась одна карта!").format(user=get_username(self.data.current_user)),
+                _("Player {user} has one card left!").format(user=get_username(self.data.current_user)),
                 reply_markup=k.game_uno_uno(),
             )
 
@@ -103,11 +103,11 @@ class UnoAction:
             self.message = await self.message.reply(
                 answer + "\n\n" + choice(
                     (
-                        _("{user}, твоя очередь."),
-                        _("{user}, твой ход."),
-                        _("Теперь ходит {user}."),
-                        _("Черёд игрока {user}."),
-                        _("Передаю ход игроку {user}."),
+                        _("{user}, your turn."),
+                        _("{user}, your move."),
+                        _("Now {user} is moving."),
+                        _("Player's turn {user}."),
+                        _("I pass the turn to the player {user}."),
                     )
                 ).format(user=get_username(self.data.next_user)),
                 reply_markup=k.game_uno_show_cards(),
@@ -137,7 +137,7 @@ class UnoAction:
 
         await self.message.answer(
             _(
-                "<b>Игра закончена.</b>\n\n{user} остался последним игроком."
+                "<b>Game over.</b>\n\n{user} is the last player."
             ).format(
                 user=get_username(self.data.current_user)
                 ),

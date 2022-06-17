@@ -32,7 +32,7 @@ async def chance_update_handler(
         await db.set_data(chance=chance * await bot.get_chat_member_count(query.message.chat.id) / 100)
         await query.message.edit_text(answer, reply_markup=k.chance(chance))
     except exceptions.TelegramBadRequest:
-        await query.answer(_("Не так быстро! Я за тобой не поспеваю..."))
+        await query.answer(_("Not so fast! I can't keep up with you..."))
 
 
 @router.callback_query()

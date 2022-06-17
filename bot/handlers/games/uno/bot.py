@@ -23,7 +23,7 @@ class UnoBot:
 
     async def get_color(self) -> str:
         self.data.current_card.color = choice(self.data.users[self.bot.id]).color
-        return _("Я выбираю {color[0]} {color[1]} цвет.").format(color=self.data.current_card.color.value)
+        return _("I choice {color[0]} {color[1]} color.").format(color=self.data.current_card.color.value)
 
     async def get_cards(self) -> tuple:
         def get():

@@ -3,7 +3,7 @@ from random import choices, choice
 from aiogram import Bot, types
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.dispatcher.fsm.storage.base import StorageKey
-from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import gettext as _, ngettext as ___
 from pydantic import BaseModel
 
 from bot.handlers import get_username
@@ -78,10 +78,16 @@ class UnoData(BaseModel):
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
 
         if user.id == bot.id:
-            return _("Я беру {amount} карты =(.").format(amount=amount)
+            return ___(
+                "I take {amount} card =(.",
+                "I take {amount} cards =(.",
+                amount,
+            ).format(amount=amount)
         else:
-            return _(
-                "{user} получает {amount} карты."
+            return ___(
+                "{user} receives {amount} card.",
+                "{user} receives {amount} cards.",
+                amount,
             ).format(
                 user=get_username(user),
                 amount=amount
@@ -107,60 +113,60 @@ class UnoData(BaseModel):
                     card = user_card
                     break
             else:
-                return sticker, accept, _("Что за шутка, эта карта не из твоей колоды.")
+                return sticker, accept, _("What a joke, this card is not from your deck.")
         else:
             card = sticker
 
         if user.id == self.next_user.id:
             if not self.current_card:
-                accept = _("Первый ход сделан.")
+                accept = _("The first move has been made.")
             elif card.color is UnoColors.black:
-                accept = _("Чёрная карта!")
+                accept = _("Black card!")
             elif card.color is self.current_card.color:
-                accept = _("Так-с...")
+                accept = _("So...")
 
                 if self.current_special.color:
                     color = choice(
                         [color for color in UnoColors.names() if color is not self.current_card.color]
                     ).value
-                    accept = _("Ех, нужно было брать {color} цвет.").format(color=color[0] + ' ' + str(color[1]))
+                    accept = _("Eh, I should have taken {color[0]} {color[1]} color.").format(color=color)
             elif card.emoji == self.current_card.emoji:
-                accept = _("Смена цвета!")
+                accept = _("Color change!")
             else:
                 decline = choice(
                     (
-                        _("Попытка не засчитана, получай карту! =)."),
-                        _("Просто. Пропусти. Ход."),
+                        _("Attempt not counted, get a card! =)."),
+                        _("Just. Skip. Move."),
                     )
                 )
         elif card.emoji == self.current_card.emoji:
             if self.current_user and user.id == self.current_user.id:
-                accept = _("Продолжаем накидывать карты...")
+                accept = _("Let's keep throwing cards...")
             elif self.current_special.skip and user.id == self.current_special.skip.id and \
                     (not self.current_card.special.color or card.color is self.current_card.color):
-                accept = _("Ха, перекидываем ход.")
+                accept = _("Ha, we throw over the move.")
             elif card == self.current_card:
                 accept = choice(
                     (
-                        _("Игроку {user} удалось перебить ход!"),
-                        _("Даю пари, {user} выиграет эту игру!"),
-                        _("Внезапно, {user}.")
+                        _("Player {user} managed to take the turn!"),
+                        _("I bet {user} will win this game!"),
+                        _("Suddenly, {user}.")
                     )
                 ).format(user=get_username(user))
             else:
                 decline = choice(
                     (
-                        _("Попридержи коней, {user}. Сейчас не твой ход."),
-                        _("Хей, {user}, твоей карте не место на этом ходу."),
-                        _("Нет. Нет, нет, нет. Нет. {user}, ещё раз, нет!")
+                        _("Hold your horses, {user}. Now is not your turn."),
+                        _("Hey {user}, your card doesn't belong this turn."),
+                        _("No. No no no. No. {user}, again, no!")
                     )
                 ).format(user=get_username(user))
         else:
             decline = choice(
                 (
-                    _("Кто-нибудь, объясните этому игроку, как играть."),
-                    _("Давай я просто дам тебе карту и мы сделаем вид, что ничего не было?"),
-                    _("Делаю ставку на твоё поражение."),
+                    _("Someone explain to this player how to play."),
+                    _("Can I just give you a map and we'll pretend like nothing happened?"),
+                    _("I'm betting on your defeat."),
                 )
             )
 
@@ -171,17 +177,17 @@ class UnoData(BaseModel):
             self.users = dict(reversed(self.users.items()))
             return choice(
                 (
-                    _("И всё наоборот!"),
-                    _("Немного беспорядка..."),
+                    _("And vice versa!"),
+                    _("A bit of a mess..."),
                 )
-            ) + "\n" + _("{user} меняет очередь.")
+            ) + "\n" + _("{user} changes the queue.")
 
         def color():
             self.current_special.color = self.current_card.color
             return choice(
                 (
-                    _("Наконец мы поменяем цвет.\nЧто выберет {user}?"),
-                    _("Новый цвет, новый свет.\nby {user}."),
+                    _("Finally, we will change the color.\nWhat will {user} choose?"),
+                    _("New color, new light.\nby {user}."),
                 )
             )
 
@@ -189,8 +195,8 @@ class UnoData(BaseModel):
             self.next_user = self.current_special.skip = await self.user_next(bot, chat.id)
             return choice(
                 (
-                    _("{user} лишается хода?"),
-                    _("{user} рискует пропустить ход."),
+                    _("{user} loses a turn?"),
+                    _("{user} risks missing a turn."),
                 )
             )
 
@@ -198,15 +204,19 @@ class UnoData(BaseModel):
             self.current_special.draw += self.current_card.special.draw
             return choice(
                 (
-                    _("Как жестоко!"),
-                    _("Вот это сюрприз."),
+                    _("How cruel!"),
+                    _("What a surprise."),
                 )
             ) + "\n" + choice(
                 (
-                        _("{user} рискует получить"),
-                        _("{user} может получить"),
+                        _("{user} risks getting"),
+                        _("{user} can get"),
                 )
-            ) + " " + _("<b>{amount}</b> карты!").format(amount=self.current_special.draw)
+            ) + " " + _(
+                "<b>{amount}</b> card!",
+                "<b>{amount}</b> cards!",
+                self.current_special.draw,
+            ).format(amount=self.current_special.draw)
 
         answer = None
 
