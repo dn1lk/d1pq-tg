@@ -188,7 +188,7 @@ class UnoData(BaseModel):
 
     async def card_special(self, bot: Bot, chat: types.Chat) -> str:
         def reverse():
-            self.users = dict(reversed(self.users))
+            self.users = dict(reversed(self.users.items()))
             return choice(
                 (
                     _("And vice versa!"),
