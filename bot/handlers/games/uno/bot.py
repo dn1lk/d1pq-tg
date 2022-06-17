@@ -73,7 +73,6 @@ class UnoBot:
     async def uno_user(self, user: types.User):
         await asyncio.sleep(choice(range(2, 10)))
 
-        self.data.uno_users_id.remove(user.id)
         await self.data.user_card_add(self.bot, user)
         await self.message.answer(
             get_username(user) + ", " + str(k.UNO),

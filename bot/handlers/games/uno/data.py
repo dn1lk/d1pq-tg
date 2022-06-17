@@ -1,3 +1,4 @@
+import asyncio
 from random import choices, choice
 
 from aiogram import Bot, types
@@ -76,6 +77,14 @@ class UnoData(BaseModel):
     async def user_card_add(self, bot: Bot, user: types.User | None = None, amount: int | None = 1) -> str:
         user = user or self.next_user
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
+
+        for task in asyncio.all_tasks():
+            if task is not asyncio.current_task() and task.get_name() == str(bot) + ':' + str(user.id) + ':' + 'uno':
+                task.cancel()
+                break
+
+        if user.id in self.uno_users_id:
+            self.uno_users_id.remove(user.id)
 
         if user.id == bot.id:
             return ___(
