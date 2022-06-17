@@ -70,7 +70,7 @@ class UnoAction:
         await self.color_check(await self.data.card_special(self.state.bot, self.message.chat) or accept)
 
     async def draw_check(self):
-        if self.data.current_special.draw and not (self.data.current_card.special.draw or self.message.sticker):
+        if self.data.current_special.draw and (not self.data.current_card.special.draw or not self.message.sticker):
             await self.message.answer(
                 await self.data.user_card_add(
                     self.state.bot,
