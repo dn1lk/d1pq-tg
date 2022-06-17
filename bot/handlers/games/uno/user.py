@@ -96,6 +96,11 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
     if message.from_user.id == data_uno.next_user.id:
         action_uno: UnoAction = UnoAction(message=message, state=state, data=data_uno)
 
+        for task in asyncio.all_tasks():
+            if task.get_name() == str(action_uno.bot):
+                task.cancel()
+                break
+
         await action_uno.draw_check()
 
         action_uno.data.current_special.skip = action_uno.data.current_user = message.from_user
