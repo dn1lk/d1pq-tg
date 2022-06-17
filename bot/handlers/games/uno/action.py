@@ -66,14 +66,11 @@ class UnoAction:
 
     async def process(self, accept: str):
         await self.draw_check()
-
-        self.data.current_special.color = False
-        self.data.current_special.skip = False
-
+        self.data.current_special.color = self.data.current_special.skip = False
         await self.color_check(await self.data.card_special(self.state.bot, self.message.chat) or accept)
 
     async def draw_check(self):
-        if self.data.current_special.draw and not self.data.current_card.special.draw:
+        if self.data.current_special.draw and not (self.data.current_card.special.draw or self.message.sticker):
             await self.message.answer(
                 await self.data.user_card_add(
                     self.state.bot,

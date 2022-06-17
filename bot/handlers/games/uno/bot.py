@@ -58,8 +58,6 @@ class UnoBot:
                 await action_uno.move(await action_uno.data.user_card_add(self.bot))
                 action_uno.data.current_user = self.message.from_user.id
 
-                await state.update_data(uno=action_uno.data)
-
         await state.update_data(uno=action_uno.data)
 
     async def uno(self):

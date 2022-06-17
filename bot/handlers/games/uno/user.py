@@ -116,7 +116,7 @@ async def get_color_handler(message: types.Message, state: FSMContext):
     if data_uno.current_special.color and message.from_user.id == data_uno.current_user.id:
         data_uno.current_card.color = UnoColors[message.text.split()[0]]
 
-        message = await message.answer(
+        await message.answer(
             choice(
                 (
                     _("Received."),
