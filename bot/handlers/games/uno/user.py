@@ -45,7 +45,7 @@ async def inline_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext)
                     title=_("Shall we play UNO?"),
                     input_message_content=types.InputMessageContent(message_text=_("Next time I'm with you!")),
                     description=_("State your desire to play."),
-                    thumb_url=f'https://api.telegram.org/file/bot{bot.token}/documents/file_0.png'
+                    thumb_url='https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png',
                 )
             ]
     else:
@@ -55,7 +55,7 @@ async def inline_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext)
                 title=_("Shall we play UNO?"),
                 input_message_content=types.InputMessageContent(message_text='/play uno'),
                 description=_("Start a new game."),
-                thumb_url=f'https://api.telegram.org/file/bot{bot.token}/documents/file_0.png'
+                thumb_url='https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png',
             )
         ]
 
