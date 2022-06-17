@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-17 13:18+0300\n"
+"POT-Creation-Date: 2022-06-17 13:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -675,15 +675,15 @@ msgid "Just. Skip. Move."
 msgstr ""
 
 #: handlers/games/uno/data.py:144
-msgid "Let's keep throwing cards..."
-msgstr ""
-
-#: handlers/games/uno/data.py:146
 msgid "Ha, you're in luck!"
 msgstr ""
 
-#: handlers/games/uno/data.py:148
+#: handlers/games/uno/data.py:146
 msgid "Good try."
+msgstr ""
+
+#: handlers/games/uno/data.py:149
+msgid "Let's keep throwing cards..."
 msgstr ""
 
 #: handlers/games/uno/data.py:152
