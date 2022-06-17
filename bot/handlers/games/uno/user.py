@@ -133,8 +133,31 @@ async def get_color_handler(message: types.Message, state: FSMContext):
         await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
 
 
+async def uno_answer(message: types.Message, state: FSMContext, user: types.User, action_uno: UnoAction):
+    action_uno.data.uno_users_id.remove(user.id)
+
+    if user.id == message.from_user.id:
+        await message.reply(
+            _("On reaction =)."),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+    else:
+        if user.id == state.bot.id:
+            for task in asyncio.all_tasks():
+                if task.get_name() == str(action_uno.bot) + ':' + 'uno':
+                    task.cancel()
+                    break
+
+        await message.reply(
+            await action_uno.data.user_card_add(state.bot, user),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+
+    await state.update_data(uno=action_uno.data)
+
+
 @router.message(F.text.in_(k.UNO), F.reply_to_message)
-async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
+async def uno_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     action_uno: UnoAction = UnoAction(message=message, state=state, data=data['uno'])
 
@@ -145,26 +168,20 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
 
     for user in users:
         if user.id in action_uno.data.uno_users_id:
-            action_uno.data.uno_users_id.remove(user.id)
+            await uno_answer(message, state, user, action_uno)
+            break
+    else:
+        await message.reply(_("Nope."))
 
-            if user.id == message.from_user.id:
-                await message.reply(
-                    _("On reaction =)."),
-                    reply_markup=types.ReplyKeyboardRemove()
-                )
-            else:
-                if user.id == bot.id:
-                    for task in asyncio.all_tasks():
-                        if task.get_name() == str(action_uno.bot) + ':' + 'uno':
-                            task.cancel()
-                            break
 
-                await message.reply(
-                    await action_uno.data.user_card_add(bot, user),
-                    reply_markup=types.ReplyKeyboardRemove()
-                )
+@router.message(F.text.in_(k.UNO), F.chat.type == 'private')
+async def uno_private_handler(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    action_uno: UnoAction = UnoAction(message=message, state=state, data=data['uno'])
 
-            await state.update_data(uno=action_uno.data)
+    for user in message.from_user, await state.bot.get_me():
+        if user.id in action_uno.data.uno_users_id:
+            await uno_answer(message, state, user, action_uno)
             break
     else:
         await message.reply(_("Nope."))

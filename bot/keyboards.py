@@ -56,7 +56,7 @@ def locale(i18n: I18n):
 def chance(markov_chance: int | float):
     datas = list()
 
-    for i in (6, 10):
+    for i in 6, 10:
         math = round(markov_chance / i, 2)
 
         if markov_chance > 10:
