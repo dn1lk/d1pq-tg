@@ -155,7 +155,6 @@ async def uno_answer(message: types.Message, state: FSMContext, user: types.User
             for task in asyncio.all_tasks():
                 if task.get_name() == str(action_uno.bot) + ':' + 'uno':
                     task.cancel()
-                    break
 
         await message.reply(
             await action_uno.data.user_card_add(state.bot, user),

@@ -64,6 +64,8 @@ class UnoAction:
                 reply_markup=k.game_uno_uno(),
             )
 
+            asyncio.create_task(self.bot.uno_user(self.data.current_user), name=str(self.bot) + ':' + 'uno')
+
     async def process(self, accept: str):
         await self.draw_check()
         self.data.current_special.color = self.data.current_special.skip = False

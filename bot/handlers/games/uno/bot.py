@@ -7,6 +7,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
+from bot.handlers import get_username
 from .data import UnoData
 from .exceptions import UnoNoUsersException
 
@@ -68,3 +69,12 @@ class UnoBot:
 
             self.data.uno_users_id.remove(self.bot.id)
             await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
+
+    async def uno_user(self, user: types.User):
+        await asyncio.sleep(choice(range(2, 10)))
+
+        self.data.uno_users_id.remove(user.id)
+        await self.data.user_card_add(self.bot, user)
+        await self.message.answer(
+            get_username(user) + ", " + str(k.UNO),
+            reply_markup=types.ReplyKeyboardRemove())
