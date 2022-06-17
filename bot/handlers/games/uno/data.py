@@ -26,7 +26,7 @@ class UnoData(BaseModel):
     current_special: UnoSpecials = UnoSpecials()
 
     polls_kick: dict[str, UnoPollKick] = {}
-    uno_users_id: list[int] = []
+    uno_users_id: set[int] = []
 
     timer_amount: int = 0
 

@@ -18,9 +18,11 @@ DRAW_CARD = __("Take a card.")
 
 
 @router.inline_query(F.query.lower() == "uno")
-async def inline_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
+async def inline_handler(inline: types.InlineQuery, state: FSMContext):
     data = await state.get_data()
     data_uno: UnoData = data.get('uno')
+
+    thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
     if data_uno:
         cards = data_uno.users.get(inline.from_user.id)
@@ -45,7 +47,7 @@ async def inline_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext)
                     title=_("Shall we play UNO?"),
                     input_message_content=types.InputMessageContent(message_text=_("Next time I'm with you!")),
                     description=_("State your desire to play."),
-                    thumb_url='https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png',
+                    thumb_url=thumb_url,
                 )
             ]
     else:
@@ -55,7 +57,7 @@ async def inline_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext)
                 title=_("Shall we play UNO?"),
                 input_message_content=types.InputMessageContent(message_text='/play uno'),
                 description=_("Start a new game."),
-                thumb_url='https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png',
+                thumb_url=thumb_url,
             )
         ]
 
