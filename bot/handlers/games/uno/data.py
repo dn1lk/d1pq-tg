@@ -159,7 +159,7 @@ class UnoData(BaseModel):
                     (
                         _("Player {user} managed to take the turn!"),
                         _("I bet {user} will win this game!"),
-                        _("Suddenly, {user}.")
+                        _("Suddenly, {user}."),
                     )
                 ).format(user=get_username(user))
             else:
