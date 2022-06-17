@@ -60,7 +60,7 @@ class UnoBot:
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(2, 10)))
+            await asyncio.sleep(choice(range(0, 5)))
 
             self.data.uno_users_id.remove(self.bot.id)
             await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
