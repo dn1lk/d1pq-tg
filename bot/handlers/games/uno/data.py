@@ -143,7 +143,7 @@ class UnoData(BaseModel):
             if self.current_user and user.id == self.current_user.id:
                 accept = _("Let's keep throwing cards...")
             elif self.current_special.skip and user.id == self.current_special.skip.id and \
-                    (not self.current_card.special.color or card.color is self.current_card.color):
+                    (not self.current_special.color or card.color is self.current_card.color):
                 accept = _("Ha, we throw over the move.")
             elif card == self.current_card:
                 accept = choice(
