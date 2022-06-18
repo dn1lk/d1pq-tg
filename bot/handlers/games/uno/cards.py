@@ -18,7 +18,7 @@ class UnoColorsMeta(EnumMeta):
         return tuple(cls)[:-1]
 
 
-class UnoColors(Enum, metaclass=UnoColorsMeta):
+class UnoColors(str, Enum, metaclass=UnoColorsMeta):
     blue = '🔵'
     green = '🟢'
     red = '🔴'
