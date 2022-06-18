@@ -88,7 +88,7 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
         await action_uno.data.user_card_add(bot, message.from_user)
         await message.reply(decline)
 
-    await state.update_data(uno=action_uno.data.dict())
+    await state.update_data(uno=action_uno.data.dict() if action_uno.data else None)
 
 
 @router.message(F.text == DRAW_CARD)
@@ -226,4 +226,4 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
                 action = UnoAction(message, state, data_uno)
                 data_uno = await action.end()
 
-        await state.update_data(uno=data_uno.dict())
+        await state.update_data(uno=data_uno.dict() if data_uno else None)

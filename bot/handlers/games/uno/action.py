@@ -49,7 +49,7 @@ class UnoAction:
         await self.process(accept)
 
     async def uno(self):
-        self.data.uno_users_id.add(self.data.current_user.id)
+        self.data.uno_users_id.append(self.data.current_user.id)
 
         if self.data.current_user.id == self.state.bot.id:
             await self.message.answer(
