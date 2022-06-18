@@ -7,10 +7,9 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters as f, keyboards as k
+from bot.handlers import NO_ARGS
 from bot.utils import markov
 from bot.utils.database.context import DataBaseContext
-
-from bot.handlers import NO_ARGS
 from .middleware import CustomCommandsMiddleware
 from .. import Settings
 

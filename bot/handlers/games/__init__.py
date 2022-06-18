@@ -48,12 +48,12 @@ async def win_timeout(message: types.Message, state: FSMContext):
 
 async def close_timeout(message: types.Message, state: FSMContext, answer: str | None = None):
     answer = answer or choice(
-            (
-                _("You know I won't play with you! Maybe..."),
-                _("Well don't play with me!"),
-                _("I thought we were playing..."),
-                _("It's too slow, I won't play with you!"),
-            )
+        (
+            _("You know I won't play with you! Maybe..."),
+            _("Well don't play with me!"),
+            _("I thought we were playing..."),
+            _("It's too slow, I won't play with you!"),
+        )
     )
 
     await message.reply(answer, reply_markup=types.ReplyKeyboardRemove())

@@ -223,8 +223,8 @@ class UnoData(BaseModel):
                 )
             ) + "\n" + choice(
                 (
-                        _("{user} risks getting"),
-                        _("{user} can get"),
+                    _("{user} risks getting"),
+                    _("{user} can get"),
                 )
             ) + " " + ___(
                 "<b>{amount}</b> card!",

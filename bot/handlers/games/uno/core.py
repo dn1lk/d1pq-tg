@@ -34,10 +34,10 @@ async def start_filter(query: types.CallbackQuery):
     start_filter
 )
 async def start_handler(
-    query: types.CallbackQuery | types.Message,
-    bot: Bot,
-    state: FSMContext,
-    users_id: set | None = None
+        query: types.CallbackQuery | types.Message,
+        bot: Bot,
+        state: FSMContext,
+        users_id: set | None = None
 ):
     message = query.message if isinstance(query, types.CallbackQuery) else query
     message = await message.delete_reply_markup()

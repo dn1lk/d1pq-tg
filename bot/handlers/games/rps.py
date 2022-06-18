@@ -5,7 +5,6 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
-
 from . import Game, timer, close_timeout
 
 router = Router(name='game:rps')

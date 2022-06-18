@@ -1,7 +1,7 @@
 from pathlib import Path
-from pydantic import BaseSettings, SecretStr
 
 from aiogram.utils.i18n import I18n
+from pydantic import BaseSettings, SecretStr
 
 
 class Bot(BaseSettings):

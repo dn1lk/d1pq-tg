@@ -1,5 +1,7 @@
-aiogram==3.0.0b3
-aiohttp==3.8.1
-asyncpg==0.25.0
-markovify==0.9.4
-pydantic==1.9.1
+aiogram>=3.0.0b3
+asyncpg>=0.25.0
+markovify>=0.9.4
+aiohttp>=3.8.1
+pydantic>=1.9.1
+babel>=2.10.3
+google-cloud-texttospeech>=2.11.1

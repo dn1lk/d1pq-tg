@@ -9,8 +9,8 @@ from bot import keyboards as k
 from bot.handlers import get_username
 from .action import UnoAction
 from .cards import UnoColors, draw_card
-from .exceptions import UnoNoUsersException
 from .data import UnoData
+from .exceptions import UnoNoUsersException
 
 router = Router(name='game:uno:user')
 

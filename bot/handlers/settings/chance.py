@@ -3,7 +3,6 @@ from aiogram.utils.i18n import gettext as _
 
 from bot import keyboards as k
 from bot.utils.database.context import DataBaseContext
-
 from . import UPDATE, UPDATE_AGAIN
 
 router = Router(name="settings:chance")

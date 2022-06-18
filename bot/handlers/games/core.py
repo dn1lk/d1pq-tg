@@ -7,7 +7,6 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import keyboards as k
-
 from . import Game, timer, get_cts, win_timeout, close_timeout
 from .. import get_username
 from ..settings.commands.filter import CustomCommandFilter
@@ -70,8 +69,8 @@ async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stick
             "my own in 60 seconds and we'll we'll see which one of you is right."
         ).format(
             username=get_username(message.from_user)
-            )
         )
+    )
 
     async with ChatActionSender.typing(chat_id=message.chat.id):
         await asyncio.sleep(2)

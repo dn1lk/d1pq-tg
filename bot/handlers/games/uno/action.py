@@ -145,8 +145,8 @@ class UnoAction:
                 "<b>Game over.</b>\n\n{user} is the last player."
             ).format(
                 user=get_username(self.data.current_user)
-                ),
+            ),
             reply_markup=types.ReplyKeyboardRemove()
-            )
+        )
 
         self.data = None

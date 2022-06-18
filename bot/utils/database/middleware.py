@@ -12,10 +12,10 @@ class DataBaseContextMiddleware(BaseMiddleware):
         self.storage = storage
 
     async def __call__(
-        self,
-        handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
-        event: types.TelegramObject,
-        data: Dict[str, Any],
+            self,
+            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            event: types.TelegramObject,
+            data: Dict[str, Any],
     ) -> Any:
         bot: Bot = data["bot"]
         pool_db: Pool = data["pool_db"]
@@ -26,11 +26,11 @@ class DataBaseContextMiddleware(BaseMiddleware):
         return await handler(event, data)
 
     def get_context(
-        self,
-        bot: Bot,
-        pool_db: Pool,
-        chat_id: int,
-        destiny: str = DEFAULT_DESTINY,
+            self,
+            bot: Bot,
+            pool_db: Pool,
+            chat_id: int,
+            destiny: str = DEFAULT_DESTINY,
     ) -> DataBaseContext:
         return DataBaseContext(
             bot=bot,

@@ -4,7 +4,6 @@ from aiogram import Router, Bot, F, filters, types, flags
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.utils.database.context import DataBaseContext
-
 from . import get_username, get_command_list
 
 router = Router(name='action')

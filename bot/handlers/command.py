@@ -6,7 +6,6 @@ from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters as f
 from bot.utils import markov, balaboba
-
 from . import NO_ARGS, get_username, get_command_list
 from .settings.commands.filter import CustomCommandFilter
 
@@ -116,9 +115,9 @@ async def who_chat_handler(
             answer = (_("Oh, I don't know you guys... Give me a time."))
     else:
         answer = _(
-                "<b>This command requires permission to record chat participants.</b>\n\n"
-                "/settings - give permission."
-            )
+            "<b>This command requires permission to record chat participants.</b>\n\n"
+            "/settings - give permission."
+        )
 
     await message.answer(answer)
 
