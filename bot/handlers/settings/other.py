@@ -32,6 +32,6 @@ async def no_admin_handler(query: types.CallbackQuery):
     return query.answer(_("These commands are only available to the administrator."))
 
 
-@router.callback_query(k.SettingsData.filter(F.name == 'back'))
+@router.callback_query(k.Settings.filter(F.name == 'back'))
 async def query_handler(query: types.CallbackQuery, bot: Bot):
     await query.message.edit_text(**await get_answer(query.message.chat.id, query.from_user.id, bot))

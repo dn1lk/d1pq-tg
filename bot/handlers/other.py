@@ -25,7 +25,7 @@ async def get_gen_args(
             accuracy: int | None = await db.get_data('accuracy')
 
             return {
-                'text': await markov.gen(
+                'text': markov.gen(
                     locale=i18n.current_locale,
                     messages=messages,
                     text=message.text,

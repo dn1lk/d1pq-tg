@@ -15,7 +15,7 @@ def setup():
     from bot import keyboards as k
 
     router = Router(name='settings')
-    router.callback_query.filter(k.SettingsData.filter(F.name))
+    router.callback_query.filter(k.Settings.filter(F.name))
 
     from .accuracy import router as accuracy_rt
     from .chance import router as chance_rt
@@ -29,8 +29,8 @@ def setup():
         accuracy_rt,
         chance_rt,
         commands_rt,
-        data_rt,
         locale_rt,
+        data_rt,
     )
 
     for sub_router in sub_routers:

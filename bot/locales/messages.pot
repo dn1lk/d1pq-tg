@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-17 19:54+0300\n"
+"POT-Creation-Date: 2022-06-18 17:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,99 +17,91 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.10.1\n"
 
-#: keyboards.py:15
+#: keyboards.py:13
 msgid "Add command"
 msgstr ""
 
-#: keyboards.py:16
+#: keyboards.py:14
 msgid "Change language"
 msgstr ""
 
-#: keyboards.py:17
+#: keyboards.py:15
 msgid "Change generation chance"
 msgstr ""
 
-#: keyboards.py:18
+#: keyboards.py:16
 msgid "Change generation accuracy"
 msgstr ""
 
-#: keyboards.py:19
+#: keyboards.py:17
 msgid "Change data policy"
 msgstr ""
 
-#: keyboards.py:36
+#: keyboards.py:30
 msgid "Back"
 msgstr ""
 
-#: keyboards.py:94
-msgid "messages"
+#: keyboards.py:88
+msgid "{action} {item} recording"
+msgstr ""
+
+#: keyboards.py:89
+msgid "Enable"
+msgstr ""
+
+#: keyboards.py:89
+msgid "Disable"
 msgstr ""
 
 #: keyboards.py:95
-msgid "members"
-msgstr ""
-
-#: keyboards.py:102
-msgid "{req} recording {item}"
-msgstr ""
-
-#: keyboards.py:102
-msgid "Decline"
-msgstr ""
-
-#: keyboards.py:102
-msgid "Allow"
-msgstr ""
-
-#: keyboards.py:106
 msgid "Delete all data"
 msgstr ""
 
-#: handlers/games/__init__.py:86 keyboards.py:122
+#: handlers/games/__init__.py:86 keyboards.py:110
 msgid "Yes"
 msgstr ""
 
-#: keyboards.py:123
+#: keyboards.py:111
 msgid "No"
 msgstr ""
 
-#: keyboards.py:124
+#: keyboards.py:112
 msgid "Start UNO"
 msgstr ""
 
-#: keyboards.py:134
+#: keyboards.py:120
 msgid "Show maps"
 msgstr ""
 
-#: keyboards.py:145
+#: keyboards.py:130
 msgid "{color[0]} {color[1]} color"
 msgstr ""
 
-#: keyboards.py:152
+#: keyboards.py:136
 msgid "What color will you choose?"
 msgstr ""
 
-#: keyboards.py:156
+#: keyboards.py:140
 msgid "UNO!"
 msgstr ""
 
-#: keyboards.py:166
+#: keyboards.py:148
 msgid "Add a card to your opponent's deck?"
 msgstr ""
 
-#: keyboards.py:172 keyboards.py:174
+#: keyboards.py:154 keyboards.py:156
 msgid "Rock"
 msgstr ""
 
-#: keyboards.py:172 keyboards.py:173
+#: keyboards.py:154 keyboards.py:155
 msgid "Scissors"
 msgstr ""
 
-#: keyboards.py:173 keyboards.py:174
+#: keyboards.py:155 keyboards.py:156
 msgid "Paper"
 msgstr ""
 
-#: keyboards.py:186
+#: keyboards.py:167
 msgid "What will you choose?"
 msgstr ""
 
@@ -210,83 +202,83 @@ msgid ""
 "request, in one message:"
 msgstr ""
 
-#: handlers/command.py:73
+#: handlers/command.py:71
 msgid "I choose <b>{choice}</b>."
 msgstr ""
 
-#: handlers/command.py:85
+#: handlers/command.py:83
 msgid "<b>What to choose?</b>"
 msgstr ""
 
-#: handlers/command.py:94
+#: handlers/command.py:92
 msgid "{args[0]} or {args[1]}"
 msgstr ""
 
-#: handlers/command.py:101
+#: handlers/command.py:99
 msgid "This command only works in <b>chats</b>, alas =(."
 msgstr ""
 
-#: handlers/command.py:117
+#: handlers/command.py:115
 msgid "Hmmm, I think {username} {args}"
 msgstr ""
 
-#: handlers/command.py:122
+#: handlers/command.py:120
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr ""
 
-#: handlers/command.py:124
+#: handlers/command.py:122
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
 "/settings - give permission."
 msgstr ""
 
-#: handlers/command.py:141
+#: handlers/command.py:139
 msgid "<b>Who???</b>"
 msgstr ""
 
-#: handlers/command.py:159
+#: handlers/command.py:157
 msgid "Ha! Invalid request, try again."
 msgstr ""
 
-#: handlers/command.py:160
+#: handlers/command.py:158
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr ""
 
-#: handlers/command.py:161
+#: handlers/command.py:159
 msgid "The game is not recognized. I'll give it another try!"
 msgstr ""
 
-#: handlers/command.py:162
+#: handlers/command.py:160
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/command.py:171
+#: handlers/command.py:169
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/command.py:187
+#: handlers/command.py:185
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/command.py:192
+#: handlers/command.py:190
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/command.py:206
+#: handlers/command.py:204
 msgid "<b>So what's the question?</b>"
 msgstr ""
 
-#: handlers/command.py:228
+#: handlers/command.py:226
 msgid "In short, "
 msgstr ""
 
-#: handlers/command.py:259
+#: handlers/command.py:255
 msgid "<b>On coffee grounds?</b>"
 msgstr ""
 
@@ -622,11 +614,11 @@ msgstr ""
 msgid "Now there are one more players!"
 msgstr ""
 
-#: handlers/games/uno/core.py:152
+#: handlers/games/uno/core.py:150
 msgid "Now there is one less player!"
 msgstr ""
 
-#: handlers/games/uno/core.py:154
+#: handlers/games/uno/core.py:152
 msgid "You are not in the list yet!"
 msgstr ""
 
@@ -886,47 +878,46 @@ msgstr ""
 msgid "Current text generation chance: <b>{chance}%</b>."
 msgstr ""
 
-#: handlers/settings/data.py:17
+#: handlers/settings/data.py:13
 msgid "<b>The data was successfully deleted.</b>"
 msgstr ""
 
-#: handlers/settings/data.py:29
-msgid "Members"
+#: handlers/settings/data.py:18
+msgid "<b>{item} recording is {status}.</b>"
 msgstr ""
 
-#: handlers/settings/data.py:33
-msgid "Messages"
-msgstr ""
-
-#: handlers/settings/data.py:37
+#: handlers/settings/data.py:20
 msgid "enabled"
 msgstr ""
 
-#: handlers/settings/data.py:40
+#: handlers/settings/data.py:20
 msgid "disabled"
 msgstr ""
 
+#: handlers/settings/data.py:25 handlers/settings/data.py:47
+msgid "Messages"
+msgstr ""
+
+#: handlers/settings/data.py:31 handlers/settings/data.py:53
+msgid "Members"
+msgstr ""
+
 #: handlers/settings/data.py:44
-msgid "<b>{item} recording {status}.</b>"
-msgstr ""
-
-#: handlers/settings/data.py:55
 msgid ""
-"<b>I am logging some information about this chat.</b>\n"
-"\n"
-"This is necessary for my correct work. What am I recording?\n"
-"\n"
-"- <b>message list</b> - for more accurate and relevant message "
-"generation.\n"
-"Default: enabled.\n"
+"<b>I am recording some information about this chat.</b>\n"
 "\n"
 msgstr ""
 
-#: handlers/settings/data.py:61
-msgid ""
-"- <b>list of participants</b> - to execute the /who command.\n"
-"Default: disabled.\n"
-"\n"
+#: handlers/settings/data.py:47
+msgid "for more accurate and relevant message generation"
+msgstr ""
+
+#: handlers/settings/data.py:53
+msgid "to execute /who command"
+msgstr ""
+
+#: handlers/settings/data.py:58
+msgid "- <b>{item} recording</b> - {description}."
 msgstr ""
 
 #: handlers/settings/locale.py:20

@@ -7,13 +7,13 @@ from bot.utils.database.context import DataBaseContext
 from . import UPDATE, UPDATE_AGAIN
 
 router = Router(name="settings:chance")
-router.callback_query.filter(k.SettingsData.filter(F.name == 'chance'))
+router.callback_query.filter(k.Settings.filter(F.name == 'chance'))
 
 
-@router.callback_query(k.SettingsData.filter(F.value))
+@router.callback_query(k.Settings.filter(F.value))
 async def chance_update_handler(
         query: types.CallbackQuery,
-        callback_data: k.SettingsData,
+        callback_data: k.Settings,
         bot: Bot,
         db: DataBaseContext
 ):

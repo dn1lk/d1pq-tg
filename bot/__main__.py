@@ -22,7 +22,7 @@ async def main():
 
     from utils import database as db
 
-    dp['db_pool'] = db_pool = await db.setup()
+    dp['pool_db'] = pool_db = await db.setup()
 
     import middlewares
     import handlers
@@ -54,7 +54,7 @@ async def main():
 
         finally:
             await bot.session.close()
-            await db_pool.close()
+            await pool_db.close()
 
 
 if __name__ == "__main__":

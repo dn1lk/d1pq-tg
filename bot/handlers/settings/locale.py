@@ -5,14 +5,14 @@ from bot import keyboards as k
 from bot.utils.database.context import DataBaseContext
 
 router = Router(name="settings:locale")
-router.callback_query.filter(k.SettingsData.filter(F.name == 'locale'))
+router.callback_query.filter(k.Settings.filter(F.name == 'locale'))
 
 
-@router.callback_query(k.SettingsData.filter(F.value))
+@router.callback_query(k.Settings.filter(F.value))
 async def locale_update_handler(
         query: types.CallbackQuery,
         i18n: I18n,
-        callback_data: k.SettingsData,
+        callback_data: k.Settings,
         db: DataBaseContext,
 ):
     await db.set_data(locales=callback_data.value)

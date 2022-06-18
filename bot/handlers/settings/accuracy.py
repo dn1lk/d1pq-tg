@@ -7,13 +7,13 @@ from bot.utils.database.context import DataBaseContext
 from . import UPDATE, UPDATE_AGAIN
 
 router = Router(name="settings:accuracy")
-router.callback_query.filter(k.SettingsData.filter(F.name == 'accuracy'))
+router.callback_query.filter(k.Settings.filter(F.name == 'accuracy'))
 
 
-@router.callback_query(k.SettingsData.filter(F.value))
+@router.callback_query(k.Settings.filter(F.value))
 async def accuracy_update_handler(
         query: types.CallbackQuery,
-        callback_data: k.SettingsData,
+        callback_data: k.Settings,
         db: DataBaseContext,
 ):
     accuracy = int(callback_data.value)

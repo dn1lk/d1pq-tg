@@ -8,12 +8,12 @@ from asyncpg import Pool
 
 
 class DataBaseContext:
-    def __init__(self, bot: Bot, dp_pool: Pool, storage: BaseStorage, key: StorageKey):
+    def __init__(self, bot: Bot, pool_db: Pool, storage: BaseStorage, key: StorageKey):
         self.bot = bot
         self.storage = storage
         self.key = key
 
-        self.dp_pool = dp_pool
+        self.pool_db = pool_db
 
     async def get_data(self, key: str) -> Any:
         data = (await self.storage.get_data(bot=self.bot, key=self.key)).get(key)
@@ -21,7 +21,7 @@ class DataBaseContext:
         if data == 'NULL':
             data = None
         elif not data:
-            async with self.dp_pool.acquire() as conn:
+            async with self.pool_db.acquire() as conn:
                 data = await conn.fetchval(f"""SELECT {key} FROM data WHERE ids = $1;""", self.key.chat_id) or \
                        await conn.fetchval(f"""SELECT {key} FROM data WHERE ids = 0;""")
 
@@ -34,7 +34,7 @@ class DataBaseContext:
         if data:
             kwargs.update(data)
 
-        async with self.dp_pool.acquire() as conn:
+        async with self.pool_db.acquire() as conn:
             for key, data in kwargs.items():
                 await conn.execute(
                     f"INSERT INTO data (ids, {key}) VALUES ($1, $2) ON CONFLICT (ids) DO UPDATE SET {key} = $2;",
@@ -48,7 +48,7 @@ class DataBaseContext:
         if data:
             kwargs.update(data)
 
-        async with self.dp_pool.acquire() as conn:
+        async with self.pool_db.acquire() as conn:
             for key, data in kwargs.items():
                 await conn.execute(f"UPDATE data SET {key} = $2 WHERE ids = $1;", self.key.chat_id, data)
 
@@ -56,7 +56,7 @@ class DataBaseContext:
         timer(self, storage=key)
 
     async def clear(self) -> None:
-        async with self.dp_pool.acquire() as conn:
+        async with self.pool_db.acquire() as conn:
             await conn.execute(f"DELETE FROM data WHERE ids = $1;", self.key.chat_id)
 
         await self.storage.set_data(bot=self.bot, key=self.key, data={})

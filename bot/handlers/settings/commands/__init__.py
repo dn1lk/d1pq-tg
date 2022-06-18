@@ -22,7 +22,7 @@ router.edited_message.outer_middleware(CustomCommandsMiddleware())
 router.callback_query.outer_middleware(CustomCommandsMiddleware())
 
 
-@router.callback_query(k.SettingsData.filter(F.name == 'commands'))
+@router.callback_query(k.Settings.filter(F.name == 'commands'))
 @flags.data('messages')
 async def commands_handler(
         query: types.CallbackQuery,

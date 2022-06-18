@@ -56,9 +56,7 @@ async def help_handler(message: types.Message, bot: Bot, i18n: I18n):
 async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
     return {
         'command': command.command,
-        'args': (
-            await markov.gen(locale=i18n.current_locale, text=command.command, max_words=5, **kwargs)
-        ).lower()
+        'args': (markov.gen(locale=i18n.current_locale, text=command.command, max_words=5, **kwargs)).lower()
     }
 
 
@@ -231,9 +229,7 @@ async def history_handler(
 
     # await message.answer(await aiobalaboba.get(query, 6)) not working
 
-    await message.answer(
-        await markov.gen(i18n.current_locale, messages, query, 2, min_words=25, max_words=100)
-    )
+    await message.answer(markov.gen(i18n.current_locale, messages, query, 2, min_words=25, max_words=100))
 
 
 @router.message(commands=['future', 'погадай'], commands_ignore_case=True, command_magic=F.args)
