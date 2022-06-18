@@ -126,8 +126,8 @@ def game_uno_color():
 
     builder = ReplyKeyboardBuilder()
 
-    for emoji, color in (color.value for color in tuple(UnoColors)[:-1]):
-        builder.button(text=_("{color[0]} {color[1]} color").format(color=(emoji, str(color).capitalize())))
+    for color in UnoColors.names():
+        builder.button(text=_("{color[0]} {color[1]} color").format(color=color.value + color.get_color(color)))
 
     builder.adjust(1)
     return builder.as_markup(

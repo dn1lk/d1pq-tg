@@ -24,7 +24,10 @@ class UnoBot:
 
     async def get_color(self) -> str:
         self.data.current_card.color = choice(self.data.users[self.bot.id]).color
-        return _("I choice {color[0]} {color[1]} color.").format(color=self.data.current_card.color.value)
+        return _("I choice {emoji} {color} color.").format(
+            emoji=self.data.current_card.color.value,
+            color=self.data.current_card.color.get_color(),
+        )
 
     async def get_cards(self) -> tuple:
         def get():
@@ -61,7 +64,7 @@ class UnoBot:
                 action_uno.data.current_special.skip = action_uno.data.current_user = self.message.from_user
                 await action_uno.move()
 
-        await state.update_data(uno=action_uno.data)
+        await state.update_data(uno=action_uno.data.json())
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):

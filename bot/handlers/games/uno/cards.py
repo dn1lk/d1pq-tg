@@ -1,7 +1,7 @@
 from enum import Enum, EnumMeta
 
 from aiogram import types, Bot
-from aiogram.utils.i18n import lazy_gettext as __
+from aiogram.utils.i18n import gettext as _
 from pydantic import BaseModel
 
 
@@ -19,12 +19,23 @@ class UnoColorsMeta(EnumMeta):
 
 
 class UnoColors(Enum, metaclass=UnoColorsMeta):
-    blue = '🔵', __('blue')
-    green = '🟢', __('green')
-    red = '🔴', __('red')
-    yellow = '🟡', __('yellow')
+    blue = '🔵'
+    green = '🟢'
+    red = '🔴'
+    yellow = '🟡'
 
-    black = '⚫', __('black')
+    black = '⚫'
+
+    def get_color(self):
+        colors = {
+            self.blue: _("Blue"),
+            self.green: _("Green"),
+            self.red: _('Red'),
+            self.yellow: _('Yellow'),
+            self.black: _('Black'),
+        }
+
+        return colors.get(self)
 
 
 class UnoSpecials(BaseModel):

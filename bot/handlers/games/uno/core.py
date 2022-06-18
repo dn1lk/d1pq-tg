@@ -100,7 +100,7 @@ async def start_handler(
             reply_markup=k.game_uno_show_cards(),
         )
 
-        await state.update_data(uno=data_uno)
+        await state.update_data(uno=data_uno.json())
         timer(state, uno_timeout, message=message, data_uno=data_uno)
 
 

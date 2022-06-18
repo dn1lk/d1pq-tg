@@ -18,6 +18,7 @@ class Heroku(BaseSettings):
     port: int = 8080
 
     database_url: str
+    redis_url: str
 
 
 class Google(BaseSettings):

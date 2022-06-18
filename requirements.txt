@@ -5,3 +5,4 @@ aiohttp>=3.8.1
 pydantic>=1.9.1
 babel>=2.10.3
 google-cloud-texttospeech>=2.11.1
+redis>=4.3.3
