@@ -11,14 +11,10 @@ from bot import keyboards as k
 from . import Game, timer, get_cts, win_timeout, close_timeout
 from .. import get_username
 from ..settings.commands.filter import CustomCommandFilter
-from ..settings.commands.middleware import CustomCommandsMiddleware
 
 router = Router(name='game:core')
 router.message.filters[1] = CustomCommandFilter
 router.edited_message.filters[1] = CustomCommandFilter
-
-router.message.outer_middleware(CustomCommandsMiddleware())
-router.edited_message.outer_middleware(CustomCommandsMiddleware())
 
 router.message.filter(commands=['play', 'поиграем'], commands_ignore_case=True)
 

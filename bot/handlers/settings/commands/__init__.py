@@ -17,8 +17,6 @@ from .. import Settings
 router = Router(name='settings:commands')
 router.message.filter(Settings.command, f.AdminFilter(is_admin=True))
 
-router.message.outer_middleware(CustomCommandsMiddleware())
-router.edited_message.outer_middleware(CustomCommandsMiddleware())
 router.callback_query.outer_middleware(CustomCommandsMiddleware())
 
 

@@ -124,7 +124,7 @@ class UnhandledMiddleware(BaseMiddleware):
 class Middleware:
     inner: Optional[BaseMiddleware] = None
     outer: Optional[BaseMiddleware] = None
-    observers: Optional[tuple] = 'update',
+    observers: Optional[Union[tuple, str]] = 'update',
 
 
 def setup(dp: Dispatcher):
@@ -132,18 +132,23 @@ def setup(dp: Dispatcher):
 
     from locales.middleware import I18nContextMiddleware
     from utils.database.middleware import DataBaseContextMiddleware
+    from handlers.settings.commands.middleware import CustomCommandsMiddleware
 
     middlewares = (
-        Middleware(inner=ThrottlingMiddleware(), observers=('message',)),
+        Middleware(inner=ThrottlingMiddleware(), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
         # Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage)),
+        Middleware(outer=CustomCommandsMiddleware(), observers='message'),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
-        Middleware(outer=UnhandledMiddleware(), observers=('message',)),
+        Middleware(outer=UnhandledMiddleware(), observers='message'),
     )
 
     for middleware in middlewares:
+        if isinstance(middleware.observers, str):
+            middleware.observers = [middleware.observers]
+
         for observer in middleware.observers:
             register = dp.observers[observer]
 

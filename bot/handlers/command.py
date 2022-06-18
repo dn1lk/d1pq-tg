@@ -9,14 +9,10 @@ from bot.utils import markov, balaboba
 
 from . import NO_ARGS, get_username, get_command_list
 from .settings.commands.filter import CustomCommandFilter
-from .settings.commands.middleware import CustomCommandsMiddleware
 
 router = Router(name="commands")
 router.message.filters[1] = CustomCommandFilter
 router.edited_message.filters[1] = CustomCommandFilter
-
-router.message.outer_middleware(CustomCommandsMiddleware())
-router.edited_message.outer_middleware(CustomCommandsMiddleware())
 
 
 @router.message(~F.from_user.is_bot, f.LevenshteinFilter(lev={'hello', 'hey', 'здравствуйте', 'привет'}))
