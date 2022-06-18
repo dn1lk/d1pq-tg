@@ -20,12 +20,12 @@ DRAW_CARD = __("Take a card.")
 @router.inline_query(F.query.lower() == "uno")
 async def inline_handler(inline: types.InlineQuery, state: FSMContext):
     data = await state.get_data()
-    data_uno: str | None = data.get('uno')
+    data_uno: dict | None = data.get('uno')
 
     thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
     if data_uno:
-        data_uno: UnoData = UnoData.parse_raw(data_uno)
+        data_uno: UnoData = UnoData(**data_uno)
         cards = data_uno.users.get(inline.from_user.id)
 
         if cards:
@@ -68,7 +68,7 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
 @router.message(F.sticker.set_name == 'uno_cards')
 async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
-    action_uno: UnoAction = UnoAction(message=message, state=state, data=UnoData.parse_raw(data['uno']))
+    action_uno: UnoAction = UnoAction(message=message, state=state, data=UnoData(**data['uno']))
 
     card, accept, decline = action_uno.data.card_filter(message.from_user, message.sticker)
 
@@ -94,7 +94,7 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
 @router.message(F.text == DRAW_CARD)
 async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
     data = await state.get_data()
-    data_uno: UnoData = UnoData.parse_raw(data['uno'])
+    data_uno: UnoData = UnoData(**data['uno'])
 
     if message.from_user.id == data_uno.next_user.id:
         action_uno: UnoAction = UnoAction(message=message, state=state, data=data_uno)
@@ -121,7 +121,7 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
 @router.message(F.text.func(lambda text: any(color.value in text for color in UnoColors)))
 async def get_color_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    data_uno: UnoData = UnoData.parse_raw(data['uno'])
+    data_uno: UnoData = UnoData(**data['uno'])
 
     if data_uno.current_special.color and message.from_user.id == data_uno.current_user.id:
         data_uno.current_card.color = UnoColors[message.text.split()[0]]
@@ -168,7 +168,7 @@ async def uno_answer(message: types.Message, state: FSMContext, user: types.User
 @router.message(F.text.in_(k.UNO), F.reply_to_message)
 async def uno_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    action_uno: UnoAction = UnoAction(message=message, state=state, data=UnoData.parse_raw(data['uno']))
+    action_uno: UnoAction = UnoAction(message=message, state=state, data=UnoData(**data['uno']))
 
     users = [message.reply_to_message.from_user]
 
@@ -186,7 +186,7 @@ async def uno_handler(message: types.Message, state: FSMContext):
 @router.message(F.text.in_(k.UNO), F.chat.type == 'private')
 async def uno_private_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    action_uno: UnoAction = UnoAction(message=message, state=state, data=UnoData.parse_raw(data['uno']))
+    action_uno: UnoAction = UnoAction(message=message, state=state, data=UnoData(**data['uno']))
 
     for user in message.from_user, await state.bot.get_me():
         if user.id in action_uno.data.uno_users_id:
@@ -199,7 +199,7 @@ async def uno_private_handler(message: types.Message, state: FSMContext):
 @router.poll_answer()
 async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMContext):
     data = await state.get_data()
-    data_uno: UnoData = UnoData.parse_raw(data['uno'])
+    data_uno: UnoData = UnoData(**data['uno'])
 
     if poll_answer.option_ids == [0] and poll_answer.poll_id in data_uno.polls_kick:
         data_uno.polls_kick[poll_answer.poll_id].amount += 1
