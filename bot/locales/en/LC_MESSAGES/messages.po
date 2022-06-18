@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-18 17:15+0300\n"
+"POT-Creation-Date: 2022-06-18 19:21+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.1\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: keyboards.py:13
 msgid "Add command"
@@ -114,82 +114,82 @@ msgid ""
 "For example: /{command} {args}"
 msgstr ""
 
-#: handlers/action.py:17
+#: handlers/action.py:16
 msgid ""
 "{title}, hello! Let's start with answering the obvious questions:\n"
 "- What am I? Bot.\n"
 "- What can I do? Some things after which something happens..."
 msgstr ""
 
-#: handlers/action.py:63
+#: handlers/action.py:62
 msgid "All bacchanalia, with you {username}!"
 msgstr ""
 
-#: handlers/action.py:64
+#: handlers/action.py:63
 msgid "You don't have to clap, {username} is with us."
 msgstr ""
 
-#: handlers/action.py:65
+#: handlers/action.py:64
 msgid "Do not meet, now we have {username}!"
 msgstr ""
 
-#: handlers/action.py:74
+#: handlers/action.py:73
 msgid "AAAND..."
 msgstr ""
 
-#: handlers/action.py:75
+#: handlers/action.py:74
 msgid "But that's not all!"
 msgstr ""
 
-#: handlers/action.py:76
+#: handlers/action.py:75
 msgid "Well, that's not all... Oh, yes!"
 msgstr ""
 
-#: handlers/action.py:85
+#: handlers/action.py:84
 msgid "Greetings, {username}!"
 msgstr ""
 
-#: handlers/action.py:86
+#: handlers/action.py:85
 msgid "Welcome, {username}!"
 msgstr ""
 
-#: handlers/action.py:87
+#: handlers/action.py:86
 msgid "{username}... Who is it?"
 msgstr ""
 
-#: handlers/action.py:106
+#: handlers/action.py:105
 msgid "Ha, and so be it!"
 msgstr ""
 
-#: handlers/action.py:107
+#: handlers/action.py:106
 msgid "Nothing to chat here."
 msgstr ""
 
-#: handlers/action.py:108
+#: handlers/action.py:107
 msgid "Bye-bye."
 msgstr ""
 
-#: handlers/action.py:112
+#: handlers/action.py:111
 msgid "I'll miss :(."
 msgstr ""
 
-#: handlers/action.py:113
+#: handlers/action.py:112
 msgid "We've lost a great man... Wait, was that a man?"
 msgstr ""
 
-#: handlers/action.py:114
+#: handlers/action.py:113
 msgid "Let's remember."
 msgstr ""
 
-#: handlers/action.py:115
+#: handlers/action.py:114
 msgid "Get out of here, user!"
 msgstr ""
 
-#: handlers/action.py:116
+#: handlers/action.py:115
 msgid "And it all started so nicely..."
 msgstr ""
 
-#: handlers/command.py:26
+#: handlers/command.py:21
 msgid ""
 "Hello, {username}. I am a text generator bot and in some cases a great "
 "conversationalist.\n"
@@ -197,89 +197,89 @@ msgid ""
 "If you write me a message or a command, something might happen."
 msgstr ""
 
-#: handlers/command.py:50
+#: handlers/command.py:45
 msgid ""
 "List of my main commands - I only accept them together with the required "
 "request, in one message:"
 msgstr ""
 
-#: handlers/command.py:71
+#: handlers/command.py:66
 msgid "I choose <b>{choice}</b>."
 msgstr ""
 
-#: handlers/command.py:83
+#: handlers/command.py:78
 msgid "<b>What to choose?</b>"
 msgstr ""
 
-#: handlers/command.py:92
+#: handlers/command.py:87
 msgid "{args[0]} or {args[1]}"
 msgstr ""
 
-#: handlers/command.py:99
+#: handlers/command.py:94
 msgid "This command only works in <b>chats</b>, alas =(."
 msgstr ""
 
-#: handlers/command.py:115
+#: handlers/command.py:110
 msgid "Hmmm, I think {username} {args}"
 msgstr ""
 
-#: handlers/command.py:120
+#: handlers/command.py:115
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr ""
 
-#: handlers/command.py:122
+#: handlers/command.py:117
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
 "/settings - give permission."
 msgstr ""
 
-#: handlers/command.py:139
+#: handlers/command.py:134
 msgid "<b>Who???</b>"
 msgstr ""
 
-#: handlers/command.py:157
+#: handlers/command.py:152
 msgid "Ha! Invalid request, try again."
 msgstr ""
 
-#: handlers/command.py:158
+#: handlers/command.py:153
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr ""
 
-#: handlers/command.py:159
+#: handlers/command.py:154
 msgid "The game is not recognized. I'll give it another try!"
 msgstr ""
 
-#: handlers/command.py:160
+#: handlers/command.py:155
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/command.py:169
+#: handlers/command.py:164
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/command.py:185
+#: handlers/command.py:180
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/command.py:190
+#: handlers/command.py:185
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/command.py:204
+#: handlers/command.py:199
 msgid "<b>So what's the question?</b>"
 msgstr ""
 
-#: handlers/command.py:226
+#: handlers/command.py:221
 msgid "In short, "
 msgstr ""
 
-#: handlers/command.py:255
+#: handlers/command.py:250
 msgid "<b>On coffee grounds?</b>"
 msgstr ""
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "No, keep playing"
 msgstr ""
 
-#: handlers/games/core.py:29
+#: handlers/games/core.py:24
 msgid ""
 "<b>Let's play UNO?</b>\n"
 "\n"
@@ -338,7 +338,7 @@ msgid ""
 "{user}"
 msgstr ""
 
-#: handlers/games/core.py:47
+#: handlers/games/core.py:42
 msgid ""
 "Oh, the game of cities. Well, let's try!\n"
 "\n"
@@ -347,15 +347,15 @@ msgid ""
 "You have 60 seconds to think."
 msgstr ""
 
-#: handlers/games/core.py:57
+#: handlers/games/core.py:52
 msgid "I start! My word: {bot_var}."
 msgstr ""
 
-#: handlers/games/core.py:60
+#: handlers/games/core.py:55
 msgid "You start! Your word?"
 msgstr ""
 
-#: handlers/games/core.py:71
+#: handlers/games/core.py:66
 msgid ""
 "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay "
 "attention!\n"
@@ -364,23 +364,23 @@ msgid ""
 " we'll we'll see which one of you is right."
 msgstr ""
 
-#: handlers/games/core.py:84
+#: handlers/games/core.py:79
 msgid "LET THE BATTLE BEGIN!"
 msgstr ""
 
-#: handlers/games/core.py:105
+#: handlers/games/core.py:100
 msgid "So my variant is {bot_var}. Who guessed? Hmm..."
 msgstr ""
 
-#: handlers/games/core.py:114
+#: handlers/games/core.py:109
 msgid "Well... the title of winner goes to: {winners}. Congratulations!"
 msgstr ""
 
-#: handlers/games/core.py:118
+#: handlers/games/core.py:113
 msgid "Well... no one guessed right. Heh."
 msgstr ""
 
-#: handlers/games/core.py:128
+#: handlers/games/core.py:123
 msgid "Eh, classic. Your move?"
 msgstr ""
 
@@ -494,19 +494,19 @@ msgstr ""
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr ""
 
-#: handlers/games/rps.py:30
+#: handlers/games/rps.py:29
 msgid "Draw."
 msgstr ""
 
-#: handlers/games/rps.py:33
+#: handlers/games/rps.py:32
 msgid "My win!"
 msgstr ""
 
-#: handlers/games/rps.py:36
+#: handlers/games/rps.py:35
 msgid "My defeat..."
 msgstr ""
 
-#: handlers/games/rps.py:38
+#: handlers/games/rps.py:37
 msgid ""
 "Score: {loses}-{wins}.\n"
 "Play again?"
@@ -846,11 +846,11 @@ msgid ""
 "Update again:"
 msgstr ""
 
-#: handlers/settings/accuracy.py:23
+#: handlers/settings/accuracy.py:22
 msgid "Text generation accuracy updated successfully: <b>{markov_state}</b>."
 msgstr ""
 
-#: handlers/settings/accuracy.py:37
+#: handlers/settings/accuracy.py:36
 msgid ""
 "Current text generation accuracy: <b>{accuracy}</b>.\n"
 "\n"
@@ -858,27 +858,27 @@ msgid ""
 "take longer."
 msgstr ""
 
-#: handlers/settings/chance.py:23
+#: handlers/settings/chance.py:22
 msgid ""
 "The chance of text generation has reached the limit: <b>{chance}%</b>, "
 "below is impossible."
 msgstr ""
 
-#: handlers/settings/chance.py:25
+#: handlers/settings/chance.py:24
 msgid ""
 "The chance of text generation has reached the limit: <b>{chance}%</b>, "
 "higher is impossible."
 msgstr ""
 
-#: handlers/settings/chance.py:27
+#: handlers/settings/chance.py:26
 msgid "Text generation chance successfully updated: <b>{chance}%</b>."
 msgstr ""
 
-#: handlers/settings/chance.py:35
+#: handlers/settings/chance.py:34
 msgid "Not so fast! I can't keep up with you..."
 msgstr ""
 
-#: handlers/settings/chance.py:45
+#: handlers/settings/chance.py:44
 msgid "Current text generation chance: <b>{chance}%</b>."
 msgstr ""
 
@@ -938,60 +938,60 @@ msgid ""
 "Current language: <b>{locale}</b>. Available languages:"
 msgstr ""
 
-#: handlers/settings/other.py:13
+#: handlers/settings/other.py:12
 msgid "dialogue"
 msgstr ""
 
-#: handlers/settings/other.py:15
+#: handlers/settings/other.py:14
 msgid "chat - they are only available to the administrator - {admins}"
 msgstr ""
 
-#: handlers/settings/other.py:21
+#: handlers/settings/other.py:20
 msgid "only I don't know who it is... So"
 msgstr ""
 
-#: handlers/settings/other.py:25
+#: handlers/settings/other.py:24
 msgid "My settings for this {chat}:"
 msgstr ""
 
-#: handlers/settings/other.py:32
+#: handlers/settings/other.py:31
 msgid "These commands are only available to the administrator."
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:42
+#: handlers/settings/commands/__init__.py:39
 msgid ""
 "<b>Tired of writing preset commands?</b>{no_args} - and I will answer "
 "this command."
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:56
+#: handlers/settings/commands/__init__.py:53
 msgid "missing."
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:58
+#: handlers/settings/commands/__init__.py:55
 msgid "Current custom commands:"
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:90
+#: handlers/settings/commands/__init__.py:87
 msgid "The /{args} command is already in my database. Try another."
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:97
+#: handlers/settings/commands/__init__.py:94
 msgid ""
 "<b>Command /{args} added successfully!</b>\n"
 "\n"
 "Now in this chat you can write it instead of the /{command} command."
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:103
+#: handlers/settings/commands/__init__.py:100
 msgid "No, I can record only one custom command. You'll have to choose!"
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:121
+#: handlers/settings/commands/__init__.py:118
 msgid "<b>Custom command not recognized.</b>"
 msgstr ""
 
-#: handlers/settings/commands/__init__.py:133
+#: handlers/settings/commands/__init__.py:130
 msgid ""
 "<b>Default command not recognized.</b>\n"
 "\n"
