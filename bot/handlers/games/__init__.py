@@ -98,7 +98,7 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoDa
         action = UnoAction(message=message, state=state, data=data_uno)
 
         await action.move()
-        await state.update_data(uno=action.data.json())
+        await state.update_data(uno=action.data.dict())
 
 
 def setup():

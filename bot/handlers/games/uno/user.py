@@ -88,7 +88,7 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
         await action_uno.data.user_card_add(bot, message.from_user)
         await message.reply(decline)
 
-    await state.update_data(uno=action_uno.data.json())
+    await state.update_data(uno=action_uno.data.dict())
 
 
 @router.message(F.text == DRAW_CARD)
@@ -109,7 +109,7 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
         action_uno.data.current_special.skip = action_uno.data.current_user = message.from_user
         await action_uno.move(await action_uno.data.user_card_add(bot))
 
-        await state.update_data(uno=action_uno.data.json())
+        await state.update_data(uno=action_uno.data.dict())
     else:
         await message.reply(
             _(
@@ -140,7 +140,7 @@ async def get_color_handler(message: types.Message, state: FSMContext):
         action_uno = UnoAction(message=message, state=state, data=data_uno)
 
         await action_uno.move()
-        await state.update_data(uno=action_uno.data.json())
+        await state.update_data(uno=action_uno.data.dict())
     else:
         await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
 
@@ -162,7 +162,7 @@ async def uno_answer(message: types.Message, state: FSMContext, user: types.User
             reply_markup=types.ReplyKeyboardRemove()
         )
 
-    await state.update_data(uno=action_uno.data.json())
+    await state.update_data(uno=action_uno.data.dict())
 
 
 @router.message(F.text.in_(k.UNO), F.reply_to_message)
@@ -226,4 +226,4 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
                 action = UnoAction(message, state, data_uno)
                 data_uno = await action.end()
 
-        await state.update_data(uno=data_uno.json())
+        await state.update_data(uno=data_uno.dict())

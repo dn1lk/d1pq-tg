@@ -64,7 +64,7 @@ class UnoBot:
                 action_uno.data.current_special.skip = action_uno.data.current_user = self.message.from_user
                 await action_uno.move()
 
-        await state.update_data(uno=action_uno.data.json())
+        await state.update_data(uno=action_uno.data.dict())
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
