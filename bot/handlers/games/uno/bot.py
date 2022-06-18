@@ -38,7 +38,7 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 5)))
+            await asyncio.sleep(choice(range(0, 6)))
 
             from .action import UnoAction
 
@@ -65,13 +65,13 @@ class UnoBot:
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(0, 5)))
+            await asyncio.sleep(choice(range(0, 3)))
 
             self.data.uno_users_id.remove(self.bot.id)
             await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
 
     async def uno_user(self, user: types.User):
-        await asyncio.sleep(choice(range(2, 10)))
+        await asyncio.sleep(choice(range(2, 6)))
 
         await self.data.user_card_add(self.bot, user, 2)
         await self.message.answer(
