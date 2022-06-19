@@ -4,3 +4,7 @@ class UnoNoUsersException(BaseException):
 
 class UnoNoCardsException(BaseException):
     pass
+
+
+class UnoOneCardException(BaseException):
+    pass

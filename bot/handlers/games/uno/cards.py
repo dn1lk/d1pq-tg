@@ -14,8 +14,10 @@ class UnoColorsMeta(EnumMeta):
                 if item in member.value:
                     return member
 
-    def names(cls):
-        return tuple(cls)[:-1]
+    def names(cls, exclude: set = None):
+        if exclude:
+            return (color for color in cls.names() if color not in exclude)
+        return cls
 
 
 class UnoColors(str, Enum, metaclass=UnoColorsMeta):
@@ -39,10 +41,10 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
 
 
 class UnoSpecials(BaseModel):
-    draw: int = 0
-    color: bool = False
-    skip: bool | types.User = False
     reverse: bool = False
+    color: bool = False
+    skip: int = 0
+    draw: int = 0
 
 
 class UnoCard(BaseModel):
@@ -65,13 +67,13 @@ draw_card = UnoCard(
 
 def check_special_card(color: UnoColors, emoji: str) -> dict[str, UnoSpecials]:
     specials = {
+        '🔃': UnoSpecials(reverse=True),
+        '🏳️\u200d🌈': UnoSpecials(color=True),
+        '🚫': UnoSpecials(skip=True),
         '➕': UnoSpecials(
             skip=True,
             **{'draw': 4, 'color': True} if color is UnoColors.black else {'draw': 2}
         ),
-        '🏳️\u200d🌈': UnoSpecials(color=True),
-        '🚫': UnoSpecials(skip=True),
-        '🔃': UnoSpecials(reverse=True),
     }
 
     return {'special': specials.get(emoji, UnoSpecials())}
@@ -91,7 +93,7 @@ async def get_cards(bot: Bot) -> tuple[UnoCard]:
                 **check_special_card(color, sticker.emoji)
             )
 
-        for enum, color in enumerate(UnoColors.names()):
+        for enum, color in enumerate(UnoColors.names(exclude={UnoColors.black})):
             for sticker in stickers[enum::4]:
                 yield UnoCard(
                     id=sticker.file_unique_id,

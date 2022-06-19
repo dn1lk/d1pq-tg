@@ -3,15 +3,15 @@ from random import choice
 from pydantic import BaseModel
 
 from bot import filters as f
-from . import get_cts
+from . import get_cities
 
 
 class CtsData(BaseModel):
-    bot_var: str | None
-    cities: list[str]
+    bot_var: str = None
+    cities: list[str] = []
     fails: int = 5
 
-    async def var_filter(self, locale: str, user_var: str):
+    def city_filter(self, locale: str, user_var: str) -> str | None:
         def user_var_filter():
             for game_var in game_vars:
                 if game_var[0].lower() == user_var[0].lower():
@@ -19,7 +19,7 @@ class CtsData(BaseModel):
 
         if not self.bot_var or user_var[0].lower() == self.bot_var[-1].lower():
             if user_var not in self.cities:
-                game_vars = get_cts(locale)
+                game_vars = get_cities(locale)
 
                 if any(user_var_filter()):
                     self.cities.append(user_var)
@@ -28,13 +28,13 @@ class CtsData(BaseModel):
                     return self.bot_var
 
     def gen_bot_var(self, user_var: str, game_vars: list[str]):
-        def get_var():
+        def get_city():
             for city in game_vars:
                 if city[0].lower() == user_var[-1].lower() and city not in self.cities:
                     yield city
             yield None
 
-        self.bot_var = choice(tuple(get_var()))
+        self.bot_var = choice(tuple(get_city()))
 
         if self.bot_var:
             self.cities.append(self.bot_var)

@@ -17,7 +17,7 @@ async def game_cts_filter(message: types.Message, state: FSMContext, i18n: I18n)
         data = await state.get_data()
         data_cts = CtsData(**data['cts'])
 
-        if data_cts.var_filter(i18n.current_locale, message.text):
+        if data_cts.city_filter(i18n.current_locale, message.text):
             return {'data_cts': data_cts}
 
 

@@ -1,11 +1,11 @@
 from aiogram import Bot, types
-from aiogram.utils.i18n import lazy_gettext as __
+from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: /{command} {args}")
 
 
 def get_username(user: types.User) -> str:
-    return f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+    return f'<a href="tg://user?id={user.id}">{user.first_name or _("user")}</a>'
 
 
 def get_command_list(

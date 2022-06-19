@@ -47,19 +47,21 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
     )
 
     if choice(('bot', 'user')) == 'bot':
-        from .cts import get_cts
+        from .cts import get_cities
 
-        bot_var = choice(get_cts(i18n.current_locale))
+        bot_var = choice(get_cities(i18n.current_locale))
+        cities = [bot_var]
         answer = _("I start! My word: {bot_var}.").format(bot_var=bot_var)
     else:
         bot_var = None
+        cities = []
         answer = _("You start! Your word?")
 
     await state.set_state(Game.cts)
 
     from bot.handlers.games.cts.data import CtsData
 
-    await state.update_data(cts=CtsData(bot_var=bot_var, cities=[bot_var] if bot_var else []).dict())
+    await state.update_data(cts=CtsData(bot_var=bot_var, cities=cities).dict())
     timer(state, win_timeout, message=await message.answer(answer))
 
 
@@ -106,10 +108,12 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
     message = await message.reply(_("So my variant is {bot_var}. Who guessed? Hmm...").format(bot_var=bot_var))
 
     data = await state.get_data()
-    user_vars = data.pop('rnd', None)
+    rnd_data = data.pop('rnd', {})
+    winners = [
+        get_username((await bot.get_chat_member(message.chat.id, user_id)).user) for user_id in
+        rnd_data.get(bot_var, ())
+    ]
     await state.set_data(data)
-
-    winners = [get_username(user) for user in user_vars.get(bot_var, ())] if user_vars else None
 
     if winners:
         answer = _(

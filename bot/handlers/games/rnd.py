@@ -14,7 +14,7 @@ router.message.filter(Game.rnd)
 async def answer_handler(message: types.Message, state: FSMContext):
     user_var = (await state.get_data()).get('rnd', {})
 
-    if message.from_user in user_var.values():
+    if message.from_user.id in user_var.values():
         answer = (
             _("You have already made your choice."),
             _("Cunning, but you already used your try."),
@@ -22,9 +22,9 @@ async def answer_handler(message: types.Message, state: FSMContext):
         )
     else:
         if message.text in user_var:
-            user_var[message.text].append(message.from_user)
+            user_var[message.text].append(message.from_user.id)
         else:
-            user_var[message.text] = message.from_user
+            user_var[message.text] = message.from_user.id
 
         await state.update_data(rnd=user_var)
 

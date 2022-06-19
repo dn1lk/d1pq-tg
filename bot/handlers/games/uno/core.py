@@ -80,23 +80,24 @@ async def start_handler(
         await state.storage.set_state(bot, key, Game.uno)
         await state.storage.update_data(bot, key, {'uno_chat_id': message.chat.id})
 
+    member = await bot.get_chat_member(message.chat.id, choice(tuple(users_id)))
     data_uno = UnoData(
         users=users,
-        next_user=(await bot.get_chat_member(message.chat.id, choice(tuple(users_id)))).user,
+        next_user_id=member.user.id,
     )
 
     await state.set_state(Game.uno)
 
     answer = _("So, <b>let's start the game.</b>") + "\n\n"
 
-    if data_uno.next_user.id == bot.id:
+    if data_uno.next_user_id == bot.id:
         message = await message.reply(answer + _("What a surprise, my move."))
         bot_uno = UnoBot(message=message, bot=bot, data=data_uno)
 
-        await bot_uno.gen(state, await bot_uno.get_cards())
+        await bot_uno.gen(state, bot_uno.get_cards())
     else:
         message = await message.reply(
-            answer + _("{user}, your move.").format(user=get_username(data_uno.next_user)),
+            answer + _("{user}, your move.").format(user=get_username(await data_uno.get_user(bot, message.chat.id))),
             reply_markup=k.uno_show_cards(),
         )
 

@@ -40,7 +40,7 @@ def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
 
 
 async def win_timeout(message: types.Message, state: FSMContext):
-    await close_timeout(message, state, answer=_("Your time is up. ") + str(choice(WINNER)))
+    await close_timeout(message, state, answer=_("Your time is up.") + " " + str(choice(WINNER)))
 
 
 async def close_timeout(message: types.Message, state: FSMContext, answer: str | None = None):
@@ -67,11 +67,11 @@ def setup():
     from .core import router as core_rt
 
     sub_routers = (
+        core_rt,
         uno_rt(),
         cts_rt(),
         rps_rt,
         rnd_rt,
-        core_rt,
     )
 
     for sub_router in sub_routers:

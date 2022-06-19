@@ -16,17 +16,18 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoDa
     if not data_uno.timer_amount or len(data_uno.users) == 2 and state.bot.id in data_uno.users:
         try:
             for user_id in data_uno.users:
-                await data_uno.user_remove(state, user_id)
+                await data_uno.remove_user(state, user_id)
         except UnoNoUsersException:
-            await data_uno.user_remove(state, tuple(data_uno.users)[0])
+            await data_uno.remove_user(state, tuple(data_uno.users)[0])
 
         await close_timeout(message, state)
-
     else:
-        message = await message.reply(_("Time is over.") + " " + await data_uno.user_card_add(state.bot))
+        message = await message.reply(
+            _("Time is over.") + " " + await data_uno.add_card(state.bot, message.chat.id, data_uno.next_user_id)
+        )
 
         for poll_id, poll_data in data_uno.polls_kick.items():
-            if data_uno.next_user.id == poll_data.user_id:
+            if data_uno.next_user_id == poll_data.user_id:
                 await state.bot.delete_message(message.chat.id, poll_data.message_id)
                 del data_uno.polls_kick[poll_id]
                 break
@@ -39,7 +40,7 @@ async def uno_timeout(message: types.Message, state: FSMContext, data_uno: UnoDa
 
         data_uno.polls_kick[poll.poll.id] = UnoPollKick(
             message_id=poll.message_id,
-            user_id=data_uno.next_user.id,
+            user_id=data_uno.next_user_id,
             amount=0,
         )
 

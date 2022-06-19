@@ -30,7 +30,7 @@ def uno_color():
 
     builder = ReplyKeyboardBuilder()
 
-    for color in UnoColors.names():
+    for color in UnoColors.names(exclude={UnoColors.black}):
         builder.button(text=_("{emoji} {color} color").format(emoji=color.value, color=color.get_color()))
 
     builder.adjust(1)
