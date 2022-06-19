@@ -1,6 +1,6 @@
 from random import choice
 
-from aiogram import Router, F, types
+from aiogram import Router, F, types, flags
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -17,6 +17,7 @@ router.message.filter(F.text.lower().func(answer_filter))
 
 
 @router.message(Game.rps)
+@flags.throttling('rps')
 async def answer_handler(message: types.Message, state: FSMContext):
     bot_var = choice(tuple(k.get_rps_args()))
     wins, loses = (await state.get_data())['rps']
@@ -38,6 +39,7 @@ async def answer_handler(message: types.Message, state: FSMContext):
 
 
 @router.message(F.reply_to_message.text.lower().func(answer_filter))
+@flags.throttling('rps')
 async def reply_handler(message: types.Message, state: FSMContext):
     await state.set_state(Game.rps)
     await state.update_data(rps=(0, 0))
