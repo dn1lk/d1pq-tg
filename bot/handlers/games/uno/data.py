@@ -137,7 +137,7 @@ class UnoData(BaseModel):
             decline = choice(
                 (
                     _("Someone explain to {user} how to play."),
-                    _("Can I just give {user} a map and we'll pretend like nothing happened?"),
+                    _("Can I just give {user} a card and we'll pretend like nothing happened?"),
                     _("I'm betting on {user}'s defeat."),
                 )
             )

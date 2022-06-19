@@ -24,7 +24,7 @@ class UnoBot:
 
     def get_color(self):
         self.data.current_card.color = choice(self.data.users[self.bot.id]).color
-        return _("I choice {emoji} {color} color.").format(
+        return _("I choice {emoji} {color}.").format(
             emoji=self.data.current_card.color.value,
             color=self.data.current_card.color.get_color(),
         )
