@@ -5,11 +5,11 @@ from aiogram import types
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot import keyboards as k
 from bot.handlers import get_username
 from .cards import UnoCard
 from .data import UnoData
 from .exceptions import UnoNoCardsException
+from .. import keyboards as k
 
 
 class UnoAction:
@@ -50,6 +50,7 @@ class UnoAction:
 
     async def uno(self):
         self.data.uno_users_id.append(self.data.current_user.id)
+        name = ':'.join((str(self.bot), str(self.data.current_user.id), 'uno'))
 
         if self.data.current_user.id == self.state.bot.id:
             await self.message.answer(
@@ -57,20 +58,14 @@ class UnoAction:
                 reply_markup=k.game_uno_uno(),
             )
 
-            asyncio.create_task(
-                self.bot.uno(),
-                name=str(self.bot) + ':' + str(self.data.current_user.id) + ':' + 'uno',
-            )
+            asyncio.create_task(self.bot.uno(), name=name)
         else:
             await self.message.answer(
                 _("Player {user} has one card left!").format(user=get_username(self.data.current_user)),
                 reply_markup=k.game_uno_uno(),
             )
 
-            asyncio.create_task(
-                self.bot.uno_user(self.data.current_user),
-                name=str(self.bot) + ':' + str(self.data.current_user.id) + ':' + 'uno',
-            )
+            asyncio.create_task(self.bot.uno_user(self.data.current_user), name=name)
 
     async def process(self, accept: str):
         await self.draw_check()
@@ -118,13 +113,15 @@ class UnoAction:
                 reply_markup=k.game_uno_show_cards(),
             )
 
-        from .. import timer, uno_timeout
+        from . import uno_timeout
+        from .. import timer
 
+        await self.state.set_data({'uno': self.data})
         timer(self.state, uno_timeout, message=self.message, data_uno=self.data)
 
     async def end(self):
         for task in asyncio.all_tasks():
-            if task is not asyncio.current_task() and 'uno' in task.get_name():
+            if task is not asyncio.current_task() and task.get_name().startswith('uno'):
                 task.cancel()
 
         for poll in self.data.polls_kick.values():
@@ -137,8 +134,8 @@ class UnoAction:
             )
         ).user
 
-        await self.state.set_state()
         await self.data.user_remove(self.state)
+        await self.state.clear()
 
         await self.message.answer(
             _(
@@ -148,5 +145,3 @@ class UnoAction:
             ),
             reply_markup=types.ReplyKeyboardRemove()
         )
-
-        self.data = None

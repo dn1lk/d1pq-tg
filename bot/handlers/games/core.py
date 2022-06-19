@@ -6,8 +6,7 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import keyboards as k
-from . import Game, timer, get_cts, win_timeout, close_timeout
+from . import Game, timer, win_timeout, close_timeout, keyboards as k
 from .. import get_username
 from ..settings.commands.filter import CustomCommandFilter
 
@@ -47,7 +46,9 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
         )
     )
 
-    if choice(('bot_var', 'user_var')) == 'bot_var':
+    if choice(('bot', 'user')) == 'bot':
+        from .cts import get_cts
+
         bot_var = choice(get_cts(i18n.current_locale))
         answer = _("I start! My word: {bot_var}.").format(bot_var=bot_var)
     else:
@@ -55,7 +56,10 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
         answer = _("You start! Your word?")
 
     await state.set_state(Game.cts)
-    await state.update_data(cts=(bot_var, [bot_var], 5))
+
+    from bot.handlers.games.cts.data import CtsData
+
+    await state.update_data(cts=CtsData(bot_var=bot_var, cities=[bot_var] if bot_var else []).dict())
     timer(state, win_timeout, message=await message.answer(answer))
 
 
@@ -96,14 +100,16 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
 
     bot_var = str(choice(range(1, 11)))
 
-    await state.set_state()
+    if await state.get_state() == Game.rnd.state:
+        await state.set_state()
+
     message = await message.reply(_("So my variant is {bot_var}. Who guessed? Hmm...").format(bot_var=bot_var))
 
     data = await state.get_data()
     user_vars = data.pop('rnd', None)
-    winners = [get_username(user) for user in user_vars.get(bot_var, ())] if user_vars else None
-
     await state.set_data(data)
+
+    winners = [get_username(user) for user in user_vars.get(bot_var, ())] if user_vars else None
 
     if winners:
         answer = _(

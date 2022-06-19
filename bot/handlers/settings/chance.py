@@ -1,9 +1,8 @@
 from aiogram import Router, Bot, F, types, flags, exceptions
 from aiogram.utils.i18n import gettext as _
 
-from bot import keyboards as k
 from bot.utils.database.context import DataBaseContext
-from . import UPDATE, UPDATE_AGAIN
+from . import UPDATE, UPDATE_AGAIN, keyboards as k
 
 router = Router(name="settings:chance")
 router.callback_query.filter(k.Settings.filter(F.name == 'chance'))

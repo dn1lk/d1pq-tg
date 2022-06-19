@@ -68,11 +68,11 @@ class UnoData(BaseModel):
             bot_id=state.key.bot_id,
             chat_id=user_id,
             user_id=user_id,
-            destiny=state.key.destiny
+            destiny=state.key.destiny,
         )
 
         await state.storage.set_state(state.bot, key)
-        await state.storage.update_data(state.bot, key, {'uno_chat_id': None})
+        await state.storage.set_data(state.bot, key, {})
 
     async def user_card_add(self, bot: Bot, user: types.User | None = None, amount: int | None = 1) -> str:
         user = user or self.next_user

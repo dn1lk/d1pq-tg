@@ -5,61 +5,39 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters as f
-from . import Game, WINNER, get_cts, timer, win_timeout
+from bot.handlers.games.cts.data import CtsData
+from .. import Game, WINNER, timer, win_timeout
 
 router = Router(name='game:cts')
 router.message.filter(Game.cts)
 
 
 async def game_cts_filter(message: types.Message, state: FSMContext, i18n: I18n) -> dict | bool:
-    def get() -> str:
-        for city in game_vars:
-            if city[0].lower() == message.text[-1].lower() and city not in cities:
-                yield city
-
     async with ChatActionSender.typing(chat_id=message.chat.id):
         data = await state.get_data()
-        bot_var, cities, failed = data['cts']
+        data_cts = CtsData(**data['cts'])
 
-        if not bot_var or message.text[0].lower() == bot_var[-1].lower():
-            game_vars = get_cts(i18n.current_locale)
-
-            if message.text not in cities:
-                if await f.LevenshteinFilter(
-                        lev=set(filter(lambda game_var: game_var[0].lower() == message.text[0].lower(), game_vars))
-                )(obj=message):
-                    cities.append(message.text)
-
-                    data['cts'] = (choice(list(get())[::choice(range(1, 11))] + [None]), cities, failed)
-
-                    await state.set_data(data)
-                    return {'data': data}
+        if data_cts.var_filter(i18n.current_locale, message.text):
+            return {'data_cts': data_cts}
 
 
 @router.message(game_cts_filter)
-async def game_cts_answer_yes_handler(
-        message: types.Message,
-        state: FSMContext,
-        data: dict
-):
-    bot_var, cities, failed = data.pop('cts')
-
-    if bot_var:
+async def answer_yes_handler(message: types.Message, state: FSMContext, data_cts: CtsData):
+    if data_cts.bot_var:
         message = await message.reply(
-            (
-                choice(
-                    (
-                        _("Hmm."),
-                        _("And you're smarter than you look."),
-                        _("Right!"),
-                    )
+            choice(
+                (
+                    _("Hmm."),
+                    _("And you're smarter than you look."),
+                    _("Right!"),
                 )
-            ) + _(" My word: {bot_var}.").format(bot_var=bot_var)
+            ) + _(" My word: {bot_var}.").format(bot_var=data_cts.bot_var)
         )
 
+        await state.update_data(cts=data_cts.dict())
         timer(state, win_timeout, message=message)
     else:
+        await state.clear()
         await message.reply(choice(
             (
                 _("Okay, I have nothing to write on {letter}... Victory is yours."),
@@ -68,21 +46,19 @@ async def game_cts_answer_yes_handler(
             )
         ).format(letter=f'"{message.text[-1]}"'))
 
-        await state.set_state()
-        await state.set_data(data)
-
 
 @router.message()
-async def game_cts_two_no_handler(message: types.Message, state: FSMContext):
+async def answer_no_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    bot_var, cities, failed = data['cts']
+    data_cts = CtsData(**data['cts'])
 
-    failed -= 1
+    data_cts.fails -= 1
 
-    if failed:
-        end = _("Remaining attempts: {failed}").format(failed=failed)
+    if data_cts.fails:
+        data['cts'] = data_cts.dict()
+        await state.set_data(data)
 
-        if message.text in cities:
+        if message.text in data_cts.cities:
             answer = (
                 _("We have already used this name. Choose another!"),
                 _("I remember exactly that we already used this. Let's try something else."),
@@ -95,16 +71,17 @@ async def game_cts_two_no_handler(message: types.Message, state: FSMContext):
                 _("My algorithms do not deceive me - you are mistaken!"),
             )
 
-        await state.update_data(cts=(bot_var, cities, failed))
+        end = _("Remaining attempts: {failed}").format(failed=data_cts.fails)
+
     else:
-        end = str(choice(WINNER))
+        await state.clear()
+
         answer = (
             _("You have no attempts left."),
             _("Looks like all attempts have been spent."),
             _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
         )
 
-        await state.set_state()
-        await state.set_data(data)
+        end = str(choice(WINNER))
 
     await message.reply(choice(answer) + "\n\n" + end)

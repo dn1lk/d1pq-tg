@@ -4,8 +4,7 @@ from aiogram import Router, F, types
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot import keyboards as k
-from . import Game, timer, close_timeout
+from . import Game, timer, close_timeout, keyboards as k
 
 router = Router(name='game:rps')
 
@@ -20,14 +19,11 @@ router.message.filter(F.text.lower().func(game_rps_answer_filter))
 @router.message(Game.rps)
 async def game_rps_answer_handler(message: types.Message, state: FSMContext):
     bot_var = choice(tuple(k.get_game_rps_args()))
-    user_var = message.text.lower()
+    wins, loses = (await state.get_data())['rps']
 
-    data = await state.get_data()
-    wins, loses = data['rps']
-
-    if bot_var[1].lower() in user_var:
+    if bot_var[1].lower() in message.text.lower():
         result = _("Draw.")
-    elif k.get_game_rps_args()[bot_var][1].lower() in user_var:
+    elif k.get_game_rps_args()[bot_var][1].lower() in message.text.lower():
         wins += 1
         result = _("My win!")
     else:

@@ -16,13 +16,13 @@ class UnoFSMContextMiddleware(BaseMiddleware):
         state: Optional[FSMContext] = data.get('state')
 
         if state:
-            uno_chat_id = (await state.get_data()).get('uno_chat_id')
+            chat_id = (await state.get_data()).get('uno_chat_id')
 
-            if uno_chat_id:
+            if chat_id:
                 state.key = StorageKey(
                     bot_id=state.key.bot_id,
-                    chat_id=uno_chat_id,
-                    user_id=uno_chat_id,
+                    chat_id=chat_id,
+                    user_id=chat_id,
                     destiny=state.key.destiny,
                 )
 

@@ -12,8 +12,7 @@ router.message.filter(Game.rnd)
 
 @router.message(F.text.in_(set(map(str, range(1, 11)))))
 async def game_rnd_answer_handler(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    user_var = data.get('rnd', {})
+    user_var = (await state.get_data()).get('rnd', {})
 
     if message.from_user in user_var.values():
         answer = (

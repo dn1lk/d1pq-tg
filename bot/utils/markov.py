@@ -7,7 +7,7 @@ from bot import config
 
 
 def set_data(text: str, messages: list | None = None) -> list | None:
-    if messages == ['DECLINE']:
+    if messages == ['decline']:
         return
     elif not messages:
         messages = []
@@ -67,7 +67,7 @@ def gen(
                 weights=(100, 0.01)
             )
 
-    model.compile(inplace=True)
+    model = model.compile()
 
     try:
         if text:

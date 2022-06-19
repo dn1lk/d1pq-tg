@@ -6,12 +6,12 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.dispatcher.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 
-from bot import keyboards as k
 from bot.handlers import get_username
+from . import uno_timeout
 from .bot import UnoBot
 from .cards import get_cards
 from .data import UnoData
-from .. import Game, timer, uno_timeout
+from .. import Game, timer, keyboards as k
 
 router = Router(name='game:uno:core')
 
@@ -21,7 +21,7 @@ async def start_filter(query: types.CallbackQuery):
 
     if users_id:
         for task in asyncio.all_tasks():
-            if task.get_name() == f'game:{query.message.chat.id}:none':
+            if task.get_name() == 'game' + ':' + str(query.message.chat.id):
                 task.cancel()
                 break
 
@@ -100,7 +100,7 @@ async def start_handler(
             reply_markup=k.game_uno_show_cards(),
         )
 
-        await state.update_data(uno=data_uno.dict())
+        await state.set_data({'uno': data_uno.dict()})
         timer(state, uno_timeout, message=message, data_uno=data_uno)
 
 

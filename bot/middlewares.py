@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from dataclasses import dataclass
 from typing import Dict, Any, Awaitable, Callable, Union, Optional
@@ -5,6 +6,7 @@ from typing import Dict, Any, Awaitable, Callable, Union, Optional
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
 from aiogram.dispatcher.flags.getter import get_flag
 from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.dispatcher.fsm.storage.base import StorageKey, BaseStorage
 from aiogram.utils.chat_action import ChatActionMiddleware
 
 from utils import markov
@@ -67,25 +69,56 @@ class LogMiddleware(BaseMiddleware):
 class ThrottlingMiddleware(BaseMiddleware):
     timeouts = {'gen': 1}
 
+    def __init__(self, storage: BaseStorage):
+        self.storage = storage
+
     async def __call__(
             self,
-            handler: Callable[[types.Message, Dict[str, Any]], Awaitable[Any]],
-            event: types.Message,
+            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            event: types.TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
-        state: FSMContext = data.get('state')
         throttling = get_flag(data, 'throttling')
 
-        if state and throttling:
-            throttling = f'throttling:{throttling}'
+        if throttling:
+            bot: Bot = data['bot']
+            chat_id: int = data.get('event_chat', data['event_from_user']).id
+            state = self.get_context(bot, chat_id)
 
             if (await state.get_data()).get(throttling):
                 return
             else:
                 await state.update_data({throttling: True})
-                state.timer(timeout=self.timeouts[throttling.split(':')[-1]], throttling=throttling)
+                self.timer(state, throttling)
 
         return await handler(event, data)
+
+    def get_context(
+            self,
+            bot: Bot,
+            chat_id: int,
+            destiny: str = 'throttling',
+    ) -> FSMContext:
+        return FSMContext(
+            bot=bot,
+            storage=self.storage,
+            key=StorageKey(
+                user_id=chat_id,
+                chat_id=chat_id,
+                bot_id=bot.id,
+                destiny=destiny,
+            ),
+        )
+
+    def timer(self, state: FSMContext, key: str):
+        async def waiter():
+            await asyncio.sleep(self.timeouts[key])
+            data = await state.get_data()
+
+            if data.pop(key, None):
+                await state.set_data(data)
+
+        asyncio.create_task(waiter(), name=state.key.destiny + ':' + str(state.key.chat_id))
 
 
 class UnhandledMiddleware(BaseMiddleware):
@@ -102,20 +135,20 @@ class UnhandledMiddleware(BaseMiddleware):
         if result is UNHANDLED:
             db: DataBaseContext = data['db']
 
-            if event.sticker:
-                stickers = await db.get_data('stickers')
-
-                if event.sticker.set_name not in stickers:
-                    stickers.insert(0, event.sticker.set_name)
-                    await db.set_data(stickers=stickers[slice(3)])
-
-            elif event.text:
+            if event.text:
                 messages = markov.set_data(
                     event.text,
                     data.get('messages', await db.get_data('messages')),
                 )
                 if messages:
                     await db.set_data(messages=messages)
+
+            elif event.sticker:
+                stickers: list[str] = await db.get_data('stickers')
+
+                if event.sticker.set_name not in stickers:
+                    stickers.append(event.sticker.set_name)
+                    await db.set_data(stickers=stickers[-3:])
 
         return result
 
@@ -124,7 +157,7 @@ class UnhandledMiddleware(BaseMiddleware):
 class Middleware:
     inner: Optional[BaseMiddleware] = None
     outer: Optional[BaseMiddleware] = None
-    observers: Optional[Union[tuple, str]] = 'update',
+    observers: Optional[Union[tuple, str]] = 'update'
 
 
 def setup(dp: Dispatcher):
@@ -135,11 +168,11 @@ def setup(dp: Dispatcher):
     from handlers.settings.commands.middleware import CustomCommandsMiddleware
 
     middlewares = (
-        Middleware(inner=ThrottlingMiddleware(), observers='message'),
+        Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
         # Middleware(outer=LogMiddleware()),
-        Middleware(outer=DataBaseContextMiddleware(storage=dp.storage)),
+        Middleware(outer=DataBaseContextMiddleware(storage=dp.storage, pool_db=dp['pool_db'])),
         Middleware(outer=CustomCommandsMiddleware(), observers='message'),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
         Middleware(outer=UnhandledMiddleware(), observers='message'),

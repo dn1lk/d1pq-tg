@@ -12,7 +12,7 @@ UPDATE_AGAIN = __("\n\nUpdate again:")
 
 
 def setup():
-    from bot import keyboards as k
+    from . import keyboards as k
 
     router = Router(name='settings')
     router.callback_query.filter(k.Settings.filter(F.name))

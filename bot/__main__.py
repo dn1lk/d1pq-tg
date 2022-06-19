@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher, exceptions
-from aiogram.dispatcher.fsm.storage.redis import RedisStorage
+from aiogram.dispatcher.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,7 +18,11 @@ async def main():
     bot = Bot(token=config.bot.token.get_secret_value(), parse_mode="HTML")
     dp = Dispatcher(
         name='dispatcher',
-        storage=RedisStorage.from_url(config.heroku.redis_url),
+        storage=RedisStorage.from_url(
+            config.heroku.redis_url,
+            key_builder=DefaultKeyBuilder(with_destiny=True),
+            data_ttl=60 * 60 * 25 * 7,
+        ),
         fsm_strategy=FSMStrategy.CHAT
     )
 

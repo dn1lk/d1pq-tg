@@ -1,7 +1,8 @@
 from aiogram import Router, Bot, F, types
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters as f, keyboards as k
+from bot import filters as f
+from . import keyboards as k
 from .. import get_username
 
 router = Router(name='settings:other')

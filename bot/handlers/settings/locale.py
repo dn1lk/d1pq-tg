@@ -1,8 +1,8 @@
 from aiogram import Router, F, types
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import keyboards as k
 from bot.utils.database.context import DataBaseContext
+from . import keyboards as k
 
 router = Router(name="settings:locale")
 router.callback_query.filter(k.Settings.filter(F.name == 'locale'))

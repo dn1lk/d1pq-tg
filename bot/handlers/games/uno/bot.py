@@ -6,10 +6,10 @@ from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from bot import keyboards as k
 from bot.handlers import get_username
 from .data import UnoData
 from .exceptions import UnoNoUsersException
+from .. import keyboards as k
 
 
 class UnoBot:
@@ -20,7 +20,7 @@ class UnoBot:
         self.data: UnoData = data
 
     def __str__(self):
-        return f'game:{self.message.chat.id}:uno:bot'
+        return ':'.join(('uno', str(self.message.chat.id), 'bot'))
 
     async def get_color(self) -> str:
         self.data.current_card.color = choice(self.data.users[self.bot.id]).color
@@ -63,8 +63,6 @@ class UnoBot:
 
                 action_uno.data.current_special.skip = action_uno.data.current_user = self.message.from_user
                 await action_uno.move()
-
-        await state.update_data(uno=action_uno.data.dict() if action_uno.data else None)
 
     async def uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):

@@ -5,12 +5,12 @@ from aiogram import Router, F, types, Bot
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
-from bot import keyboards as k
 from bot.handlers import get_username
 from .action import UnoAction
 from .cards import UnoColors, draw_card
 from .data import UnoData
 from .exceptions import UnoNoUsersException
+from .. import keyboards as k
 
 router = Router(name='game:uno:user')
 
@@ -78,17 +78,17 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
                 task.cancel()
                 break
 
+        action_uno.data.timer_amount = 3
+
         try:
-            action_uno.data.timer_amount = 3
             await action_uno.prepare(card, accept)
         except UnoNoUsersException:
             await action_uno.end()
 
     elif decline:
         await action_uno.data.user_card_add(bot, message.from_user)
+        await state.set_data({'uno': action_uno.data.dict()})
         await message.reply(decline)
-
-    await state.update_data(uno=action_uno.data.dict() if action_uno.data else None)
 
 
 @router.message(F.text == DRAW_CARD)
@@ -108,8 +108,6 @@ async def add_card_handler(message: types.Message, bot: Bot, state: FSMContext):
 
         action_uno.data.current_special.skip = action_uno.data.current_user = message.from_user
         await action_uno.move(await action_uno.data.user_card_add(bot))
-
-        await state.update_data(uno=action_uno.data.dict())
     else:
         await message.reply(
             _(
@@ -125,7 +123,6 @@ async def get_color_handler(message: types.Message, state: FSMContext):
 
     if data_uno.current_special.color and message.from_user.id == data_uno.current_user.id:
         data_uno.current_card.color = UnoColors[message.text.split()[0]]
-
         await message.answer(
             choice(
                 (
@@ -138,9 +135,7 @@ async def get_color_handler(message: types.Message, state: FSMContext):
         )
 
         action_uno = UnoAction(message=message, state=state, data=data_uno)
-
         await action_uno.move()
-        await state.update_data(uno=action_uno.data.dict())
     else:
         await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
 
@@ -148,7 +143,7 @@ async def get_color_handler(message: types.Message, state: FSMContext):
 async def uno_answer(message: types.Message, state: FSMContext, user: types.User, action_uno: UnoAction):
     if user.id == message.from_user.id:
         for task in asyncio.all_tasks():
-            if task.get_name() == str(action_uno.bot) + ':' + str(user.id) + ':' + 'uno':
+            if task.get_name() == ':'.join((str(action_uno.bot), str(user.id), 'uno')):
                 task.cancel()
                 break
 
@@ -162,7 +157,7 @@ async def uno_answer(message: types.Message, state: FSMContext, user: types.User
             reply_markup=types.ReplyKeyboardRemove()
         )
 
-    await state.update_data(uno=action_uno.data.dict())
+    await state.set_data({'uno': action_uno.data.dict()})
 
 
 @router.message(F.text.in_(k.UNO), F.reply_to_message)
@@ -222,8 +217,11 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
 
             try:
                 await data_uno.user_remove(state, data_uno.polls_kick.pop(poll_answer.poll_id).user_id)
+                await state.set_data({'uno': data_uno.dict()})
             except UnoNoUsersException:
                 action = UnoAction(message, state, data_uno)
-                data_uno = await action.end()
+                await action.end()
 
-        await state.update_data(uno=data_uno.dict() if data_uno else None)
+    elif poll_answer.poll_id not in data_uno.polls_kick:
+        from aiogram.dispatcher.event.bases import UNHANDLED
+        return UNHANDLED
