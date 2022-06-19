@@ -19,10 +19,10 @@ router.edited_message.filters[1] = CustomCommandFilter
 async def hello_handler(message: types.Message, bot: Bot, i18n: I18n):
     await message.answer(
         _(
-            "Hello, {username}. "
+            "Hello, {user}. "
             "I am a text generator bot and in some cases a great conversationalist.\n\n"
             "If you write me a message or a command, something might happen."
-        ).format(username=get_username(message.from_user)) +
+        ).format(user=get_username(message.from_user)) +
         "\n\n" +
         get_command_list(bot, i18n.current_locale, slice(2)),
     )
@@ -107,8 +107,8 @@ async def who_chat_handler(
     if members:
         if len(members) > 1:
             member = await bot.get_chat_member(message.chat.id, choice(members))
-            answer = _("Hmmm, I think {username} {args}").format(
-                username=get_username(member.user),
+            answer = _("Hmmm, I think {user} {args}").format(
+                user=get_username(member.user),
                 args=command.args,
             )
         else:

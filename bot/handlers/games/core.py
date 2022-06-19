@@ -72,7 +72,7 @@ async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stick
             "Enter any emoji between 1 and 10 and I'll choose "
             "my own in 60 seconds and we'll we'll see which one of you is right."
         ).format(
-            username=get_username(message.from_user)
+            user=get_username(message.from_user)
         )
     )
 

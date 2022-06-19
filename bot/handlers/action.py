@@ -59,11 +59,11 @@ async def on_member_join_handler(
         await message.answer(
             choice(
                 (
-                    _("All bacchanalia, with you {username}!"),
-                    _("You don't have to clap, {username} is with us."),
-                    _("Do not meet, now we have {username}!"),
+                    _("All bacchanalia, with you {user}!"),
+                    _("You don't have to clap, {user} is with us."),
+                    _("Do not meet, now we have {user}!"),
                 )
-            ).format(username=', '.join(answer['bot'])),
+            ).format(user=', '.join(answer['bot'])),
         )
 
     if answer['bot'] and answer['user']:
@@ -81,11 +81,11 @@ async def on_member_join_handler(
         await message.answer(
             choice(
                 (
-                    _("Greetings, {username}!"),
-                    _("Welcome, {username}!"),
-                    _("{username}... Who is it?"),
+                    _("Greetings, {user}!"),
+                    _("Welcome, {user}!"),
+                    _("{user}... Who is it?"),
                 )
-            ).format(username=', '.join(answer['user'])),
+            ).format(user=', '.join(answer['user'])),
         )
 
 
