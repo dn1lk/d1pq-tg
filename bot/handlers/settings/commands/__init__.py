@@ -31,7 +31,7 @@ async def commands_handler(
 ):
     await state.set_state(Settings.command)
 
-    args = markov.get_base(locale=choice(i18n.available_locales)).parsed_sentences
+    args = markov.get_base(choice(i18n.available_locales), choice(markov.books)).parsed_sentences
     if messages:
         args = messages + args
 
@@ -110,7 +110,7 @@ async def commands_setup_no_args_handler(
         i18n: I18n,
         messages: list | None = None,
 ):
-    args = markov.get_base(locale=choice(i18n.available_locales)).parsed_sentences
+    args = markov.get_base(choice(i18n.available_locales), choice(markov.books)).parsed_sentences
 
     if messages:
         args = messages + args

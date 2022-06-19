@@ -77,7 +77,7 @@ async def choose_no_args_handler(
         messages: list | None = None):
     message = await message.answer(_("<b>What to choose?</b>"))
 
-    args = markov.get_base(i18n.current_locale).parsed_sentences
+    args = markov.get_base(i18n.current_locale, choice(markov.books)).parsed_sentences
     if messages:
         args = messages + args
 
@@ -208,6 +208,7 @@ async def question_no_args_handler(
 
 
 @router.message(commands=['history', 'короче'], commands_ignore_case=True)
+@flags.throttling('gen')
 @flags.data('messages')
 @flags.chat_action("typing")
 async def history_handler(
@@ -224,7 +225,7 @@ async def history_handler(
 
     # await message.answer(await aiobalaboba.get(query, 6)) not working
 
-    await message.answer(markov.gen(i18n.current_locale, messages, query, 2, min_words=25, max_words=100))
+    await message.answer(markov.gen(i18n.current_locale, messages, query, state_size=2, tries=10000, min_words=50))
 
 
 @router.message(commands=['future', 'погадай'], commands_ignore_case=True, command_magic=F.args)

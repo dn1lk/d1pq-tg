@@ -26,10 +26,13 @@ def set_data(text: str, messages: list | None = None) -> list | None:
         return messages
 
 
-@lru_cache(maxsize=2)
-def get_base(locale: str, state_size: int = 1):
+books = ('galaxy', 'war-and-peace', 'war-worlds')
+
+
+@lru_cache(maxsize=4)
+def get_base(locale: str, book: str, state_size: int = 1):
     with open(
-            config.BASE_DIR / 'locales' / locale / 'war-and-peace.txt',
+            config.BASE_DIR / 'locales' / locale / f'{book}.txt',
             'r',
             encoding='UTF-8'
     ) as f:
@@ -51,10 +54,11 @@ def gen(
         messages: list | None = None,
         text: str = None,
         state_size: int = 2,
+        tries: int = 20,
         min_words: int = 1,
         max_words: int = 20,
 ) -> str:
-    model = get_base(locale, state_size)
+    model = get_base(locale, choice(books), state_size)
 
     if messages:
         model_messages = markovify.Text(messages, state_size=state_size)
@@ -74,7 +78,7 @@ def gen(
             answer = model.make_sentence_with_start(
                 beginning=choice(text.split()),
                 strict=False,
-                tries=state_size * 10,
+                tries=state_size * tries,
                 min_words=min_words,
                 max_words=max_words,
             )
@@ -88,6 +92,10 @@ def gen(
                 f"Yours has 0 words"
             )
     except (markovify.text.ParamError, LookupError, TypeError):
-        answer = model.make_sentence(tries=state_size * 10, min_words=min_words, max_words=max_words)
+        answer = model.make_sentence(
+            tries=state_size * tries,
+            min_words=min_words,
+            max_words=max_words
+        )
 
     return answer or get_none(locale).make_sentence()
