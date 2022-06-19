@@ -139,12 +139,13 @@ async def color_handler(message: types.Message, state: FSMContext):
 
 
 async def uno_answer(message: types.Message, bot: Bot, state: FSMContext, user_id: int, data_uno: UnoData):
-    if user_id == message.from_user.id:
-        for task in asyncio.all_tasks():
-            if task.get_name().endswith(str(user_id) + ":" + "uno"):
-                task.cancel()
-                break
+    for task in asyncio.all_tasks():
+        if task.get_name().endswith(str(user_id) + ":" + "uno"):
+            task.cancel()
+            break
 
+    if user_id == message.from_user.id:
+        data_uno.uno_users_id.remove(user_id)
         await message.reply(
             _("On reaction =)."),
             reply_markup=types.ReplyKeyboardRemove()
