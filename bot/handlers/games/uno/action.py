@@ -50,7 +50,7 @@ class UnoAction:
         await self.message.answer(answer, reply_markup=k.uno_uno())
 
         name = str(self.bot) + ':' + str(self.data.current_user_id) + ':' + 'uno'
-        asyncio.create_task(coro(), name=name)
+        asyncio.create_task(coro(self.state), name=name)
 
     async def remove(self):
         if self.message.from_user.id == self.state.bot.id:

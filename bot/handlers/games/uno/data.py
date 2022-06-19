@@ -84,8 +84,9 @@ class UnoData(BaseModel):
 
                 if self.current_special.color:
                     self.current_special.color = False
-                    color = choice(list(UnoColors.names(exclude={UnoColors.black, self.current_card.color}))).value
-                    accept = _("Eh, {user}. But you could choose {emoji} {color}.").format(
+
+                    color = choice(list(UnoColors.names(exclude={UnoColors.black, self.current_card.color})))
+                    accept = _("Eh, {user}.") + _("You could choose {emoji} {color}!").format(
                         emoji=color.value,
                         color=color.get_color(),
                     )

@@ -63,17 +63,21 @@ class UnoBot:
             else:
                 await action_uno.skip()
 
-    async def uno(self):
+    async def uno(self, state: FSMContext):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
             await asyncio.sleep(choice(range(0, 2)))
 
             self.data.uno_users_id.remove(self.bot.id)
             await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
 
-    async def uno_user(self):
+            await state.update_data(uno=self.data.dict())
+
+    async def uno_user(self, state: FSMContext):
         await asyncio.sleep(choice(range(2, 6)))
 
         await self.data.add_card(self.bot, self.message.chat.id, self.message.from_user.id, 2)
         await self.message.answer(
             get_username(self.message.from_user) + ", " + str(k.UNO),
             reply_markup=types.ReplyKeyboardRemove())
+
+        await state.update_data(uno=self.data.dict())
