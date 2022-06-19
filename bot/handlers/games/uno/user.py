@@ -88,7 +88,7 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
     elif decline:
         await action_uno.data.user_card_add(bot, message.from_user)
 
-        data['uno'] = action_uno.data
+        data['uno'] = action_uno.data.dict()
         await state.set_data(data)
 
         await message.reply(decline)
