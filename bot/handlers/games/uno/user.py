@@ -7,7 +7,6 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 from bot.handlers import get_username
 from .action import UnoAction
-from .bot import UnoBot
 from .cards import UnoColors, draw_card
 from .data import UnoData
 from .exceptions import UnoNoUsersException
