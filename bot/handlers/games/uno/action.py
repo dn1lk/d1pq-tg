@@ -116,7 +116,7 @@ class UnoAction:
         from . import uno_timeout
         from .. import timer
 
-        await self.state.update_data(uno=self.data)
+        await self.state.update_data(uno=self.data.dict())
         timer(self.state, uno_timeout, message=self.message, data_uno=self.data)
 
     async def end(self):
