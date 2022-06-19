@@ -31,7 +31,7 @@ def uno_color():
     builder = ReplyKeyboardBuilder()
 
     for color in UnoColors.names():
-        builder.button(text=_("{emoji} {color[1]} color").format(emoji=color.value, color=color.get_color()))
+        builder.button(text=_("{emoji} {color} color").format(emoji=color.value, color=color.get_color()))
 
     builder.adjust(1)
     return builder.as_markup(
