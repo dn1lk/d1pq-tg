@@ -56,7 +56,7 @@ def gen(
         state_size: int = 2,
         tries: int = 20,
         min_words: int = 1,
-        max_words: int = 20,
+        max_words: int = None,
 ) -> str:
     model = get_base(locale, choice(books), state_size)
 
@@ -70,8 +70,6 @@ def gen(
                 models=(model_messages, model),
                 weights=(100, 0.01)
             )
-
-    model = model.compile()
 
     try:
         if text:
@@ -95,7 +93,7 @@ def gen(
         answer = model.make_sentence(
             tries=state_size * tries,
             min_words=min_words,
-            max_words=max_words
+            max_words=max_words,
         )
 
     return answer or get_none(locale).make_sentence()

@@ -225,7 +225,7 @@ async def history_handler(
 
     # await message.answer(await aiobalaboba.get(query, 6)) not working
 
-    await message.answer(markov.gen(i18n.current_locale, messages, query, state_size=2, tries=10000, min_words=50))
+    await message.answer(markov.gen(i18n.current_locale, messages, query, state_size=2, tries=1000, min_words=50))
 
 
 @router.message(commands=['future', 'погадай'], commands_ignore_case=True, command_magic=F.args)
