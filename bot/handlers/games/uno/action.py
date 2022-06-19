@@ -55,14 +55,14 @@ class UnoAction:
         if self.data.current_user.id == self.state.bot.id:
             await self.message.answer(
                 _("I have one card left!"),
-                reply_markup=k.game_uno_uno(),
+                reply_markup=k.uno_uno(),
             )
 
             asyncio.create_task(self.bot.uno(), name=name)
         else:
             await self.message.answer(
                 _("Player {user} has one card left!").format(user=get_username(self.data.current_user)),
-                reply_markup=k.game_uno_uno(),
+                reply_markup=k.uno_uno(),
             )
 
             asyncio.create_task(self.bot.uno_user(self.data.current_user), name=name)
@@ -89,7 +89,7 @@ class UnoAction:
             if self.data.current_user.id == self.state.bot.id:
                 answer = await self.bot.get_color()
             else:
-                return await self.message.reply(answer, reply_markup=k.game_uno_color())
+                return await self.message.reply(answer, reply_markup=k.uno_color())
 
         await self.move(answer)
 
@@ -110,13 +110,13 @@ class UnoAction:
                         _("I pass the turn to the player {user}."),
                     )
                 ).format(user=get_username(self.data.next_user)),
-                reply_markup=k.game_uno_show_cards(),
+                reply_markup=k.uno_show_cards(),
             )
 
         from . import uno_timeout
         from .. import timer
 
-        await self.state.set_data({'uno': self.data})
+        await self.state.update_data(uno=self.data)
         timer(self.state, uno_timeout, message=self.message, data_uno=self.data)
 
     async def end(self):

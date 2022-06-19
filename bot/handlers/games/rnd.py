@@ -11,7 +11,7 @@ router.message.filter(Game.rnd)
 
 
 @router.message(F.text.in_(set(map(str, range(1, 11)))))
-async def game_rnd_answer_handler(message: types.Message, state: FSMContext):
+async def answer_handler(message: types.Message, state: FSMContext):
     user_var = (await state.get_data()).get('rnd', {})
 
     if message.from_user in user_var.values():
@@ -38,7 +38,7 @@ async def game_rnd_answer_handler(message: types.Message, state: FSMContext):
 
 
 @router.message(F.text.isdigit())
-async def game_rnd_mistake_handler(message: types.Message):
+async def mistake_handler(message: types.Message):
     await message.reply(
         choice(
             (

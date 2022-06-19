@@ -8,7 +8,7 @@ class Games(CallbackData, prefix='game'):
     value: str | None
 
 
-def game_uno_start():
+def uno_start():
     builder = InlineKeyboardBuilder()
 
     builder.button(text=_("Yes"), callback_data=Games(game='uno', value='join'))
@@ -19,13 +19,13 @@ def game_uno_start():
     return builder.as_markup()
 
 
-def game_uno_show_cards():
+def uno_show_cards():
     builder = InlineKeyboardBuilder()
     builder.button(text=_("Show maps"), switch_inline_query_current_chat="uno")
     return builder.as_markup()
 
 
-def game_uno_color():
+def uno_color():
     from .uno.cards import UnoColors
 
     builder = ReplyKeyboardBuilder()
@@ -44,7 +44,7 @@ def game_uno_color():
 UNO = __("UNO!")
 
 
-def game_uno_uno():
+def uno_uno():
     builder = ReplyKeyboardBuilder()
     builder.button(text=str(UNO))
     return builder.as_markup(
@@ -53,7 +53,7 @@ def game_uno_uno():
     )
 
 
-def get_game_rps_args() -> dict:
+def get_rps_args() -> dict:
     return {
         ("🪨", _("Rock")): _("Scissors").lower(),
         ("✂", _("Scissors")): _("Paper").lower(),
@@ -61,10 +61,10 @@ def get_game_rps_args() -> dict:
     }
 
 
-def game_rps():
+def rps_show_vars():
     builder = ReplyKeyboardBuilder()
 
-    for item in get_game_rps_args():
+    for item in get_rps_args():
         builder.button(text=' '.join(item))
 
     builder.adjust(1)

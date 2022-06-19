@@ -27,7 +27,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
             "<b>Already in the game:</b>\n"
             "{user}"
         ).format(user=get_username(message.from_user)),
-        reply_markup=k.game_uno_start(),
+        reply_markup=k.uno_start(),
     )
 
     from .uno.core import start_handler
@@ -126,5 +126,5 @@ async def rps_handler(message: types.Message, state: FSMContext):
     await state.set_state(Game.rps)
     await state.update_data(rps=(0, 0))
 
-    await message.answer(_("Eh, classic. Your move?"), reply_markup=k.game_rps())
+    await message.answer(_("Eh, classic. Your move?"), reply_markup=k.rps_show_vars())
     timer(state, close_timeout, message=message)

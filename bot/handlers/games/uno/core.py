@@ -46,7 +46,7 @@ async def start_handler(
         users_id = {entity.user.id for entity in message.entities[3:] if entity.user}
 
         if not users_id:
-            return await start_no_users_handler(await message.edit_reply_markup(k.game_uno_start()))
+            return await start_no_users_handler(await message.edit_reply_markup(k.uno_start()))
 
     if random() < 2 / len(users_id):
         users_id.add(bot.id)
@@ -97,10 +97,10 @@ async def start_handler(
     else:
         message = await message.reply(
             answer + _("{user}, your move.").format(user=get_username(data_uno.next_user)),
-            reply_markup=k.game_uno_show_cards(),
+            reply_markup=k.uno_show_cards(),
         )
 
-        await state.set_data({'uno': data_uno.dict()})
+        await state.update_data(uno=data_uno.dict())
         timer(state, uno_timeout, message=message, data_uno=data_uno)
 
 
