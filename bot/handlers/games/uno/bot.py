@@ -41,7 +41,7 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 5)))
+            await asyncio.sleep(choice(range(1, 4)))
 
             from .action import UnoAction
 
