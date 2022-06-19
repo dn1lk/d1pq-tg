@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-19 22:32+0300\n"
+"POT-Creation-Date: 2022-06-19 23:01+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -406,19 +406,19 @@ msgstr "Кто-то не умеет читать. Было чётко напис
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr "От 1 до 10, что сложного то?!"
 
-#: handlers/games/rps.py:25
+#: handlers/games/rps.py:26
 msgid "Draw."
 msgstr "Ничья."
 
-#: handlers/games/rps.py:28
+#: handlers/games/rps.py:29
 msgid "My win!"
 msgstr "Моя победа!"
 
-#: handlers/games/rps.py:31
+#: handlers/games/rps.py:32
 msgid "My defeat..."
 msgstr "Моё поражение..."
 
-#: handlers/games/rps.py:33
+#: handlers/games/rps.py:34
 msgid ""
 "Score: {loses}-{wins}.\n"
 "Play again?"
@@ -716,7 +716,9 @@ msgstr "{user}, спроси ты у кого-нибудь, как играть.
 
 #: handlers/games/uno/data.py:140
 msgid "Can I just give {user} a card and we'll pretend like nothing happened?"
-msgstr "Давай я просто дам игроку {user} карту и мы сделаем вид, что ничего не было?"
+msgstr ""
+"Давай я просто дам игроку {user} карту и мы сделаем вид, что ничего не "
+"было?"
 
 #: handlers/games/uno/data.py:141
 msgid "I'm betting on {user}'s defeat."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-19 22:32+0300\n"
+"POT-Creation-Date: 2022-06-19 23:01+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -301,7 +301,7 @@ msgid "Show maps"
 msgstr ""
 
 #: handlers/games/keyboards.py:34
-msgid "{emoji} {color} color"
+msgid "{emoji} {color}"
 msgstr ""
 
 #: handlers/games/keyboards.py:40
@@ -368,19 +368,19 @@ msgstr ""
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr ""
 
-#: handlers/games/rps.py:25
+#: handlers/games/rps.py:26
 msgid "Draw."
 msgstr ""
 
-#: handlers/games/rps.py:28
+#: handlers/games/rps.py:29
 msgid "My win!"
 msgstr ""
 
-#: handlers/games/rps.py:31
+#: handlers/games/rps.py:32
 msgid "My defeat..."
 msgstr ""
 
-#: handlers/games/rps.py:33
+#: handlers/games/rps.py:34
 msgid ""
 "Score: {loses}-{wins}.\n"
 "Play again?"
@@ -509,7 +509,7 @@ msgid "I pass the turn to the player {user}."
 msgstr ""
 
 #: handlers/games/uno/bot.py:27
-msgid "I choice {emoji} {color} color."
+msgid "I choice {emoji} {color}."
 msgstr ""
 
 #: handlers/games/uno/cards.py:33
@@ -670,7 +670,7 @@ msgid "Someone explain to {user} how to play."
 msgstr ""
 
 #: handlers/games/uno/data.py:140
-msgid "Can I just give {user} a map and we'll pretend like nothing happened?"
+msgid "Can I just give {user} a card and we'll pretend like nothing happened?"
 msgstr ""
 
 #: handlers/games/uno/data.py:141
@@ -1528,5 +1528,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "I'm betting on your defeat."
+#~ msgstr ""
+
+#~ msgid "{emoji} {color} color"
+#~ msgstr ""
+
+#~ msgid "I choice {emoji} {color} color."
+#~ msgstr ""
+
+#~ msgid "Can I just give {user} a map and we'll pretend like nothing happened?"
 #~ msgstr ""
 
