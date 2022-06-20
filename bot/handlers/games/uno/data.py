@@ -34,10 +34,16 @@ class UnoData(BaseModel):
     async def get_user(self, bot: Bot, chat_id: int, user_id: int = None) -> types.User:
         user_id = user_id or self.next_user_id
         member = await bot.get_chat_member(chat_id, user_id)
-        if member.is_member or user_id in (chat_id, bot.id):
+
+        if member not in (types.ChatMemberLeft, types.ChatMemberBanned) or user_id in (chat_id, bot.id):
             return member.user
         else:
-            raise UnoNoCardsException("User leave from the chat")
+            user = await self.get_user(bot, chat_id, self.user_next(user_id))
+
+            if user_id == self.next_user_id:
+                self.next_user_id = user.id
+
+            return user
 
     def user_next(self, user_id: int = None) -> int:
         user_id = user_id or self.next_user_id

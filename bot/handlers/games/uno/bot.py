@@ -54,7 +54,23 @@ class UnoBot:
                 try:
                     await action_uno.prepare(
                         action_uno.data.current_card,
-                        accept.format(user=get_username(action_uno.message.from_user))
+                        choice(
+                            (
+                                _("My move is made."),
+                                _("Expected? But I don't care."),
+                                _("BA-DUM-TSS!"),
+                                _(
+                                    "On a scale of 10, rate the quality of this move.\n"
+                                    "Where 0 is very good, 10 is excellent"
+                                ),
+                                _("I still have cards in my deck."),
+                                _("Curious, but I know all the cards in the game... I dealt them."),
+                                _("Maybe I can even win this game!"),
+                                _("Oh, I don't envy the next player..."),
+                                _("Br-b. Ah. Yes. No. ..."),
+                                _("Oh-oh, this card fell into this chat by itself..."),
+                            )
+                        )
                     )
                 except ValueError:
                     return await action_uno.message.delete()
