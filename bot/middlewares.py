@@ -171,7 +171,7 @@ def setup(dp: Dispatcher):
     from handlers.settings.commands.middleware import CustomCommandsMiddleware
 
     middlewares = (
-        Middleware(inner=ThrottlingMiddleware(dp.storage), observers=('message', callback_query'),
+        Middleware(inner=ThrottlingMiddleware(dp.storage), observers=('message', 'callback_query'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
         # Middleware(outer=LogMiddleware()),
