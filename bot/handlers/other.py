@@ -48,6 +48,19 @@ async def get_gen_args(
     return await choice([gen_markov, gen_sticker])()
 
 
+@router.message(F.text.lower().contains('гольд'))
+async def gold_handler(message: types.Message):
+    await message.answer(
+        choice(
+            (
+                'Оооо',
+                'Оо',
+                'ОООООО',
+            )
+        )
+    )
+
+
 @router.message(magic_data=F.reply_to_message.from_user.id == F.bot.id)
 @flags.throttling('gen')
 @flags.data('messages')
