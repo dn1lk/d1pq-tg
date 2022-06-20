@@ -67,7 +67,7 @@ class LogMiddleware(BaseMiddleware):
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    timeouts = {'gen': 1, 'rps': 3}
+    timeouts = {'gen': 1, 'callback_query': 1, 'rps': 3}
 
     def __init__(self, storage: BaseStorage):
         self.storage = storage
@@ -80,10 +80,13 @@ class ThrottlingMiddleware(BaseMiddleware):
     ) -> Any:
         throttling = get_flag(data, 'throttling')
 
-        if throttling:
+        if throttling or event.event_type == 'callback_query':
             bot: Bot = data['bot']
             chat_id: int = data.get('event_chat', data['event_from_user']).id
             state = self.get_context(bot, chat_id)
+
+            if event.event_type == 'callback_query':
+                throttling = 'callback_query'
 
             if (await state.get_data()).get(throttling):
                 return
@@ -168,7 +171,7 @@ def setup(dp: Dispatcher):
     from handlers.settings.commands.middleware import CustomCommandsMiddleware
 
     middlewares = (
-        Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
+        Middleware(inner=ThrottlingMiddleware(dp.storage), observers=('message', callback_query'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
         # Middleware(outer=LogMiddleware()),
