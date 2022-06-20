@@ -80,13 +80,13 @@ class ThrottlingMiddleware(BaseMiddleware):
     ) -> Any:
         throttling = get_flag(data, 'throttling')
 
-        if throttling or event.event_type == 'callback_query':
+        if isinstance(event, types.CallbackQuery):
+            throttling = 'callback_query'
+
+        if throttling:
             bot: Bot = data['bot']
             chat_id: int = data.get('event_chat', data['event_from_user']).id
             state = self.get_context(bot, chat_id)
-
-            if event.event_type == 'callback_query':
-                throttling = 'callback_query'
 
             if (await state.get_data()).get(throttling):
                 return
