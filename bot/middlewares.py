@@ -67,7 +67,7 @@ class LogMiddleware(BaseMiddleware):
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    timeouts = {'gen': 1, 'callback_query': 1, 'rps': 3}
+    timeouts = {'gen': 1, 'callback_query': 0.25, 'rps': 3}
 
     def __init__(self, storage: BaseStorage):
         self.storage = storage
