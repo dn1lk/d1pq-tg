@@ -1,7 +1,7 @@
 import asyncio
 from random import choice
 
-from aiogram import Bot, types
+from aiogram import Bot, types, exceptions
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
@@ -49,7 +49,11 @@ class UnoBot:
 
             if cards:
                 action_uno.data.current_card, accept = choice(cards)
-                action_uno.message = await action_uno.message.answer_sticker(action_uno.data.current_card.file_id)
+                try:
+                    action_uno.message = await action_uno.message.answer_sticker(action_uno.data.current_card.file_id)
+                except exceptions.TelegramRetryAfter as retry:
+                    await asyncio.sleep(retry.retry_after)
+                    action_uno.message = await retry.method
 
                 try:
                     await action_uno.prepare(
@@ -81,7 +85,7 @@ class UnoBot:
 
     async def uno(self, state: FSMContext):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(0, 6)) / len(self.data.users))
+            await asyncio.sleep(choice(range(0, 4)) / len(self.data.users))
 
             self.data.uno_users_id.remove(self.bot.id)
             await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
@@ -89,7 +93,7 @@ class UnoBot:
             await state.update_data(uno=self.data.dict())
 
     async def uno_user(self, state: FSMContext):
-        await asyncio.sleep(choice(range(2, 12)) / len(self.data.users))
+        await asyncio.sleep(choice(range(2, 8)) / len(self.data.users))
 
         await self.data.add_card(self.bot, self.message.chat.id, self.message.from_user.id, 2)
         await self.message.answer(

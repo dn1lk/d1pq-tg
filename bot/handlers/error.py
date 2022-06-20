@@ -6,6 +6,11 @@ from aiogram import Router, Bot, types, exceptions
 router = Router(name='error')
 
 
+@router.errors(pattern="Message can't be edited")
+async def edit_handler(_):
+    pass
+
+
 @router.errors(exception=exceptions.TelegramRetryAfter)
 async def retry_after_handler(event: types.Update, bot: Bot, exception: exceptions.TelegramRetryAfter):
     logging.error(f'TelegramRetryAfter: sleeping for {exception.retry_after} seconds')
