@@ -35,7 +35,7 @@ class UnoData(BaseModel):
         user_id = user_id or self.next_user_id
         member = await bot.get_chat_member(chat_id, user_id)
 
-        if member not in (types.ChatMemberLeft, types.ChatMemberBanned) or user_id in (chat_id, bot.id):
+        if member.status not in (types.ChatMemberLeft.status, types.ChatMemberBanned.status):
             return member.user
         else:
             user = await self.get_user(bot, chat_id, self.user_next(user_id))
