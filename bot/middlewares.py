@@ -87,9 +87,9 @@ class ThrottlingMiddleware(BaseMiddleware):
 
             if throttling in await state.get_data():
                 return
-            else:
-                await state.update_data({throttling: True})
-                self.timer(state, throttling)
+
+            await state.update_data({throttling: True})
+            self.timer(state, throttling)
 
         return await handler(event, data)
 
