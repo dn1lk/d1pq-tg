@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-20 17:52+0300\n"
+"POT-Creation-Date: 2022-06-20 18:26+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -512,45 +512,45 @@ msgstr ""
 msgid "I choice {emoji} {color}."
 msgstr ""
 
-#: handlers/games/uno/bot.py:59
+#: handlers/games/uno/bot.py:63
 msgid "My move is made."
 msgstr ""
 
-#: handlers/games/uno/bot.py:60
+#: handlers/games/uno/bot.py:64
 msgid "Expected? But I don't care."
 msgstr ""
 
-#: handlers/games/uno/bot.py:61
+#: handlers/games/uno/bot.py:65
 msgid "BA-DUM-TSS!"
 msgstr ""
 
-#: handlers/games/uno/bot.py:62
+#: handlers/games/uno/bot.py:66
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent"
 msgstr ""
 
-#: handlers/games/uno/bot.py:66
+#: handlers/games/uno/bot.py:70
 msgid "I still have cards in my deck."
 msgstr ""
 
-#: handlers/games/uno/bot.py:67
+#: handlers/games/uno/bot.py:71
 msgid "Curious, but I know all the cards in the game... I dealt them."
 msgstr ""
 
-#: handlers/games/uno/bot.py:68
+#: handlers/games/uno/bot.py:72
 msgid "Maybe I can even win this game!"
 msgstr ""
 
-#: handlers/games/uno/bot.py:69
+#: handlers/games/uno/bot.py:73
 msgid "Oh, I don't envy the next player..."
 msgstr ""
 
-#: handlers/games/uno/bot.py:70
+#: handlers/games/uno/bot.py:74
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr ""
 
-#: handlers/games/uno/bot.py:71
+#: handlers/games/uno/bot.py:75
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr ""
 
@@ -659,7 +659,6 @@ msgid "Someday {user} will be able to make the right move."
 msgstr ""
 
 #: handlers/games/uno/data.py:111
-#, fuzzy
 msgid "{user} keeps throwing cards..."
 msgstr ""
 
@@ -724,12 +723,10 @@ msgid "I take"
 msgstr ""
 
 #: handlers/games/uno/data.py:173
-#, fuzzy
 msgid "{user} receives"
 msgstr ""
 
 #: handlers/games/uno/data.py:175
-#, fuzzy
 msgid "{amount} card."
 msgid_plural "{amount} cards."
 msgstr[0] ""
@@ -784,7 +781,6 @@ msgid "{user} can get"
 msgstr ""
 
 #: handlers/games/uno/data.py:229
-#, fuzzy
 msgid "<b>{amount}</b> card!"
 msgid_plural "<b>{amount}</b> cards!"
 msgstr[0] ""
@@ -841,15 +837,31 @@ msgid ""
 "When you'll get a black card, choose this color ;)."
 msgstr ""
 
-#: handlers/games/uno/user.py:150
+#: handlers/games/uno/user.py:153
 msgid "On reaction =)."
 msgstr ""
 
-#: handlers/games/uno/user.py:176 handlers/games/uno/user.py:188
+#: handlers/games/uno/user.py:154
+msgid "Yep!"
+msgstr ""
+
+#: handlers/games/uno/user.py:155
+msgid "Ok, you won't get cards."
+msgstr ""
+
+#: handlers/games/uno/user.py:176
 msgid "Nope."
 msgstr ""
 
-#: handlers/games/uno/user.py:203
+#: handlers/games/uno/user.py:177
+msgid "And who is UNO for?"
+msgstr ""
+
+#: handlers/games/uno/user.py:178
+msgid "No, you are UNO! Kidding."
+msgstr ""
+
+#: handlers/games/uno/user.py:215
 msgid "{user} is kicked from the game."
 msgstr ""
 
@@ -1058,526 +1070,4 @@ msgid ""
 "\n"
 "/settings - repeat the procedure."
 msgstr ""
-
-#~ msgid ""
-#~ "{title}, hello! Let's start with answering the obvious questions:\n"
-#~ "- What am I? Bot.\n"
-#~ "- What can I do? Some things after which something happens...\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Hello, {username}. I am a text "
-#~ "generator bot and in some cases a"
-#~ " great conversationalist.\n"
-#~ "\n"
-#~ "If you write me a message or a command, something might happen.\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "List of my main commands - I "
-#~ "only accept them together with the "
-#~ "required request, in one message:\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "\n"
-#~ "Remaining attempts: {failed}"
-#~ msgstr ""
-
-#~ msgid "You have no attempts left. "
-#~ msgstr ""
-
-#~ msgid "Looks like all attempts have been spent. "
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Where is an ordinary user up to"
-#~ " artificial intelligence. All attempts have"
-#~ " ended. "
-#~ msgstr ""
-
-#~ msgid "Do you really think that I will choose THIS number? Well, let's see ;)."
-#~ msgstr ""
-
-#~ msgid "So you won’t guess for sure, choose a number from 1 to 10!"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "\n"
-#~ "\n"
-#~ "Score: {loses}-{wins}.\n"
-#~ "Play again?"
-#~ msgstr ""
-
-#~ msgid "I won't play with you!"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Mm, {username} is trying his luck... "
-#~ "Well, EVERYONE, EVERYONE, EVERYONE, pay "
-#~ "attention!\n"
-#~ "\n"
-#~ "Enter any number between 1 and 10"
-#~ " and I'll choose my own in 60"
-#~ " seconds and we'll we'll see which"
-#~ " one of you is right."
-#~ msgstr ""
-
-#~ msgid "So my number is {bot}. Who guessed? Hmm..."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Current custom commands:\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid "No, I can only record one custom command. You'll have to choose!"
-#~ msgstr ""
-
-#~ msgid "Время вышло."
-#~ msgstr ""
-
-#~ msgid "Исключить игрока из игры?"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<b>Поиграем в UNO?</b>\n"
-#~ "\n"
-#~ "Минута на принятие решения!\n"
-#~ "Вручную начать игру может {user}.\n"
-#~ "\n"
-#~ "<b>Уже в игре:</b>\n"
-#~ "{user}"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Что-ж, у меня закончились карты, "
-#~ "вынужден остаться лишь наблюдателем =(."
-#~ msgstr ""
-
-#~ msgid "{user} использует свою последнюю карту и выходит из игры победителем."
-#~ msgstr ""
-
-#~ msgid "У меня осталась одна карта!"
-#~ msgstr ""
-
-#~ msgid "У игрока {user} осталась одна карта!"
-#~ msgstr ""
-
-#~ msgid "{user}, твоя очередь."
-#~ msgstr ""
-
-#~ msgid "{user}, твой ход."
-#~ msgstr ""
-
-#~ msgid "Теперь ходит {user}."
-#~ msgstr ""
-
-#~ msgid "Черёд игрока {user}."
-#~ msgstr ""
-
-#~ msgid "Передаю ход игроку {user}."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<b>Игра закончена.</b>\n"
-#~ "\n"
-#~ "{user} остался последним игроком."
-#~ msgstr ""
-
-#~ msgid "Я выбираю {color[0]} {color[1]} цвет."
-#~ msgstr ""
-
-#~ msgid "Да-да, я тоже играю!"
-#~ msgstr ""
-
-#~ msgid "Поиграю с вами."
-#~ msgstr ""
-
-#~ msgid "А в игре и я тоже!"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Итак, <b>начнём игру.</b>\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid "Какая неожиданность, мой ход."
-#~ msgstr ""
-
-#~ msgid "А с кем играть то? =)"
-#~ msgstr ""
-
-#~ msgid "Ты не можешь начать эту игру."
-#~ msgstr ""
-
-#~ msgid "Ты уже участвуешь!"
-#~ msgstr ""
-
-#~ msgid "Теперь участников стало на один больше!"
-#~ msgstr ""
-
-#~ msgid "Теперь участников стало на один меньше!"
-#~ msgstr ""
-
-#~ msgid "Ты ещё не участвуешь!"
-#~ msgstr ""
-
-#~ msgid "Я беру {amount} карты =(."
-#~ msgstr ""
-
-#~ msgid "{user} получает {amount} карты."
-#~ msgstr ""
-
-#~ msgid "Что за шутка, эта карта не из твоей колоды."
-#~ msgstr ""
-
-#~ msgid "Первый ход сделан."
-#~ msgstr ""
-
-#~ msgid "Чёрная карта!"
-#~ msgstr ""
-
-#~ msgid "Так-с..."
-#~ msgstr ""
-
-#~ msgid "Ех, нужно было брать {color} цвет."
-#~ msgstr ""
-
-#~ msgid "Смена цвета!"
-#~ msgstr ""
-
-#~ msgid "Попытка не засчитана, получай карту! =)."
-#~ msgstr ""
-
-#~ msgid "Просто. Пропусти. Ход."
-#~ msgstr ""
-
-#~ msgid "Продолжаем накидывать карты..."
-#~ msgstr ""
-
-#~ msgid "Ха, перекидываем ход."
-#~ msgstr ""
-
-#~ msgid "Игроку {user} удалось перебить ход!"
-#~ msgstr ""
-
-#~ msgid "Даю пари, {user} выиграет эту игру!"
-#~ msgstr ""
-
-#~ msgid "Внезапно, {user}."
-#~ msgstr ""
-
-#~ msgid "Попридержи коней, {user}. Сейчас не твой ход."
-#~ msgstr ""
-
-#~ msgid "Хей, {user}, твоей карте не место на этом ходу."
-#~ msgstr ""
-
-#~ msgid "Нет. Нет, нет, нет. Нет. {user}, ещё раз, нет!"
-#~ msgstr ""
-
-#~ msgid "Кто-нибудь, объясните этому игроку, как играть."
-#~ msgstr ""
-
-#~ msgid "Давай я просто дам тебе карту и мы сделаем вид, что ничего не было?"
-#~ msgstr ""
-
-#~ msgid "Делаю ставку на твоё поражение."
-#~ msgstr ""
-
-#~ msgid "И всё наоборот!"
-#~ msgstr ""
-
-#~ msgid "Немного беспорядка..."
-#~ msgstr ""
-
-#~ msgid "{user} меняет очередь."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Наконец мы поменяем цвет.\n"
-#~ "Что выберет {user}?"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Новый цвет, новый свет.\n"
-#~ "by {user}."
-#~ msgstr ""
-
-#~ msgid "{user} лишается хода?"
-#~ msgstr ""
-
-#~ msgid "{user} рискует пропустить ход."
-#~ msgstr ""
-
-#~ msgid "Как жестоко!"
-#~ msgstr ""
-
-#~ msgid "Вот это сюрприз."
-#~ msgstr ""
-
-#~ msgid "{user} рискует получить"
-#~ msgstr ""
-
-#~ msgid "{user} может получить"
-#~ msgstr ""
-
-#~ msgid "<b>{amount}</b> карты!"
-#~ msgstr ""
-
-#~ msgid "Беру карту."
-#~ msgstr ""
-
-#~ msgid "Сыграем в UNO?"
-#~ msgstr ""
-
-#~ msgid "Заявить о желании сыграть."
-#~ msgstr ""
-
-#~ msgid "Инициировать новую игру."
-#~ msgstr ""
-
-#~ msgid "Я, конечно, не против, но сейчас очередь {user}. Придётся подождать =)."
-#~ msgstr ""
-
-#~ msgid "Принято."
-#~ msgstr ""
-
-#~ msgid "Меняем цвет..."
-#~ msgstr ""
-
-#~ msgid "Хоть какой-то разнообразие!"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Хорошо.\n"
-#~ "Когда получишь чёрную карту, выберешь этот цвет ;)."
-#~ msgstr ""
-
-#~ msgid "На реакции =)."
-#~ msgstr ""
-
-#~ msgid "Сам ты уно!"
-#~ msgstr ""
-
-#~ msgid "{user} исключён из игры."
-#~ msgstr ""
-
-#~ msgid "Показать карты"
-#~ msgstr ""
-
-#~ msgid "{color} цвет"
-#~ msgstr ""
-
-#~ msgid "Какой ты выберешь цвет?"
-#~ msgstr ""
-
-#~ msgid "Добавишь карту в колоду соперника?"
-#~ msgstr ""
-
-#~ msgid "Уно!"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<b>Let's play UNO?</b>\n"
-#~ "\n"
-#~ "One minute to make a decision!\n"
-#~ "{user} can start the game manually.\n"
-#~ "\n"
-#~ "<b>Already in the game:</b>\n"
-#~ "{user}"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Mm, {username} is trying his luck... "
-#~ "Well, EVERYONE, EVERYONE, EVERYONE, pay "
-#~ "attention!\n"
-#~ "\n"
-#~ "Enter any emoji between 1 and 10"
-#~ " and I'll choose my own in 60"
-#~ " seconds and we'll we'll see which"
-#~ " one of you is right."
-#~ msgstr ""
-
-#~ msgid "So my emoji is {bot}. Who guessed? Hmm..."
-#~ msgstr ""
-
-#~ msgid "Do you really think that I will choose THIS emoji? Well, let's see ;)."
-#~ msgstr ""
-
-#~ msgid "Ha, we flip the move."
-#~ msgstr ""
-
-#~ msgid "Не так быстро! Я за тобой не поспеваю..."
-#~ msgstr ""
-
-#~ msgid "uno"
-#~ msgstr ""
-
-#~ msgid "messages"
-#~ msgstr ""
-
-#~ msgid "members"
-#~ msgstr ""
-
-#~ msgid "{req} recording {item}"
-#~ msgstr ""
-
-#~ msgid "Decline"
-#~ msgstr ""
-
-#~ msgid "Allow"
-#~ msgstr ""
-
-#~ msgid "Members"
-#~ msgstr ""
-
-#~ msgid "Messages"
-#~ msgstr ""
-
-#~ msgid "<b>{item} recording {status}.</b>"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<b>I am logging some information about this chat.</b>\n"
-#~ "\n"
-#~ "This is necessary for my correct work. What am I recording?\n"
-#~ "\n"
-#~ "- <b>message list</b> - for more "
-#~ "accurate and relevant message generation.\n"
-#~ ""
-#~ "Default: enabled.\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "- <b>list of participants</b> - to execute the /who command.\n"
-#~ "Default: disabled.\n"
-#~ "\n"
-#~ msgstr ""
-
-#~ msgid "{color[0]} {color[1]} color"
-#~ msgstr ""
-
-#~ msgid "All bacchanalia, with you {username}!"
-#~ msgstr ""
-
-#~ msgid "You don't have to clap, {username} is with us."
-#~ msgstr ""
-
-#~ msgid "Do not meet, now we have {username}!"
-#~ msgstr ""
-
-#~ msgid "Greetings, {username}!"
-#~ msgstr ""
-
-#~ msgid "Welcome, {username}!"
-#~ msgstr ""
-
-#~ msgid "{username}... Who is it?"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Hello, {username}. I am a text "
-#~ "generator bot and in some cases a"
-#~ " great conversationalist.\n"
-#~ "\n"
-#~ "If you write me a message or a command, something might happen."
-#~ msgstr ""
-
-#~ msgid "Hmmm, I think {username} {args}"
-#~ msgstr ""
-
-#~ msgid "Your time is up. "
-#~ msgstr ""
-
-#~ msgid "I choice {color[0]} {color[1]} color."
-#~ msgstr ""
-
-#~ msgid "blue"
-#~ msgstr ""
-
-#~ msgid "green"
-#~ msgstr ""
-
-#~ msgid "red"
-#~ msgstr ""
-
-#~ msgid "yellow"
-#~ msgstr ""
-
-#~ msgid "black"
-#~ msgstr ""
-
-#~ msgid "I take {amount} card =(."
-#~ msgid_plural "I take {amount} cards =(."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "What a joke, this card is not from your deck."
-#~ msgstr ""
-
-#~ msgid "The first move has been made."
-#~ msgstr ""
-
-#~ msgid "Black card!"
-#~ msgstr ""
-
-#~ msgid "So..."
-#~ msgstr ""
-
-#~ msgid "Eh, I should have taken {color[0]} {color[1]} color."
-#~ msgstr ""
-
-#~ msgid "Color change!"
-#~ msgstr ""
-
-#~ msgid "Attempt not counted, get a card! =)."
-#~ msgstr ""
-
-#~ msgid "Just. Skip. Move."
-#~ msgstr ""
-
-#~ msgid "Let's keep throwing cards..."
-#~ msgstr ""
-
-#~ msgid "Ha, we throw over the move."
-#~ msgstr ""
-
-#~ msgid "Player {user} managed to take the turn!"
-#~ msgstr ""
-
-#~ msgid "Hey {user}, your card doesn't belong this turn."
-#~ msgstr ""
-
-#~ msgid "No. No no no. No. {user}, again, no!"
-#~ msgstr ""
-
-#~ msgid "Ha, you're in luck!"
-#~ msgstr ""
-
-#~ msgid "Good try."
-#~ msgstr ""
-
-#~ msgid "Someone explain to this player how to play."
-#~ msgstr ""
-
-#~ msgid "Can I just give you a map and we'll pretend like nothing happened?"
-#~ msgstr ""
-
-#~ msgid "I'm betting on your defeat."
-#~ msgstr ""
-
-#~ msgid "{emoji} {color} color"
-#~ msgstr ""
-
-#~ msgid "I choice {emoji} {color} color."
-#~ msgstr ""
-
-#~ msgid "Can I just give {user} a map and we'll pretend like nothing happened?"
-#~ msgstr ""
 

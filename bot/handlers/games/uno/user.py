@@ -138,54 +138,66 @@ async def color_handler(message: types.Message, state: FSMContext):
         await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
 
 
-async def uno_answer(message: types.Message, bot: Bot, state: FSMContext, user_id: int, data_uno: UnoData):
-    for task in asyncio.all_tasks():
-        if task.get_name().endswith(str(user_id) + ":" + "uno"):
-            task.cancel()
-            break
+async def uno_answer(message: types.Message, bot: Bot, state: FSMContext, users: set[int], data_uno: UnoData):
+    async def uno():
+        for task in asyncio.all_tasks():
+            if task.get_name().endswith(str(user_id) + ":" + "uno"):
+                task.cancel()
+                break
 
-    if user_id == message.from_user.id:
-        data_uno.uno_users_id.remove(user_id)
-        await message.reply(
-            _("On reaction =)."),
-            reply_markup=types.ReplyKeyboardRemove()
-        )
+        if user_id == message.from_user.id:
+            data_uno.uno_users_id.remove(user_id)
+            await message.reply(
+                choice(
+                    (
+                        _("On reaction =)."),
+                        _("Yep!"),
+                        _("Ok, you won't get cards."),
+                    )
+                ),
+                reply_markup=types.ReplyKeyboardRemove()
+            )
+        else:
+            await message.reply(
+                await data_uno.add_card(bot, message.chat.id, user_id, 2),
+                reply_markup=types.ReplyKeyboardRemove()
+            )
+
+        await state.update_data(uno=data_uno.dict())
+
+    for user_id in users:
+        if user_id in data_uno.uno_users_id:
+            await uno()
+            break
     else:
         await message.reply(
-            await data_uno.add_card(bot, message.chat.id, user_id, 2),
-            reply_markup=types.ReplyKeyboardRemove()
+            choice(
+                (
+                    _("Nope."),
+                    _("And who is UNO for?"),
+                    _("No, you are UNO! Kidding."),
+                )
+            )
         )
-
-    await state.update_data(uno=data_uno.dict())
 
 
 @router.message(F.text.in_(k.UNO), F.reply_to_message)
 async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-
-    users = [message.reply_to_message.from_user.id]
+    users = {message.reply_to_message.from_user.id}
 
     if message.reply_to_message.entities:
-        users.extend(entities.user.id for entities in message.reply_to_message.entities if entities.user)
+        users.update(entities.user.id for entities in message.reply_to_message.entities if entities.user)
 
-    for user_id in users:
-        if user_id in data_uno.uno_users_id:
-            await uno_answer(message, bot, state, user_id, data_uno)
-            break
-    else:
-        await message.reply(_("Nope."))
+    await uno_answer(message, bot, state, users, data_uno)
 
 
 @router.message(F.text.in_(k.UNO), F.chat.type == 'private')
 async def uno_private_handler(message: types.Message, bot: Bot, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
+    users = {message.from_user.id, bot.id}
 
-    for user_id in message.from_user.id, bot.id:
-        if user_id in data_uno.uno_users_id:
-            await uno_answer(message, bot, state, user_id, data_uno)
-            break
-    else:
-        await message.reply(_("Nope."))
+    await uno_answer(message, bot, state, users, data_uno)
 
 
 @router.poll_answer()
@@ -219,7 +231,3 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
             except UnoNoUsersException:
                 action = UnoAction(message, state, data_uno)
                 await action.end()
-
-    elif poll_answer.poll_id not in data_uno.polls_kick:
-        from aiogram.dispatcher.event.bases import UNHANDLED
-        return UNHANDLED

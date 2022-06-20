@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-20 17:52+0300\n"
+"POT-Creation-Date: 2022-06-20 18:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -511,45 +511,45 @@ msgstr ""
 msgid "I choice {emoji} {color}."
 msgstr ""
 
-#: handlers/games/uno/bot.py:59
+#: handlers/games/uno/bot.py:63
 msgid "My move is made."
 msgstr ""
 
-#: handlers/games/uno/bot.py:60
+#: handlers/games/uno/bot.py:64
 msgid "Expected? But I don't care."
 msgstr ""
 
-#: handlers/games/uno/bot.py:61
+#: handlers/games/uno/bot.py:65
 msgid "BA-DUM-TSS!"
 msgstr ""
 
-#: handlers/games/uno/bot.py:62
+#: handlers/games/uno/bot.py:66
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent"
 msgstr ""
 
-#: handlers/games/uno/bot.py:66
+#: handlers/games/uno/bot.py:70
 msgid "I still have cards in my deck."
 msgstr ""
 
-#: handlers/games/uno/bot.py:67
+#: handlers/games/uno/bot.py:71
 msgid "Curious, but I know all the cards in the game... I dealt them."
 msgstr ""
 
-#: handlers/games/uno/bot.py:68
+#: handlers/games/uno/bot.py:72
 msgid "Maybe I can even win this game!"
 msgstr ""
 
-#: handlers/games/uno/bot.py:69
+#: handlers/games/uno/bot.py:73
 msgid "Oh, I don't envy the next player..."
 msgstr ""
 
-#: handlers/games/uno/bot.py:70
+#: handlers/games/uno/bot.py:74
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr ""
 
-#: handlers/games/uno/bot.py:71
+#: handlers/games/uno/bot.py:75
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr ""
 
@@ -836,15 +836,31 @@ msgid ""
 "When you'll get a black card, choose this color ;)."
 msgstr ""
 
-#: handlers/games/uno/user.py:150
+#: handlers/games/uno/user.py:153
 msgid "On reaction =)."
 msgstr ""
 
-#: handlers/games/uno/user.py:176 handlers/games/uno/user.py:188
+#: handlers/games/uno/user.py:154
+msgid "Yep!"
+msgstr ""
+
+#: handlers/games/uno/user.py:155
+msgid "Ok, you won't get cards."
+msgstr ""
+
+#: handlers/games/uno/user.py:176
 msgid "Nope."
 msgstr ""
 
-#: handlers/games/uno/user.py:203
+#: handlers/games/uno/user.py:177
+msgid "And who is UNO for?"
+msgstr ""
+
+#: handlers/games/uno/user.py:178
+msgid "No, you are UNO! Kidding."
+msgstr ""
+
+#: handlers/games/uno/user.py:215
 msgid "{user} is kicked from the game."
 msgstr ""
 

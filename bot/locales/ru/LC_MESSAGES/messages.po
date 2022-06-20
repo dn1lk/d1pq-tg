@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-20 17:52+0300\n"
+"POT-Creation-Date: 2022-06-20 18:26+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -348,7 +348,7 @@ msgstr "Какой цвет ты выберешь?"
 
 #: handlers/games/keyboards.py:44
 msgid "UNO!"
-msgstr "Уно!"
+msgstr "UNO!"
 
 #: handlers/games/keyboards.py:52
 msgid "Add a card to your opponent's deck?"
@@ -558,19 +558,19 @@ msgstr "Передаю очередь игроку {user}."
 msgid "I choice {emoji} {color}."
 msgstr "Я выбираю {emoji} {color} цвет."
 
-#: handlers/games/uno/bot.py:59
+#: handlers/games/uno/bot.py:63
 msgid "My move is made."
 msgstr "Мой ход сделан."
 
-#: handlers/games/uno/bot.py:60
+#: handlers/games/uno/bot.py:64
 msgid "Expected? But I don't care."
 msgstr "Ожидали? А мне всё равно."
 
-#: handlers/games/uno/bot.py:61
+#: handlers/games/uno/bot.py:65
 msgid "BA-DUM-TSS!"
 msgstr "BA-DUM-TSS!"
 
-#: handlers/games/uno/bot.py:62
+#: handlers/games/uno/bot.py:66
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent"
@@ -578,27 +578,27 @@ msgstr ""
 "Оцените по 10 бальной шкале качество этого хода.\n"
 "Где 0 - очень хороший, 10 - великолепный"
 
-#: handlers/games/uno/bot.py:66
+#: handlers/games/uno/bot.py:70
 msgid "I still have cards in my deck."
 msgstr "У меня ещё есть карты в колоде."
 
-#: handlers/games/uno/bot.py:67
+#: handlers/games/uno/bot.py:71
 msgid "Curious, but I know all the cards in the game... I dealt them."
 msgstr "Любопытно, а ведь я знаю все карты в игре... Я же их раздавал."
 
-#: handlers/games/uno/bot.py:68
+#: handlers/games/uno/bot.py:72
 msgid "Maybe I can even win this game!"
 msgstr "Может, у меня получится даже выиграть эту игру!"
 
-#: handlers/games/uno/bot.py:69
+#: handlers/games/uno/bot.py:73
 msgid "Oh, I don't envy the next player..."
 msgstr "Ох, не завидую я следующему игроку..."
 
-#: handlers/games/uno/bot.py:70
+#: handlers/games/uno/bot.py:74
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr "Бр-б. Аа. Да. Нет. ..."
 
-#: handlers/games/uno/bot.py:71
+#: handlers/games/uno/bot.py:75
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr "Ой-ой, эта карта сама выпала в этот чат..."
 
@@ -900,15 +900,31 @@ msgstr ""
 "Хорошо.\n"
 "Когда получишь чёрную карту, выберешь этот цвет ;)."
 
-#: handlers/games/uno/user.py:150
+#: handlers/games/uno/user.py:153
 msgid "On reaction =)."
 msgstr "На реакции =)."
 
-#: handlers/games/uno/user.py:176 handlers/games/uno/user.py:188
+#: handlers/games/uno/user.py:154
+msgid "Yep!"
+msgstr "Ага!"
+
+#: handlers/games/uno/user.py:155
+msgid "Ok, you won't get cards."
+msgstr "Ок, ты не получишь карты."
+
+#: handlers/games/uno/user.py:176
 msgid "Nope."
 msgstr "Нет."
 
-#: handlers/games/uno/user.py:203
+#: handlers/games/uno/user.py:177
+msgid "And who is UNO for?"
+msgstr "И для кого же UNO?"
+
+#: handlers/games/uno/user.py:178
+msgid "No, you are UNO! Kidding."
+msgstr "Нет, это ты UNO! Шучу."
+
+#: handlers/games/uno/user.py:215
 msgid "{user} is kicked from the game."
 msgstr "{user} исключается из игры."
 
