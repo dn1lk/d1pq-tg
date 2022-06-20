@@ -6,7 +6,7 @@ from aiogram import Router, Bot, types, exceptions
 router = Router(name='error')
 
 
-@router.errors(pattern="Message can't be edited")
+@router.errors(pattern="message is not modified")
 async def edit_handler(_):
     pass
 
