@@ -15,7 +15,7 @@ async def locale_update_handler(
         callback_data: k.Settings,
         db: DataBaseContext,
 ):
-    await db.set_data(locales=callback_data.value)
+    await db.set_data(locale=callback_data.value)
     await query.message.edit_text(
         _(
             "<b>The language has been successfully updated.</b>\n\n"

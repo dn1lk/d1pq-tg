@@ -20,19 +20,17 @@ async def setup() -> Pool:
     async with pool.acquire() as conn:
         await conn.execute(
             """CREATE TABLE IF NOT EXISTS data (
-                ids             BIGINT              PRIMARY KEY NOT NULL,
-                locales         TEXT,                
+                id              INT              PRIMARY KEY NOT NULL,
+                locale          TEXT,                
                 messages        TEXT ARRAY,
                 stickers        TEXT ARRAY          DEFAULT '{TextAnimated}',
-                members         BIGINT ARRAY,
+                members         INT ARRAY,
                 commands        JSON,
                 chance          FLOAT               DEFAULT 2,
                 accuracy        SMALLINT            DEFAULT 3
             );"""
         )
 
-        await conn.execute(
-            f"INSERT INTO data (ids) VALUES (0) ON CONFLICT (ids) DO NOTHING;"
-        )
+        await conn.execute(f"INSERT INTO data (id) VALUES (0) ON CONFLICT (id) DO NOTHING;")
 
     return pool
