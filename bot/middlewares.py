@@ -88,7 +88,7 @@ class ThrottlingMiddleware(BaseMiddleware):
             chat_id: int = data.get('event_chat', data['event_from_user']).id
             state = self.get_context(bot, chat_id)
 
-            if (await state.get_data()).get(throttling):
+            if throttling in await state.get_data():
                 return
             else:
                 await state.update_data({throttling: True})
