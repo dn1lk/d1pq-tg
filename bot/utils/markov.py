@@ -54,8 +54,8 @@ def gen(
         messages: list | None = None,
         text: str = None,
         state_size: int = 2,
-        tries: int = 20,
-        min_words: int = 1,
+        tries: int = 30,
+        min_words: int = None,
         max_words: int = None,
 ) -> str:
     model = get_base(locale, choice(books), state_size)
