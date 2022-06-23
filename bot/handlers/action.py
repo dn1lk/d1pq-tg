@@ -48,7 +48,7 @@ async def on_member_join_handler(
             if members:
                 await db.set_data(members=members + [new_chat_member.id])
 
-            user = get_username(message.from_user)
+            user = get_username(new_chat_member)
 
             if new_chat_member.is_bot:
                 answer['bot'].append(user)
