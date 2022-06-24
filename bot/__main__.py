@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher, exceptions
 from aiogram.dispatcher.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(levelname)s - %(name)s - %(message)s")
 logging.info("Start bot")
 
