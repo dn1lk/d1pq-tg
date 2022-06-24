@@ -54,7 +54,7 @@ def gen(
         messages: list | None = None,
         text: str = None,
         state_size: int = 2,
-        tries: int = 250,
+        tries: int = 500,
         min_words: int = None,
         max_words: int = None,
 ) -> str:
