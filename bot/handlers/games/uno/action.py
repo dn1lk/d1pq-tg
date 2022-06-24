@@ -104,7 +104,8 @@ class UnoAction:
                 self.message.chat.id,
                 self.data.current_special.skip,
                 self.data.current_special.draw,
-            )
+            ),
+            reply_markup=types.ReplyKeyboardRemove()
         )
 
         self.data.current_special.draw = self.data.current_special.skip = 0
