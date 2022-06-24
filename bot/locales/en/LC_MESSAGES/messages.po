@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-20 22:21+0300\n"
+"POT-Creation-Date: 2022-06-24 21:38+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -488,23 +488,23 @@ msgstr ""
 msgid "{user} puts his last card and leaves the game as the winner."
 msgstr ""
 
-#: handlers/games/uno/action.py:131
+#: handlers/games/uno/action.py:132
 msgid "{user}, your turn."
 msgstr ""
 
-#: handlers/games/uno/action.py:132 handlers/games/uno/core.py:100
+#: handlers/games/uno/action.py:133 handlers/games/uno/core.py:100
 msgid "{user}, your move."
 msgstr ""
 
-#: handlers/games/uno/action.py:133
+#: handlers/games/uno/action.py:134
 msgid "Now {user} is moving."
 msgstr ""
 
-#: handlers/games/uno/action.py:134
+#: handlers/games/uno/action.py:135
 msgid "Player's turn {user}."
 msgstr ""
 
-#: handlers/games/uno/action.py:135
+#: handlers/games/uno/action.py:136
 msgid "I pass the turn to the player {user}."
 msgstr ""
 
