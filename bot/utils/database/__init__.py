@@ -20,11 +20,11 @@ async def setup() -> Pool:
     async with pool.acquire() as conn:
         await conn.execute(
             """CREATE TABLE IF NOT EXISTS data (
-                id              INT              PRIMARY KEY NOT NULL,
+                id              BIGINT              PRIMARY KEY NOT NULL,
                 locale          TEXT,                
                 messages        TEXT ARRAY,
                 stickers        TEXT ARRAY          DEFAULT '{TextAnimated}',
-                members         INT ARRAY,
+                members         BIGINT ARRAY,
                 commands        JSON,
                 chance          FLOAT               DEFAULT 2,
                 accuracy        SMALLINT            DEFAULT 3

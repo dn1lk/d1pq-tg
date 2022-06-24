@@ -171,7 +171,7 @@ def setup(dp: Dispatcher):
         Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
-        Middleware(outer=LogMiddleware()),
+        # Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage, pool_db=dp['pool_db'])),
         Middleware(outer=CustomCommandsMiddleware(), observers='message'),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
