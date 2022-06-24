@@ -30,7 +30,7 @@ books = ('galaxy', 'war-and-peace', 'war-worlds')
 
 
 @lru_cache(maxsize=4)
-def get_base(locale: str, book: str, state_size: int = 1):
+def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
     with open(
             config.BASE_DIR / 'locales' / locale / f'{book}.txt',
             'r',
@@ -40,7 +40,7 @@ def get_base(locale: str, book: str, state_size: int = 1):
 
 
 @lru_cache(maxsize=2)
-def get_none(locale: str):
+def get_none(locale: str) -> markovify.Text:
     with open(
             config.BASE_DIR / 'locales' / locale / 'none.txt',
             'r',
@@ -54,11 +54,11 @@ def gen(
         messages: list | None = None,
         text: str = None,
         state_size: int = 2,
-        tries: int = 30,
+        tries: int = 250,
         min_words: int = None,
         max_words: int = None,
 ) -> str:
-    model = get_base(locale, choice(books), state_size)
+    model = get_base(locale, choice(books), state_size=state_size)
 
     if messages:
         model_messages = markovify.Text(messages, state_size=state_size)
