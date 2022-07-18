@@ -77,6 +77,8 @@ class UnoAction:
                 special = self.data.special_skip().format(
                     user=get_username(await self.data.get_user(self.state.bot, self.message.chat.id))
                 )
+            else:
+                self.data.current_special.skip = 0
 
             if self.data.current_card.special.draw:
                 special = self.data.special_draw().format(
@@ -84,8 +86,6 @@ class UnoAction:
                 )
             elif self.data.current_special.draw:
                 await self.user_draw()
-            else:
-                self.data.current_special.skip = 0
 
         await self.move(special)
 
