@@ -208,7 +208,9 @@ class UnoData(BaseModel):
 
     def special_skip(self):
         self.next_user_id = self.current_special.skip = self.user_next()
+        print(self.current_special.skip)
         self.current_card.special.skip = 0
+        print(self.current_special.skip)
         return choice(
             (
                 _("{user} loses a turn?"),
