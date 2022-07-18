@@ -108,17 +108,19 @@ class UnoData(BaseModel):
                 )
         elif card.emoji == self.current_card.emoji:
             print(user_id, self.current_special.skip, self.current_special.color)
-            if user_id == self.current_user_id:
-                accept = _("{user} keeps throwing cards...")
-            elif user_id == self.current_special.skip and \
-                    (not self.current_special.color or card.color is self.current_card.color):
-                accept = choice(
-                    (
-                        _("{user} is unskippable!"),
-                        _("{user}, you can't be skipped!"),
-                        _("Skips are not for you, {user} =).")
+            if not self.current_special.color or card.color is self.current_card.color:
+                if user_id == self.current_user_id:
+                    accept = _("{user} keeps throwing cards...")
+                elif user_id == self.current_special.skip:
+                    accept = choice(
+                        (
+                            _("{user} is unskippable!"),
+                            _("{user}, you can't be skipped!"),
+                            _("Skips are not for you, {user} =).")
+                        )
                     )
-                )
+                else:
+                    decline = _("{user}, a different color has been chosen!")
             elif card.id == self.current_card.id:
                 accept = choice(
                     (
