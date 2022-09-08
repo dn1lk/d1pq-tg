@@ -107,7 +107,6 @@ class UnoData(BaseModel):
                     )
                 )
         elif card.emoji == self.current_card.emoji:
-            print(user_id, self.current_special.skip, self.current_special.color)
             if not self.current_special.color:
                 if user_id == self.current_user_id:
                     accept = _("{user} keeps throwing cards...")
