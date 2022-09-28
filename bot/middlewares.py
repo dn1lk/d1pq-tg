@@ -4,9 +4,9 @@ from dataclasses import dataclass
 from typing import Dict, Any, Awaitable, Callable, Union, Optional
 
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
-from aiogram.dispatcher.flags.getter import get_flag
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.dispatcher.fsm.storage.base import StorageKey, BaseStorage
+from aiogram.dispatcher.flags import get_flag
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey, BaseStorage
 from aiogram.utils.chat_action import ChatActionMiddleware
 
 from utils import markov
@@ -67,7 +67,7 @@ class LogMiddleware(BaseMiddleware):
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    timeouts = {'gen': 1, 'rps': 3}
+    timeouts = {'gen': 3, 'rps': 1}
 
     def __init__(self, storage: BaseStorage):
         self.storage = storage
@@ -171,7 +171,7 @@ def setup(dp: Dispatcher):
         Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
-        # Middleware(outer=LogMiddleware()),
+        Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage, pool_db=dp['pool_db'])),
         Middleware(outer=CustomCommandsMiddleware(), observers='message'),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),

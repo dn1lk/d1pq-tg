@@ -1,8 +1,8 @@
 from typing import Dict, Any, Callable, Awaitable, Optional
 
 from aiogram import BaseMiddleware
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.dispatcher.fsm.storage.base import StorageKey
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
 
 

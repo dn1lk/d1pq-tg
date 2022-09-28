@@ -1,7 +1,7 @@
 from typing import Callable, Dict, Any, Awaitable
 
 from aiogram import BaseMiddleware, Bot, types
-from aiogram.dispatcher.fsm.storage.base import BaseStorage, StorageKey
+from aiogram.fsm.storage.base import BaseStorage, StorageKey
 from asyncpg import Pool
 
 from .context import DataBaseContext

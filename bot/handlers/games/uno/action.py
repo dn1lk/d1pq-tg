@@ -2,7 +2,7 @@ import asyncio
 from random import choice
 
 from aiogram import types
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
@@ -77,8 +77,6 @@ class UnoAction:
                 special = self.data.special_skip().format(
                     user=get_username(await self.data.get_user(self.state.bot, self.message.chat.id))
                 )
-            else:
-                self.data.current_special.skip = 0
 
             if self.data.current_card.special.draw:
                 special = self.data.special_draw().format(
@@ -86,6 +84,8 @@ class UnoAction:
                 )
             elif self.data.current_special.draw:
                 await self.user_draw()
+            else:
+                self.data.current_special.skip = 0
 
         await self.move(special)
 

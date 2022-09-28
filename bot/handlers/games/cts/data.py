@@ -15,9 +15,11 @@ class CtsData(BaseModel):
         def user_var_filter():
             for game_var in game_vars:
                 if game_var[0].lower() == user_var[0].lower():
-                    yield f.LevenshteinFilter.lev_distance(game_var, user_var) <= len(game_var) / 3
+                    yield f.LevenshteinFilter.lev_distance(game_var, user_var) <= max(len(game_var) / 5, 1)
 
-        if not self.bot_var or user_var[0].lower() == self.bot_var[-1].lower():
+        if not self.bot_var \
+                or user_var[0].lower() == self.bot_var[-1].lower() \
+                or self.bot_var[-1].lower() in ('ь', 'ъ') and user_var[0].lower() == self.bot_var[-2].lower():
             if user_var not in self.cities:
                 game_vars = get_cities(locale)
 

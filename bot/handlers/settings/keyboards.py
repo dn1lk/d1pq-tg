@@ -1,4 +1,4 @@
-from aiogram.dispatcher.filters.callback_data import CallbackData
+from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _, I18n
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 

@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.dispatcher.fsm.state import StatesGroup, State
+from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.i18n import lazy_gettext as __
 
 

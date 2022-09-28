@@ -26,7 +26,7 @@ def set_data(text: str, messages: list | None = None) -> list | None:
         return messages
 
 
-books = ('galaxy', 'war-and-peace', 'war-worlds')
+books = ('war-and-peace', 'plato')
 
 
 @lru_cache(maxsize=4)

@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from aiogram import Dispatcher, Bot
-from aiogram.dispatcher.webhook.aiohttp_server import SimpleRequestHandler
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from aiogram.types import User
 from aiohttp import web
 

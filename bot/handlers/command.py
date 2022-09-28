@@ -174,13 +174,14 @@ async def question_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
+        yalm: balaboba.Yalm,
 ):
     """answer the question, ответить на вопрос"""
 
     message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=command.args))
 
     if len(command.args) < 20:
-        answer = await balaboba.gen(i18n.current_locale, command.args, 8)
+        answer = await yalm.gen(i18n.current_locale, command.args, 8)
     else:
         answer = _("Let's do it sooner!")
 
@@ -215,17 +216,20 @@ async def history_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
+        yalm: balaboba.Yalm,
         messages: list | None = None,
 ):
     """tell a story, рассказать историю"""
 
-    query = _("In short, ")
-    if command.args:
-        query += command.args
+    query = command.args or choice(sum([message.split() for message in messages], [_("history")]))
 
-    # await message.answer(await aiobalaboba.get(query, 6)) not working
+    if choice(['balaboba', 'markov']) == 'balaboba':
+        answer = await yalm.gen(i18n.current_locale, query, 6)
+    else:
+        query = (_("In short, ")) + query
+        answer = markov.gen(i18n.current_locale, messages, query, state_size=2, tries=150000, min_words=50)
 
-    await message.answer(markov.gen(i18n.current_locale, messages, query, state_size=2, tries=150000, min_words=75))
+    await message.answer(answer)
 
 
 @router.message(commands=['future', 'погадай'], commands_ignore_case=True, command_magic=F.args)
@@ -234,10 +238,11 @@ async def future_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
+        yalm: balaboba.Yalm,
 ):
     """predict the future, предсказать будущее"""
 
-    await message.answer(await balaboba.gen(i18n.current_locale, command.args, 10))
+    await message.answer(await yalm.gen(i18n.current_locale, command.args, 10))
 
 
 @router.message(commands=['future', 'погадай'], commands_ignore_case=True)

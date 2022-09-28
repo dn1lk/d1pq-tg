@@ -1,9 +1,8 @@
 from random import choice
 from re import findall
 
-from aiogram import Router, Bot, F, types, flags
-from aiogram.dispatcher import filters
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram import Router, Bot, F, types, flags, filters
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters as f

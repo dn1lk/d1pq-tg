@@ -1,7 +1,7 @@
 from random import choice
 
 from aiogram import Router, types
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
@@ -41,7 +41,7 @@ async def answer_yes_handler(message: types.Message, state: FSMContext, data_cts
         await message.reply(choice(
             (
                 _("Okay, I have nothing to write on {letter}... Victory is yours."),
-                _("Can't find the right title on {letter}... My defeat."),
+                _("Can't find the right command on {letter}... My defeat."),
                 _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
             )
         ).format(letter=f'"{message.text[-1]}"'))
@@ -71,7 +71,7 @@ async def answer_no_handler(message: types.Message, state: FSMContext):
                 _("My algorithms do not deceive me - you are mistaken!"),
             )
 
-        end = _("Remaining attempts: {failed}").format(failed=data_cts.fails)
+        end = _("\n\nRemaining attempts: {failed}").format(failed=data_cts.fails)
 
     else:
         await state.clear()
@@ -82,6 +82,6 @@ async def answer_no_handler(message: types.Message, state: FSMContext):
             _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
         )
 
-        end = str(choice(WINNER))
+        end = str(choice(WINNER)) + _("\n\nNumber of words guessed: {words}.").format(words=len(data_cts.cities))
 
-    await message.reply(choice(answer) + "\n\n" + end)
+    await message.reply(choice(answer) + " " + end)

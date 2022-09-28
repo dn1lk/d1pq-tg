@@ -2,8 +2,8 @@ import asyncio
 from random import choices, choice
 
 from aiogram import Bot, types
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.dispatcher.fsm.storage.base import StorageKey
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 from pydantic import BaseModel
 
@@ -20,30 +20,15 @@ class UnoPollKick(BaseModel):
 
 class UnoData(BaseModel):
     users: dict[int, list[UnoCard]]
-    current_user_id: int = None
-    next_user_id: int
+    current_user: types.User = None
+    prev_user: types.User | None = None
+    next_user: types.User
 
-    current_card: UnoCard | None
-    current_special: UnoSpecials = UnoSpecials()
+    current_card: UnoCard | None = None
+    current_special: UnoSpecials | None = None
 
     polls_kick: dict[str, UnoPollKick] = {}
-    uno_users_id: list[int] = []
-
     timer_amount: int = 3
-
-    async def get_user(self, bot: Bot, chat_id: int, user_id: int = None) -> types.User:
-        user_id = user_id or self.next_user_id
-        member = await bot.get_chat_member(chat_id, user_id)
-
-        if member.status not in ('left', 'kicked'):
-            return member.user
-        else:
-            user = await self.get_user(bot, chat_id, self.user_next(user_id))
-
-            if user_id == self.next_user_id:
-                self.next_user_id = user.id
-
-            return user
 
     def user_next(self, user_id: int = None) -> int:
         user_id = user_id or self.next_user_id

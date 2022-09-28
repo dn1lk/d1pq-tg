@@ -1,4 +1,4 @@
-from aiogram.dispatcher.filters.callback_data import CallbackData
+from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
@@ -26,38 +26,33 @@ def uno_show_cards():
 
 
 def uno_color():
-    from .uno.cards import UnoColors
+    from .uno import UnoColors
 
-    builder = ReplyKeyboardBuilder()
+    builder = InlineKeyboardBuilder()
 
     for color in UnoColors.names(exclude={UnoColors.black}):
-        builder.button(text=_("{emoji} {color}").format(emoji=color.value, color=color.get_color()))
+        builder.button(
+            text=color.value + ' ' + color.get_color_name(),
+            callback_data=Games(game='uno', value=color.value)
+        )
 
     builder.adjust(1)
-    return builder.as_markup(
-        resize_keyboard=True,
-        selective=True,
-        input_field_placeholder=_("What color will you choose?")
-    )
-
-
-UNO = __("UNO!")
+    return builder.as_markup()
 
 
 def uno_uno():
-    builder = ReplyKeyboardBuilder()
-    builder.button(text=str(UNO))
-    return builder.as_markup(
-        resize_keyboard=True,
-        input_field_placeholder=_("Add a card to your opponent's deck?")
-    )
+    from .uno import UNO
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text=str(UNO), callback_data=Games(game='uno', value='uno'))
+    return builder.as_markup()
 
 
 def get_rps_args() -> dict:
     return {
-        ("🪨", _("Rock")): _("Scissors").lower(),
-        ("✂", _("Scissors")): _("Paper").lower(),
-        ("📜", _("Paper")): _("Rock").lower(),
+        ("🪨", _("Rock")): _("Scissors"),
+        ("✂", _("Scissors")): _("Paper"),
+        ("📜", _("Paper")): _("Rock"),
     }
 
 

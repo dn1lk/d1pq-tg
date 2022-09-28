@@ -1,9 +1,10 @@
 import asyncio
 from random import choice, random, choices
+from typing import Generator
 
 from aiogram import Bot, Router, F, types
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.dispatcher.fsm.storage.base import StorageKey
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
@@ -16,16 +17,33 @@ from .. import Game, timer, keyboards as k
 router = Router(name='game:uno:core')
 
 
-async def start_filter(query: types.CallbackQuery):
-    users_id = {entity.user.id for entity in query.message.entities[3:] if entity.user}
+def get_users(entities: list[types.MessageEntity]) -> Generator[types.User]:
+    return (entity.user for entity in entities if entity.user)
 
-    if users_id:
+
+async def start_filter(query: types.CallbackQuery):
+    users = get_users(query.message.entities)
+
+    if users:
         for task in asyncio.all_tasks():
             if task.get_name() == 'game' + ':' + str(query.message.chat.id):
                 task.cancel()
                 break
 
-        return {'users_id': users_id}
+        return {'users': users}
+
+
+async def start_timer_handler(
+        message: types.Message,
+        bot: Bot,
+        state: FSMContext,
+):
+    users = get_users(message.entities)
+
+    if users:
+        await start_handler(message, bot, state, users)
+    else:
+        await start_no_users_handler(await message.edit_reply_markup(k.uno_start()))
 
 
 @router.callback_query(
@@ -37,24 +55,30 @@ async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,
         state: FSMContext,
-        users_id: set | None = None
+        users: set[types.User],
 ):
+    async def get_users_with_cards():
+        for user in users:
+            key = StorageKey(
+                bot_id=state.key.bot_id,
+                chat_id=user.id,
+                user_id=user.id,
+                destiny=state.key.destiny
+            )
+
+            await state.storage.set_state(bot, key, Game.uno)
+            await state.storage.update_data(bot, key, {'uno_chat_id': message.chat.id})
+
+            yield {user: choices(cards, k=6)}
+
     message = query.message if isinstance(query, types.CallbackQuery) else query
     message = await message.delete_reply_markup()
 
-    if not users_id:
-        users_id = {entity.user.id for entity in message.entities[3:] if entity.user}
+    if random() < 2 / len(users):    # add bot to the list
+        user_bot = await bot.get_me()
+        users.add(user_bot)
 
-        if not users_id:
-            return await start_no_users_handler(await message.edit_reply_markup(k.uno_start()))
-
-    if random() < 2 / len(users_id):
-        users_id.add(bot.id)
-
-        await message.edit_text(
-            message.html_text + '\n' + get_username(await bot.get_me()),
-            reply_markup=message.reply_markup
-        )
+        await message.edit_text(message.html_text + '\n' + get_username(user_bot))
         await message.answer(
             choice(
                 (
@@ -66,24 +90,12 @@ async def start_handler(
         )
 
     cards = await get_cards(bot)
-    users = {}
-
-    for user_id in users_id:
-        users[user_id] = choices(cards, k=6)
-        key = StorageKey(
-            bot_id=state.key.bot_id,
-            chat_id=user_id,
-            user_id=user_id,
-            destiny=state.key.destiny
-        )
-
-        await state.storage.set_state(bot, key, Game.uno)
-        await state.storage.update_data(bot, key, {'uno_chat_id': message.chat.id})
-
-    member = await bot.get_chat_member(message.chat.id, choice(tuple(users_id)))
+    users = get_users_with_cards()
+    print(users)
+    next_user = choice(tuple(users))
     data_uno = UnoData(
         users=users,
-        next_user_id=member.user.id,
+        next_user_id=next_user.id,
     )
 
     await state.set_state(Game.uno)
@@ -97,7 +109,7 @@ async def start_handler(
         await bot_uno.gen(state, bot_uno.get_cards())
     else:
         message = await message.reply(
-            answer + _("{user}, your move.").format(user=get_username(await data_uno.get_user(bot, message.chat.id))),
+            answer + _("{user}, your move.").format(user=get_username(next_user)),
             reply_markup=k.uno_show_cards(),
         )
 
@@ -107,7 +119,7 @@ async def start_handler(
 
 @router.callback_query(k.Games.filter(F.value == 'start'), F.from_user.id == F.message.entities[1].user.id)
 async def start_no_users_handler(query: types.CallbackQuery | types.Message):
-    await query.answer(_("And who do you play with? =)."))
+    await query.answer(_("And who is there to play with?"))
 
 
 @router.callback_query(k.Games.filter(F.value == 'start'))
@@ -116,7 +128,7 @@ async def start_no_owner_handler(query: types.CallbackQuery):
 
 
 @router.callback_query(k.Games.filter(F.value == 'join'))
-async def game_uno_join(query: types.CallbackQuery):
+async def join_handler(query: types.CallbackQuery):
     users = {entity.user.id for entity in query.message.entities[3:] if entity.user}
 
     if query.from_user.id in users:
@@ -139,7 +151,7 @@ async def game_uno_join(query: types.CallbackQuery):
 
 
 @router.callback_query(k.Games.filter(F.value == 'leave'))
-async def game_uno_leave(query: types.CallbackQuery):
+async def leave_handler(query: types.CallbackQuery):
     users = {entity.user.id for entity in query.message.entities[3:] if entity.user}
 
     if query.from_user.id in users:

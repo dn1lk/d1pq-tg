@@ -2,67 +2,18 @@ import asyncio
 from random import choice
 
 from aiogram import Router, F, types, Bot
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.utils.i18n import gettext as _, lazy_gettext as __
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
+from . import DRAW_CARD
 from .action import UnoAction
-from .cards import UnoColors, draw_card
+from .cards import UnoColors
 from .data import UnoData
 from .exceptions import UnoNoUsersException
 from .. import keyboards as k
 
 router = Router(name='game:uno:user')
-
-DRAW_CARD = __("Take a card.")
-
-
-@router.inline_query(F.query.lower() == "uno")
-async def inline_handler(inline: types.InlineQuery, state: FSMContext):
-    data = await state.get_data()
-    data_uno: dict | None = data.get('uno')
-
-    thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
-
-    if data_uno:
-        data_uno: UnoData = UnoData(**data_uno)
-        cards = data_uno.users.get(inline.from_user.id)
-
-        if cards:
-            answer = [
-                         types.InlineQueryResultCachedSticker(
-                             id=str(enum) + ':' + card.id,
-                             sticker_file_id=card.file_id,
-                         ) for enum, card in enumerate(cards)
-                     ] + [
-                         types.InlineQueryResultCachedSticker(
-                             id='add' + ':' + draw_card.id,
-                             sticker_file_id=draw_card.file_id,
-                             input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD)),
-                         )
-                     ]
-        else:
-            answer = [
-                types.InlineQueryResultArticle(
-                    id='no_cards',
-                    title=_("Shall we play UNO?"),
-                    input_message_content=types.InputMessageContent(message_text=_("Next time I'm with you!")),
-                    description=_("State your desire to play."),
-                    thumb_url=thumb_url,
-                )
-            ]
-    else:
-        answer = [
-            types.InlineQueryResultArticle(
-                id='no_game',
-                title=_("Shall we play UNO?"),
-                input_message_content=types.InputMessageContent(message_text='/play uno'),
-                description=_("Start a new game."),
-                thumb_url=thumb_url,
-            )
-        ]
-
-    await inline.answer(answer, is_personal=True, cache_time=0)
 
 
 @router.message(F.sticker.set_name == 'uno_cards')
@@ -115,119 +66,66 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
         )
 
 
-@router.message(F.text.func(lambda text: any(color.value in text for color in UnoColors)))
-async def color_handler(message: types.Message, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
+@router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors.names()])))
+async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games):
+    data_uno: UnoData = UnoData(**(await state.get_data()).get('uno'))
 
-    if data_uno.current_special.color and message.from_user.id == data_uno.current_user_id:
-        data_uno.current_card.color = UnoColors[message.text.split()[0]]
-        await message.answer(
+    if query.from_user.id == data_uno.current_user_id:
+        data_uno.current_card.color = UnoColors[callback_data.value]
+
+        await query.message.delete_reply_markup()
+        await query.answer(
             choice(
                 (
                     _("Received."),
                     _("Changing color..."),
                     _("Some variety!"),
                 )
-            ),
-            reply_markup=types.ReplyKeyboardRemove(),
+            )
+        )
+        await query.message.edit_text(
+            _("{user} changes the color to {emoji} {color}!").format(
+                user=get_username(data_uno.current_user_id),
+                emoji=data_uno.current_card.color.value,
+                color=data_uno.current_card.color.get_color()
+            )
         )
 
-        action_uno = UnoAction(message=message, state=state, data=data_uno)
+        action_uno = UnoAction(message=query.message.reply_to_message, state=state, data=data_uno)
         await action_uno.process()
     else:
-        await message.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
+        await query.answer(_("Good.\nWhen you'll get a black card, choose this color ;)."))
 
 
-async def uno_answer(message: types.Message, bot: Bot, state: FSMContext, users: set[int], data_uno: UnoData):
-    async def uno():
-        for task in asyncio.all_tasks():
-            if task.get_name().endswith(str(user_id) + ":" + "uno"):
-                task.cancel()
-                break
+@router.callback_query(k.Games.filter(F.value == 'uno'))
+async def uno_answer(query: types.CallbackQuery, bot: Bot, state: FSMContext):
+    data_uno: UnoData = UnoData(**(await state.get_data()).get('uno'))
+    uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
-        if user_id == message.from_user.id:
-            data_uno.uno_users_id.remove(user_id)
-            await message.reply(
-                choice(
-                    (
-                        _("On reaction =)."),
-                        _("Yep!"),
-                        _("Ok, you won't get cards."),
-                    )
-                ),
-                reply_markup=types.ReplyKeyboardRemove()
-            )
-        else:
-            await message.reply(
-                await data_uno.add_card(bot, message.chat.id, user_id, 2),
-                reply_markup=types.ReplyKeyboardRemove()
-            )
-
-        await state.update_data(uno=data_uno.dict())
-
-    for user_id in users:
-        if user_id in data_uno.uno_users_id:
-            await uno()
+    for task in asyncio.all_tasks():
+        if task is not asyncio.current_task() and task.get_name().endswith(str(uno_user.id) + ":" + "uno"):
+            task.cancel()
             break
-    else:
-        await message.reply(
+
+    await query.message.delete_reply_markup()
+
+    if query.from_user.id == uno_user.id:
+        await query.answer(
             choice(
                 (
-                    _("Nope."),
-                    _("And who is UNO for?"),
-                    _("No, you are UNO! Kidding."),
+                    _("On reaction =)."),
+                    _("Yep!"),
+                    _("Ok, you won't get cards."),
                 )
             )
         )
-
-
-@router.message(F.text.in_(k.UNO), F.reply_to_message)
-async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-    users = {message.reply_to_message.from_user.id}
-
-    if message.reply_to_message.entities:
-        users.update(entities.user.id for entities in message.reply_to_message.entities if entities.user)
-
-    await uno_answer(message, bot, state, users, data_uno)
-
-
-@router.message(F.text.in_(k.UNO), F.chat.type == 'private')
-async def uno_private_handler(message: types.Message, bot: Bot, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-    users = {message.from_user.id, bot.id}
-
-    await uno_answer(message, bot, state, users, data_uno)
-
-
-@router.poll_answer()
-async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMContext):
-    data = await state.get_data()
-    data_uno: UnoData = UnoData(**data['uno'])
-
-    if poll_answer.option_ids == [0] and poll_answer.poll_id in data_uno.polls_kick:
-        data_uno.polls_kick[poll_answer.poll_id].amount += 1
-
-        if data_uno.polls_kick[poll_answer.poll_id].amount >= (len(data_uno.users) - 1) / 2:
-            await bot.delete_message(state.key.chat_id, data_uno.polls_kick[poll_answer.poll_id].message_id)
-            message = await bot.send_message(
-                state.key.chat_id,
-                _("{user} is kicked from the game.").format(
-                    user=get_username(
-                        await data_uno.get_user(
-                            bot,
-                            state.key.chat_id,
-                            data_uno.polls_kick[poll_answer.poll_id].user_id
-                        )
-                    )
-                )
+    else:
+        await data_uno.add_card(bot, query.message.chat.id, uno_user.id, 2)
+        await query.message.edit_text(
+            _("{user} gives {uno_user} 2 cards!").format(
+                user=get_username(query.from_user),
+                uno_user=get_username(uno_user)
             )
+        )
 
-            try:
-                await data_uno.remove_user(state, data_uno.polls_kick.pop(poll_answer.poll_id).user_id)
-
-                data['uno'] = data_uno.dict()
-                await state.set_data(data)
-            except UnoNoUsersException:
-                action = UnoAction(message, state, data_uno)
-                await action.end()
+    await state.update_data(uno=data_uno.dict())

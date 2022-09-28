@@ -18,6 +18,7 @@ async def get_gen_args(
         bot: Bot,
         i18n: I18n,
         db: DataBaseContext,
+        yalm: balaboba.Yalm,
         messages: list | None = None,
 ) -> dict:
     async def gen_markov() -> dict:
@@ -37,15 +38,21 @@ async def get_gen_args(
         async with ChatActionSender.record_voice(chat_id=message.chat.id):
             return await voice.gen(answer=(await gen_markov())['text'], locale=i18n.current_locale)
 
-    async def gen_balaboba() -> dict:  # not working too :(
+    async def gen_balaboba() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id):
-            return {'text': await balaboba.gen(i18n.current_locale, message.text, choice([4, 3, 5, 7, 11]))}
+            return {
+                'text': await yalm.gen(
+                    i18n.current_locale,
+                    message.text,
+                    choice(yalm.intros.get(i18n.current_locale, 'en'))
+                    )
+                }
 
     async def gen_sticker() -> dict:
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=1):
             return {'sticker': await sticker.gen(message, bot, db)}
 
-    return await choice([gen_markov, gen_sticker])()
+    return await choice([gen_markov, gen_sticker, gen_balaboba])()
 
 
 @router.message(F.text.lower().contains('гольд'))
@@ -71,9 +78,10 @@ async def gen_reply_handler(
         bot: Bot,
         i18n: I18n,
         db: DataBaseContext,
+        yalm: balaboba.Yalm,
         messages: list | None = None,
 ):
-    answer = await get_gen_args(message, bot, i18n, db, messages)
+    answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
 
     if answer.get('text'):
         await message.reply(**answer)
@@ -103,9 +111,10 @@ async def gen_answer_handler(
         bot: Bot,
         i18n: I18n,
         db: DataBaseContext,
+        yalm: balaboba.Yalm,
         messages: list | None = None,
 ):
-    answer = await get_gen_args(message, bot, i18n, db, messages)
+    answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
 
     if answer.get('text'):
         await message.answer(**answer)

@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 from aiogram import Bot
-from aiogram.dispatcher.fsm.storage.base import BaseStorage, StorageKey
+from aiogram.fsm.storage.base import BaseStorage, StorageKey
 from asyncpg import Pool
 
 

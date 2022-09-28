@@ -1,7 +1,7 @@
 from random import choice
 
 from aiogram import Router, F, types
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from . import Game

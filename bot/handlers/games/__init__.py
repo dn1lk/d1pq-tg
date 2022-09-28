@@ -2,8 +2,8 @@ import asyncio
 from random import choice
 
 from aiogram import Router, types
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.dispatcher.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 

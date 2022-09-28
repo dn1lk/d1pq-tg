@@ -1,41 +1,40 @@
 import asyncio
 import logging
+import traceback
 
 from aiogram import Router, Bot, types, exceptions
+
 
 router = Router(name='error')
 
 
-@router.errors(
-    pattern=(
-                    "Bad Request: message is not modified: "
-                    "specified new message content and reply markup are exactly "
-                    "the same as a current content and reply markup of the message"
-    )
-)
-async def edit_handler(_):
-    pass
+@router.errors(exception=exceptions.TelegramBadRequest)
+async def edit_handler(event: types.Update, bot: Bot):
+    if event.callback_query:
+        await event.callback_query.answer("↻ - please wait...")
+    else:
+        await errors_handler(event, bot)
 
 
 @router.errors(exception=exceptions.TelegramRetryAfter)
 async def retry_after_handler(_, exception: exceptions.TelegramRetryAfter):
-    logging.error(f'TelegramRetryAfter: sleeping for {exception.retry_after} seconds')
+    logging.error(exception)
 
     await asyncio.sleep(exception.retry_after)
     await exception.method
 
 
 @router.errors()
-async def errors_handler(event: types.Update, bot: Bot, exception: Exception):
+async def errors_handler(event: types.Update, bot: Bot):
     try:
         await bot.send_message(
             bot.owner_id,
             (
-                f'ERROR while event <b>{event.event_type}</b>:\n\n'
-                f'- <b>exception</b>: {exception}.'
+                f'ERROR while event <b>{event.event_type}</b>\n\n'
+                f'{traceback.format_exc(limit=10)}'
             )
         )
     except exceptions.TelegramBadRequest:
         logging.critical("TelegramBadRequest: can't send error message")
     finally:
-        logging.exception(exception)
+        raise

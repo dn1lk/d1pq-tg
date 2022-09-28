@@ -2,14 +2,14 @@ import asyncio
 from random import choice
 
 from aiogram import Bot, types, exceptions
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
+from . import UNO
 from .data import UnoData
 from .exceptions import UnoNoUsersException
-from .. import keyboards as k
 
 
 class UnoBot:
@@ -26,7 +26,7 @@ class UnoBot:
         self.data.current_card.color = choice(self.data.users[self.bot.id]).color
         return _("I choice {emoji} {color}.").format(
             emoji=self.data.current_card.color.value,
-            color=self.data.current_card.color.get_color(),
+            color=self.data.current_card.color.get_color_name(),
         )
 
     def get_cards(self) -> tuple:
@@ -87,8 +87,7 @@ class UnoBot:
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
             await asyncio.sleep(choice(range(0, 4)) / len(self.data.users))
 
-            self.data.uno_users_id.remove(self.bot.id)
-            await self.message.answer(str(k.UNO), reply_markup=types.ReplyKeyboardRemove())
+            await self.message.answer(str(UNO), reply_markup=types.ReplyKeyboardRemove())
 
             await state.update_data(uno=self.data.dict())
 
@@ -97,7 +96,7 @@ class UnoBot:
 
         await self.data.add_card(self.bot, self.message.chat.id, self.message.from_user.id, 2)
         await self.message.answer(
-            get_username(self.message.from_user) + ", " + str(k.UNO),
+            get_username(self.message.from_user) + ", " + str(UNO),
             reply_markup=types.ReplyKeyboardRemove())
 
         await state.update_data(uno=self.data.dict())

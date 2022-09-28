@@ -1,7 +1,6 @@
 from typing import Optional, Union, Dict, Any
 
-from aiogram import types, Bot
-from aiogram.dispatcher import filters
+from aiogram import Bot, types, filters
 
 
 class CustomCommandFilter(filters.Command):

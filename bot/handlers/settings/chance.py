@@ -1,4 +1,4 @@
-from aiogram import Router, Bot, F, types, flags, exceptions
+from aiogram import Router, Bot, F, types, flags
 from aiogram.utils.i18n import gettext as _
 
 from bot.utils.database.context import DataBaseContext
@@ -26,11 +26,8 @@ async def chance_update_handler(
 
     answer = answer.format(chance=chance) + str(UPDATE_AGAIN)
 
-    try:
-        await db.set_data(chance=chance * await bot.get_chat_member_count(query.message.chat.id) / 100)
-        await query.message.edit_text(answer, reply_markup=k.chance(chance))
-    except exceptions.TelegramBadRequest:
-        await query.answer(_("Not so fast! I can't keep up with you..."))
+    await db.set_data(chance=chance * await bot.get_chat_member_count(query.message.chat.id) / 100)
+    await query.message.edit_text(answer, reply_markup=k.chance(chance))
 
 
 @router.callback_query()

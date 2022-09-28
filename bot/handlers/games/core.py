@@ -2,7 +2,7 @@ import asyncio
 from random import choice
 
 from aiogram import Router, Bot, F, types, flags
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
@@ -30,9 +30,9 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
         reply_markup=k.uno_start(),
     )
 
-    from .uno.core import start_handler
+    from .uno.core import start_timer_handler
 
-    timer(state, start_handler, query=message, bot=bot)
+    timer(state, start_timer_handler, message=message, bot=bot)
 
 
 @router.message(F.text.lower().endswith(('cts', 'грд')))
@@ -117,7 +117,7 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
 
     if winners:
         answer = _(
-            "Well... the title of winner goes to: {winners}. Congratulations!"
+            "Well... the command of winner goes to: {winners}. Congratulations!"
         ).format(winners=", ".join(winners))
     else:
         answer = _("Well... no one guessed right. Heh.")

@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher, exceptions
-from aiogram.dispatcher.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
+from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -11,7 +11,7 @@ logging.info("Start bot")
 
 
 async def main():
-    from aiogram.dispatcher.fsm.strategy import FSMStrategy
+    from aiogram.fsm.strategy import FSMStrategy
 
     import config
 
@@ -26,9 +26,10 @@ async def main():
         fsm_strategy=FSMStrategy.CHAT
     )
 
-    from utils import database as db
+    from utils import database as db, balaboba as yalm
 
     dp['pool_db'] = pool_db = await db.setup()
+    dp['yalm'] = yalm = await yalm.Yalm().setup()
 
     import middlewares
     import handlers
@@ -60,6 +61,7 @@ async def main():
 
         finally:
             await bot.session.close()
+            await yalm.session.close()
             await pool_db.close()
 
 
