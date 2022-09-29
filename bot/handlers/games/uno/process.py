@@ -59,7 +59,7 @@ async def color(message: types.Message, data: UnoData, state: FSMContext, accept
         from . import uno_timeout
         from .. import timer
 
-        timer(state, uno_timeout, message=message, data_uno=data)
+        timer(state, uno_timeout, message=message)
 
 
 async def remove(message: types.Message, data: UnoData, state: FSMContext):
@@ -109,7 +109,7 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
     from . import uno_timeout
     from .. import timer
 
-    timer(state, uno_timeout, message=message, data_uno=data)
+    timer(state, uno_timeout, message=message)
 
 
 async def process(message: types.Message, data: UnoData, state: FSMContext, accept: str = ""):
