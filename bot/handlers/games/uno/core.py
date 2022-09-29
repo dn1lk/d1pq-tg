@@ -102,14 +102,14 @@ async def start_handler(
     answer = _("So, <b>let's start the game.</b>") + "\n\n"
 
     if data_uno.current_user_id == bot.id:
-        message = await message.reply(answer + _("What a surprise, my move."))
+        message = await message.reply(answer + _("What a surprise, my turn."))
         bot_uno = UnoBot(message=message, bot=bot, data=data_uno)
 
         await bot_uno.gen(state, bot_uno.get_cards())
     else:
         user = (await bot.get_chat_member(message.chat.id, current_user_id)).user
         message = await message.reply(
-            answer + _("{user}, your move.").format(user=get_username(user)),
+            answer + _("{user}, your turn.").format(user=get_username(user)),
             reply_markup=k.uno_show_cards(),
         )
 

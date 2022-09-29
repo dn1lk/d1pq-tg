@@ -68,9 +68,9 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
     else:
         user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
         await message.reply(
-            _(
-                "Of course, I don't mind, but now it's {user}'s turn.\nWe'll have to wait =)."
-            ).format(user=get_username(user))
+            _("Of course, I don't mind, but now it's {user}'s turn.\nWe'll have to wait =).").format(
+                user=get_username(user)
+            )
         )
 
 
@@ -80,9 +80,9 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
     if query.from_user.id == data_uno.current_user_id:
         data_uno.current_card.color = UnoColors[callback_data.value]
+        data_uno.queries.remove(query.message.message_id)
 
         await query.message.delete_reply_markup()
-        data_uno.queries.remove(query.message.message_id)
         await query.message.edit_text(
             _("{user} changes the color to {emoji} {color}!").format(
                 user=get_username(query.from_user),

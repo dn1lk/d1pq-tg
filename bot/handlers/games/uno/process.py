@@ -30,7 +30,7 @@ async def uno(message: types.Message, data: UnoData, state: FSMContext):
 
 
 async def skip(message: types.Message, data: UnoData, state: FSMContext):
-    user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
+    user = await state.bot.get_me() if data.current_user_id == state.bot.id else message.from_user
     answer = await data.add_card(state.bot, user)
     special = await data.accept_current_special(state)
 

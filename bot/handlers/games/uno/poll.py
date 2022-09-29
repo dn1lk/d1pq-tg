@@ -12,8 +12,7 @@ router = Router(name='game:uno:poll')
 
 @router.poll_answer()
 async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMContext):
-    data = await state.get_data()
-    data_uno: UnoData = UnoData(**data['uno'])
+    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
 
     if poll_answer.option_ids == [0] and poll_answer.poll_id in data_uno.polls_kick:
         data_uno.polls_kick[poll_answer.poll_id].amount += 1
@@ -28,8 +27,6 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
 
             try:
                 await data_uno.remove_user(state, data_uno.polls_kick.pop(poll_answer.poll_id).user_id)
-
-                data['uno'] = data_uno.dict()
-                await state.set_data(data)
+                await state.update_data(uno=data_uno.dict())
             except UnoNoUsersException:
                 await finish(message, data_uno, state)

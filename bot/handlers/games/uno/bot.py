@@ -48,7 +48,6 @@ class UnoBot:
 
             if cards:
                 self.data.current_card, accept = choice(cards)
-                print(accept)
 
                 try:
                     self.message = await self.message.answer_sticker(self.data.current_card.file_id)
@@ -92,9 +91,10 @@ class UnoBot:
             await asyncio.sleep(choice(range(0, 4)) / len(self.data.users))
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
-            await self.message.delete_reply_markup()
             self.data.queries.remove(self.message.message_id)
             await state.update_data(uno=self.data.dict())
+
+            await self.message.delete_reply_markup()
             await self.message.edit_text(str(UNO))
 
     async def uno_user(self, state: FSMContext):
@@ -102,8 +102,9 @@ class UnoBot:
             await asyncio.sleep(choice(range(2, 8)) / len(self.data.users))
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
-            await self.data.add_card(self.bot, self.message.from_user, 2)
-            await self.message.delete_reply_markup()
+            await self.data.add_card(self.bot, self.message.entities[0].user, 2)
             self.data.queries.remove(self.message.message_id)
             await state.update_data(uno=self.data.dict())
+
+            await self.message.delete_reply_markup()
             await self.message.edit_text(get_username(self.message.entities[0].user) + ", " + str(UNO))
