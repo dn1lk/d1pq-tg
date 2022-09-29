@@ -27,6 +27,7 @@ class UnoData(BaseModel):
     current_skip: int | bool = False
 
     polls_kick: dict[str, UnoPollKick] = {}
+    queries: set[int] = {}
     timer_amount: int = 3
 
     @property
@@ -262,6 +263,9 @@ class UnoData(BaseModel):
 
         for poll in self.polls_kick.values():
             await state.bot.delete_message(state.key.chat_id, poll.message_id)
+
+        for query in self.queries:
+            await state.bot.edit_message_reply_markup(state.key.chat_id, query)
 
         self.current_user_id = self.next_user_id
 

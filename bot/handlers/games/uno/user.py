@@ -76,12 +76,13 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
 
 @router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors.get_names()])))
 async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games):
-    data_uno: UnoData = UnoData(**(await state.get_data()).get('uno'))
+    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
 
     if query.from_user.id == data_uno.current_user_id:
         data_uno.current_card.color = UnoColors[callback_data.value]
 
         await query.message.delete_reply_markup()
+        data_uno.queries.remove(query.message.message_id)
         await query.message.edit_text(
             _("{user} changes the color to {emoji} {color}!").format(
                 user=get_username(query.from_user),
@@ -97,7 +98,7 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
 @router.callback_query(k.Games.filter(F.value == 'uno'))
 async def uno_answer(query: types.CallbackQuery, bot: Bot, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data()).get('uno'))
+    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
     for task in asyncio.all_tasks():
@@ -106,6 +107,7 @@ async def uno_answer(query: types.CallbackQuery, bot: Bot, state: FSMContext):
             break
 
     await query.message.delete_reply_markup()
+    data_uno.queries.remove(query.message.message_id)
 
     if query.from_user.id == uno_user.id:
         await query.answer(

@@ -87,11 +87,14 @@ class UnoBot:
             else:
                 await skip(self.message, self.data, state)
 
-    async def uno(self, _):
+    async def uno(self, state: FSMContext):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
             await asyncio.sleep(choice(range(0, 4)) / len(self.data.users))
+            self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             await self.message.delete_reply_markup()
+            self.data.queries.remove(self.message.message_id)
+            await state.update_data(uno=self.data.dict())
             await self.message.edit_text(str(UNO))
 
     async def uno_user(self, state: FSMContext):
@@ -100,7 +103,7 @@ class UnoBot:
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             await self.data.add_card(self.bot, self.message.from_user, 2)
-            await state.update_data(uno=self.data.dict())
-
             await self.message.delete_reply_markup()
+            self.data.queries.remove(self.message.message_id)
+            await state.update_data(uno=self.data.dict())
             await self.message.edit_text(get_username(self.message.entities[0].user) + ", " + str(UNO))

@@ -25,14 +25,13 @@ async def uno(message: types.Message, data: UnoData, state: FSMContext):
         answer = _("Player {user} has one card left!").format(user=get_username(message.from_user))
 
     bot.message = await message.answer(answer, reply_markup=k.uno_uno())
+    data.queries.add(bot.message.message_id)
     asyncio.create_task(coro(state), name=str(bot) + ':' + str(message.from_user.id) + ':' + 'uno')
 
 
 async def skip(message: types.Message, data: UnoData, state: FSMContext):
-    answer = await data.add_card(
-        state.bot,
-        (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
-    )
+    user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
+    answer = await data.add_card(state.bot, user)
     special = await data.accept_current_special(state)
 
     if special:
@@ -50,11 +49,17 @@ async def color(message: types.Message, data: UnoData, state: FSMContext, accept
         await message.answer(bot.get_color())
         await process(message, data, state, accept)
     else:
-        await message.reply(data.special_color().format(
+        message = await message.reply(data.special_color().format(
             user=get_username(message.from_user)),
             reply_markup=k.uno_color()
         )
+        data.queries.add(message.message_id)
         await state.update_data(uno=data.dict())
+
+        from . import uno_timeout
+        from .. import timer
+
+        timer(state, uno_timeout, message=message, data_uno=data)
 
 
 async def remove(message: types.Message, data: UnoData, state: FSMContext):
