@@ -3,9 +3,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from .process import finish
 from .data import UnoData
 from .exceptions import UnoNoUsersException
+from .process import finish
 
 router = Router(name='game:uno:poll')
 

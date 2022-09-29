@@ -87,7 +87,7 @@ class UnoBot:
             else:
                 await skip(self.message, self.data, state)
 
-    async def uno(self, state: FSMContext):
+    async def uno(self, _):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
             await asyncio.sleep(choice(range(0, 4)) / len(self.data.users))
 

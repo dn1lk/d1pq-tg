@@ -7,10 +7,10 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
 from . import DRAW_CARD
-from .process import pre, finish, skip, process
 from .cards import UnoColors
 from .data import UnoData
 from .exceptions import UnoNoUsersException
+from .process import pre, finish, skip, process
 from .. import keyboards as k
 
 router = Router(name='game:uno:user')

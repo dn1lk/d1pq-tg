@@ -1,16 +1,15 @@
 import asyncio
 import logging
 
-from aiogram import Dispatcher, Bot
+from aiogram import Dispatcher, Bot, types
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
-from aiogram.types import User
 from aiohttp import web
 
 import config
 
 
 async def setup(dp: Dispatcher, bot: Bot):
-    user: User = await bot.me()
+    user: types.User = await bot.me()
     webhook_logger = logging.getLogger("aiogram.webhook")
     webhook_logger.info(
         "Setup webhook for bot @%s id=%d - %r", user.username, bot.id, user.full_name

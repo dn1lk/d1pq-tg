@@ -45,8 +45,8 @@ async def get_gen_args(
                     i18n.current_locale,
                     message.text,
                     choice(yalm.intros.get(i18n.current_locale, 'en'))
-                    )
-                }
+                )
+            }
 
     async def gen_sticker() -> dict:
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=1):

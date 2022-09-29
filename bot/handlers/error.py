@@ -4,7 +4,6 @@ import traceback
 
 from aiogram import Router, Bot, types, exceptions
 
-
 router = Router(name='error')
 
 

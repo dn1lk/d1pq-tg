@@ -5,7 +5,6 @@ from aiogram.utils.i18n import gettext as _
 from . import DRAW_CARD
 from .data import UnoData
 
-
 router = Router(name='game:uno:inline')
 
 command = '/play uno'

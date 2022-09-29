@@ -11,7 +11,6 @@ from .exceptions import UnoNoUsersException
 from .process import post
 from .. import close_timeout
 
-
 UNO = __("UNO!")
 DRAW_CARD = __("Take a card.")
 

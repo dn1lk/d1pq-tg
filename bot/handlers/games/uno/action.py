@@ -2,8 +2,8 @@ from aiogram import Router, types, flags
 from aiogram.fsm.context import FSMContext
 
 from bot.utils.database.context import DataBaseContext
-from .exceptions import UnoNoUsersException
 from .data import UnoData
+from .exceptions import UnoNoUsersException
 from .process import finish
 
 router = Router(name='game:uno:action')

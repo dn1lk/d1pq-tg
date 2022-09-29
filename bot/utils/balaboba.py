@@ -38,11 +38,11 @@ class Yalm:
         return self
 
     async def _get_response(
-        self,
-        *,
-        method: str,
-        endpoint: str,
-        json: dict | None = None,
+            self,
+            *,
+            method: str,
+            endpoint: str,
+            json: dict | None = None,
     ):
         if not self.session or self.session.closed:
             self.session = ClientSession()
@@ -60,9 +60,9 @@ class Yalm:
             json: dict,
     ):
         async with self.session.request(
-            method,
-            f"https://yandex.ru/lab/api/yalm/{endpoint}",
-            json=json,
-            raise_for_status=True,
+                method,
+                f"https://yandex.ru/lab/api/yalm/{endpoint}",
+                json=json,
+                raise_for_status=True,
         ) as response:
             return await response.json()
