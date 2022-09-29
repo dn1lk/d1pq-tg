@@ -14,9 +14,9 @@ class UnoColorsMeta(EnumMeta):
                 if item in member.value:
                     return member
 
-    def names(cls, exclude: set = None):
+    def get_names(cls, exclude: set = None):
         if exclude:
-            return (color for color in cls.names() if color not in exclude)
+            return (color for color in cls.get_names() if color not in exclude)
         return cls
 
 
@@ -28,7 +28,8 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
 
     black = '⚫'
 
-    def get_color_name(self) -> str:
+    @property
+    def name(self) -> str:
         colors = {
             self.blue: _("Blue"),
             self.green: _("Green"),
@@ -40,13 +41,13 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
         return colors.get(self)
 
 
-class UnoSpecials(int, Enum):
-    none = 0
+class UnoEmoji(str, Enum):
+    none = 'Null'
 
-    reverse = 1
-    color = 2
-    skip = 3
-    draw = 4
+    reverse = '🔃'
+    color = '🏳️\u200d🌈'
+    skip = '🚫'
+    draw = '➕'
 
 
 class UnoCard(BaseModel):
@@ -55,18 +56,6 @@ class UnoCard(BaseModel):
     emoji: str
 
     color: UnoColors
-    special: UnoSpecials
-
-
-def check_special_card(emoji: str) -> UnoSpecials:
-    specials = {
-        '🔃': UnoSpecials.reverse,
-        '🏳️\u200d🌈': UnoSpecials.color,
-        '🚫': UnoSpecials.skip,
-        '➕': UnoSpecials.draw,
-    }
-
-    return specials.get(emoji, UnoSpecials.none)
 
 
 async def get_cards(bot: Bot) -> tuple[UnoCard]:
@@ -79,17 +68,15 @@ async def get_cards(bot: Bot) -> tuple[UnoCard]:
                 file_id=sticker.file_id,
                 emoji=sticker.emoji,
                 color=UnoColors.black,
-                special=check_special_card(sticker.emoji)
             )
 
-        for enum, color in enumerate(UnoColors.names(exclude={UnoColors.black})):
+        for enum, color in enumerate(UnoColors.get_names(exclude={UnoColors.black})):
             for sticker in stickers[enum::4]:
                 yield UnoCard(
                     id=sticker.file_unique_id,
                     file_id=sticker.file_id,
                     emoji=sticker.emoji,
                     color=color,
-                    special=check_special_card(sticker.emoji)
                 )
 
     return tuple(get((await bot.get_sticker_set('uno_cards')).stickers))

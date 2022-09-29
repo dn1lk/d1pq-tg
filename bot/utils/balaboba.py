@@ -22,11 +22,11 @@ class Yalm:
                 }
             )
 
-            if intro in (3, 6, 8, 11) or len(answer["query"]) < 10 and len(answer["answers"]) < 20:
+            if intro in (3, 6, 8, 11) or len(answer["query"]) < 10 and len(answer["text"]) < 20:
                 return answer["query"] + answer["text"]
             else:
                 return answer["text"]
-        except ClientResponseError:
+        except (ClientResponseError, KeyError):
             return get_none(locale).make_sentence()
 
     async def setup(self):

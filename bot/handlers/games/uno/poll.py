@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from .action import UnoAction
+from .process import finish
 from .data import UnoData
 from .exceptions import UnoNoUsersException
 
@@ -20,17 +20,10 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
 
         if data_uno.polls_kick[poll_answer.poll_id].amount >= (len(data_uno.users) - 1) / 2:
             await bot.delete_message(state.key.chat_id, data_uno.polls_kick[poll_answer.poll_id].message_id)
+            user = (await bot.get_chat_member(state.key.chat_id, data_uno.polls_kick[poll_answer.poll_id].user_id)).user
             message = await bot.send_message(
                 state.key.chat_id,
-                _("{user} is kicked from the game.").format(
-                    user=get_username(
-                        await data_uno.get_user(
-                            bot,
-                            state.key.chat_id,
-                            data_uno.polls_kick[poll_answer.poll_id].user_id
-                        )
-                    )
-                )
+                _("{user} is kicked from the game.").format(user=get_username(user)),
             )
 
             try:
@@ -39,5 +32,4 @@ async def poll_kick_handler(poll_answer: types.PollAnswer, bot: Bot, state: FSMC
                 data['uno'] = data_uno.dict()
                 await state.set_data(data)
             except UnoNoUsersException:
-                action = UnoAction(message, state, data_uno)
-                await action.end()
+                await finish(message, data_uno, state)

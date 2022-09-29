@@ -1,5 +1,5 @@
 from aiogram.filters.callback_data import CallbackData
-from aiogram.utils.i18n import gettext as _, lazy_gettext as __
+from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 
@@ -30,9 +30,9 @@ def uno_color():
 
     builder = InlineKeyboardBuilder()
 
-    for color in UnoColors.names(exclude={UnoColors.black}):
+    for color in UnoColors.get_names(exclude={UnoColors.black}):
         builder.button(
-            text=color.value + ' ' + color.get_color_name(),
+            text=color.value + ' ' + color.name,
             callback_data=Games(game='uno', value=color.value)
         )
 
