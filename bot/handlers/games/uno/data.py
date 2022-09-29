@@ -27,7 +27,7 @@ class UnoData(BaseModel):
     current_skip: int | bool = False
 
     polls_kick: dict[str, UnoPollKick] = {}
-    queries: set[int] = {}
+    queries: set[int] = set()
     timer_amount: int = 3
 
     @property
