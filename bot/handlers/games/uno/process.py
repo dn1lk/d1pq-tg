@@ -25,7 +25,7 @@ async def uno(message: types.Message, data: UnoData, state: FSMContext):
         answer = _("Player {user} has one card left!").format(user=get_username(message.from_user))
 
     bot.message = await message.answer(answer, reply_markup=k.uno_uno())
-    data.queries.add(bot.message.message_id)
+    data.queries.append(bot.message.message_id)
     asyncio.create_task(coro(state), name=str(bot) + ':' + str(message.from_user.id) + ':' + 'uno')
 
 
@@ -53,7 +53,7 @@ async def color(message: types.Message, data: UnoData, state: FSMContext, accept
             user=get_username(message.from_user)),
             reply_markup=k.uno_color()
         )
-        data.queries.add(message.message_id)
+        data.queries.append(message.message_id)
         await state.update_data(uno=data.dict())
 
         from . import uno_timeout
