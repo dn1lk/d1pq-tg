@@ -71,8 +71,8 @@ async def remove(message: types.Message, data: UnoData, state: FSMContext):
             user=get_username(message.from_user)
         )
 
-    await data.remove_user(state)
     await message.answer(answer)
+    await data.remove_user(state)
 
 
 async def finish(message: types.Message, data: UnoData, state: FSMContext):
