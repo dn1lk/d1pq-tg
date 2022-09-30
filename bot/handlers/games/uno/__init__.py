@@ -20,20 +20,16 @@ async def uno_timeout(message: types.Message, state: FSMContext):
     data_uno.timer_amount -= 1
 
     if not data_uno.timer_amount or len(data_uno.users) == 2 and state.bot.id in data_uno.users:
-        try:
-            for user_id in tuple(data_uno.users):
-                await data_uno.remove_user(state, user_id)
-        except UnoNoUsersException:
-            await data_uno.remove_user(state, tuple(data_uno.users)[0])
-
+        await data_uno.finish(state)
         await close_timeout(message, state)
     else:
-        answer = _("Time is over.") + " " + await data_uno.add_card(state.bot, message.entities[0].user)
+        answer = _("Time is over.") + " " + await data_uno.add_card(state.bot, message.entities[-1].user)
 
         if data_uno.current_card.color is UnoColors.black:
-            await message.delete_reply_markup()
             data_uno.queries.remove(message.message_id)
             data_uno.current_card.color = choice(UnoColors.get_names(exclude={UnoColors.black.name}))
+
+            await message.delete_reply_markup()
             await message.edit_text(
                 _("Current color: {emoji} {color}").format(
                     emoji=data_uno.current_card.color.value,
@@ -42,7 +38,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
             )
 
         for poll_id, poll_data in data_uno.polls_kick.items():
-            if data_uno.next_user_id == poll_data.user_id:
+            if data_uno.current_user_id == poll_data.user_id:
                 await state.bot.delete_message(message.chat.id, poll_data.message_id)
                 del data_uno.polls_kick[poll_id]
                 break
@@ -53,14 +49,11 @@ async def uno_timeout(message: types.Message, state: FSMContext):
             is_anonymous=False,
         )
 
-        data_uno.polls_kick[poll.poll.id] = UnoPollKick(
-            message_id=poll.message_id,
-            user_id=data_uno.current_user_id,
-            amount=0,
-        )
+        data_uno.polls_kick[poll.poll.id] = UnoPollKick(message_id=poll.message_id, user_id=data_uno.current_user_id)
+        await state.update_data(uno=data_uno)
 
-        await asyncio.sleep(3)
-        await post(message, data_uno, state, answer)
+        await asyncio.sleep(2)
+        await post(message, UnoData(**(await state.get_data())['uno']), state, answer)
 
 
 def setup():

@@ -15,7 +15,7 @@ from .exceptions import UnoNoCardsException, UnoNoUsersException, UnoOneCardExce
 class UnoPollKick(BaseModel):
     message_id: int
     user_id: int
-    amount: int
+    amount: int = 0
 
 
 class UnoData(BaseModel):
@@ -44,8 +44,6 @@ class UnoData(BaseModel):
     @property
     def next_user_id(self) -> int:
         users = tuple(self.users)
-        print(users)
-        print(self.current_user_id)
 
         try:
             user_id = users[users.index(self.current_user_id) + 1]
@@ -132,12 +130,7 @@ class UnoData(BaseModel):
 
         return accept, decline
 
-    async def add_card(
-            self,
-            bot: Bot,
-            user: types.User,
-            amount: int = 1
-    ) -> str:
+    async def add_card(self, bot: Bot, user: types.User, amount: int = 1) -> str:
         self.users[user.id].extend(choices(await get_cards(bot), k=amount))
 
         if user.id == bot.id:
@@ -147,7 +140,7 @@ class UnoData(BaseModel):
 
         return answer + " " + ___("{amount} card.", "{amount} cards.", amount).format(amount=amount)
 
-    def update_currents(self, user_id):
+    def update_current_user_id(self, user_id):
         self.current_user_id = user_id
         self.users[self.current_user_id].remove(self.current_card)
 
@@ -156,22 +149,15 @@ class UnoData(BaseModel):
         elif not self.users[self.current_user_id]:
             raise UnoNoCardsException("The user has run out of cards in UNO game")
 
-    async def update_current_special(self, state: FSMContext) -> tuple[str | None, str | None]:
-        special, answer = None, None
-
+    async def update_current_special(self) -> str | None:
         if self.current_card.emoji == UnoEmoji.reverse:
-            special = self.special_reverse() if len(self.users) > 2 else self.special_skip()
+            return self.special_reverse()
 
         elif self.current_card.emoji == UnoEmoji.skip:
-            special = self.special_skip()
+            return self.special_skip()
 
         elif self.current_card.emoji == UnoEmoji.draw:
-            special = self.special_draw()
-
-        else:
-            answer = await self.accept_current_special(state)
-
-        return special, answer
+            return self.special_draw()
 
     async def accept_current_special(self, state) -> str | None:
         answer = None
@@ -186,27 +172,19 @@ class UnoData(BaseModel):
 
         return answer
 
-    def special_reverse(self):
-        self.users = dict(reversed(self.users.items()))
-        return choice(
-            (
-                _("And vice versa!"),
-                _("A bit of a mess..."),
-            )
-        ) + "\n" + _("{user} changes the queue.")
+    def special_reverse(self) -> str:
+        if len(self.users) > 2:
+            self.users = dict(reversed(self.users.items()))
+            return choice(
+                (
+                    _("And vice versa!"),
+                    _("A bit of a mess..."),
+                )
+            ) + "\n" + _("{user} changes the queue.")
 
-    def special_color(self):
-        if self.current_card.emoji == UnoEmoji.draw:
-            self.current_draw += 2
+        return self.special_skip()
 
-        return choice(
-            (
-                _("Finally, we will change the color.\nWhat will {user} choose?"),
-                _("New color, new light.\nby {user}."),
-            )
-        )
-
-    def special_skip(self):
+    def special_skip(self) -> str:
         self.current_user_id = self.current_skip = self.next_user_id
         return choice(
             (
@@ -215,7 +193,7 @@ class UnoData(BaseModel):
             )
         )
 
-    def special_draw(self):
+    def special_draw(self) -> str:
         self.special_skip()
         self.current_draw += 2
 
@@ -235,6 +213,17 @@ class UnoData(BaseModel):
             self.current_draw,
         ).format(amount=self.current_draw)
 
+    def special_color(self) -> str:
+        if self.current_card.emoji == UnoEmoji.draw:
+            self.current_draw += 2
+
+        return choice(
+            (
+                _("Finally, we will change the color.\nWhat will {user} choose?"),
+                _("New color, new light.\nby {user}."),
+            )
+        )
+
     async def remove_user(self, state: FSMContext, user_id: int = None):
         async def remove_state():
             key = StorageKey(
@@ -248,7 +237,7 @@ class UnoData(BaseModel):
             await state.storage.set_data(state.bot, key, {})
 
         user_id = user_id or self.current_user_id
-        self.current_user_id = self.next_user_id
+        self.current_user_id = self.prev_user_id
 
         await remove_state()
         del self.users[user_id]
@@ -269,8 +258,11 @@ class UnoData(BaseModel):
 
         self.current_user_id = self.next_user_id
 
-        for user_id in tuple(self.users):
-            await self.remove_user(state, user_id)
+        try:
+            for user_id in tuple(self.users):
+                await self.remove_user(state, user_id)
+        except UnoNoUsersException:
+            await self.remove_user(state, tuple(self.users)[0])
 
         await state.clear()
 

@@ -53,6 +53,7 @@ async def color(message: types.Message, data: UnoData, state: FSMContext, accept
             user=get_username(message.from_user)),
             reply_markup=k.uno_color()
         )
+
         data.queries.append(message.message_id)
         await state.update_data(uno=data.dict())
 
@@ -116,21 +117,26 @@ async def process(message: types.Message, data: UnoData, state: FSMContext, acce
     if data.current_card.color is UnoColors.black:
         await color(message, data, state, accept)
     else:
-        special, answer = await data.update_current_special(state)
+        special = await data.update_current_special()
 
-        if answer:
-            await message.answer(answer)
+        if special:
+            user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
+            accept = special.format(user=get_username(user))
+        else:
+            answer = await data.accept_current_special(state)
 
-        user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
-        await post(message, data, state, (special or accept).format(user=get_username(user)))
+            if answer:
+                await message.answer(answer)
+
+        await post(message, data, state, accept)
 
 
 async def pre(message: types.Message, data: UnoData, state: FSMContext, accept: str):
     try:
-        data.update_currents(message.from_user.id)
+        data.update_current_user_id(message.from_user.id)
     except UnoOneCardException:
         await uno(message, data, state)
     except UnoNoCardsException:
         await remove(message, data, state)
 
-    await process(message, data, state, accept)
+    await process(message, data, state, accept.format(user=message.from_user))

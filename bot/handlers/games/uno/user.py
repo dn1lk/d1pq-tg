@@ -18,8 +18,7 @@ router = Router(name='game:uno:user')
 
 @router.message(F.sticker.set_name == 'uno_cards')
 async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
-    data = await state.get_data()
-    data_uno: UnoData = UnoData(**data['uno'])
+    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
 
     card = data_uno.check_sticker(message.from_user.id, message.sticker)
     accept, decline = data_uno.filter_card(message.from_user.id, card)
@@ -38,14 +37,12 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
         data_uno.timer_amount = 3
 
         try:
-            await pre(message, data_uno, state, accept.format(user=get_username(message.from_user)))
+            await pre(message, data_uno, state, accept)
         except UnoNoUsersException:
             await finish(message, data_uno, state)
     elif decline:
         await data_uno.add_card(bot, message.from_user)
-
-        data['uno'] = data_uno.dict()
-        await state.set_data(data)
+        await state.update_data(uno=data_uno.dict())
 
         await message.reply(decline.format(user=get_username(message.from_user)))
 

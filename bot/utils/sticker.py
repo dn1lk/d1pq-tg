@@ -10,8 +10,8 @@ async def gen(message: types.Message, bot: Bot, db: DataBaseContext) -> str:
 
     if message.text or message.sticker and message.sticker.emoji:
         answer = [
-            sticker.file_id for sticker in
-            stickers.stickers if sticker.emoji in (message.text or message.sticker.emoji)
+            sticker.file_id for sticker in stickers.stickers
+            if sticker.emoji in (message.text or message.sticker.emoji)
         ]
         if answer:
             return choice(answer)
