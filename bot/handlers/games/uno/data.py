@@ -256,8 +256,6 @@ class UnoData(BaseModel):
         for query in self.queries:
             await state.bot.edit_message_reply_markup(state.key.chat_id, query)
 
-        self.current_user_id = self.next_user_id
-
         try:
             for user_id in tuple(self.users):
                 await self.remove_user(state, user_id)
