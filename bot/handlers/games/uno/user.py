@@ -71,7 +71,7 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
         )
 
 
-@router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors.get_names()])))
+@router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors.get_colors()])))
 async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
 

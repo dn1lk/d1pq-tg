@@ -14,9 +14,9 @@ class UnoColorsMeta(EnumMeta):
                 if item in member.value:
                     return member
 
-    def get_names(cls, exclude: set = None):
+    def get_colors(cls, exclude: set = None):
         if exclude:
-            return (color for color in cls.get_names() if color not in exclude)
+            return (color for color in cls.get_colors() if color not in exclude)
         return cls
 
 
@@ -70,7 +70,7 @@ async def get_cards(bot: Bot) -> tuple[UnoCard]:
                 color=UnoColors.black,
             )
 
-        for enum, color in enumerate(UnoColors.get_names(exclude={UnoColors.black})):
+        for enum, color in enumerate(UnoColors.get_colors(exclude={UnoColors.black})):
             for sticker in stickers[enum::4]:
                 yield UnoCard(
                     id=sticker.file_unique_id,

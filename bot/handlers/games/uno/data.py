@@ -90,7 +90,7 @@ class UnoData(BaseModel):
                 )
 
         elif user_id == self.prev_user_id:
-            if user_id == self.current_skip:
+            if self.current_skip or self.current_draw:
                 if card.emoji == self.current_card.emoji:
                     accept = choice(
                         (
@@ -149,28 +149,26 @@ class UnoData(BaseModel):
         elif not self.users[self.current_user_id]:
             raise UnoNoCardsException("The user has run out of cards in UNO game")
 
-    async def update_current_special(self) -> str | None:
+    async def update_current_special(self):
         if self.current_card.emoji == UnoEmoji.reverse:
             return self.special_reverse()
-
-        elif self.current_card.emoji == UnoEmoji.skip:
-            return self.special_skip()
 
         elif self.current_card.emoji == UnoEmoji.draw:
             return self.special_draw()
 
-    async def accept_current_special(self, state) -> str | None:
-        answer = None
+        elif self.current_card.emoji == UnoEmoji.skip:
+            return self.special_skip()
 
+    async def apply_current_special(self, state: FSMContext):
         if self.current_draw:
-            user = (await state.bot.get_chat_member(state.key.chat_id, self.current_skip)).user
+            user = (await state.bot.get_chat_member(state.key.chat_id, self.prev_user_id)).user
             answer = await self.add_card(state.bot, user, self.current_draw)
             self.current_draw = 0
 
+            return answer
+
         if self.current_skip:
             self.current_skip = False
-
-        return answer
 
     def special_reverse(self) -> str:
         if len(self.users) > 2:
@@ -194,7 +192,7 @@ class UnoData(BaseModel):
         )
 
     def special_draw(self) -> str:
-        self.special_skip()
+        self.current_user_id = self.next_user_id
         self.current_draw += 2
 
         return choice(
@@ -236,8 +234,9 @@ class UnoData(BaseModel):
             await state.storage.set_state(state.bot, key)
             await state.storage.set_data(state.bot, key, {})
 
-        user_id = user_id or self.current_user_id
-        self.current_user_id = self.prev_user_id
+        if not user_id:
+            user_id = self.current_user_id
+            self.current_user_id = self.prev_user_id
 
         await remove_state()
         del self.users[user_id]
@@ -260,7 +259,7 @@ class UnoData(BaseModel):
             for user_id in tuple(self.users):
                 await self.remove_user(state, user_id)
         except UnoNoUsersException:
-            await self.remove_user(state)
+            await self.remove_user(state, tuple(self.users)[0])
 
         await state.clear()
 

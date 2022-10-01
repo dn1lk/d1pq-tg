@@ -27,7 +27,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
 
         if data_uno.current_card.color is UnoColors.black:
             data_uno.queries.remove(message.message_id)
-            data_uno.current_card.color = choice(UnoColors.get_names(exclude={UnoColors.black.name}))
+            data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.black})))
 
             await message.delete_reply_markup()
             await message.edit_text(
@@ -50,10 +50,10 @@ async def uno_timeout(message: types.Message, state: FSMContext):
         )
 
         data_uno.polls_kick[poll.poll.id] = UnoPollKick(message_id=poll.message_id, user_id=data_uno.current_user_id)
-        await state.update_data(uno=data_uno)
+        await state.update_data(uno=data_uno.dict())
 
         await asyncio.sleep(2)
-        await post(message, UnoData(**(await state.get_data())['uno']), state, answer)
+        await post(message, data_uno, state, answer)
 
 
 def setup():

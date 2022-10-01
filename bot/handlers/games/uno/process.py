@@ -31,13 +31,12 @@ async def uno(message: types.Message, data: UnoData, state: FSMContext):
 
 async def skip(message: types.Message, data: UnoData, state: FSMContext):
     user = await state.bot.get_me() if data.current_user_id == state.bot.id else message.from_user
-    answer = await data.add_card(state.bot, user)
-    special = await data.accept_current_special(state)
+    special = await data.apply_current_special(state)
 
     if special:
         await message.answer(special)
 
-    await post(message, data, state, answer)
+    await post(message, data, state, await data.add_card(state.bot, user))
 
 
 async def color(message: types.Message, data: UnoData, state: FSMContext, accept: str):
@@ -115,20 +114,20 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
 
 async def process(message: types.Message, data: UnoData, state: FSMContext, accept: str = ""):
     if data.current_card.color is UnoColors.black:
-        await color(message, data, state, accept)
+        return await color(message, data, state, accept)
+
+    special = await data.update_current_special()
+
+    if special:
+        user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
+        accept = special.format(user=get_username(user))
     else:
-        special = await data.update_current_special()
+        special = await data.apply_current_special(state)
 
         if special:
-            user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
-            accept = special.format(user=get_username(user))
-        else:
-            answer = await data.accept_current_special(state)
+            await message.answer(special)
 
-            if answer:
-                await message.answer(answer)
-
-        await post(message, data, state, accept)
+    await post(message, data, state, accept)
 
 
 async def pre(message: types.Message, data: UnoData, state: FSMContext, accept: str):
