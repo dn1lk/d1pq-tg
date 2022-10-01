@@ -138,4 +138,4 @@ async def pre(message: types.Message, data: UnoData, state: FSMContext, accept: 
     except UnoNoCardsException:
         await remove(message, data, state)
 
-    await process(message, data, state, accept.format(user=message.from_user))
+    await process(message, data, state, accept.format(user=get_username(message.from_user)))
