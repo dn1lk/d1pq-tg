@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from .cards import UnoColors
+from .cards import UnoColors, UnoEmoji
 from .data import UnoData
 from .exceptions import UnoNoCardsException, UnoOneCardException
 from .. import keyboards as k
@@ -116,16 +116,17 @@ async def process(message: types.Message, data: UnoData, state: FSMContext, acce
     if data.current_card.color is UnoColors.black:
         return await color(message, data, state, accept)
 
+    if data.current_card.emoji != UnoEmoji.draw:
+        special = await data.apply_current_special(state)
+
+        if special:
+            await message.answer(special)
+
     special = await data.update_current_special()
 
     if special:
         user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
         accept = special.format(user=get_username(user))
-    else:
-        special = await data.apply_current_special(state)
-
-        if special:
-            await message.answer(special)
 
     await post(message, data, state, accept)
 

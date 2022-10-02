@@ -166,8 +166,7 @@ class UnoData(BaseModel):
 
             return answer
 
-        if self.current_skip:
-            self.current_skip = False
+        self.current_skip = False
 
     def special_reverse(self) -> str:
         if len(self.users) > 2:
