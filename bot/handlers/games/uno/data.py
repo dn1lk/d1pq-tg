@@ -91,7 +91,7 @@ class UnoData(BaseModel):
 
         elif user_id == self.prev_user_id:
             if self.current_skip or self.current_draw:
-                if card.emoji == self.current_card.emoji:
+                if card.emoji == self.current_card.emoji or card.color in (self.current_card.color, UnoColors.black):
                     accept = choice(
                         (
                             _("{user} is unskippable!"),
@@ -108,7 +108,7 @@ class UnoData(BaseModel):
                     decline = _("{user}, you have already made your turn.")
 
         elif card.id == self.current_card.id:
-            decline = choice(
+            accept = choice(
                 (
                     _("We've been interrupted!"),
                     _("I bet {user} will win this game!"),
