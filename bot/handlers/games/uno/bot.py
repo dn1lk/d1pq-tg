@@ -46,10 +46,9 @@ class UnoBot:
             await asyncio.sleep(choice(range(1, 6)) / len(self.data.users))
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
-            if cards:
-                self.data.current_card, accept = choice(cards)
-
-                try:
+            try:
+                if cards:
+                    self.data.current_card, accept = choice(cards)
                     self.message = await self.message.answer_sticker(self.data.current_card.file_id)
 
                     try:
@@ -78,13 +77,12 @@ class UnoBot:
 
                     except UnoNoUsersException:
                         await finish(self.message, self.data, state)
+                else:
+                    await skip(self.message, self.data, state)
 
-                except exceptions.TelegramRetryAfter as retry:
-                    await asyncio.sleep(retry.retry_after)
-                    self.message = await retry.method
-
-            else:
-                await skip(self.message, self.data, state)
+            except exceptions.TelegramRetryAfter as retry:
+                await asyncio.sleep(retry.retry_after)
+                self.message = await retry.method
 
     async def uno(self, state: FSMContext):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
