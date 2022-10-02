@@ -44,7 +44,7 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) / self.speed)
+            await asyncio.sleep(choice(range(1, 4)) / len(self.data.users) / self.speed)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             try:
@@ -87,7 +87,7 @@ class UnoBot:
 
     async def uno(self, state: FSMContext):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) / self.speed)
+            await asyncio.sleep(choice(range(0, 2)) / len(self.data.users) / self.speed)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             self.data.queries.remove(self.message.message_id)
@@ -97,7 +97,7 @@ class UnoBot:
 
     async def uno_user(self, state: FSMContext):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(2, 8)) / len(self.data.users) / self.speed)
+            await asyncio.sleep(choice(range(2, 6)) / len(self.data.users) / self.speed)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             await self.data.add_card(self.bot, self.message.entities[0].user, 2)
