@@ -101,7 +101,7 @@ class UnoData(BaseModel):
                 else:
                     decline = _("{user}, your turn is skipped =(.")
             else:
-                if card.emoji == self.current_card.emoji or card.color in (self.current_card.color, UnoColors.black):
+                if card.emoji == self.current_card.emoji:
                     accept = choice(
                         (
                             _("{user} keeps throwing cards..."),
