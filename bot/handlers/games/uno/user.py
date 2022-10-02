@@ -79,7 +79,6 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
         data_uno.current_card.color = UnoColors[callback_data.value]
         data_uno.queries.remove(query.message.message_id)
 
-        await query.message.delete_reply_markup()
         await query.message.edit_text(
             _("{user} changes the color to {emoji} {color}!").format(
                 user=get_username(query.from_user),
