@@ -36,7 +36,7 @@ def uno_difficulties(current_difficulty: str):
 
     builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
 
-    builder.adjust(1)
+    builder.adjust(2)
     return builder.as_markup()
 
 
