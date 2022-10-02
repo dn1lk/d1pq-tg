@@ -42,8 +42,6 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
 
 
 class UnoEmoji(str, Enum):
-    none = 'Null'
-
     reverse = '🔃'
     color = '🏳️\u200d🌈'
     skip = '🚫'
