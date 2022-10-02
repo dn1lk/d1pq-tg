@@ -26,10 +26,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
         answer = _("Time is over.") + " " + await data_uno.add_card(state.bot, message.entities[-1].user)
 
         if data_uno.current_card.color is UnoColors.black:
-            data_uno.queries.remove(message.message_id)
             data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.black})))
-
-            await message.delete_reply_markup()
             await message.edit_text(
                 _("Current color: {emoji} {color}").format(
                     emoji=data_uno.current_card.color.value,
@@ -37,11 +34,10 @@ async def uno_timeout(message: types.Message, state: FSMContext):
                 )
             )
 
-        for poll_id, poll_data in data_uno.polls_kick.items():
-            if data_uno.current_user_id == poll_data.user_id:
-                await state.bot.delete_message(message.chat.id, poll_data.message_id)
-                del data_uno.polls_kick[poll_id]
-                break
+        poll = data_uno.polls_kick.get(data_uno.current_user_id)
+
+        if poll:
+            await state.bot.delete_message(message.chat.id, poll.message_id)
 
         poll = await message.answer_poll(
             _("Kick a player from the game?"),
@@ -49,7 +45,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
             is_anonymous=False,
         )
 
-        data_uno.polls_kick[poll.poll.id] = UnoPollKick(message_id=poll.message_id, user_id=data_uno.current_user_id)
+        data_uno.polls_kick[data_uno.current_user_id] = UnoPollKick(message_id=poll.message_id, poll_id=poll.poll.id)
         await state.update_data(uno=data_uno.dict())
 
         await asyncio.sleep(2)

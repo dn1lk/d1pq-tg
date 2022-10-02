@@ -14,7 +14,7 @@ from .exceptions import UnoNoCardsException, UnoNoUsersException, UnoOneCardExce
 
 class UnoPollKick(BaseModel):
     message_id: int
-    user_id: int
+    poll_id: int
     amount: int = 0
 
 
@@ -26,7 +26,7 @@ class UnoData(BaseModel):
     current_draw: int = 0
     current_skip: int | bool = False
 
-    polls_kick: dict[str, UnoPollKick] = {}
+    polls_kick: dict[int, UnoPollKick] = {}
     timer_amount: int = 3
 
     @property
