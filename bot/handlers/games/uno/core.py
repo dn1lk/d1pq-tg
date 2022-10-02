@@ -47,7 +47,7 @@ async def start_timer_handler(
 
 @router.callback_query(
     k.Games.filter(F.value == 'start'),
-    F.from_user.id == F.entities[1].user.id,
+    F.from_user.id == F.message.entities[1].user.id,
     start_filter
 )
 async def start_handler(
