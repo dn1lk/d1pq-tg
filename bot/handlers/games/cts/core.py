@@ -41,7 +41,7 @@ async def answer_yes_handler(message: types.Message, state: FSMContext, data_cts
         await message.reply(choice(
             (
                 _("Okay, I have nothing to write on {letter}... Victory is yours."),
-                _("Can't find the right command on {letter}... My defeat."),
+                _("Can't find the right something on {letter}... My defeat."),
                 _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
             )
         ).format(letter=f'"{message.text[-1]}"'))

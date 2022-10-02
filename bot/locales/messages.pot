@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-02 20:20+0300\n"
+"POT-Creation-Date: 2022-10-02 21:58+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -236,7 +236,7 @@ msgid ""
 "\n"
 "One minute to make a decision!\n"
 "Initiator: {user}.\n"
-"Difficulty: <b>standard</b>.\n"
+"Difficulty: <b>medium</b>.\n"
 "\n"
 "<b>Already in the game:</b>\n"
 "{user}"
@@ -288,35 +288,55 @@ msgstr ""
 msgid "Eh, classic. Your move?"
 msgstr ""
 
-#: handlers/games/keyboards.py:14 handlers/games/uno/__init__.py:44
+#: handlers/games/keyboards.py:16 handlers/games/uno/__init__.py:44
 msgid "Yes"
 msgstr ""
 
-#: handlers/games/keyboards.py:15
+#: handlers/games/keyboards.py:17
 msgid "No"
 msgstr ""
 
-#: handlers/games/keyboards.py:16
-msgid "Start UNO"
+#: handlers/games/keyboards.py:18
+msgid "Change difficulty"
 msgstr ""
 
-#: handlers/games/keyboards.py:24
+#: handlers/games/keyboards.py:19
+msgid "LET'S PLAY!"
+msgstr ""
+
+#: handlers/games/keyboards.py:26
+msgid "low"
+msgstr ""
+
+#: handlers/games/keyboards.py:26
+msgid "medium"
+msgstr ""
+
+#: handlers/games/keyboards.py:26
+msgid "high"
+msgstr ""
+
+#: handlers/games/keyboards.py:37 handlers/settings/keyboards.py:30
+msgid "Back"
+msgstr ""
+
+#: handlers/games/keyboards.py:45
 msgid "Show cards"
 msgstr ""
 
-#: handlers/games/keyboards.py:53 handlers/games/keyboards.py:55
+#: handlers/games/keyboards.py:74 handlers/games/keyboards.py:76
 msgid "Rock"
 msgstr ""
 
-#: handlers/games/keyboards.py:53 handlers/games/keyboards.py:54
+#: handlers/games/keyboards.py:74 handlers/games/keyboards.py:75
 msgid "Scissors"
 msgstr ""
 
-#: handlers/games/keyboards.py:54 handlers/games/keyboards.py:55
+#: handlers/games/keyboards.py:75 handlers/games/keyboards.py:76
 msgid "Paper"
 msgstr ""
 
-#: handlers/games/keyboards.py:66
+#: handlers/games/keyboards.py:87
 msgid "What will you choose?"
 msgstr ""
 
@@ -395,7 +415,7 @@ msgid "Okay, I have nothing to write on {letter}... Victory is yours."
 msgstr ""
 
 #: handlers/games/cts/core.py:44
-msgid "Can't find the right command on {letter}... My defeat."
+msgid "Can't find the right something on {letter}... My defeat."
 msgstr ""
 
 #: handlers/games/cts/core.py:45
@@ -548,55 +568,55 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: handlers/games/uno/core.py:82
+#: handlers/games/uno/core.py:71
 msgid "Yes, I play too!"
 msgstr ""
 
-#: handlers/games/uno/core.py:83
+#: handlers/games/uno/core.py:72
 msgid "I'll play with you."
 msgstr ""
 
-#: handlers/games/uno/core.py:84
+#: handlers/games/uno/core.py:73
 msgid "I'm with you."
 msgstr ""
 
-#: handlers/games/uno/core.py:102
+#: handlers/games/uno/core.py:92
 msgid "So, <b>let's start the game.</b>"
 msgstr ""
 
-#: handlers/games/uno/core.py:105
+#: handlers/games/uno/core.py:95
 msgid "What a surprise, my turn."
 msgstr ""
 
-#: handlers/games/uno/core.py:112 handlers/games/uno/process.py:99
+#: handlers/games/uno/core.py:102 handlers/games/uno/process.py:99
 msgid "{user}, your turn."
 msgstr ""
 
-#: handlers/games/uno/core.py:121
-msgid "And who is there to play with?"
-msgstr ""
-
-#: handlers/games/uno/core.py:126
+#: handlers/games/uno/core.py:111
 msgid "You cannot start this game."
 msgstr ""
 
-#: handlers/games/uno/core.py:134
+#: handlers/games/uno/core.py:119
 msgid "You are already in the list!"
 msgstr ""
 
-#: handlers/games/uno/core.py:141
+#: handlers/games/uno/core.py:126
 msgid "Now there are one more players!"
 msgstr ""
 
-#: handlers/games/uno/core.py:156
+#: handlers/games/uno/core.py:143
 msgid "Nobody wants to play =(."
 msgstr ""
 
-#: handlers/games/uno/core.py:169
+#: handlers/games/uno/core.py:144
+msgid "And who is there to play with?"
+msgstr ""
+
+#: handlers/games/uno/core.py:160
 msgid "Now there is one less player!"
 msgstr ""
 
-#: handlers/games/uno/core.py:171
+#: handlers/games/uno/core.py:162
 msgid "You are not in the list yet!"
 msgstr ""
 
@@ -657,7 +677,7 @@ msgid "{user} keeps throwing cards..."
 msgstr ""
 
 #: handlers/games/uno/data.py:110
-msgid "{user}, it's time to stop you!"
+msgid "{user}, will anyone stop you?"
 msgstr ""
 
 #: handlers/games/uno/data.py:114
@@ -823,6 +843,10 @@ msgstr ""
 msgid "I pass the turn to the player {user}."
 msgstr ""
 
+#: handlers/games/uno/settings.py:41
+msgid "You cannot setting this game."
+msgstr ""
+
 #: handlers/games/uno/user.py:68
 msgid ""
 "Of course, I don't mind, but now it's {user}'s turn.\n"
@@ -959,10 +983,6 @@ msgstr ""
 
 #: handlers/settings/keyboards.py:17
 msgid "Change data policy"
-msgstr ""
-
-#: handlers/settings/keyboards.py:30
-msgid "Back"
 msgstr ""
 
 #: handlers/settings/keyboards.py:88

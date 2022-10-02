@@ -107,7 +107,7 @@ class UnoData(BaseModel):
                     accept = choice(
                         (
                             _("{user} keeps throwing cards..."),
-                            _("{user}, it's time to stop you!"),
+                            _("{user}, will anyone stop you?"),
                         )
                     )
                 else:
