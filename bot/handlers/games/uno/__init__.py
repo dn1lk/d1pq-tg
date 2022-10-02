@@ -67,17 +67,19 @@ def setup():
     router.poll_answer.outer_middleware(UnoFSMContextMiddleware())
 
     from .action import router as action_rt
-    from .user import router as user_rt
     from .core import router as core_rt
     from .inline import router as inline_rt
     from .poll import router as poll_rt
+    from .settings import router as settings_rt
+    from .user import router as user_rt
 
     sub_routers = (
-        action_rt,
         user_rt,
-        core_rt,
         inline_rt,
         poll_rt,
+        core_rt,
+        settings_rt,
+        action_rt,
     )
 
     for sub_router in sub_routers:

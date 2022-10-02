@@ -2,6 +2,8 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
+from bot.handlers.settings.keyboards import back
+
 
 class Games(CallbackData, prefix='game'):
     game: str
@@ -13,9 +15,28 @@ def uno_start():
 
     builder.button(text=_("Yes"), callback_data=Games(game='uno', value='join'))
     builder.button(text=_("No"), callback_data=Games(game='uno', value='leave'))
-    builder.button(text=_("Start UNO"), callback_data=Games(game='uno', value='start'))
+    builder.button(text=_("Change difficulty"), callback_data=Games(game='uno', value='difficulty'))
+    builder.button(text=_("LET'S PLAY!"), callback_data=Games(game='uno', value='start'))
 
-    builder.adjust(2)
+    builder.adjust(2, 1)
+    return builder.as_markup()
+
+
+def get_uno_difficulties():
+    return {_('low'): 0.3, _('medium'): 0.5, _('high'): 0.7}
+
+
+def uno_difficulties(current_difficulty: str):
+    difficulties = get_uno_difficulties()
+    builder = InlineKeyboardBuilder()
+
+    for difficulty, level in difficulties.items():
+        if difficulty != current_difficulty:
+            builder.button(text=difficulty, callback_data=Games(game='uno', value=difficulty))
+
+    builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
+
+    builder.adjust(1)
     return builder.as_markup()
 
 

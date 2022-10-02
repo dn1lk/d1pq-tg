@@ -26,7 +26,7 @@ class UnoData(BaseModel):
     current_draw: int = 0
     current_skip: int | bool = False
 
-    bot_speed: float = 0.3
+    bot_speed: float
 
     polls_kick: dict[int, UnoPollKick] = {}
     timer_amount: int = 3

@@ -11,6 +11,7 @@ from . import uno_timeout
 from .bot import UnoBot
 from .cards import get_cards
 from .data import UnoData
+from .settings import get_current_difficulty
 from .. import Game, timer, keyboards as k
 
 router = Router(name='game:uno:core')
@@ -21,28 +22,16 @@ def get_user_ids(entities: list[types.MessageEntity]) -> set[int]:
 
 
 async def start_filter(query: types.CallbackQuery):
-    user_ids = get_user_ids(query.message.entities)
+    for task in asyncio.all_tasks():
+        if task.get_name() == 'game' + ':' + str(query.message.chat.id):
+            task.cancel()
+            break
 
-    if user_ids:
-        for task in asyncio.all_tasks():
-            if task.get_name() == 'game' + ':' + str(query.message.chat.id):
-                task.cancel()
-                break
-
-        return {'user_ids': user_ids}
+    return {'user_ids': get_user_ids(query.message.entities)}
 
 
-async def start_timer_handler(
-        message: types.Message,
-        bot: Bot,
-        state: FSMContext,
-):
-    user_ids = get_user_ids(message.entities)
-
-    if user_ids:
-        await start_handler(message, bot, state, user_ids)
-    else:
-        await start_no_users_handler(await message.edit_reply_markup(k.uno_start()))
+async def start_timer_handler(message: types.Message, bot: Bot, state: FSMContext):
+    await start_handler(message, bot, state, get_user_ids(message.entities))
 
 
 @router.callback_query(
@@ -94,6 +83,7 @@ async def start_handler(
     data_uno = UnoData(
         users=users,
         current_user_id=choice(tuple(users)),
+        bot_speed=k.get_uno_difficulties()[get_current_difficulty(message)],
     )
 
     await state.set_state(Game.uno)
@@ -114,11 +104,6 @@ async def start_handler(
         )
 
         timer(state, uno_timeout, message=message)
-
-
-@router.callback_query(k.Games.filter(F.value == 'start'), F.from_user.id == F.message.entities[1].user.id)
-async def start_no_users_handler(query: types.CallbackQuery | types.Message):
-    await query.answer(_("And who is there to play with?"))
 
 
 @router.callback_query(k.Games.filter(F.value == 'start'))
@@ -152,8 +137,14 @@ async def leave_handler(query: types.CallbackQuery):
                     task.cancel()
                     break
 
-            await query.message.delete()
-            await query.answer(_("Nobody wants to play =(."))
+            await query.message.edit_text(
+                choice(
+                    (
+                        _("Nobody wants to play =(."),
+                        _("And who is there to play with?"),
+                    )
+                )
+            )
         else:
             if query.message.entities[1].user.id == query.from_user.id:
                 query.message.html_text.replace(
