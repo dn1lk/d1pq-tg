@@ -20,8 +20,8 @@ def uno_start():
     return builder.as_markup()
 
 
-def get_uno_difficulties():
-    return {_('low'): 0.3, _('medium'): 0.5, _('high'): 0.7}
+def get_uno_difficulties() -> dict[str, int]:
+    return {_('slowpoke'): 0.3, _('common man'): 0.5, _('genius'): 0.8}
 
 
 def uno_difficulties(current_difficulty: str):

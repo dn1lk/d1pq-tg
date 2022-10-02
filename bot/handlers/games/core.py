@@ -24,10 +24,10 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
             "<b>Let's play UNO?</b>\n\n"
             "One minute to make a decision!\n"
             "Initiator: {user}.\n"
-            "Difficulty: <b>medium</b>.\n\n"
+            "Difficulty: <b>{difficulty}</b>.\n\n"
             "<b>Already in the game:</b>\n"
             "{user}"
-        ).format(user=get_username(message.from_user)),
+        ).format(user=get_username(message.from_user), difficulty=tuple(k.get_uno_difficulties())[1]),
         reply_markup=k.uno_start(),
     )
 

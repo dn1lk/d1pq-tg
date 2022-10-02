@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-02 21:58+0300\n"
+"POT-Creation-Date: 2022-10-02 22:16+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -259,7 +259,7 @@ msgid ""
 "\n"
 "One minute to make a decision!\n"
 "Initiator: {user}.\n"
-"Difficulty: <b>medium</b>.\n"
+"Difficulty: <b>{difficulty}</b>.\n"
 "\n"
 "<b>Already in the game:</b>\n"
 "{user}"
@@ -268,7 +268,7 @@ msgstr ""
 "\n"
 "Минута на принятие решения!\n"
 "Инициатор: {user}.\n"
-"Сложность: <b>средняя</b>.\n"
+"Сложность: <b>{difficulty}</b>.\n"
 "\n"
 "<b>Уже в игре:</b>\n"
 "{user}"
@@ -328,55 +328,55 @@ msgstr "Что ж... никто не угадал. Хе."
 msgid "Eh, classic. Your move?"
 msgstr "Ех, классика. Твой ход?"
 
-#: handlers/games/keyboards.py:16 handlers/games/uno/__init__.py:44
+#: handlers/games/keyboards.py:14 handlers/games/uno/__init__.py:44
 msgid "Yes"
 msgstr "Да"
 
-#: handlers/games/keyboards.py:17
+#: handlers/games/keyboards.py:15
 msgid "No"
 msgstr "Нет"
 
-#: handlers/games/keyboards.py:18
+#: handlers/games/keyboards.py:16
 msgid "Change difficulty"
 msgstr "Изменить сложность"
 
-#: handlers/games/keyboards.py:19
+#: handlers/games/keyboards.py:17
 msgid "LET'S PLAY!"
 msgstr "НАЧАТЬ ИГРУ!"
 
-#: handlers/games/keyboards.py:26
-msgid "low"
-msgstr "низкая"
+#: handlers/games/keyboards.py:24
+msgid "slowpoke"
+msgstr "слоупок"
 
-#: handlers/games/keyboards.py:26
-msgid "medium"
-msgstr "средняя"
+#: handlers/games/keyboards.py:24
+msgid "common man"
+msgstr "обыватель"
 
-#: handlers/games/keyboards.py:26
-msgid "high"
-msgstr "высокая"
+#: handlers/games/keyboards.py:24
+msgid "genius"
+msgstr "гений"
 
-#: handlers/games/keyboards.py:37 handlers/settings/keyboards.py:30
+#: handlers/games/keyboards.py:35 handlers/settings/keyboards.py:30
 msgid "Back"
 msgstr "Назад"
 
-#: handlers/games/keyboards.py:45
+#: handlers/games/keyboards.py:43
 msgid "Show cards"
 msgstr "Показать карты"
 
-#: handlers/games/keyboards.py:74 handlers/games/keyboards.py:76
+#: handlers/games/keyboards.py:72 handlers/games/keyboards.py:74
 msgid "Rock"
 msgstr "Камень"
 
-#: handlers/games/keyboards.py:74 handlers/games/keyboards.py:75
+#: handlers/games/keyboards.py:72 handlers/games/keyboards.py:73
 msgid "Scissors"
 msgstr "Ножницы"
 
-#: handlers/games/keyboards.py:75 handlers/games/keyboards.py:76
+#: handlers/games/keyboards.py:73 handlers/games/keyboards.py:74
 msgid "Paper"
 msgstr "Бумага"
 
-#: handlers/games/keyboards.py:87
+#: handlers/games/keyboards.py:85
 msgid "What will you choose?"
 msgstr "Что ты выберешь?"
 
