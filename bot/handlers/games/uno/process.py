@@ -106,10 +106,10 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
             reply_markup=k.uno_show_cards(),
         )
 
-    from . import uno_timeout
-    from .. import timer
+        from . import uno_timeout
+        from .. import timer
 
-    timer(state, uno_timeout, message=message)
+        timer(state, uno_timeout, message=message)
 
 
 async def process(message: types.Message, data: UnoData, state: FSMContext, accept: str = ""):
