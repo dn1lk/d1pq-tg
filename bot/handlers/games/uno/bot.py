@@ -85,23 +85,23 @@ class UnoBot:
                 await asyncio.sleep(retry.retry_after)
                 self.message = await retry.method
 
-    async def uno(self, state: FSMContext):
-        async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(0, 2)) / len(self.data.users) / self.speed)
-            self.data: UnoData = UnoData(**(await state.get_data())['uno'])
-
-            self.data.queries.remove(self.message.message_id)
-            await state.update_data(uno=self.data.dict())
-
-            await self.message.edit_text(str(UNO))
+    async def uno(self, _):
+        try:
+            async with ChatActionSender.typing(chat_id=self.message.chat.id):
+                await asyncio.sleep(choice(range(0, 2)) / len(self.data.users) / self.speed)
+                await self.message.edit_text(str(UNO))
+        except asyncio.CancelledError:
+            await self.message.delete_reply_markup()
 
     async def uno_user(self, state: FSMContext):
-        async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(2, 6)) / len(self.data.users) / self.speed)
-            self.data: UnoData = UnoData(**(await state.get_data())['uno'])
+        try:
+            async with ChatActionSender.typing(chat_id=self.message.chat.id):
+                await asyncio.sleep(choice(range(2, 6)) / len(self.data.users) / self.speed)
+                self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
-            await self.data.add_card(self.bot, self.message.entities[0].user, 2)
-            self.data.queries.remove(self.message.message_id)
-            await state.update_data(uno=self.data.dict())
+                await self.data.add_card(self.bot, self.message.entities[0].user, 2)
+                await state.update_data(uno=self.data.dict())
 
-            await self.message.edit_text(get_username(self.message.entities[0].user) + ", " + str(UNO))
+                await self.message.edit_text(get_username(self.message.entities[0].user) + ", " + str(UNO))
+        except asyncio.CancelledError:
+            await self.message.delete_reply_markup()

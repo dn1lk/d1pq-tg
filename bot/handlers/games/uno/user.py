@@ -77,7 +77,6 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
     if query.from_user.id == data_uno.current_user_id:
         data_uno.current_card.color = UnoColors[callback_data.value]
-        data_uno.queries.remove(query.message.message_id)
 
         await query.message.edit_text(
             _("{user} changes the color to {emoji} {color}!").format(
@@ -98,12 +97,11 @@ async def uno_answer(query: types.CallbackQuery, bot: Bot, state: FSMContext):
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
     for task in asyncio.all_tasks():
-        if task is not asyncio.current_task() and task.get_name().endswith(str(uno_user.id) + ":" + "uno"):
+        if task.get_name().endswith(str(uno_user.id) + ":" + "uno"):
             task.cancel()
             break
 
     await query.message.delete_reply_markup()
-    data_uno.queries.remove(query.message.message_id)
 
     if query.from_user.id == uno_user.id:
         await query.answer(
