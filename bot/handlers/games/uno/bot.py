@@ -93,7 +93,6 @@ class UnoBot:
             self.data.queries.remove(self.message.message_id)
             await state.update_data(uno=self.data.dict())
 
-            await self.message.delete_reply_markup()
             await self.message.edit_text(str(UNO))
 
     async def uno_user(self, state: FSMContext):
@@ -105,5 +104,4 @@ class UnoBot:
             self.data.queries.remove(self.message.message_id)
             await state.update_data(uno=self.data.dict())
 
-            await self.message.delete_reply_markup()
             await self.message.edit_text(get_username(self.message.entities[0].user) + ", " + str(UNO))
