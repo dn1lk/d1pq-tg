@@ -32,7 +32,7 @@ def uno_difficulties(current_difficulty: str):
 
     for difficulty, level in difficulties.items():
         if difficulty != current_difficulty:
-            builder.button(text=difficulty, callback_data=Games(game='uno', value=difficulty))
+            builder.button(text=difficulty.capitalize(), callback_data=Games(game='uno', value=difficulty))
 
     builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
 
