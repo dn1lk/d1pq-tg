@@ -14,12 +14,11 @@ from .process import pre, finish, skip
 
 
 class UnoBot:
-    def __init__(self, message: types.Message, bot: Bot, data: UnoData, speed: float = 0.3):
+    def __init__(self, message: types.Message, bot: Bot, data: UnoData):
         self.message: types.Message = message
         self.bot: Bot = bot
 
         self.data: UnoData = data
-        self.speed: float = speed
 
     def __str__(self):
         return 'uno' + ':' + str(self.message.chat.id) + ':' + 'bot'
@@ -44,7 +43,7 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 4)) / len(self.data.users) / self.speed)
+            await asyncio.sleep(choice(range(1, 4)) / len(self.data.users) / self.data.bot_speed)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             try:
@@ -88,7 +87,7 @@ class UnoBot:
     async def uno(self, _):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(0, 2)) / len(self.data.users) / self.speed)
+                await asyncio.sleep(choice(range(0, 2)) / len(self.data.users) / self.data.bot_speed)
                 await self.message.edit_text(str(UNO))
         except asyncio.CancelledError:
             await self.message.delete_reply_markup()
@@ -96,7 +95,7 @@ class UnoBot:
     async def uno_user(self, state: FSMContext):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(2, 6)) / len(self.data.users) / self.speed)
+                await asyncio.sleep(choice(range(2, 6)) / len(self.data.users) / self.data.bot_speed)
                 self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
                 await self.data.add_card(self.bot, self.message.entities[0].user, 2)

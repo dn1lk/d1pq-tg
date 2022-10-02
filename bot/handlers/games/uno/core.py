@@ -71,7 +71,6 @@ async def start_handler(
             yield user_id, choices(cards, k=6)
 
     message = query.message if isinstance(query, types.CallbackQuery) else query
-    message = await message.delete_reply_markup()
 
     if random() < 2 / len(user_ids):
         user_ids.add(bot.id)
@@ -86,14 +85,15 @@ async def start_handler(
                 )
             )
         )
+    else:
+        await message.delete_reply_markup()
 
     cards = await get_cards(bot)
     users = {user: cards async for user, cards in get_users_with_cards()}
 
-    current_user_id = choice(tuple(users))
     data_uno = UnoData(
         users=users,
-        current_user_id=current_user_id,
+        current_user_id=choice(tuple(users)),
     )
 
     await state.set_state(Game.uno)
@@ -107,7 +107,7 @@ async def start_handler(
 
         await bot_uno.gen(state, bot_uno.get_cards())
     else:
-        user = (await bot.get_chat_member(message.chat.id, current_user_id)).user
+        user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
         message = await message.reply(
             answer + _("{user}, your turn.").format(user=get_username(user)),
             reply_markup=k.uno_show_cards(),
@@ -128,21 +128,13 @@ async def start_no_owner_handler(query: types.CallbackQuery):
 
 @router.callback_query(k.Games.filter(F.value == 'join'))
 async def join_handler(query: types.CallbackQuery):
-    users = {entity.user.id for entity in query.message.entities[3:] if entity.user}
+    user_ids = get_user_ids(query.message.entities)
 
-    if query.from_user.id in users:
+    if query.from_user.id in user_ids:
         await query.answer(_("You are already in the list!"))
     else:
-        html_text = query.message.html_text
-
-        if not users:
-            html_text = html_text.replace(
-                get_username(query.message.entities[1].user),
-                get_username(query.from_user)
-            )
-
         await query.message.edit_text(
-            html_text + '\n' + get_username(query.from_user),
+            query.message.html_text + '\n' + get_username(query.from_user),
             reply_markup=query.message.reply_markup
         )
 
@@ -151,14 +143,29 @@ async def join_handler(query: types.CallbackQuery):
 
 @router.callback_query(k.Games.filter(F.value == 'leave'))
 async def leave_handler(query: types.CallbackQuery):
-    users = {entity.user.id for entity in query.message.entities[3:] if entity.user}
+    user_ids = get_user_ids(query.message.entities)
 
-    if query.from_user.id in users:
-        await query.message.edit_text(
-            query.message.html_text.replace("\n" + get_username(query.from_user), ""),
-            reply_markup=query.message.reply_markup
-        )
+    if query.from_user.id in user_ids:
+        if len(user_ids) == 1:
+            for task in asyncio.all_tasks():
+                if task.get_name() == 'game' + ':' + str(query.message.chat.id):
+                    task.cancel()
+                    break
 
-        await query.answer(_("Now there is one less player!"))
+            await query.message.delete()
+            await query.answer(_("Nobody wants to play =(."))
+        else:
+            if query.message.entities[1].user.id == query.from_user.id:
+                query.message.html_text.replace(
+                    get_username(query.message.entities[1].user),
+                    get_username(query.message.entities[4].user),
+                )
+
+            await query.message.edit_text(
+                query.message.html_text.replace("\n" + get_username(query.from_user), ""),
+                reply_markup=query.message.reply_markup
+            )
+
+            await query.answer(_("Now there is one less player!"))
     else:
         await query.answer(_("You are not in the list yet!"))

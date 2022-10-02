@@ -8,7 +8,7 @@ from aiogram.utils.i18n import gettext as _, ngettext as ___
 from pydantic import BaseModel
 
 from bot.handlers import get_username
-from .cards import UnoCard, UnoColors, get_cards, UnoEmoji
+from .cards import UnoCard, UnoColors, UnoEmoji, get_cards
 from .exceptions import UnoNoCardsException, UnoNoUsersException, UnoOneCardException
 
 
@@ -25,6 +25,8 @@ class UnoData(BaseModel):
     current_card: UnoCard | None = None
     current_draw: int = 0
     current_skip: int | bool = False
+
+    bot_speed: float = 0.3
 
     polls_kick: dict[int, UnoPollKick] = {}
     timer_amount: int = 3

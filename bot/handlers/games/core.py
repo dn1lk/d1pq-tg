@@ -23,7 +23,8 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
         _(
             "<b>Let's play UNO?</b>\n\n"
             "One minute to make a decision!\n"
-            "Game initiator - {user}.\n\n"
+            "Initiator: {user}.\n"
+            "Difficulty: <b>standard</b>.\n\n"
             "<b>Already in the game:</b>\n"
             "{user}"
         ).format(user=get_username(message.from_user)),
