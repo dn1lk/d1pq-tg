@@ -13,8 +13,7 @@ thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MK
 
 @router.inline_query(F.query.lower() == "uno")
 async def inline_handler(inline: types.InlineQuery, state: FSMContext):
-    data = await state.get_data()
-    data_uno: dict | None = data.get('uno')
+    data_uno: dict | None = (await state.get_data()).get('uno')
 
     if data_uno:
         data_uno: UnoData = UnoData(**data_uno)
@@ -33,7 +32,7 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
                     types.InlineQueryResultCachedSticker(
                         id=str(enum),
                         sticker_file_id=card.file_id,
-                    ) for enum, card in enumerate(cards)
+                    ) for enum, card in enumerate(cards.cards)
                 ]
             )
         else:

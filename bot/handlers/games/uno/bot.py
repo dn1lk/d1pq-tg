@@ -25,7 +25,7 @@ class UnoBot:
 
     def get_color(self):
         self.data.special_color()
-        self.data.current_card.color = choice(self.data.users[self.bot.id]).color
+        self.data.current_card.color = choice(self.data.users[self.bot.id].cards).color
         return _("I choice {emoji} {color}.").format(
             emoji=self.data.current_card.color.value,
             color=self.data.current_card.color.name,
@@ -33,7 +33,7 @@ class UnoBot:
 
     def get_cards(self) -> tuple:
         def get():
-            for card in self.data.users[self.bot.id]:
+            for card in self.data.users[self.bot.id].cards:
                 accept, decline = self.data.filter_card(self.bot.id, card)
                 if accept:
                     yield card, accept

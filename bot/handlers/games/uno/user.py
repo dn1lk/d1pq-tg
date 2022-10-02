@@ -101,8 +101,6 @@ async def uno_answer(query: types.CallbackQuery, bot: Bot, state: FSMContext):
             task.cancel()
             break
 
-    await query.message.delete_reply_markup()
-
     if query.from_user.id == uno_user.id:
         await query.answer(
             choice(

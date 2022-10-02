@@ -12,6 +12,11 @@ from .cards import UnoCard, UnoColors, UnoEmoji, get_cards
 from .exceptions import UnoNoCardsException, UnoNoUsersException, UnoOneCardException
 
 
+class UnoUser(BaseModel):
+    cards: list[UnoCard]
+    played_cards: int = 0
+
+
 class UnoPollKick(BaseModel):
     message_id: int
     poll_id: int
@@ -19,7 +24,7 @@ class UnoPollKick(BaseModel):
 
 
 class UnoData(BaseModel):
-    users: dict[int, list[UnoCard]]
+    users: dict[int, UnoUser]
     current_user_id: int
 
     current_card: UnoCard | None = None
@@ -27,6 +32,8 @@ class UnoData(BaseModel):
     current_skip: int | bool = False
 
     bot_speed: float
+
+    winners: dict = {}
 
     polls_kick: dict[int, UnoPollKick] = {}
     timer_amount: int = 3
@@ -54,7 +61,7 @@ class UnoData(BaseModel):
         return user_id
 
     def check_sticker(self, user_id, sticker: types.Sticker) -> UnoCard | None:
-        for user_card in self.users[user_id]:
+        for user_card in self.users[user_id].cards:
             if user_card.id == sticker.file_unique_id:
                 return user_card
 
@@ -137,7 +144,7 @@ class UnoData(BaseModel):
         return accept, decline
 
     async def add_card(self, bot: Bot, user: types.User, amount: int = 1) -> str:
-        self.users[user.id].extend(choices(await get_cards(bot), k=amount))
+        self.users[user.id].cards.extend(choices(await get_cards(bot), k=amount))
 
         if user.id == bot.id:
             answer = _("I take")
@@ -148,11 +155,13 @@ class UnoData(BaseModel):
 
     def update_current_user_id(self, user_id):
         self.current_user_id = user_id
-        self.users[self.current_user_id].remove(self.current_card)
+        self.users[self.current_user_id].cards.remove(self.current_card)
+        self.users[self.current_user_id].played_cards += 1
 
-        if len(self.users[self.current_user_id]) == 1:
+        if len(self.users[self.current_user_id].cards) == 1:
             raise UnoOneCardException("The user has one card in UNO game")
-        elif not self.users[self.current_user_id]:
+        elif not self.users[self.current_user_id].cards:
+            self.winners[self.current_user_id] = self.users[self.current_user_id].played_cards
             raise UnoNoCardsException("The user has run out of cards in UNO game")
 
     async def update_current_special(self):
@@ -247,6 +256,8 @@ class UnoData(BaseModel):
         del self.users[user_id]
 
         if len(self.users) == 1:
+            user_id = tuple(self.users)[0]
+            self.winners[user_id] = self.users[user_id].played_cards
             raise UnoNoUsersException("Only one user remained in UNO game")
 
     async def finish(self, state: FSMContext) -> str:
@@ -261,8 +272,8 @@ class UnoData(BaseModel):
             for user_id in tuple(self.users):
                 await self.remove_user(state, user_id)
         except UnoNoUsersException:
-            await self.remove_user(state, tuple(self.users)[0])
+            await self.remove_user(state)
 
         await state.clear()
 
-        return _("<b>Game over.</b>\n\n{user} is the last player.")
+        return _("<b>Game over.</b>\n")

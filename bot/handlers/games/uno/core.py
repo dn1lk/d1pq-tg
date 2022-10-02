@@ -10,7 +10,7 @@ from bot.handlers import get_username
 from . import uno_timeout
 from .bot import UnoBot
 from .cards import get_cards
-from .data import UnoData
+from .data import UnoData, UnoUser
 from .settings import get_current_difficulty
 from .. import Game, timer, keyboards as k
 
@@ -78,7 +78,7 @@ async def start_handler(
         await message.delete_reply_markup()
 
     cards = await get_cards(bot)
-    users = {user: cards async for user, cards in get_users_with_cards()}
+    users = {user: UnoUser(cards=cards) async for user, cards in get_users_with_cards()}
 
     data_uno = UnoData(
         users=users,

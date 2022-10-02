@@ -3,7 +3,7 @@ from random import choice
 
 from aiogram import types
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import gettext as _, ngettext as ___
 
 from bot.handlers import get_username
 from .cards import UnoColors, UnoEmoji
@@ -76,8 +76,17 @@ async def remove(message: types.Message, data: UnoData, state: FSMContext):
 
 async def finish(message: types.Message, data: UnoData, state: FSMContext):
     answer = await data.finish(state)
-    user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
-    await message.answer(answer.format(user=get_username(user)))
+
+    for number, winner in enumerate(data.winners.items(), start=1):
+        user = (await state.bot.get_chat_member(message.chat.id, winner[0])).user
+        answer += "\n{number}: {user} - ".format(
+            number=_("WINNER") if number == 1 else number,
+            user=get_username(user)
+        ) + ___("{amount} card played.", "{amount} cards played.", winner[1]).format(
+            amount=winner[1]
+        )
+
+    await message.answer(answer)
 
 
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
