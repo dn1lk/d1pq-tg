@@ -60,6 +60,7 @@ async def start_handler(
             yield user_id, choices(cards, k=6)
 
     message = query.message if isinstance(query, types.CallbackQuery) else query
+    message = await message.delete_reply_markup()
 
     if random() < 2 / len(user_ids):
         user_ids.add(bot.id)
@@ -74,8 +75,6 @@ async def start_handler(
                 )
             )
         )
-    else:
-        await message.delete_reply_markup()
 
     cards = await get_cards(bot)
     users = {user: UnoUser(cards=cards) async for user, cards in get_users_with_cards()}
