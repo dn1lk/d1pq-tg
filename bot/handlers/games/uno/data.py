@@ -272,7 +272,7 @@ class UnoData(BaseModel):
             for user_id in tuple(self.users):
                 await self.remove_user(state, user_id)
         except UnoNoUsersException:
-            await self.remove_user(state)
+            await self.remove_user(state, tuple(self.users)[0])
 
         await state.clear()
 
