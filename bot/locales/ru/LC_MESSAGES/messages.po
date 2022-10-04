@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-03 00:12+0300\n"
+"POT-Creation-Date: 2022-10-03 21:35+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -532,10 +532,6 @@ msgstr ""
 "\n"
 "Количество угаданных слов: {words}."
 
-#: handlers/games/uno/__init__.py:14
-msgid "UNO!"
-msgstr "UNO!"
-
 #: handlers/games/uno/__init__.py:15
 msgid "Take a card."
 msgstr "Беру карту."
@@ -624,55 +620,55 @@ msgstr "Жёлтый"
 msgid "Black"
 msgstr "Чёрный"
 
-#: handlers/games/uno/core.py:71
+#: handlers/games/uno/core.py:72
 msgid "Yes, I play too!"
 msgstr "Да-да, я тоже играю!"
 
-#: handlers/games/uno/core.py:72
+#: handlers/games/uno/core.py:73
 msgid "I'll play with you."
 msgstr "Сыграю с вами."
 
-#: handlers/games/uno/core.py:73
+#: handlers/games/uno/core.py:74
 msgid "I'm with you."
 msgstr "Я с вами."
 
-#: handlers/games/uno/core.py:92
+#: handlers/games/uno/core.py:91
 msgid "So, <b>let's start the game.</b>"
 msgstr "Итак, <b>начнём игру.</b>"
 
-#: handlers/games/uno/core.py:95
+#: handlers/games/uno/core.py:94
 msgid "What a surprise, my turn."
 msgstr "Какая неожиданность, мой ход."
 
-#: handlers/games/uno/core.py:102 handlers/games/uno/process.py:108
+#: handlers/games/uno/core.py:101 handlers/games/uno/process.py:108
 msgid "{user}, your turn."
 msgstr "{user}, твоя очередь."
 
-#: handlers/games/uno/core.py:111
+#: handlers/games/uno/core.py:110
 msgid "You cannot start this game."
 msgstr "Ты не можешь начать эту игру."
 
-#: handlers/games/uno/core.py:119
+#: handlers/games/uno/core.py:118
 msgid "You are already in the list!"
 msgstr "Ты уже в списке!"
 
-#: handlers/games/uno/core.py:126
+#: handlers/games/uno/core.py:125
 msgid "Now there are one more players!"
 msgstr "Теперь участников стало на один больше!"
 
-#: handlers/games/uno/core.py:143
+#: handlers/games/uno/core.py:142
 msgid "Nobody wants to play =(."
 msgstr "Никто не хочет играть =(."
 
-#: handlers/games/uno/core.py:144
+#: handlers/games/uno/core.py:143
 msgid "And who is there to play with?"
 msgstr "А с кем играть-то? =)."
 
-#: handlers/games/uno/core.py:160
+#: handlers/games/uno/core.py:159
 msgid "Now there is one less player!"
 msgstr "Теперь участников стало на один меньше!"
 
-#: handlers/games/uno/core.py:162
+#: handlers/games/uno/core.py:161
 msgid "You are not in the list yet!"
 msgstr "Ты ещё не в списке!"
 
@@ -897,7 +893,7 @@ msgid "{amount} card played."
 msgid_plural "{amount} cards played."
 msgstr[0] "сыграна {amount} карта."
 msgstr[1] "сыграны {amount} карты."
-msgstr[2] "сыграны {amount} карт."
+msgstr[2] "сыграно {amount} карт."
 
 #: handlers/games/uno/process.py:109
 msgid "{user}, your move."

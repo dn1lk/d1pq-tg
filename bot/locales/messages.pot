@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-03 00:12+0300\n"
+"POT-Creation-Date: 2022-10-03 21:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -478,10 +478,6 @@ msgid ""
 "Number of words guessed: {words}."
 msgstr ""
 
-#: handlers/games/uno/__init__.py:14
-msgid "UNO!"
-msgstr ""
-
 #: handlers/games/uno/__init__.py:15
 msgid "Take a card."
 msgstr ""
@@ -568,55 +564,55 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: handlers/games/uno/core.py:71
+#: handlers/games/uno/core.py:72
 msgid "Yes, I play too!"
 msgstr ""
 
-#: handlers/games/uno/core.py:72
+#: handlers/games/uno/core.py:73
 msgid "I'll play with you."
 msgstr ""
 
-#: handlers/games/uno/core.py:73
+#: handlers/games/uno/core.py:74
 msgid "I'm with you."
 msgstr ""
 
-#: handlers/games/uno/core.py:92
+#: handlers/games/uno/core.py:91
 msgid "So, <b>let's start the game.</b>"
 msgstr ""
 
-#: handlers/games/uno/core.py:95
+#: handlers/games/uno/core.py:94
 msgid "What a surprise, my turn."
 msgstr ""
 
-#: handlers/games/uno/core.py:102 handlers/games/uno/process.py:108
+#: handlers/games/uno/core.py:101 handlers/games/uno/process.py:108
 msgid "{user}, your turn."
 msgstr ""
 
-#: handlers/games/uno/core.py:111
+#: handlers/games/uno/core.py:110
 msgid "You cannot start this game."
 msgstr ""
 
-#: handlers/games/uno/core.py:119
+#: handlers/games/uno/core.py:118
 msgid "You are already in the list!"
 msgstr ""
 
-#: handlers/games/uno/core.py:126
+#: handlers/games/uno/core.py:125
 msgid "Now there are one more players!"
 msgstr ""
 
-#: handlers/games/uno/core.py:143
+#: handlers/games/uno/core.py:142
 msgid "Nobody wants to play =(."
 msgstr ""
 
-#: handlers/games/uno/core.py:144
+#: handlers/games/uno/core.py:143
 msgid "And who is there to play with?"
 msgstr ""
 
-#: handlers/games/uno/core.py:160
+#: handlers/games/uno/core.py:159
 msgid "Now there is one less player!"
 msgstr ""
 
-#: handlers/games/uno/core.py:162
+#: handlers/games/uno/core.py:161
 msgid "You are not in the list yet!"
 msgstr ""
 
