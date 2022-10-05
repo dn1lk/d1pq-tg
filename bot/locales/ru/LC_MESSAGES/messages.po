@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-05 16:17+0300\n"
+"POT-Creation-Date: 2022-10-05 17:54+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -109,7 +109,7 @@ msgstr "Ну и иди отсюда, пользователь!"
 msgid "And it all started so nicely..."
 msgstr "А всё начиналось так прекрасно..."
 
-#: handlers/command.py:21
+#: handlers/command.py:19
 msgid ""
 "Hello, {user}. I am a text generator bot and in some cases a great "
 "conversationalist.\n"
@@ -121,7 +121,7 @@ msgstr ""
 "\n"
 "Если мне написать сообщение или команду, что-то может произойти."
 
-#: handlers/command.py:45
+#: handlers/command.py:43
 msgid ""
 "List of my main commands - I only accept them together with the required "
 "request, in one message:"
@@ -129,31 +129,31 @@ msgstr ""
 "Список моих основных команд - я их принимаю только вместе с необходимым "
 "запросом, одним сообщением:"
 
-#: handlers/command.py:66
+#: handlers/command.py:64
 msgid "I choose <b>{choice}</b>."
 msgstr "Я выбираю <b>{choice}</b>."
 
-#: handlers/command.py:78
+#: handlers/command.py:76
 msgid "<b>What to choose?</b>"
 msgstr "<b>Что выбрать?</b>"
 
-#: handlers/command.py:87
+#: handlers/command.py:85
 msgid "{args[0]} or {args[1]}"
 msgstr "{args[0]} или {args[1]}"
 
-#: handlers/command.py:94
+#: handlers/command.py:92
 msgid "This command only works in <b>chats</b>, alas =(."
 msgstr "Эта команда работает только в <b>чатах</b>, увы =(."
 
-#: handlers/command.py:110
+#: handlers/command.py:108
 msgid "Hmmm, I think {user} {args}"
 msgstr "Хммм, я думаю, {user} {args}"
 
-#: handlers/command.py:115
+#: handlers/command.py:113
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr "Ох, я не знаю вас ребят... Дайте мне время."
 
-#: handlers/command.py:117
+#: handlers/command.py:115
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
@@ -163,27 +163,27 @@ msgstr ""
 "\n"
 "/settings - дать разрешение."
 
-#: handlers/command.py:134
+#: handlers/command.py:132
 msgid "<b>Who???</b>"
 msgstr "<b>Кто???</b>"
 
-#: handlers/command.py:152
+#: handlers/command.py:150
 msgid "Ha! Invalid request, try again."
 msgstr "Ха! А вот и нет, попробуй ещё."
 
-#: handlers/command.py:153
+#: handlers/command.py:151
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr "Удача явно тебе НЕ благоволит. Ты не угадал игру!"
 
-#: handlers/command.py:154
+#: handlers/command.py:152
 msgid "The game is not recognized. I'll give it another try!"
 msgstr "Игра не распознана. Даю ещё попытку!"
 
-#: handlers/command.py:155
+#: handlers/command.py:153
 msgid "And here it is not. This game has a different name ;)."
 msgstr "А вот и нет. У этой игры другая команда ;)."
 
-#: handlers/command.py:164
+#: handlers/command.py:162
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
@@ -193,31 +193,31 @@ msgstr ""
 "\n"
 "Попробуй угадать игру, написав нужный запрос сразу после команды."
 
-#: handlers/command.py:181
+#: handlers/command.py:179
 msgid ""
-"Hm, {args}?\n"
+"Hm, <b>{args}</b>?\n"
 "Ok, I need to think..."
 msgstr ""
-"Хм, {args}?\n"
+"Хм, <b>{args}</b>?\n"
 "Ок, мне нужно подумать..."
 
-#: handlers/command.py:186
+#: handlers/command.py:184
 msgid "Let's do it sooner!"
 msgstr "Давай покороче!"
 
-#: handlers/command.py:200
+#: handlers/command.py:198
 msgid "<b>So what's the question?</b>"
 msgstr "<b>Так какой вопросик?</b>"
 
-#: handlers/command.py:224
+#: handlers/command.py:222
 msgid "history"
 msgstr "история"
 
-#: handlers/command.py:229
+#: handlers/command.py:227
 msgid "In short, "
 msgstr "Короче, "
 
-#: handlers/command.py:256
+#: handlers/command.py:254
 msgid "<b>On coffee grounds?</b>"
 msgstr "<b>На кофейной гуще?</b>"
 
@@ -253,7 +253,7 @@ msgstr "Я думал мы играли..."
 msgid "It's too slow, I won't play with you!"
 msgstr "Я не буду играть с тобой!"
 
-#: handlers/games/core.py:23
+#: handlers/games/core.py:21
 msgid ""
 "<b>Let's play UNO?</b>\n"
 "\n"
@@ -273,7 +273,7 @@ msgstr ""
 "<b>Уже в игре:</b>\n"
 "{user}"
 
-#: handlers/games/core.py:42
+#: handlers/games/core.py:40
 msgid ""
 "Oh, the game of cities. Well, let's try!\n"
 "\n"
@@ -287,15 +287,15 @@ msgstr ""
 "на последнюю букву названия предыдущего населённого пункта.\n"
 "На раздумья - 60 секунд."
 
-#: handlers/games/core.py:55
+#: handlers/games/core.py:53
 msgid "I start! My word: {bot_var}."
 msgstr "Я начинаю! Моё слово: {bot_var}."
 
-#: handlers/games/core.py:59
+#: handlers/games/core.py:57
 msgid "You start! Your word?"
 msgstr "Ты начинаешь! Твоё слово?"
 
-#: handlers/games/core.py:73
+#: handlers/games/core.py:71
 msgid ""
 "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay "
 "attention!\n"
@@ -308,23 +308,23 @@ msgstr ""
 "Введите любое число от 1 до 10 - а я через 60 секунд выберу своё и мы "
 "узнаем, кто из вас окажется прав."
 
-#: handlers/games/core.py:86
+#: handlers/games/core.py:84
 msgid "LET THE BATTLE BEGIN!"
 msgstr "ДА НАЧНЁТСЯ ЖЕ БИТВА!"
 
-#: handlers/games/core.py:109
+#: handlers/games/core.py:107
 msgid "So my variant is {bot_var}. Who guessed? Hmm..."
 msgstr "Итак, моё число - {bot_var}. Кто же угадал? Хм-м..."
 
-#: handlers/games/core.py:120
+#: handlers/games/core.py:118
 msgid "Well... the command of winner goes to: {winners}. Congratulations!"
 msgstr "Что ж... звание победителя достаётся: {winners}. Поздравим же!"
 
-#: handlers/games/core.py:124
+#: handlers/games/core.py:122
 msgid "Well... no one guessed right. Heh."
 msgstr "Что ж... никто не угадал. Хе."
 
-#: handlers/games/core.py:134
+#: handlers/games/core.py:132
 msgid "Eh, classic. Your move?"
 msgstr "Ех, классика. Твой ход?"
 
@@ -552,23 +552,23 @@ msgstr "Исключить игрока из игры?"
 msgid "No, keep playing"
 msgstr "Нет, продолжить игру"
 
-#: handlers/games/uno/bot.py:29
+#: handlers/games/uno/bot.py:35
 msgid "I choice {emoji} {color}."
 msgstr "Я выбираю {emoji} {color} цвет."
 
-#: handlers/games/uno/bot.py:61
+#: handlers/games/uno/bot.py:67
 msgid "My move is made."
 msgstr "Мой ход сделан."
 
-#: handlers/games/uno/bot.py:62
+#: handlers/games/uno/bot.py:68
 msgid "Expected? But I don't care."
 msgstr "Ожидали? А мне всё равно."
 
-#: handlers/games/uno/bot.py:63
+#: handlers/games/uno/bot.py:69
 msgid "BA-DUM-TSS!"
 msgstr "BA-DUM-TSS!"
 
-#: handlers/games/uno/bot.py:64
+#: handlers/games/uno/bot.py:70
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent"
@@ -576,27 +576,27 @@ msgstr ""
 "Оцените по 10 бальной шкале качество этого хода.\n"
 "Где 0 - очень хороший, 10 - великолепный"
 
-#: handlers/games/uno/bot.py:68
+#: handlers/games/uno/bot.py:74
 msgid "I still have cards in my deck."
 msgstr "У меня ещё есть карты в колоде."
 
-#: handlers/games/uno/bot.py:69
+#: handlers/games/uno/bot.py:75
 msgid "Curious, but I know all the cards in the game... I dealt them."
 msgstr "Любопытно, а ведь я знаю все карты в игре... Я же их раздавал."
 
-#: handlers/games/uno/bot.py:70
+#: handlers/games/uno/bot.py:76
 msgid "Maybe I can even win this game!"
 msgstr "Может, у меня получится даже выиграть эту игру!"
 
-#: handlers/games/uno/bot.py:71
+#: handlers/games/uno/bot.py:77
 msgid "Oh, I don't envy the next player..."
 msgstr "Ох, не завидую я следующему игроку..."
 
-#: handlers/games/uno/bot.py:72
+#: handlers/games/uno/bot.py:78
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr "Бр-б. Аа. Да. Нет. ..."
 
-#: handlers/games/uno/bot.py:73
+#: handlers/games/uno/bot.py:79
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr "Ой-ой, эта карта сама выпала в этот чат..."
 
@@ -664,11 +664,11 @@ msgstr "Никто не хочет играть =(."
 msgid "And who is there to play with?"
 msgstr "А с кем играть-то? =)."
 
-#: handlers/games/uno/core.py:159
+#: handlers/games/uno/core.py:161
 msgid "Now there is one less player!"
 msgstr "Теперь участников стало на один меньше!"
 
-#: handlers/games/uno/core.py:161
+#: handlers/games/uno/core.py:163
 msgid "You are not in the list yet!"
 msgstr "Ты ещё не в списке!"
 
