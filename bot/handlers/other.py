@@ -100,7 +100,7 @@ async def gen_chance_filter(message: types.Message, bot: Bot, db: DataBaseContex
 
 
 @router.message(F.chat.type == 'private')
-@router.message(f.LevenshteinFilter(lev=('delete', 'делите')))
+@router.message(f.LevenshteinFilter(lev={'delete', 'делите'}))
 @router.message(gen_chance_filter)
 @flags.throttling('gen')
 @flags.data('messages')

@@ -1,11 +1,12 @@
-from typing import Union, Sequence
+from typing import Union
 
 from aiogram import Bot, types, filters
 
 
 class LevenshteinFilter(filters.BaseFilter):
-    lev: Union[Sequence[filters.text.TextType], filters.text.TextType]
-    lev_ignore_case: bool = True
+    def __init__(self, lev: set[str], lev_ignore_case: bool = True):
+        self.lev: set[str] = lev
+        self.lev_ignore_case: bool = lev_ignore_case
 
     @staticmethod
     def lev_distance(lev: str, text: str):
@@ -53,7 +54,8 @@ class LevenshteinFilter(filters.BaseFilter):
 
 
 class AdminFilter(filters.BaseFilter):
-    is_admin: bool = True
+    def __init__(self, is_admin: bool = True) -> None:
+        self.is_admin: bool = is_admin
 
     async def __call__(self, obj: Union[types.Message, types.CallbackQuery], bot: Bot) -> bool:
         if isinstance(obj, types.Message):

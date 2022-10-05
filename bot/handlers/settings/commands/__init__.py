@@ -61,8 +61,8 @@ async def commands_setup_no_args_filter(
 ):
     return await filters.Command(
         commands=[command.command for command in bot.commands['en']],
-        commands_ignore_case=True,
-        command_magic=command_magic
+        ignore_case=True,
+        magic=command_magic
     )(message, bot)
 
 

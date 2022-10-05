@@ -1,4 +1,4 @@
-aiogram>=3.0.0b4
+aiogram>=3.0.0b5
 asyncpg>=0.26.0
 markovify>=0.9.4
 aiohttp>=3.8.3
