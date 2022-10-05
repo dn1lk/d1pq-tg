@@ -26,10 +26,11 @@ class UnoPollKick(BaseModel):
 class UnoData(BaseModel):
     users: dict[int, UnoUser]
     current_user_id: int
+    skipped_user_id: int = 0
 
     current_card: UnoCard | None = None
     current_draw: int = 0
-    current_skip: int | bool = False
+    current_skip: int = 0
 
     bot_speed: float
 
@@ -73,7 +74,7 @@ class UnoData(BaseModel):
 
         if user_id == self.current_user_id:
             if not self.current_card:
-                accept = _("{user} makes the first move.")
+                accept = _("{user} makes the first turn.")
             elif card.color is UnoColors.black:
                 accept = _("Black card by {user}!")
             elif card.color is self.current_card.color:
@@ -93,12 +94,22 @@ class UnoData(BaseModel):
                     (
                         _("{user}, attempt not counted, get a card! =)."),
                         _("Just. Skip. Turn."),
-                        _("Someday {user} will be able to make the right move.")
+                        _("Someday {user} will be able to make the right turn.")
                     )
                 )
 
         elif user_id == self.prev_user_id:
-            if self.current_card.emoji in (UnoEmoji.skip, UnoEmoji.draw):
+            if self.current_draw:
+                if card.emoji == self.current_card.emoji:
+                    accept = choice(
+                        (
+                            _("{user} doesn't want to take cards."),
+                            _("What a heat, +2 to the queue!"),
+                        )
+                    )
+                else:
+                    decline = _("{user}, calm down and take the cards!")
+            elif self.current_skip:
                 if card.emoji == self.current_card.emoji:
                     accept = choice(
                         (
@@ -109,6 +120,16 @@ class UnoData(BaseModel):
                     )
                 else:
                     decline = _("{user}, your turn is skipped =(.")
+            elif user_id == self.skipped_user_id:
+                if card.emoji == self.current_card.emoji or card.color == self.current_card.color:
+                    accept = choice(
+                        (
+                            _("{user}, you're in luck!"),
+                            _("{user}, is that honest?"),
+                        )
+                    )
+                else:
+                    decline = _("No, this card is wrong. Take another one!")
             else:
                 if card.emoji == self.current_card.emoji:
                     accept = choice(
@@ -182,7 +203,7 @@ class UnoData(BaseModel):
 
             return answer
 
-        self.current_skip = False
+        self.current_skip = self.skipped_user_id = 0
 
     def special_reverse(self) -> str:
         if len(self.users) > 2:

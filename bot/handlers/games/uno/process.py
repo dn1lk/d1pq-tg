@@ -34,7 +34,7 @@ async def skip(message: types.Message, data: UnoData, state: FSMContext):
     if special:
         await message.answer(special)
 
-    data.current_skip = data.current_user_id
+    data.skipped_user_id = data.current_user_id
 
     user = await state.bot.get_me() if data.current_user_id == state.bot.id else message.from_user
     await post(message, data, state, await data.add_card(state.bot, user))
