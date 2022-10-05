@@ -219,7 +219,7 @@ async def history_handler(
 ):
     """tell a story, рассказать историю"""
 
-    query = command.args or choice(sum([message.split() for message in messages], [_("history")]))
+    query = command.args or choice([message.split() for message in messages if messages] + [_("history")])
 
     if choice(['balaboba', 'markov']) == 'balaboba':
         answer = await yalm.gen(i18n.current_locale, query, 6)
