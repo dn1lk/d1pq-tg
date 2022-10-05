@@ -145,14 +145,16 @@ async def leave_handler(query: types.CallbackQuery):
                 )
             )
         else:
+            html_text = query.message.html_text
+
             if query.message.entities[1].user.id == query.from_user.id:
-                query.message.html_text.replace(
+                html_text.replace(
                     get_username(query.message.entities[1].user),
                     get_username(query.message.entities[4].user),
                 )
 
             await query.message.edit_text(
-                query.message.html_text.replace("\n" + get_username(query.from_user), ""),
+                html_text.replace("\n" + get_username(query.from_user), ""),
                 reply_markup=query.message.reply_markup
             )
 
