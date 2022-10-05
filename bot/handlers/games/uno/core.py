@@ -30,7 +30,7 @@ async def start_filter(query: types.CallbackQuery):
     return {'user_ids': get_user_ids(query.message.entities)}
 
 
-async def start_timer_handler(message: types.Message, bot: Bot, state: FSMContext):
+async def start_timer(message: types.Message, bot: Bot, state: FSMContext):
     await start_handler(message, bot, state, get_user_ids(message.entities))
 
 

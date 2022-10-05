@@ -31,9 +31,9 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
         reply_markup=k.uno_start(),
     )
 
-    from .uno.core import start_timer_handler
+    from .uno.core import start_timer
 
-    timer(state, start_timer_handler, message=message, bot=bot)
+    timer(state, start_timer, message=message, bot=bot)
 
 
 @router.message(F.text.lower().endswith(('cts', 'грд')))
