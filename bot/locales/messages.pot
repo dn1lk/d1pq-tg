@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-05 16:11+0300\n"
+"POT-Creation-Date: 2022-10-05 16:17+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -685,7 +685,7 @@ msgid "{user}, you're in luck!"
 msgstr ""
 
 #: handlers/games/uno/data.py:128
-msgid "{user}, is that fair?"
+msgid "{user}, is that honest?"
 msgstr ""
 
 #: handlers/games/uno/data.py:132
