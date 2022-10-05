@@ -11,10 +11,8 @@ from .. import get_username
 from ..settings.commands.filter import CustomCommandFilter
 
 router = Router(name='game:core')
-router.message.filters[1] = CustomCommandFilter
-router.edited_message.filters[1] = CustomCommandFilter
 
-router.message.filter(commands=['play', 'поиграем'], commands_ignore_case=True)
+router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'], ignore_case=True))
 
 
 @router.message(F.text.lower().endswith(('uno', 'уно')))

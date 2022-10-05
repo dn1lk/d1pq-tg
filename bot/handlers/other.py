@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from random import choice, random
 
-from aiogram import Router, Bot, F, types, flags
+from aiogram import Router, Bot, F, types, filters, flags
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n
 
@@ -68,7 +68,7 @@ async def gold_handler(message: types.Message):
     )
 
 
-@router.message(magic_data=F.reply_to_message.from_user.id == F.bot.id)
+@router.message(filters.MagicData(F.reply_to_message.from_user.id == F.bot.id))
 @flags.throttling('gen')
 @flags.data('messages')
 @flags.gen

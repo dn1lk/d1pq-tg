@@ -1,4 +1,4 @@
-from aiogram import Router, types, flags
+from aiogram import Router, F, types, flags
 from aiogram.fsm.context import FSMContext
 
 from bot.utils.database.context import DataBaseContext
@@ -9,7 +9,7 @@ from .process import finish
 router = Router(name='game:uno:action')
 
 
-@router.message(content_types=types.ContentType.LEFT_CHAT_MEMBER)
+@router.message(F.content_type == types.ContentType.LEFT_CHAT_MEMBER)
 @flags.data('members')
 async def on_member_leave_handler(
         message: types.Message,

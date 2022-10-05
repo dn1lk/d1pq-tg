@@ -10,12 +10,10 @@ from . import NO_ARGS, get_username, get_command_list
 from .settings.commands.filter import CustomCommandFilter
 
 router = Router(name="commands")
-router.message.filters[1] = CustomCommandFilter
-router.edited_message.filters[1] = CustomCommandFilter
 
 
 @router.message(~F.from_user.is_bot, f.LevenshteinFilter(lev={'hello', 'hey', 'здравствуйте', 'привет'}))
-@router.message(commands=['start', 'начать'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['start', 'начать'], ignore_case=True))
 async def hello_handler(message: types.Message, bot: Bot, i18n: I18n):
     await message.answer(
         _(
@@ -28,7 +26,7 @@ async def hello_handler(message: types.Message, bot: Bot, i18n: I18n):
     )
 
 
-@router.message(commands=['settings', 'настройки'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['settings', 'настройки'], ignore_case=True))
 async def settings_handler(message: types.Message, bot: Bot):
     """set up the bot, настроить бота"""
 
@@ -37,7 +35,7 @@ async def settings_handler(message: types.Message, bot: Bot):
     await message.answer(**await get_answer(message.chat.id, message.from_user.id, bot))
 
 
-@router.message(commands=['help', 'помощь'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['help', 'помощь'], ignore_case=True))
 async def help_handler(message: types.Message, bot: Bot, i18n: I18n):
     """get a list of main commands, получить список основных команд"""
 
@@ -55,7 +53,7 @@ async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs)
     }
 
 
-@router.message(commands=['choose', 'выбери'], commands_ignore_case=True, command_magic=F.args)
+@router.message(CustomCommandFilter(commands=['choose', 'выбери'], ignore_case=True, magic=F.args))
 async def choose_handler(
         message: types.Message,
         command: filters.CommandObject
@@ -67,7 +65,7 @@ async def choose_handler(
     )
 
 
-@router.message(commands=['choose', 'выбери'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['choose', 'выбери'], ignore_case=True))
 @flags.data('messages')
 @flags.chat_action("typing")
 async def choose_no_args_handler(
@@ -89,12 +87,12 @@ async def choose_no_args_handler(
     )
 
 
-@router.message(F.chat.type == 'private', commands=['who', 'кто'], commands_ignore_case=True)
+@router.message(F.chat.type == 'private', CustomCommandFilter(commands=['who', 'кто'], ignore_case=True))
 async def who_private_handler(message: types.Message):
     await message.answer(_("This command only works in <b>chats</b>, alas =(."))
 
 
-@router.message(commands=['who', 'кто'], commands_ignore_case=True, command_magic=F.args)
+@router.message(CustomCommandFilter(commands=['who', 'кто'], ignore_case=True, magic=F.args))
 @flags.data('members')
 async def who_chat_handler(
         message: types.Message,
@@ -122,7 +120,7 @@ async def who_chat_handler(
     await message.answer(answer)
 
 
-@router.message(commands=['who', 'кто'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['who', 'кто'], ignore_case=True))
 @flags.data('messages')
 @flags.chat_action("typing")
 async def who_chat_no_args_handler(
@@ -142,7 +140,7 @@ async def who_chat_no_args_handler(
     )
 
 
-@router.message(commands=['play', 'поиграем'], commands_ignore_case=True, command_magic=F.args)
+@router.message(CustomCommandFilter(commands=['play', 'поиграем'], ignore_case=True, magic=F.args))
 async def game_handler(message: types.Message):
     """play in a game, сыграть в игру"""
 
@@ -158,7 +156,7 @@ async def game_handler(message: types.Message):
     )
 
 
-@router.message(commands=['play', 'поиграем'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['play', 'поиграем'], ignore_case=True))
 async def game_no_args_handler(message: types.Message):
     await message.answer(
         _(
@@ -168,7 +166,7 @@ async def game_no_args_handler(message: types.Message):
     )
 
 
-@router.message(commands=['question', 'вопросик'], commands_ignore_case=True, command_magic=F.args)
+@router.message(CustomCommandFilter(commands=['question', 'вопросик'], ignore_case=True, magic=F.args))
 @flags.chat_action("typing")
 async def question_handler(
         message: types.Message,
@@ -188,7 +186,7 @@ async def question_handler(
     await message.answer(answer)
 
 
-@router.message(commands=['question', 'вопросик'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['question', 'вопросик'], ignore_case=True))
 @flags.data('messages')
 @flags.chat_action("typing")
 async def question_no_args_handler(
@@ -208,7 +206,7 @@ async def question_no_args_handler(
     )
 
 
-@router.message(commands=['history', 'короче'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['history', 'короче'], ignore_case=True))
 @flags.throttling('gen')
 @flags.data('messages')
 @flags.chat_action("typing")
@@ -232,7 +230,7 @@ async def history_handler(
     await message.answer(answer)
 
 
-@router.message(commands=['future', 'погадай'], commands_ignore_case=True, command_magic=F.args)
+@router.message(CustomCommandFilter(commands=['future', 'погадай'], ignore_case=True, magic=F.args))
 @flags.chat_action("typing")
 async def future_handler(
         message: types.Message,
@@ -245,7 +243,7 @@ async def future_handler(
     await message.answer(await yalm.gen(i18n.current_locale, command.args, 10))
 
 
-@router.message(commands=['future', 'погадай'], commands_ignore_case=True)
+@router.message(CustomCommandFilter(commands=['future', 'погадай'], ignore_case=True))
 @flags.data('messages')
 @flags.chat_action("typing")
 async def future_no_args_handler(

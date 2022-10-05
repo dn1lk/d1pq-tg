@@ -2,12 +2,12 @@ import asyncio
 import logging
 import traceback
 
-from aiogram import Router, Bot, types, exceptions
+from aiogram import Router, Bot, types, filters, exceptions
 
 router = Router(name='error')
 
 
-@router.errors(exception=exceptions.TelegramBadRequest)
+@router.errors(filters.ExceptionTypeFilter(exceptions.TelegramBadRequest))
 async def edit_handler(event: types.Update, bot: Bot):
     if event.callback_query:
         await event.callback_query.answer("↻ - please wait...")
@@ -15,7 +15,7 @@ async def edit_handler(event: types.Update, bot: Bot):
         await errors_handler(event, bot)
 
 
-@router.errors(exception=exceptions.TelegramRetryAfter)
+@router.errors(filters.ExceptionTypeFilter(exceptions.TelegramRetryAfter))
 async def retry_after_handler(_, exception: exceptions.TelegramRetryAfter):
     logging.error(exception)
 

@@ -9,7 +9,7 @@ from . import get_username, get_command_list
 router = Router(name='action')
 
 
-@router.my_chat_member(~(F.chat.type == 'private'), member_status_changed=filters.JOIN_TRANSITION)
+@router.my_chat_member(~(F.chat.type == 'private'), filters.ChatMemberUpdatedFilter(filters.JOIN_TRANSITION))
 async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18n):
     await bot.send_message(
         event.chat.id,
@@ -20,20 +20,20 @@ async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18
         ).format(title=event.chat.title) + "\n\n" + get_command_list(bot, i18n.current_locale, slice(2)))
 
 
-@router.my_chat_member(member_status_changed=filters.LEAVE_TRANSITION)
+@router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.LEAVE_TRANSITION))
 async def on_me_leave_handler(_, db: DataBaseContext):
     await db.clear()
 
 
 @router.message(
-    content_types=types.ContentType.LEFT_CHAT_MEMBER,
-    magic_data=F.event.left_chat_member.id == F.bot.id,
+    F.content_type == types.ContentType.LEFT_CHAT_MEMBER,
+    filters.MagicData(F.event.left_chat_member.id == F.bot.id),
 )
 async def on_me_leave_message_handler(_):
     pass
 
 
-@router.message(content_types=types.ContentType.NEW_CHAT_MEMBERS)
+@router.message(F.content_type == types.ContentType.NEW_CHAT_MEMBERS)
 @flags.data('members')
 async def on_member_join_handler(
         message: types.Message,
@@ -89,7 +89,7 @@ async def on_member_join_handler(
         )
 
 
-@router.message(content_types=types.ContentType.LEFT_CHAT_MEMBER)
+@router.message(F.content_type == types.ContentType.LEFT_CHAT_MEMBER)
 @flags.data('members')
 async def on_member_leave_handler(
         message: types.Message,
