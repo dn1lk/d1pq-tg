@@ -25,7 +25,13 @@ class UnoBot:
 
     def get_color(self):
         self.data.special_color()
-        self.data.current_card.color = choice(self.data.users[self.bot.id].cards).color
+        cards = self.data.users[self.bot.id].cards
+
+        if self.data.bot_speed > 0.5:
+            self.data.current_card.color = max(set(cards), key=cards.count)
+        else:
+            self.data.current_card.color = choice(cards).color
+
         return _("I choice {emoji} {color}.").format(
             emoji=self.data.current_card.color.value,
             color=self.data.current_card.color.name,
