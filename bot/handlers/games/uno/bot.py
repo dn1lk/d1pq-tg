@@ -28,7 +28,7 @@ class UnoBot:
         cards = self.data.users[self.bot.id].cards
 
         if self.data.bot_speed > 0.5:
-            self.data.current_card.color = max(set(cards), key=cards.count)
+            self.data.current_card.color = max(set(cards), key=cards.count).color
         else:
             self.data.current_card.color = choice(cards).color
 
