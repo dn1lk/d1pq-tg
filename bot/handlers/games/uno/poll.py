@@ -43,7 +43,7 @@ async def poll_kick_handler(
                 await data_uno.remove_user(state, user_id)
             except UnoNoUsersException:
                 return await finish(message, data_uno, state)
-    elif not poll_answer.option_ids:
+    else:
         data_uno.polls_kick[user_id].amount -= 1
 
     await state.update_data(uno=data_uno.dict())

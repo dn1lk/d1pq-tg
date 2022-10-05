@@ -19,21 +19,20 @@ async def uno_timeout(message: types.Message, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
     data_uno.timer_amount -= 1
 
+    if data_uno.current_card.color is UnoColors.black:
+        data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.black})))
+        await message.edit_text(
+            _("Current color: {emoji} {color}").format(
+                emoji=data_uno.current_card.color.value,
+                color=data_uno.current_card.color.name
+            )
+        )
+
     if not data_uno.timer_amount or len(data_uno.users) == 2 and state.bot.id in data_uno.users:
         await data_uno.finish(state)
         await close_timeout(message, state)
     else:
         answer = _("Time is over.") + " " + await data_uno.add_card(state.bot, message.entities[-1].user)
-
-        if data_uno.current_card.color is UnoColors.black:
-            data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.black})))
-            await message.edit_text(
-                _("Current color: {emoji} {color}").format(
-                    emoji=data_uno.current_card.color.value,
-                    color=data_uno.current_card.color.name
-                )
-            )
-
         poll = data_uno.polls_kick.get(data_uno.current_user_id)
 
         if poll:

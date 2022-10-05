@@ -92,7 +92,7 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
 
 @router.callback_query(k.Games.filter(F.value == 'uno'))
-async def uno_answer(query: types.CallbackQuery, bot: Bot, state: FSMContext):
+async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
