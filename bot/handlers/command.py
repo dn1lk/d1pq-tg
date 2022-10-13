@@ -105,10 +105,15 @@ async def who_chat_handler(
     if members:
         if len(members) > 1:
             member = await bot.get_chat_member(message.chat.id, choice(members))
-            answer = _("Hmmm, I think {user} {args}").format(
-                user=get_username(member.user),
-                args=command.args,
-            )
+            answer = choice(
+                (
+                    _("Hmmm, I think"),
+                    _("I guess"),
+                    _("Oh, I admit"),
+                    _("Maybe it's"),
+                    _("Wait! It's")
+                )
+            ) + " " + get_username(member.user) + " " + f"<b>{command.args}</b>"
         else:
             answer = (_("Oh, I don't know you guys... Give me a time."))
     else:
