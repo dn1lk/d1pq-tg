@@ -14,7 +14,7 @@ async def on_me_join_handler(event: types.ChatMemberUpdated, bot: Bot, i18n: I18
     await bot.send_message(
         event.chat.id,
         _(
-            "{command}, hello! Let's start with answering the obvious questions:\n"
+            "{title}, hello! Let's start with answering the obvious questions:\n"
             "- What am I? Bot.\n"
             "- What can I do? Some things after which something happens..."
         ).format(title=event.chat.title) + "\n\n" + get_command_list(bot, i18n.current_locale, slice(2)))
