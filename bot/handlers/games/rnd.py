@@ -19,7 +19,7 @@ async def answer_handler(message: types.Message):
             "Ok, so... My choice is {bot_var}."
         ).format(bot_var=bot_var) +
         "\n" +
-        _("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(.")
+        (_("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(."))
     )
 
 
