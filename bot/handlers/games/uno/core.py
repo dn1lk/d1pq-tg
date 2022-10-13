@@ -36,7 +36,7 @@ async def start_timer(message: types.Message, bot: Bot, state: FSMContext):
 
 @router.callback_query(
     k.Games.filter(F.value == 'start'),
-    F.from_user.id == F.message.entities[1].user.id,
+    F.from_user.id == F.message.entities[3].user.id,
     start_filter
 )
 async def start_handler(
@@ -107,7 +107,7 @@ async def start_handler(
 
 @router.callback_query(k.Games.filter(F.value == 'start'))
 async def start_no_owner_handler(query: types.CallbackQuery):
-    await query.answer(_("You cannot start this game."))
+    await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[3].user.first_name))
 
 
 @router.callback_query(k.Games.filter(F.value == 'join'))
@@ -147,14 +147,8 @@ async def leave_handler(query: types.CallbackQuery):
         else:
             html_text = query.message.html_text
 
-            if query.message.entities[1].user.id == query.from_user.id:
-                html_text.replace(
-                    get_username(query.message.entities[1].user),
-                    get_username(query.message.entities[4].user),
-                )
-
             await query.message.edit_text(
-                html_text.replace("\n" + get_username(query.from_user), ""),
+                html_text.replace("\n" + get_username(query.from_user), "", 1),
                 reply_markup=query.message.reply_markup
             )
 

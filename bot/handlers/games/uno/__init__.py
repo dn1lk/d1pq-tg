@@ -19,7 +19,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
     data_uno.timer_amount -= 1
 
-    if data_uno.current_card.color is UnoColors.black:
+    if data_uno.current_card and data_uno.current_card.color is UnoColors.black:
         data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.black})))
         await message.edit_text(
             _("Current color: {emoji} {color}").format(

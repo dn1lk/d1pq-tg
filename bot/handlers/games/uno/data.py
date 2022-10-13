@@ -19,7 +19,7 @@ class UnoUser(BaseModel):
 
 class UnoPollKick(BaseModel):
     message_id: int
-    poll_id: int
+    poll_id: str
     amount: int = 0
 
 

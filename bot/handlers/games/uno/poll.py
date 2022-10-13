@@ -28,11 +28,13 @@ async def poll_kick_handler(
 ):
     if poll_answer.option_ids == [0]:
         data_uno.polls_kick[user_id].amount += 1
+    else:
+        data_uno.polls_kick[user_id].amount -= 1
 
-        if data_uno.polls_kick[user_id].amount >= (len(data_uno.users) - 1) / 2:
-            await bot.delete_message(state.key.chat_id, data_uno.polls_kick[user_id].message_id)
-            del data_uno.polls_kick[user_id]
+    if abs(data_uno.polls_kick[user_id].amount) >= (len(data_uno.users) - 1) / 2:
+        await bot.delete_message(state.key.chat_id, data_uno.polls_kick[user_id].message_id)
 
+        if data_uno.polls_kick.pop(user_id).amount > 0:
             user = (await bot.get_chat_member(state.key.chat_id, user_id)).user
             message = await bot.send_message(
                 state.key.chat_id,
@@ -43,7 +45,5 @@ async def poll_kick_handler(
                 await data_uno.remove_user(state, user_id)
             except UnoNoUsersException:
                 return await finish(message, data_uno, state)
-    else:
-        data_uno.polls_kick[user_id].amount -= 1
 
     await state.update_data(uno=data_uno.dict())
