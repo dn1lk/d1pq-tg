@@ -944,7 +944,7 @@ msgstr "{user} кладёт свою последнюю карту и выход
 
 #: handlers/games/uno/process.py:83
 msgid "WINNER"
-msgstr "ПОБЕДИТЕЛЬ:"
+msgstr "ПОБЕДИТЕЛЬ"
 
 #: handlers/games/uno/process.py:85
 msgid "{amount} card played."
