@@ -17,7 +17,9 @@ async def answer_handler(message: types.Message):
     await message.reply(
         _(
             "Ok, so... My choice is {bot_var}."
-        ) + "\n" + _("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(.")
+        ).format(bot_var=bot_var) +
+        "\n" +
+        _("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(.")
     )
 
 

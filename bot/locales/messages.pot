@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-13 22:44+0300\n"
+"POT-Creation-Date: 2022-10-13 22:49+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -349,47 +349,47 @@ msgstr ""
 msgid "Ok, so... My choice is {bot_var}."
 msgstr ""
 
-#: handlers/games/rnd.py:20
+#: handlers/games/rnd.py:22
 msgid "Our numbers matched!"
 msgstr ""
 
-#: handlers/games/rnd.py:20
+#: handlers/games/rnd.py:22
 msgid "Our numbers don't match =(."
 msgstr ""
 
-#: handlers/games/rnd.py:30
+#: handlers/games/rnd.py:32
 msgid "You have already made your choice."
 msgstr ""
 
-#: handlers/games/rnd.py:31
+#: handlers/games/rnd.py:33
 msgid "Cunning, but you already used your try."
 msgstr ""
 
-#: handlers/games/rnd.py:32
+#: handlers/games/rnd.py:34
 msgid "So let's write it down ... Seen in a scam."
 msgstr ""
 
-#: handlers/games/rnd.py:43
+#: handlers/games/rnd.py:45
 msgid "Your choice has been accepted."
 msgstr ""
 
-#: handlers/games/rnd.py:44
+#: handlers/games/rnd.py:46
 msgid "Do you really think that I will choose THIS number? Well, let's see ;)."
 msgstr ""
 
-#: handlers/games/rnd.py:45
+#: handlers/games/rnd.py:47
 msgid "So let's write..."
 msgstr ""
 
-#: handlers/games/rnd.py:56
+#: handlers/games/rnd.py:58
 msgid "So you won’t guess for sure, choose a emoji from 1 to 10!"
 msgstr ""
 
-#: handlers/games/rnd.py:57
+#: handlers/games/rnd.py:59
 msgid "Somebody can't read. It was clearly written, from 1 to 10!"
 msgstr ""
 
-#: handlers/games/rnd.py:58
+#: handlers/games/rnd.py:60
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr ""
 

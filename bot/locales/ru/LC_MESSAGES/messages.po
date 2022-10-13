@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-13 22:44+0300\n"
+"POT-Creation-Date: 2022-10-13 22:49+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -298,8 +298,8 @@ msgid ""
 "Hmm, you are trying your luck... Well, ender any number between 1 and 10 "
 "and I'll choose my own and we'll see will you right or not ;)."
 msgstr ""
-"Мм, ты испытываешь свою удачу... Хорошо, введи любое число от 1 до 10 -
-"а я выберу своё и мы узнаем, кто из вас окажется прав ;)."
+"Мм, ты испытываешь свою удачу... Хорошо, введи любое число от 1 до 10 - а"
+" я выберу своё и мы узнаем, совпадают ли наши мысли ;)."
 
 #: handlers/games/core.py:81
 msgid ""
@@ -390,47 +390,47 @@ msgstr "Что ты выберешь?"
 msgid "Ok, so... My choice is {bot_var}."
 msgstr "Итак... Мой выбор {bot_var}."
 
-#: handlers/games/rnd.py:20
+#: handlers/games/rnd.py:22
 msgid "Our numbers matched!"
 msgstr "Наши числа совпали!"
 
-#: handlers/games/rnd.py:20
+#: handlers/games/rnd.py:22
 msgid "Our numbers don't match =(."
 msgstr "Наши числа не совпали =(."
 
-#: handlers/games/rnd.py:30
+#: handlers/games/rnd.py:32
 msgid "You have already made your choice."
 msgstr "Ты уже выбрал свой вариант."
 
-#: handlers/games/rnd.py:31
+#: handlers/games/rnd.py:33
 msgid "Cunning, but you already used your try."
 msgstr "Хитро, но ты уже использовал свою попытку."
 
-#: handlers/games/rnd.py:32
+#: handlers/games/rnd.py:34
 msgid "So let's write it down ... Seen in a scam."
 msgstr "Так и запишем... Замечен в жульничестве."
 
-#: handlers/games/rnd.py:43
+#: handlers/games/rnd.py:45
 msgid "Your choice has been accepted."
 msgstr "Твой вариант принят."
 
-#: handlers/games/rnd.py:44
+#: handlers/games/rnd.py:46
 msgid "Do you really think that I will choose THIS number? Well, let's see ;)."
 msgstr "Ты действительно думаешь, что я выберу ЭТО число? Ну посмотрим ;)."
 
-#: handlers/games/rnd.py:45
+#: handlers/games/rnd.py:47
 msgid "So let's write..."
 msgstr "Так и запишем..."
 
-#: handlers/games/rnd.py:56
+#: handlers/games/rnd.py:58
 msgid "So you won’t guess for sure, choose a emoji from 1 to 10!"
 msgstr "Так ты точно не угадаешь, выбери число от 1 до 10!"
 
-#: handlers/games/rnd.py:57
+#: handlers/games/rnd.py:59
 msgid "Somebody can't read. It was clearly written, from 1 to 10!"
 msgstr "Кто-то не умеет читать. Было чётко написано, от 1 до 10!"
 
-#: handlers/games/rnd.py:58
+#: handlers/games/rnd.py:60
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr "От 1 до 10, что сложного то?!"
 

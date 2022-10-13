@@ -68,7 +68,7 @@ async def rnd_private_handler(message: types.Message, state: FSMContext):
     await message.answer(
         _(
             "Hmm, you are trying your luck... Well, ender any number between 1 and 10 and I'll choose "
-            "my own and we'll see will you right or not ;)."
+            "my own and we find out if our thoughts are the same ;)."
         )
     )
     await state.set_state(Game.rnd)
