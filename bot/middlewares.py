@@ -143,7 +143,7 @@ class UnhandledMiddleware(BaseMiddleware):
                 if messages:
                     await db.set_data(messages=messages)
 
-            elif event.sticker:
+            elif event.sticker and event.sticker.set_name != "uno_cards":
                 stickers: list[str] = await db.get_data('stickers')
 
                 if event.sticker.set_name not in stickers:
