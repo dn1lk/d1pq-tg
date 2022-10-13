@@ -10,7 +10,7 @@ from bot.utils import (balaboba, markov, voice, sticker)
 from bot.utils.database.context import DataBaseContext
 
 router = Router(name='message')
-router.message.filter(~F.from_user.is_bot)
+router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
 
 
 async def get_gen_args(
