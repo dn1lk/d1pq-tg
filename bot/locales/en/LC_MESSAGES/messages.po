@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-13 22:09+0300\n"
+"POT-Creation-Date: 2022-10-13 22:44+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -259,32 +259,38 @@ msgstr ""
 msgid "You start! Your word?"
 msgstr ""
 
-#: handlers/games/core.py:70
+#: handlers/games/core.py:69
+msgid ""
+"Hmm, you are trying your luck... Well, ender any number between 1 and 10 "
+"and I'll choose my own and we'll see will you right or not ;)."
+msgstr ""
+
+#: handlers/games/core.py:81
 msgid ""
 "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay "
 "attention!\n"
 "\n"
-"Enter any emoji between 1 and 10 and I'll choose my own in 60 seconds and"
-" we'll we'll see which one of you is right."
+"Enter any number between 1 and 10 and I'll choose my own in 60 seconds "
+"and we'll see which one of you is right."
 msgstr ""
 
-#: handlers/games/core.py:83
+#: handlers/games/core.py:94
 msgid "LET THE BATTLE BEGIN!"
 msgstr ""
 
-#: handlers/games/core.py:106
+#: handlers/games/core.py:117
 msgid "So my variant is {bot_var}. Who guessed? Hmm..."
 msgstr ""
 
-#: handlers/games/core.py:117
+#: handlers/games/core.py:128
 msgid "Well... the command of winner goes to: {winners}. Congratulations!"
 msgstr ""
 
-#: handlers/games/core.py:121
+#: handlers/games/core.py:132
 msgid "Well... no one guessed right. Heh."
 msgstr ""
 
-#: handlers/games/core.py:131
+#: handlers/games/core.py:142
 msgid "Eh, classic. Your move?"
 msgstr ""
 
@@ -340,39 +346,51 @@ msgstr ""
 msgid "What will you choose?"
 msgstr ""
 
-#: handlers/games/rnd.py:19
-msgid "You have already made your choice."
+#: handlers/games/rnd.py:18
+msgid "Ok, so... My choice is {bot_var}."
 msgstr ""
 
 #: handlers/games/rnd.py:20
+msgid "Our numbers matched!"
+msgstr ""
+
+#: handlers/games/rnd.py:20
+msgid "Our numbers don't match =(."
+msgstr ""
+
+#: handlers/games/rnd.py:30
+msgid "You have already made your choice."
+msgstr ""
+
+#: handlers/games/rnd.py:31
 msgid "Cunning, but you already used your try."
 msgstr ""
 
-#: handlers/games/rnd.py:21
+#: handlers/games/rnd.py:32
 msgid "So let's write it down ... Seen in a scam."
 msgstr ""
 
-#: handlers/games/rnd.py:32
+#: handlers/games/rnd.py:43
 msgid "Your choice has been accepted."
 msgstr ""
 
-#: handlers/games/rnd.py:33
+#: handlers/games/rnd.py:44
 msgid "Do you really think that I will choose THIS number? Well, let's see ;)."
 msgstr ""
 
-#: handlers/games/rnd.py:34
+#: handlers/games/rnd.py:45
 msgid "So let's write..."
 msgstr ""
 
-#: handlers/games/rnd.py:45
+#: handlers/games/rnd.py:56
 msgid "So you won’t guess for sure, choose a emoji from 1 to 10!"
 msgstr ""
 
-#: handlers/games/rnd.py:46
+#: handlers/games/rnd.py:57
 msgid "Somebody can't read. It was clearly written, from 1 to 10!"
 msgstr ""
 
-#: handlers/games/rnd.py:47
+#: handlers/games/rnd.py:58
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr ""
 
@@ -1117,5 +1135,16 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "You cannot setting this game."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Mm, {user} is trying his luck... "
+#~ "Well, EVERYONE, EVERYONE, EVERYONE, pay "
+#~ "attention!\n"
+#~ "\n"
+#~ "Enter any emoji between 1 and 10"
+#~ " and I'll choose my own in 60"
+#~ " seconds and we'll we'll see which"
+#~ " one of you is right."
 #~ msgstr ""
 

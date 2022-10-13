@@ -10,6 +10,17 @@ router = Router(name='game:rnd')
 router.message.filter(Game.rnd)
 
 
+@router.message(F.chat.type == 'private', F.text.in_(set(map(str, range(1, 11)))))
+async def answer_handler(message: types.Message):
+    bot_var = str(choice(range(1, 11)))
+
+    await message.reply(
+        _(
+            "Ok, so... My choice is {bot_var}."
+        ) + "\n" + _("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(.")
+    )
+
+
 @router.message(F.text.in_(set(map(str, range(1, 11)))))
 async def answer_handler(message: types.Message, state: FSMContext):
     user_var = (await state.get_data()).get('rnd', {})

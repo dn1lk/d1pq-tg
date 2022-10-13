@@ -63,14 +63,25 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
     timer(state, win_timeout, message=await message.answer(answer))
 
 
+@router.message(F.chat.type == 'private', F.text.lower().endswith(('rnd', 'рнд')))
+async def rnd_private_handler(message: types.Message, state: FSMContext):
+    await message.answer(
+        _(
+            "Hmm, you are trying your luck... Well, ender any number between 1 and 10 and I'll choose "
+            "my own and we'll see will you right or not ;)."
+        )
+    )
+    await state.set_state(Game.rnd)
+
+
 @router.message(F.text.lower().endswith(('rnd', 'рнд')))
 @flags.data('stickers')
-async def rnd_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list):
+async def rnd_chat_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list):
     message = await message.answer(
         _(
             "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
-            "Enter any emoji between 1 and 10 and I'll choose "
-            "my own in 60 seconds and we'll we'll see which one of you is right."
+            "Enter any number between 1 and 10 and I'll choose "
+            "my own in 60 seconds and we'll see which one of you is right."
         ).format(
             user=get_username(message.from_user)
         )
