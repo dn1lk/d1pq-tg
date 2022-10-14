@@ -16,10 +16,15 @@ from .. import keyboards as k
 router = Router(name='game:uno:user')
 
 
-@router.message(F.sticker.set_name == 'uno_cards')
-async def user_handler(message: types.Message, bot: Bot, state: FSMContext):
+async def user_filter(event: types.Message | types.CallbackQuery, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
+    
+    if event.from_user.id in data_uno.users:
+        return {'data_uno': data_uno}
 
+
+@router.message(F.sticker.set_name == 'uno_cards', user_filter)
+async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
     card = data_uno.check_sticker(message.from_user.id, message.sticker)
     accept, decline = data_uno.filter_card(message.from_user.id, card)
 
@@ -91,14 +96,7 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
         await query.answer(_("When you'll get a black card, choose this color ;)."))
 
 
-async def uno_filter(query: types.CallbackQuery, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-
-    if query.from_user.id in data_uno.users:
-        return {'data_uno': data_uno}
-
-
-@router.callback_query(k.Games.filter(F.value == 'uno'), uno_filter)
+@router.callback_query(k.Games.filter(F.value == 'uno'), user_filter)
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData):
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
