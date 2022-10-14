@@ -91,9 +91,15 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
         await query.answer(_("When you'll get a black card, choose this color ;)."))
 
 
-@router.callback_query(k.Games.filter(F.value == 'uno'))
-async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
+async def uno_filter(query: types.CallbackQuery, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
+
+    if query.from_user.id in data_uno.users:
+        return {'data_uno': data_uno}
+
+
+@router.callback_query(k.Games.filter(F.value == 'uno'), uno_filter)
+async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData):
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
     for task in asyncio.all_tasks():
@@ -121,3 +127,8 @@ async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
         )
 
     await state.update_data(uno=data_uno.dict())
+
+
+@router.callback_query(k.Games.filter(F.value == 'uno'))
+async def uno_no_game_handler(query: types.CallbackQuery):
+    await query.answer(_("You are not in the game!"))
