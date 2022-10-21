@@ -10,7 +10,7 @@ from bot.handlers import get_username
 from . import uno_timeout
 from .bot import UnoBot
 from .cards import get_cards
-from .data import UnoData, UnoUser
+from .data import UnoData, UnoUser, UnoDifficulty
 from .settings import get_current_difficulty
 from .. import Game, timer, keyboards as k
 
@@ -82,7 +82,7 @@ async def start_handler(
     data_uno = UnoData(
         users=users,
         current_user_id=choice(tuple(users)),
-        bot_speed=k.get_uno_difficulties()[get_current_difficulty(message)],
+        bot_speed=UnoDifficulty[get_current_difficulty(message)],
     )
 
     await state.set_state(Game.uno)
