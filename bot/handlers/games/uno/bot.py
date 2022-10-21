@@ -35,7 +35,7 @@ class UnoBot:
 
         return _("I choice {emoji} {color}.").format(
             emoji=self.data.current_card.color.value,
-            color=self.data.current_card.color.name,
+            color=self.data.current_card.color.word,
         )
 
     def get_cards(self) -> tuple:
