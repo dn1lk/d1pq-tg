@@ -26,7 +26,7 @@ def uno_difficulties(current_difficulty: str):
     builder = InlineKeyboardBuilder()
     
     for difficulty in UnoDifficulty:
-        if difficulty.name != current_difficulty:
+        if difficulty is not current_difficulty:
             builder.button(text=difficulty.name.capitalize(), callback_data=Games(game='uno', value=difficulty))
 
     builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
