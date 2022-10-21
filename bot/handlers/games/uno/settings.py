@@ -1,6 +1,7 @@
 from aiogram import Router, F, types
 from aiogram.utils.i18n import gettext as _
 
+from .data import UnoDifficulty
 from .. import keyboards as k
 from ... import get_username
 
@@ -18,7 +19,7 @@ async def difficulty_handler(query: types.CallbackQuery):
 
 
 async def difficulty_change_filter(query: types.CallbackQuery):
-    return await k.Games.filter(F.value.in_(k.get_uno_difficulties()))(query)
+    return await k.Games.filter(F.value.in_(difficulty.value for difficulty in UnoDifficulty))(query)
 
 
 @router.callback_query(difficulty_change_filter, F.from_user.id == F.message.entities[3].user.id)
