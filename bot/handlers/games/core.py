@@ -17,6 +17,8 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 @router.message(F.text.lower().endswith(('uno', 'уно')))
 async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
+    from .uno.data import UnoDifficulty
+    
     message = await message.answer(
         _(
             "<b>Let's play UNO?</b>\n\n"
@@ -24,7 +26,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
             "Difficulty: <b>{difficulty}</b>.\n\n"
             "<b>Already in the game:</b>\n"
             "{user}"
-        ).format(user=get_username(message.from_user), difficulty=tuple(k.get_uno_difficulties())[1]),
+        ).format(user=get_username(message.from_user), difficulty=UnoDifficulty.normal.name),
         reply_markup=k.uno_start(),
     )
 
