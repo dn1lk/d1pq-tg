@@ -82,7 +82,7 @@ async def start_handler(
     data_uno = UnoData(
         users=users,
         current_user_id=choice(tuple(users)),
-        bot_speed=UnoDifficulty[get_current_difficulty(message)],
+        bot_speed=get_current_difficulty(message),
     )
 
     await state.set_state(Game.uno)
