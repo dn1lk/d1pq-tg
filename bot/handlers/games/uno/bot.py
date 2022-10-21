@@ -102,7 +102,7 @@ class UnoBot:
     async def uno_user(self, state: FSMContext):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(2, 8)) / len(self.data.users) / self.data.bot_speed)
+                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) / self.data.bot_speed)
                 self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
                 await self.data.add_card(self.bot, self.message.entities[0].user, 2)
