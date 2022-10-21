@@ -24,7 +24,7 @@ class UnoDifficulty(float, Enum):
     hard = 0.8
     
     @property
-    def name(self) -> str:
+    def word(self) -> str:
         difficulties = {
             self.easy: _('slowpoke'),
             self.normal: _('common man'),
