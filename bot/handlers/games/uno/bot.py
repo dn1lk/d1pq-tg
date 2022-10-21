@@ -8,7 +8,7 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
 from . import UNO
-from .data import UnoData
+from .data import UnoData, UnoDifficulty
 from .exceptions import UnoNoUsersException
 from .process import pre, finish, skip
 
@@ -27,7 +27,7 @@ class UnoBot:
         self.data.special_color()
         cards = self.data.users[self.bot.id].cards
 
-        if self.data.bot_speed > 0.5:
+        if self.data.bot_speed is UnoDifficulty.hard:
             colors = tuple(card.color for card in cards)
             self.data.current_card.color = max(set(colors), key=colors.count)
         else:
@@ -50,7 +50,7 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) / self.data.bot_speed)
+            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) / self.data.bot_speed.value)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             try:
@@ -94,7 +94,7 @@ class UnoBot:
     async def uno(self, _):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) / self.data.bot_speed)
+                await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) / self.data.bot_speed.value)
                 await self.message.edit_text(str(UNO))
         except asyncio.CancelledError:
             await self.message.delete_reply_markup()
@@ -102,7 +102,7 @@ class UnoBot:
     async def uno_user(self, state: FSMContext):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) / self.data.bot_speed)
+                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) / self.data.bot_speed.value)
                 self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
                 await self.data.add_card(self.bot, self.message.entities[0].user, 2)
