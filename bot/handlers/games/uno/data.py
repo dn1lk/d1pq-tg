@@ -1,4 +1,5 @@
 import asyncio
+from enum import Enum
 from random import choices, choice
 
 from aiogram import Bot, types
