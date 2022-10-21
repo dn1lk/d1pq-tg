@@ -10,7 +10,7 @@ router = Router(name='game:uno:settings')
 
 def get_current_difficulty(message: types.Message) -> UnoDifficulty:
     difficulty_name = message.entities[1]
-    difficulty_name = message.text[difficulty.offset:difficulty.offset + difficulty.length]
+    difficulty_name = message.text[difficulty_name.offset:difficulty_name.offset + difficulty_name.length]
     
     for difficulty in UnoDifficulty:
         if difficulty.name == difficulty_name:
