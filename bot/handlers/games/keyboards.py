@@ -1,5 +1,3 @@
-from enum import Enum
-
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
@@ -7,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 class Games(CallbackData, prefix='game'):
     game: str
-    value: str | Enum | None
+    value: str | None
 
 
 def uno_start():
