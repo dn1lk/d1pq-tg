@@ -17,12 +17,12 @@ def get_current_difficulty(message: types.Message) -> UnoDifficulty:
             return difficulty
 
 
-@router.callback_query(k.Games.filter(F.value == 'difficulty'), F.from_user.id == F.message.entities[3].user.id)
+@router.callback_query(F.from_user.id == F.message.entities[3].user.id, k.Games.filter(F.value == 'difficulty'))
 async def difficulty_handler(query: types.CallbackQuery):
     await query.message.edit_reply_markup(k.uno_difficulties(get_current_difficulty(query.message)))
 
 
-@router.callback_query(F.from_user.id == F.message.entities[3].user.id, k.Games.filter(F.value.in_(UnoDifficulty)))
+@router.callback_query(F.from_user.id == F.message.entities[3].user.id, k.Games.filter(F.value.in_(tuple(UnoDifficulty))))
 async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k.Games):
     await query.message.edit_text(
         query.message.html_text.replace(
