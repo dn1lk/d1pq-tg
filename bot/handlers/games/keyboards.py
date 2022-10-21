@@ -5,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 class Games(CallbackData, prefix='game'):
     game: str
-    value: str | None
+    value: str | float | None
 
 
 def uno_start():
@@ -27,7 +27,7 @@ def uno_difficulties(current_difficulty: str):
     
     for difficulty in UnoDifficulty:
         if difficulty is not current_difficulty:
-            builder.button(text=difficulty.word.capitalize(), callback_data=Games(game='uno', value=difficulty.name))
+            builder.button(text=difficulty.word.capitalize(), callback_data=Games(game='uno', value=difficulty.value))
 
     builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
 
