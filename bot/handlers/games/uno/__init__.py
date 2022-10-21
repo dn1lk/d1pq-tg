@@ -24,7 +24,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
         await message.edit_text(
             _("Current color: {emoji} {color}").format(
                 emoji=data_uno.current_card.color.value,
-                color=data_uno.current_card.color.name
+                color=data_uno.current_card.color.word
             )
         )
 
