@@ -87,7 +87,7 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
             _("{user} changes the color to {emoji} {color}!").format(
                 user=get_username(query.from_user),
                 emoji=data_uno.current_card.color.value,
-                color=data_uno.current_card.color.name
+                color=data_uno.current_card.color.word,
             )
         )
 
