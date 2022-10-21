@@ -20,17 +20,14 @@ def uno_start():
     return builder.as_markup()
 
 
-def get_uno_difficulties() -> dict[str, int]:
-    return {_('slowpoke'): 0.3, _('common man'): 0.5, _('genius'): 0.8}
-
-
-def uno_difficulties(current_difficulty: str):
-    difficulties = get_uno_difficulties()
+def uno_difficulties(current_difficulty: str):   
+    from .uno.data import UnoDifficulty
+    
     builder = InlineKeyboardBuilder()
-
-    for difficulty, level in difficulties.items():
-        if difficulty != current_difficulty:
-            builder.button(text=difficulty.capitalize(), callback_data=Games(game='uno', value=difficulty))
+    
+    for difficulty in UnoDifficulty:
+        if difficulty.name != current_difficulty:
+            builder.button(text=difficulty.name.capitalize(), callback_data=Games(game='uno', value=difficulty.value))
 
     builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
 
