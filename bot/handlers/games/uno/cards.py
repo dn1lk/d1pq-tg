@@ -29,7 +29,7 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
     black = '⚫'
 
     @property
-    def name(self) -> str:
+    def word(self) -> str:
         colors = {
             self.blue: _("Blue"),
             self.green: _("Green"),
