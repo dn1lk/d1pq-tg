@@ -17,6 +17,22 @@ class UnoUser(BaseModel):
     played_cards: int = 0
 
 
+class UnoDifficulty(float, Enum):
+    easy = 0.3
+    normal = 0.5
+    hard = 0.8
+    
+    @property
+    def name(self) -> str:
+        difficulties = {
+            self.easy: _('slowpoke'),
+            self.normal: _('common man'),
+            self.hard: _('genius'),
+        }
+
+        return difficulties.get(self)
+
+
 class UnoPollKick(BaseModel):
     message_id: int
     poll_id: str
@@ -32,7 +48,7 @@ class UnoData(BaseModel):
     current_draw: int = 0
     current_skip: int = 0
 
-    bot_speed: float
+    bot_speed: UnoDifficulty
 
     winners: dict = {}
 
