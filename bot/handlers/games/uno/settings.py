@@ -9,11 +9,11 @@ router = Router(name='game:uno:settings')
 
 
 def get_current_difficulty(message: types.Message) -> UnoDifficulty:
-    difficulty_name = message.entities[1]
-    difficulty_name = message.text[difficulty_name.offset:difficulty_name.offset + difficulty_name.length]
+    difficulty_word = message.entities[1]
+    difficulty_word = message.text[difficulty_word.offset:difficulty_word.offset + difficulty_word.length]
     
     for difficulty in UnoDifficulty:
-        if difficulty.name == difficulty_name:
+        if difficulty.word == difficulty_word:
             return difficulty
 
 
@@ -26,8 +26,8 @@ async def difficulty_handler(query: types.CallbackQuery):
 async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k.Games):
     await query.message.edit_text(
         query.message.html_text.replace(
-            get_current_difficulty(query.message).name,
-            callback_data.name,
+            get_current_difficulty(query.message).word,
+            callback_data.word,
         ),
         reply_markup=k.uno_start(),
     )
