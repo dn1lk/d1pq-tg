@@ -11,23 +11,20 @@ router.message.filter(Game.rnd)
 
 
 @router.message(F.chat.type == 'private', F.text.in_(set(map(str, range(1, 11)))))
-async def answer_handler(message: types.Message):
+async def private_handler(message: types.Message):
     bot_var = str(choice(range(1, 11)))
 
     await message.reply(
-        _(
-            "Ok, so... My choice is {bot_var}."
-        ).format(bot_var=bot_var) +
-        "\n" +
+        _("Ok, so... My choice is {bot_var}.\n").format(bot_var=bot_var) +
         (_("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(."))
     )
 
 
 @router.message(F.text.in_(set(map(str, range(1, 11)))))
 async def answer_handler(message: types.Message, state: FSMContext):
-    user_var = (await state.get_data()).get('rnd', {})
+    user_var: dict[str, list] = (await state.get_data()).get('rnd', {})
 
-    if message.from_user.id in user_var.values():
+    if message.from_user.id in sum(user_var.values(), []):
         answer = (
             _("You have already made your choice."),
             _("Cunning, but you already used your try."),
@@ -37,7 +34,7 @@ async def answer_handler(message: types.Message, state: FSMContext):
         if message.text in user_var:
             user_var[message.text].append(message.from_user.id)
         else:
-            user_var[message.text] = message.from_user.id
+            user_var[message.text] = [message.from_user.id]
 
         await state.update_data(rnd=user_var)
 

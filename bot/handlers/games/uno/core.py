@@ -7,45 +7,41 @@ from aiogram.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from . import uno_timeout
-from .bot import UnoBot
-from .cards import get_cards
-from .data import UnoData, UnoUser, UnoDifficulty
-from .settings import get_current_difficulty
-from .. import Game, timer, keyboards as k
+from .process import UnoData, UnoUser, get_cards
+from .settings import extract_current_difficulty
+from .. import Game, keyboards as k
 
 router = Router(name='game:uno:core')
 
 
-def get_user_ids(entities: list[types.MessageEntity]) -> set[int]:
-    return {entity.user.id for entity in entities if entity.user}
+def get_user_ids(entities: list[types.MessageEntity]) -> list[int]:
+    return [entity.user.id for entity in entities if entity.user]
 
 
 async def start_filter(query: types.CallbackQuery):
-    for task in asyncio.all_tasks():
-        if task.get_name() == 'game' + ':' + str(query.message.chat.id):
-            task.cancel()
-            break
+    user_ids = get_user_ids(query.message.entities)
 
-    return {'user_ids': get_user_ids(query.message.entities)}
+    if query.from_user.id == user_ids[0]:
+        for task in asyncio.all_tasks():
+            if task.get_name() == f'game:{query.message.chat.id}':
+                task.cancel()
+                break
+
+        return {'user_ids': user_ids}
 
 
 async def start_timer(message: types.Message, bot: Bot, state: FSMContext):
     await start_handler(message, bot, state, get_user_ids(message.entities))
 
 
-@router.callback_query(
-    k.Games.filter(F.value == 'start'),
-    F.from_user.id == F.message.entities[3].user.id,
-    start_filter
-)
+@router.callback_query(k.Games.filter(F.value == 'start'), start_filter)
 async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,
         state: FSMContext,
-        user_ids: set[int],
+        user_ids: list[int],
 ):
-    async def get_users_with_cards():
+    async def get_uno_users(cards):
         for user_id in user_ids:
             key = StorageKey(
                 bot_id=state.key.bot_id,
@@ -63,7 +59,7 @@ async def start_handler(
     message = await message.delete_reply_markup()
 
     if random() < 2 / len(user_ids):
-        user_ids.add(bot.id)
+        user_ids.append(bot.id)
 
         await message.edit_text(message.html_text + '\n' + get_username(await bot.get_me()))
         await message.answer(
@@ -76,33 +72,18 @@ async def start_handler(
             )
         )
 
-    cards = await get_cards(bot)
-    users = {user: UnoUser(cards=cards) async for user, cards in get_users_with_cards()}
+    users = {user_id: UnoUser(cards=cards) async for user_id, cards in get_uno_users(await get_cards(bot))}
+    await state.set_state(Game.uno)
 
     data_uno = UnoData(
         users=users,
-        current_user_id=choice(tuple(users)),
-        bot_speed=get_current_difficulty(message),
+        current_index=choice(range(len(users))),
+        bot_speed=extract_current_difficulty(message),
     )
 
-    await state.set_state(Game.uno)
-    await state.update_data(uno=data_uno.dict())
+    from .process.core import post
 
-    answer = _("So, <b>let's start the game.</b>") + "\n\n"
-
-    if data_uno.current_user_id == bot.id:
-        message = await message.reply(answer + _("What a surprise, my turn."))
-        bot_uno = UnoBot(message=message, bot=bot, data=data_uno)
-
-        await bot_uno.gen(state, bot_uno.get_cards())
-    else:
-        user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
-        message = await message.reply(
-            answer + _("{user}, your turn.").format(user=get_username(user)),
-            reply_markup=k.uno_show_cards(),
-        )
-
-        timer(state, uno_timeout, message=message)
+    await post(message, data_uno, state, _("So, <b>let's start the game.</b>") + "\n\n")
 
 
 @router.callback_query(k.Games.filter(F.value == 'start'))
@@ -118,7 +99,7 @@ async def join_handler(query: types.CallbackQuery):
         await query.answer(_("You are already in the list!"))
     else:
         await query.message.edit_text(
-            query.message.html_text + '\n' + get_username(query.from_user),
+            f'{query.message.html_text}\n{get_username(query.from_user)}',
             reply_markup=query.message.reply_markup
         )
 
@@ -132,7 +113,7 @@ async def leave_handler(query: types.CallbackQuery):
     if query.from_user.id in user_ids:
         if len(user_ids) == 1:
             for task in asyncio.all_tasks():
-                if task.get_name() == 'game' + ':' + str(query.message.chat.id):
+                if task.get_name() == f'game:{query.message.chat.id}':
                     task.cancel()
                     break
 
@@ -148,7 +129,7 @@ async def leave_handler(query: types.CallbackQuery):
             html_text = query.message.html_text
 
             await query.message.edit_text(
-                html_text.replace("\n" + get_username(query.from_user), "", 1),
+                html_text.replace(f'\n{get_username(query.from_user)}', ''),
                 reply_markup=query.message.reply_markup
             )
 

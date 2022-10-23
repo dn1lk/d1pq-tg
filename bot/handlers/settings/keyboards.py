@@ -26,7 +26,7 @@ def settings():
     return builder.as_markup()
 
 
-def back(builder):
+def back(builder: InlineKeyboardBuilder):
     return builder.button(text=_("Back"), callback_data=Settings(name='back'))
 
 

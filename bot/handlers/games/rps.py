@@ -1,46 +1,66 @@
+from enum import Enum
 from random import choice
 
 from aiogram import Router, F, types, flags
-from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from . import Game, timer, close_timeout, keyboards as k
+from . import keyboards as k
+from .. import get_username
 
 router = Router(name='game:rps')
 
 
-def answer_filter(text) -> bool:
-    return any(item[1].lower() in text for item in k.get_rps_args())
+class RPSVars(str, Enum):
+    rock = "🪨"
+    scissors = "✂"
+    paper = "📜"
+
+    @property
+    def word(self) -> str:
+        items = {
+            self.rock: _("Rock"),
+            self.scissors: _("Scissors"),
+            self.paper: _("Paper"),
+        }
+
+        return f'{self.value} {items.get(self)}'
+
+    @property
+    def resolve(self):
+        items = {
+            self.rock: self.scissors,
+            self.scissors: self.paper,
+            self.paper: self.rock,
+        }
+
+        return items.get(self)
 
 
-router.message.filter(F.text.lower().func(answer_filter))
-
-
-@router.message(Game.rps)
+@router.callback_query(k.Games.filter(F.game == 'rps'))
 @flags.throttling('rps')
-async def answer_handler(message: types.Message, state: FSMContext):
-    bot_var = choice(tuple(k.get_rps_args()))
-    wins, loses = (await state.get_data())['rps']
+async def answer_handler(query: types.CallbackQuery, callback_data: k.Games):
+    bot_var: RPSVars = choice(tuple(RPSVars))
+    user_var: RPSVars = RPSVars(callback_data.value)
 
-    if bot_var[1].lower() in message.text.lower():
-        result = _("Draw.")
-    elif k.get_rps_args()[bot_var].lower() in message.text.lower():
+    await query.answer(_("Your choice: {user_var}").format(user_var=user_var.word))
+
+    loses, wins = (
+        int(entity.extract_from(query.message.text)) for entity in query.message.entities[-2:]
+    ) if len(query.message.entities) > 1 else (0, 0)
+
+    if bot_var is user_var:
         wins += 1
-        result = _("My win!")
+        loses += 1
+        result = _("draw.")
+    elif bot_var.resolve is user_var:
+        wins += 1
+        result = _("my win!")
     else:
         loses += 1
-        result = _("My defeat...")
+        result = _("my defeat...")
 
-    answer = _("Score: {loses}-{wins}.\nPlay again?").format(loses=loses, wins=wins)
-    message = await message.reply(" ".join(bot_var) + "! " + result + "\n\n" + answer, reply_markup=k.rps_show_vars())
-
-    await state.update_data(rps=(wins, loses))
-    timer(state, close_timeout, message=message)
-
-
-@router.message(F.reply_to_message.text.lower().func(answer_filter))
-@flags.throttling('rps')
-async def reply_handler(message: types.Message, state: FSMContext):
-    await state.set_state(Game.rps)
-    await state.update_data(rps=(0, 0))
-    return await answer_handler(message, state)
+    await query.message.edit_text(
+        f'{bot_var.word}! {get_username(query.from_user)}, {result}\n\n' +
+        _("Score: <b>{loses}</b>-<b>{wins}</b>.\nPlay again?").format(loses=loses, wins=wins),
+        reply_markup=k.rps_show_vars()
+    )

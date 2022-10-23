@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher, exceptions
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(levelname)s - %(name)s - %(message)s")
 logging.info("Start bot")
 
@@ -29,7 +29,7 @@ async def main():
     from utils import database as db, balaboba as yalm
 
     dp['pool_db'] = pool_db = await db.setup()
-    dp['yalm'] = yalm = await yalm.Yalm().setup()
+    dp['yalm'] = yalm = await yalm.Yalm.setup()
 
     import middlewares
     import handlers

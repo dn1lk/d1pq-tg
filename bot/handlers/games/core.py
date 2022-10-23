@@ -6,27 +6,30 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from . import Game, timer, win_timeout, close_timeout, keyboards as k
+from . import Game, keyboards as k, timer, win_timeout
 from .. import get_username
 from ..settings.commands.filter import CustomCommandFilter
 
 router = Router(name='game:core')
+router.message.filter(CustomCommandFilter(commands=['play', 'поиграем']))
 
-router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'], ignore_case=True))
 
-
-@router.message(F.text.lower().endswith(('uno', 'уно')))
+@router.message(F.text.endswith(('uno', 'уно')))
 async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
-    from .uno.data import UnoDifficulty
-    
+    from .uno.settings import UnoDifficulty, UnoMode
     message = await message.answer(
         _(
             "<b>Let's play UNO?</b>\n\n"
             "One minute to make a decision!\n"
-            "Difficulty: <b>{difficulty}</b>.\n\n"
+            "Difficulty: <b>{difficulty}</b>.\n"
+            "Mode: <b>{mode}</b>\n\n"
             "<b>Already in the game:</b>\n"
             "{user}"
-        ).format(user=get_username(message.from_user), difficulty=UnoDifficulty.normal.name),
+        ).format(
+            user=get_username(message.from_user),
+            difficulty=UnoDifficulty.normal.word,
+            mode=UnoMode.fast.word,
+        ),
         reply_markup=k.uno_start(),
     )
 
@@ -35,7 +38,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     timer(state, start_timer, message=message, bot=bot)
 
 
-@router.message(F.text.lower().endswith(('cts', 'грд')))
+@router.message(F.text.endswith(('cts', 'грд')))
 async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
     message = await message.answer(
         _(
@@ -57,15 +60,14 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
         cities = []
         answer = _("You start! Your word?")
 
-    await state.set_state(Game.cts)
-
     from bot.handlers.games.cts.data import CtsData
 
+    await state.set_state(Game.cts)
     await state.update_data(cts=CtsData(bot_var=bot_var, cities=cities).dict())
     timer(state, win_timeout, message=await message.answer(answer))
 
 
-@router.message(F.chat.type == 'private', F.text.lower().endswith(('rnd', 'рнд')))
+@router.message(F.chat.type == 'private', F.text.endswith(('rnd', 'рнд')))
 async def rnd_private_handler(message: types.Message, state: FSMContext):
     await message.answer(
         _(
@@ -76,7 +78,7 @@ async def rnd_private_handler(message: types.Message, state: FSMContext):
     await state.set_state(Game.rnd)
 
 
-@router.message(F.text.lower().endswith(('rnd', 'рнд')))
+@router.message(F.text.endswith(('rnd', 'рнд')))
 @flags.data('stickers')
 async def rnd_chat_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list):
     message = await message.answer(
@@ -84,62 +86,54 @@ async def rnd_chat_handler(message: types.Message, bot: Bot, state: FSMContext, 
             "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
             "Enter any number between 1 and 10 and I'll choose "
             "my own in 60 seconds and we'll see which one of you is right."
-        ).format(
-            user=get_username(message.from_user)
-        )
+        ).format(user=get_username(message.from_user))
     )
 
     async with ChatActionSender.typing(chat_id=message.chat.id):
         await asyncio.sleep(2)
 
         await state.set_state(Game.rnd)
-        await message.answer(_("LET THE BATTLE BEGIN!"))
+        message = await message.answer(_("LET THE BATTLE BEGIN!"))
 
     asyncio.create_task(rnd_finish_handler(message, bot, state, stickers))
 
 
-async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list):
+async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list | None):
     async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=20):
         await asyncio.sleep(60)
 
-        stickers = sum(
-            [(await bot.get_sticker_set(sticker_set)).stickers for sticker_set in stickers + ['TextAnimated']],
-            []
-        )
-        await bot.send_sticker(
-            message.chat.id,
+        if await state.get_state() == Game.rnd.state:
+            await state.set_state()
+
+        stickers = sum([(await bot.get_sticker_set(sticker_set)).stickers for sticker_set in stickers], [])
+        message = await message.reply_sticker(
             choice([sticker.file_id for sticker in stickers if sticker.emoji in ('⏳', '🙈')])
         )
 
     bot_var = str(choice(range(1, 11)))
 
-    if await state.get_state() == Game.rnd.state:
-        await state.set_state()
-
-    message = await message.reply(_("So my variant is {bot_var}. Who guessed? Hmm...").format(bot_var=bot_var))
-
     data = await state.get_data()
-    rnd_data = data.pop('rnd', {})
     winners = [
         get_username((await bot.get_chat_member(message.chat.id, user_id)).user) for user_id in
-        rnd_data.get(bot_var, ())
+        data.pop('rnd', {}).get(bot_var, ())
     ]
     await state.set_data(data)
 
+    answer = _("So, my variant is {bot_var}.\n").format(bot_var=bot_var)
+
     if winners:
-        answer = _(
-            "Well... the command of winner goes to: {winners}. Congratulations!"
-        ).format(winners=", ".join(winners))
+        answer += _('This time the title of winner goes to: {winners}. Congratulations!').format(
+            winners=', '.join(winners)
+        )
     else:
         answer = _("Well... no one guessed right. Heh.")
 
     await message.answer(answer)
 
 
-@router.message(F.text.lower().endswith(('rps', 'кнб')))
-async def rps_handler(message: types.Message, state: FSMContext):
-    await state.set_state(Game.rps)
-    await state.update_data(rps=(0, 0))
-
-    await message.answer(_("Eh, classic. Your move?"), reply_markup=k.rps_show_vars())
-    timer(state, close_timeout, message=message)
+@router.message(F.text.endswith(('rps', 'кнб')))
+async def rps_handler(message: types.Message):
+    await message.answer(
+        _("Eh, classic. {user}, your turn.").format(user=get_username(message.from_user)),
+        reply_markup=k.rps_show_vars()
+    )

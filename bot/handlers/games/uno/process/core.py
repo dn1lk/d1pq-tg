@@ -6,29 +6,28 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 
 from bot.handlers import get_username
-from .cards import UnoColors, UnoEmoji
 from .data import UnoData
 from .exceptions import UnoNoCardsException, UnoOneCardException
-from .. import keyboards as k
+from ... import keyboards as k
 
 
-async def uno(message: types.Message, data: UnoData, state: FSMContext):
+async def say_uno(message: types.Message, data: UnoData, state: FSMContext):
     from .bot import UnoBot
 
     bot = UnoBot(message, state.bot, data)
 
     if message.from_user.id == state.bot.id:
-        coro = bot.uno
         answer = _("I have one card left!")
+        coro = bot.uno
     else:
-        coro = bot.uno_user
         answer = _("Player {user} has one card left!").format(user=get_username(message.from_user))
+        coro = bot.uno_user
 
     bot.message = await message.answer(answer, reply_markup=k.uno_uno())
-    asyncio.create_task(coro(state), name=str(bot) + ':' + str(message.from_user.id) + ':' + 'uno')
+    asyncio.create_task(coro(state), name=f'{bot}:{message.from_user.id}:uno')
 
 
-async def skip(message: types.Message, data: UnoData, state: FSMContext):
+async def skip_turn(message: types.Message, data: UnoData, state: FSMContext):
     special = await data.apply_current_special(state)
 
     if special:
@@ -37,10 +36,10 @@ async def skip(message: types.Message, data: UnoData, state: FSMContext):
     data.skipped_user_id = data.current_user_id
 
     user = await state.bot.get_me() if data.current_user_id == state.bot.id else message.from_user
-    await post(message, data, state, await data.add_card(state.bot, user))
+    await post(message, data, state, data.add_card(state.bot, user))
 
 
-async def color(message: types.Message, data: UnoData, state: FSMContext, accept: str):
+async def change_color(message: types.Message, data: UnoData, state: FSMContext, accept: str):
     if message.from_user.id == state.bot.id:
         from .bot import UnoBot
 
@@ -57,12 +56,12 @@ async def color(message: types.Message, data: UnoData, state: FSMContext, accept
         await state.update_data(uno=data.dict())
 
         from . import uno_timeout
-        from .. import timer
+        from ... import timer
 
         timer(state, uno_timeout, message=message)
 
 
-async def remove(message: types.Message, data: UnoData, state: FSMContext):
+async def kick_for_cards(message: types.Message, data: UnoData, state: FSMContext):
     if message.from_user.id == state.bot.id:
         answer = _("Well, I have run out of cards. I have to remain only an observer =(.")
     else:
@@ -74,23 +73,27 @@ async def remove(message: types.Message, data: UnoData, state: FSMContext):
     await data.remove_user(state)
 
 
-async def finish(message: types.Message, data: UnoData, state: FSMContext):
+async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMContext):
+    await message.answer(_("{user} is kicked from the game.").format(
+        user=get_username(user))
+    )
+    await data.remove_user(state)
+
+
+async def finish(data: UnoData, state: FSMContext):
     answer = await data.finish(state)
 
     for number, winner in enumerate(data.winners.items(), start=1):
-        user = (await state.bot.get_chat_member(message.chat.id, winner[0])).user
-        answer += "\n{number}: {user} - ".format(
-            number=_("WINNER") if number == 1 else number,
-            user=get_username(user)
-        ) + ___("{amount} card played.", "{amount} cards played.", winner[1]).format(
-            amount=winner[1]
-        )
+        user, cards_amount = winner
+        user = await data.get_user(state, user)
+        answer += f'\n{_("WINNER") if number == 1 else number}: {get_username(user)} - ' + \
+                  ___("{amount} card played.", "{amount} cards played.", cards_amount).format(amount=cards_amount)
 
-    await message.answer(answer)
+    await state.bot.send_message(state.key.chat_id, answer)
 
 
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
-    data.current_user_id = data.next_user_id
+    data.current_index = data.next_index
     await state.update_data(uno=data.dict())
 
     from .bot import UnoBot
@@ -116,14 +119,14 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
         )
 
         from . import uno_timeout
-        from .. import timer
+        from ... import timer
 
         timer(state, uno_timeout, message=message)
 
 
 async def process(message: types.Message, data: UnoData, state: FSMContext, accept: str = ""):
     if data.current_card.color is UnoColors.black:
-        return await color(message, data, state, accept)
+        return await change_color(message, data, state, accept)
 
     if data.current_card.emoji != UnoEmoji.draw:
         special = await data.apply_current_special(state)
@@ -142,10 +145,10 @@ async def process(message: types.Message, data: UnoData, state: FSMContext, acce
 
 async def pre(message: types.Message, data: UnoData, state: FSMContext, accept: str):
     try:
-        data.update_current_user_id(message.from_user.id)
+        data.update_turn(message.from_user.id)
     except UnoOneCardException:
-        await uno(message, data, state)
+        await say_uno(message, data, state)
     except UnoNoCardsException:
-        await remove(message, data, state)
+        await kick_for_cards(message, data, state)
 
     await process(message, data, state, accept.format(user=get_username(message.from_user)))

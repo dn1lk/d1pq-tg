@@ -62,7 +62,8 @@ class LogMiddleware(BaseMiddleware):
             event: types.Update,
             data: Dict[str, Any]
     ) -> Any:
-        logging.debug(f'New event - {event.event_type}:\n{event}')
+        event_data = "\n".join([f'  {key} - {value}' for key, value in event])
+        logging.debug(f'New event - {event.event_type}:\n{event_data}')
         return await handler(event, data)
 
 
@@ -118,7 +119,7 @@ class ThrottlingMiddleware(BaseMiddleware):
             if data.pop(key, None):
                 await state.set_data(data)
 
-        asyncio.create_task(waiter(), name=state.key.destiny + ':' + str(state.key.chat_id))
+        asyncio.create_task(waiter(), name=f'{state.key.destiny}:{state.key.chat_id}')
 
 
 class UnhandledMiddleware(BaseMiddleware):

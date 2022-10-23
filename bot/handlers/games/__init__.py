@@ -11,7 +11,6 @@ class Game(StatesGroup):
     uno = State()
     cts = State()
     rnd = State()
-    rps = State()
 
 
 WINNER = (
@@ -60,7 +59,6 @@ async def close_timeout(message: types.Message, state: FSMContext, answer: str |
 def setup():
     router = Router(name='game')
 
-    from .uno import setup as uno_rt
     from .cts import setup as cts_rt
     from .rnd import router as rnd_rt
     from .rps import router as rps_rt
@@ -68,7 +66,6 @@ def setup():
 
     sub_routers = (
         core_rt,
-        uno_rt(),
         cts_rt(),
         rps_rt,
         rnd_rt,

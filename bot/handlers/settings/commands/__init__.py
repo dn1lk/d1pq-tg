@@ -5,7 +5,6 @@ from aiogram import Router, Bot, F, types, flags, filters
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters as f
 from bot.handlers import NO_ARGS
 from bot.utils import markov
 from bot.utils.database.context import DataBaseContext
@@ -13,8 +12,6 @@ from .middleware import CustomCommandsMiddleware
 from .. import Settings, keyboards as k
 
 router = Router(name='settings:commands')
-router.message.filter(Settings.command, f.AdminFilter(is_admin=True))
-
 router.callback_query.outer_middleware(CustomCommandsMiddleware())
 
 

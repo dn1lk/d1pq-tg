@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.handlers.games.cts.data import CtsData
+from .data import CtsData
 from .. import Game, WINNER, timer, win_timeout
 
 router = Router(name='game:cts')
@@ -14,10 +14,9 @@ router.message.filter(Game.cts)
 
 async def game_cts_filter(message: types.Message, state: FSMContext, i18n: I18n) -> dict | bool:
     async with ChatActionSender.typing(chat_id=message.chat.id):
-        data = await state.get_data()
-        data_cts = CtsData(**data['cts'])
+        data_cts = CtsData(**(await state.get_data())['cts'])
 
-        if data_cts.city_filter(i18n.current_locale, message.text):
+        if data_cts.filter_city(i18n.current_locale, message.text):
             return {'data_cts': data_cts}
 
 
@@ -49,14 +48,11 @@ async def answer_yes_handler(message: types.Message, state: FSMContext, data_cts
 
 @router.message()
 async def answer_no_handler(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    data_cts = CtsData(**data['cts'])
+    data_cts = CtsData(**(await state.get_data())['cts'])
+    data_cts.fail_amount -= 1
 
-    data_cts.fails -= 1
-
-    if data_cts.fails:
-        data['cts'] = data_cts.dict()
-        await state.set_data(data)
+    if data_cts.fail_amount:
+        await state.update_data(cts=data_cts.dict())
 
         if message.text in data_cts.cities:
             answer = (
@@ -71,7 +67,7 @@ async def answer_no_handler(message: types.Message, state: FSMContext):
                 _("My algorithms do not deceive me - you are mistaken!"),
             )
 
-        end = _("\n\nRemaining attempts: {failed}").format(failed=data_cts.fails)
+        end = _("\n<b>Remaining attempts</b>: {fail_amount}").format(fail_amount=data_cts.fail_amount)
 
     else:
         await state.clear()
@@ -82,6 +78,6 @@ async def answer_no_handler(message: types.Message, state: FSMContext):
             _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
         )
 
-        end = str(choice(WINNER)) + _("\n\nNumber of words guessed: {words}.").format(words=len(data_cts.cities))
+        end = str(choice(WINNER)) + _("\n<b>Number of words guessed</b>: {words}.").format(words=len(data_cts.cities))
 
-    await message.reply(choice(answer) + " " + end)
+    await message.reply(f'{choice(answer)} {end}')

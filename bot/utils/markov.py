@@ -1,4 +1,5 @@
 from functools import lru_cache
+from os import listdir
 from random import choice
 
 import markovify
@@ -26,13 +27,13 @@ def set_data(text: str, messages: list | None = None) -> list | None:
         return messages
 
 
-books = ('war-and-peace', 'plato')
+books = listdir('bot/locales/en/books')
 
 
 @lru_cache(maxsize=4)
 def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
     with open(
-            config.BASE_DIR / 'locales' / locale / f'{book}.txt',
+            config.BASE_DIR / 'locales' / locale / book,
             'r',
             encoding='UTF-8'
     ) as f:

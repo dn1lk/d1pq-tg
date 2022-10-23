@@ -7,10 +7,9 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
 from . import DRAW_CARD
-from .cards import UnoColors
-from .data import UnoData
-from .exceptions import UnoNoUsersException
-from .process import pre, finish, skip, process
+from .process import UnoData, UnoColors
+from .process.exceptions import UnoNoUsersException
+from .process.core import pre, finish, skip_turn, process
 from .. import keyboards as k
 
 router = Router(name='game:uno:user')
@@ -18,7 +17,7 @@ router = Router(name='game:uno:user')
 
 async def user_filter(event: types.Message | types.CallbackQuery, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-    
+
     if event.from_user.id in data_uno.users:
         return {'data_uno': data_uno}
 
@@ -66,7 +65,7 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
                 task.cancel()
                 break
 
-        await skip(message, data_uno, state)
+        await skip_turn(message, data_uno, state)
     else:
         user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
         await message.reply(

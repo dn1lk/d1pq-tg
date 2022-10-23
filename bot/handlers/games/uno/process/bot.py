@@ -7,10 +7,11 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from . import UNO
+from .core import pre, finish, skip_turn
 from .data import UnoData, UnoDifficulty
 from .exceptions import UnoNoUsersException
-from .process import pre, finish, skip
+
+UNO = "UNO!"
 
 
 class UnoBot:
@@ -21,22 +22,20 @@ class UnoBot:
         self.data: UnoData = data
 
     def __str__(self):
-        return 'uno' + ':' + str(self.message.chat.id) + ':' + 'bot'
+        return f'uno:{self.message.chat.id}:bot'
 
     def get_color(self):
-        self.data.special_color()
         cards = self.data.users[self.bot.id].cards
 
-        if self.data.bot_speed is UnoDifficulty.hard:
+        if self.data.difficulty is UnoDifficulty.hard:
             colors = tuple(card.color for card in cards)
             self.data.current_card.color = max(set(colors), key=colors.count)
         else:
             self.data.current_card.color = choice(cards).color
 
-        return _("I choice {emoji} {color}.").format(
-            emoji=self.data.current_card.color.value,
-            color=self.data.current_card.color.word,
-        )
+        self.data.special_color()
+
+        return _("I choice {color}.").format(color=self.data.current_card.color.word)
 
     def get_cards(self) -> tuple:
         def get():
@@ -50,7 +49,7 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) / self.data.bot_speed.value)
+            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) * self.data.difficulty.value)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             try:
@@ -83,9 +82,9 @@ class UnoBot:
                         )
 
                     except UnoNoUsersException:
-                        await finish(self.message, self.data, state)
+                        await finish(self.data, state)
                 else:
-                    await skip(self.message, self.data, state)
+                    await skip_turn(self.message, self.data, state)
 
             except exceptions.TelegramRetryAfter as retry:
                 await asyncio.sleep(retry.retry_after)
@@ -94,7 +93,7 @@ class UnoBot:
     async def uno(self, _):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) / self.data.bot_speed.value)
+                await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) * self.data.difficulty.value)
                 await self.message.edit_text(str(UNO))
         except asyncio.CancelledError:
             await self.message.delete_reply_markup()
@@ -102,7 +101,7 @@ class UnoBot:
     async def uno_user(self, state: FSMContext):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) / self.data.bot_speed.value)
+                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) * self.data.difficulty.value)
                 self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
                 await self.data.add_card(self.bot, self.message.entities[0].user, 2)

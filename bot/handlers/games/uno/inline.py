@@ -1,9 +1,9 @@
 from aiogram import Router, F, types
-from aiogram.fsm.context import FSMContext
+from aiogram.filters import MagicData
 from aiogram.utils.i18n import gettext as _
 
 from . import DRAW_CARD
-from .data import UnoData
+from .process import UnoData
 
 router = Router(name='game:uno:inline')
 
@@ -11,42 +11,44 @@ command = '/play uno'
 thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
 
-@router.inline_query(F.query.lower() == "uno")
-async def inline_handler(inline: types.InlineQuery, state: FSMContext):
-    data_uno: dict | None = (await state.get_data()).get('uno')
+@router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
+async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
+    cards = data_uno.users.get(inline.from_user.id)
 
-    if data_uno:
-        data_uno: UnoData = UnoData(**data_uno)
-        cards = data_uno.users.get(inline.from_user.id)
-
-        if cards:
-            answer = [
-                types.InlineQueryResultCachedSticker(
-                    id='draw',
-                    sticker_file_id='CAACAgIAAxkBAAJ99mKgyaLsi0LGnwOdUI_DhzgN7H1CAAKWFgAC1gkJSZxwlQOpRW3PJAQ',
-                    input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD)),
-                )
-            ]
-            answer.extend(
-                [
-                    types.InlineQueryResultCachedSticker(
-                        id=str(enum),
-                        sticker_file_id=card.file_id,
-                    ) for enum, card in enumerate(cards.cards)
-                ]
+    if cards:
+        answer = [
+            types.InlineQueryResultCachedSticker(
+                id='draw',
+                sticker_file_id='CAACAgIAAxUAAWNTyJCPqf4Upyd2mc0hDDM-9UD5AALgHwACheugSmbCtLV865YXKgQ',
+                input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD)),
             )
-        else:
-            answer = [
-                types.InlineQueryResultArticle(
-                    id='no_cards',
-                    title=command,
-                    input_message_content=types.InputMessageContent(message_text=_("Next time I'm with you!")),
-                    description=_("State your desire to play."),
-                    thumb_url=thumb_url,
-                )
+        ]
+        answer.extend(
+            [
+                types.InlineQueryResultCachedSticker(
+                    id=str(enum),
+                    sticker_file_id=card.file_id,
+                ) for enum, card in enumerate(cards.cards)
             ]
+        )
     else:
         answer = [
+            types.InlineQueryResultArticle(
+                id='no_cards',
+                title=command,
+                input_message_content=types.InputMessageContent(message_text=_("/play uno")),
+                description=_("Join to the game."),
+                thumb_url=thumb_url,
+            )
+        ]
+
+    await inline.answer(answer, is_personal=True, cache_time=0)
+
+
+@router.inline_query(F.query.lower() == "uno")
+async def inline_handler(inline: types.InlineQuery):
+    await inline.answer(
+        [
             types.InlineQueryResultArticle(
                 id='no_game',
                 title=command,
@@ -55,5 +57,4 @@ async def inline_handler(inline: types.InlineQuery, state: FSMContext):
                 thumb_url=thumb_url,
             )
         ]
-
-    await inline.answer(answer, is_personal=True, cache_time=0)
+    )

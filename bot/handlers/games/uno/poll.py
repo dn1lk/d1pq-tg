@@ -1,49 +1,35 @@
-from aiogram import Router, types, Bot
-from aiogram.fsm.context import FSMContext
-from aiogram.utils.i18n import gettext as _
+import asyncio
 
-from bot.handlers import get_username
-from .data import UnoData
-from .exceptions import UnoNoUsersException
-from .process import finish
+from aiogram import Router, types
+from aiogram.fsm.context import FSMContext
+
+from .process import UnoData
 
 router = Router(name='game:uno:poll')
 
 
-async def poll_kick_filter(poll_answer: types.PollAnswer, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
+async def close_poll_timer(message: types.Message, state: FSMContext, user: types.User):
+    try:
+        await asyncio.sleep(60)
+    except asyncio.CancelledError:
+        poll = await state.bot.stop_poll(message.chat.id, message.message_id)
+        data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
 
-    for user_id, poll in data_uno.polls_kick.items():
-        if poll.poll_id == poll_answer.poll_id:
-            return {"data_uno": data_uno, "user_id": user_id}
+        if poll.options[0].voter_count > poll.options[1].voter_count and user.id in data_uno.users:
+            from .process.core import kick_for_inactivity
+
+            await kick_for_inactivity(message, data_uno, state)
+    finally:
+        await message.delete()
 
 
-@router.poll_answer(poll_kick_filter)
-async def poll_kick_handler(
-        poll_answer: types.PollAnswer,
-        bot: Bot,
-        state: FSMContext,
-        data_uno: UnoData,
-        user_id: int
-):
-    if poll_answer.option_ids == [0]:
-        data_uno.polls_kick[user_id].amount += 1
-    else:
-        data_uno.polls_kick[user_id].amount -= 1
+async def poll_kick_filter(poll: types.Poll):
+    for task in asyncio.all_tasks():
+        if task.get_name() == f'uno:{poll.id}':
+            return {'task': task}
 
-    if abs(data_uno.polls_kick[user_id].amount) >= (len(data_uno.users) - 1) / 2:
-        await bot.delete_message(state.key.chat_id, data_uno.polls_kick[user_id].message_id)
 
-        if data_uno.polls_kick.pop(user_id).amount > 0:
-            user = (await bot.get_chat_member(state.key.chat_id, user_id)).user
-            message = await bot.send_message(
-                state.key.chat_id,
-                _("{user} is kicked from the game.").format(user=get_username(user)),
-            )
-
-            try:
-                await data_uno.remove_user(state, user_id)
-            except UnoNoUsersException:
-                return await finish(message, data_uno, state)
-
-    await state.update_data(uno=data_uno.dict())
+@router.poll(poll_kick_filter)
+async def poll_kick_handler(poll: types.Poll, data_uno: UnoData, task: asyncio.Task):
+    if poll.total_voter_count >= (len(data_uno.users) - 1) / 2:
+        task.cancel()

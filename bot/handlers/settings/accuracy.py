@@ -18,9 +18,9 @@ async def accuracy_update_handler(
 
     await db.set_data(accuracy=accuracy)
     await query.message.edit_text(
-        _(
-            "Text generation accuracy updated successfully: <b>{markov_state}</b>."
-        ).format(markov_state=accuracy) + str(UPDATE_AGAIN),
+        _("Text generation accuracy updated successfully: <b>{markov_state}</b>.").format(
+            markov_state=accuracy
+        ) + str(UPDATE_AGAIN),
         reply_markup=k.accuracy(accuracy)
     )
 

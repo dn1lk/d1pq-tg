@@ -1,11 +1,15 @@
 from aiogram import Bot, Dispatcher, Router
+from aiogram.types import (
+    BotCommand,
+    BotCommandScopeDefault,
+    BotCommandScopeAllChatAdministrators,
+    BotCommandScopeAllPrivateChats,
+)
 
 import config
 
 
 def get_bot_commands(router: Router, locale: str):
-    from aiogram.types import BotCommand
-
     for handler in router.message.handlers:
         if "commands" in handler.flags and handler.callback.__doc__:
             for command in handler.flags["commands"]:
@@ -19,12 +23,6 @@ def get_bot_commands(router: Router, locale: str):
 
 
 async def set_bot_commands(bot: Bot, dp: Dispatcher) -> dict:
-    from aiogram.types import (
-        BotCommandScopeDefault,
-        BotCommandScopeAllChatAdministrators,
-        BotCommandScopeAllPrivateChats
-    )
-
     commands_dict = {}
 
     for locale in config.i18n.available_locales:

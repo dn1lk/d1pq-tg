@@ -12,9 +12,11 @@ UPDATE_AGAIN = __("\n\nUpdate again:")
 
 
 def setup():
+    from bot import filters as f
     from . import keyboards as k
 
     router = Router(name='settings')
+    router.message.filter(Settings.command, f.AdminFilter(is_admin=True))
     router.callback_query.filter(k.Settings.filter(F.name))
 
     from .accuracy import router as accuracy_rt

@@ -9,27 +9,26 @@ from . import get_cities
 class CtsData(BaseModel):
     bot_var: str = None
     cities: list[str] = []
-    fails: int = 5
+    fail_amount: int = 5
 
-    def city_filter(self, locale: str, user_var: str) -> str | None:
-        def user_var_filter():
+    def filter_city(self, locale: str, user_var: str) -> bool | None:
+        def filter_user_var():
             for game_var in game_vars:
                 if game_var[0].lower() == user_var[0].lower():
                     yield f.LevenshteinFilter.lev_distance(game_var, user_var) <= max(len(game_var) / 5, 1)
 
         if not self.bot_var \
                 or user_var[0].lower() == self.bot_var[-1].lower() \
-                or self.bot_var[-1].lower() in ('ь', 'ъ') and user_var[0].lower() == self.bot_var[-2].lower():
+                or user_var[0].lower() == self.bot_var[-2].lower() and self.bot_var[-1].lower() in ('ь', 'ъ'):
             if user_var not in self.cities:
                 game_vars = get_cities(locale)
 
-                if any(user_var_filter()):
+                if any(filter_user_var()):
                     self.cities.append(user_var)
                     self.gen_bot_var(user_var, game_vars)
+                    return True
 
-                    return self.bot_var
-
-    def gen_bot_var(self, user_var: str, game_vars: list[str]):
+    def gen_bot_var(self, user_var: str, game_vars: list[str]) -> None:
         def get_city():
             for city in game_vars:
                 if city[0].lower() == user_var[-1].lower() and city not in self.cities:

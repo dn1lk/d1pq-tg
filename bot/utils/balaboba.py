@@ -1,14 +1,22 @@
 from aiohttp import ClientSession, ClientResponseError
 
-from .markov import get_none
-
 
 class Yalm:
-    __slots__ = ("session", "intros")
+    session = ClientSession()
+    intros: dict[str, tuple] = {}
 
-    def __init__(self):
-        self.session = ClientSession()
-        self.intros: dict[str, tuple] = {}
+    @classmethod
+    async def setup(cls) -> "Yalm":
+        yalm = cls()
+
+        for locale in ("ru", "en"):
+            response = await yalm._get_response(
+                method="GET",
+                endpoint="intros" if locale == "ru" else "intros_eng",
+            )
+            yalm.intros[locale] = tuple(intro[0] for intro in response["intros"])
+
+        return yalm
 
     async def gen(self, locale: str, query: str, intro: int | None = 0) -> str:
         try:
@@ -27,15 +35,9 @@ class Yalm:
             else:
                 return answer["text"]
         except (ClientResponseError, KeyError):
+            from .markov import get_none
+
             return get_none(locale).make_sentence()
-
-    async def setup(self):
-        for locale in ("ru", "en"):
-            endpoint = "intros" if locale == "ru" else "intros_eng"
-            response = await self._get_response(method="GET", endpoint=endpoint)
-            self.intros[locale] = tuple(intro[0] for intro in response["intros"])
-
-        return self
 
     async def _get_response(
             self,

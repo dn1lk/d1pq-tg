@@ -987,7 +987,7 @@ msgstr "{user} меняет цвет на {emoji} {color}!"
 
 #: handlers/games/uno/user.py:91
 msgid "When you'll get a black card, choose this color ;)."
-msgstr "огда получишь чёрную карту, выберешь этот цвет ;)."
+msgstr "Когда получишь чёрную карту, выберешь этот цвет ;)."
 
 #: handlers/games/uno/user.py:108
 msgid "On reaction =)."

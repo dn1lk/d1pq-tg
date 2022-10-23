@@ -13,7 +13,7 @@ def get_command_list(
         locale: str,
         index: slice | None = None,
 ) -> str:
-    return '\n'.join(map(lambda command: f'/{command.command} - {command.description}', bot.commands[locale][index]))
+    return '\n'.join((f'/{command.command} - {command.description}' for command in bot.commands[locale][index]))
 
 
 def setup(dp):
