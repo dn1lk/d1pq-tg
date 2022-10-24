@@ -362,7 +362,8 @@ class UnoData(BaseModel):
         except UnoNoUsersException:
             await self.remove_user(state, tuple(self.users)[0])
 
-        if self.settings.mode is not UnoMode.with_points or max(self.winners.values(), key=lambda i: i.points) >= 500:
+        if self.settings.mode is not UnoMode.with_points or \
+                max(self.winners.values(), key=lambda i: i.points).points >= 500:
             await state.clear()
             return _("<b>Game over.</b>")
         else:
