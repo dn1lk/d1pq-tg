@@ -109,7 +109,7 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
 
     if data.prev_user_id == state.bot.id and data.current_card and \
             data.current_card.cost == 50 and data.current_special.drawn and \
-            random() < 1 / data.settings.difficulty:
+            random() < 0.75 / data.settings.difficulty:
         await message.reply(await data.check_draw_black_card(state))
 
     await state.update_data(uno=data.dict())
