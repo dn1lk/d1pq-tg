@@ -13,8 +13,8 @@ command = '/play uno'
 thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
 
-@router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
 @flags.uno
+@router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
 async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
     user_data = data_uno.users.get(inline.from_user.id)
 
