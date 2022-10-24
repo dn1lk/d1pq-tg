@@ -73,11 +73,8 @@ async def start_handler(
         )
 
     cards = await get_cards(bot)
-    len(cards)
     users = {user_id: UnoUser(cards=cards) async for user_id, cards in get_uno_users(cards)}
     await state.set_state(Game.uno)
-
-    len(cards)
 
     data_uno = UnoData(
         cards=cards,

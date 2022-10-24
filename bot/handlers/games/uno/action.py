@@ -4,8 +4,8 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.utils.database.context import DataBaseContext
 from .process import UnoData
-from .process.exceptions import UnoNoUsersException
 from .process.core import finish
+from .process.exceptions import UnoNoUsersException
 from .process.middleware import UnoDataMiddleware
 
 router = Router(name='game:uno:action')
@@ -16,12 +16,12 @@ router.chat_member.outer_middleware(UnoDataMiddleware())
 @flags.data('members')
 @flags.uno
 async def leave_handler(
-    event: types.ChatMemberUpdated,
-    bot: Bot,
-    db: DataBaseContext,
-    state: FSMContext,
-    data_uno: UnoData,
-    members: list | None = None,
+        event: types.ChatMemberUpdated,
+        bot: Bot,
+        db: DataBaseContext,
+        state: FSMContext,
+        data_uno: UnoData,
+        members: list | None = None,
 ):
     if event.new_chat_member.user.id in data_uno.users:
         message = await bot.send_message(

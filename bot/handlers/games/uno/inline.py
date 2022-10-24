@@ -16,9 +16,9 @@ thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MK
 @router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
 @flags.uno
 async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
-    cards = data_uno.users.get(inline.from_user.id)
+    user_data = data_uno.users.get(inline.from_user.id)
 
-    if cards:
+    if user_data:
         answer = [
             types.InlineQueryResultCachedSticker(
                 id='draw',
@@ -31,7 +31,7 @@ async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
                 types.InlineQueryResultCachedSticker(
                     id=str(enum),
                     sticker_file_id=card.file_id,
-                ) for enum, card in enumerate(cards.cards)
+                ) for enum, card in enumerate(user_data.cards)
             ]
         )
     else:
@@ -59,5 +59,7 @@ async def inline_handler(inline: types.InlineQuery):
                 description=_("Start a new game."),
                 thumb_url=thumb_url,
             )
-        ]
+        ],
+        is_personal=True,
+        cache_time=0,
     )

@@ -105,7 +105,9 @@ async def finish(message: types.Message, data: UnoData, state: FSMContext):
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
     data.current_index = data.next_index
 
-    if data.prev_user_id == state.bot.id and random() < 1 / data.settings.difficulty:
+    if data.current_card and data.current_card.color is UnoColors.black and \
+            data.prev_user_id == state.bot.id and \
+            random() < 1 / data.settings.difficulty:
         accept, decline = data.check_draw_black()
 
         if decline:
@@ -113,7 +115,9 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
                 "Oh no. I checked {user} cards and don't see any cards with matched color, only black.\n"
                 "I can get 6 cards =("
             )
-        await message.reply((accept or decline).format(user=await data.get_user(state, data.prev_user_id)))
+        await message.reply(
+            (accept or decline).format(user=get_username(await data.get_user(state, data.prev_user_id)))
+        )
 
     await state.update_data(uno=data.dict())
 
@@ -156,7 +160,7 @@ async def process(message: types.Message, data: UnoData, state: FSMContext, acce
         if special:
             await message.answer(special)
 
-    special = await data.update_current_special()
+    special = data.update_current_special()
 
     if special:
         accept = special.format(user=get_username(await data.get_user(state)))

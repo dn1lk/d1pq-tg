@@ -48,7 +48,7 @@ class UnoData(BaseModel):
 
     @property
     def next_index(self) -> int:
-        if self.current_index < len(self.users):
+        if self.current_index < len(self.users) - 1:
             return self.current_index + 1
         else:
             return 0
