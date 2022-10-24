@@ -1,3 +1,4 @@
+from aiogram import types
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -20,24 +21,38 @@ def uno_start():
     return builder.as_markup()
 
 
-def uno_difficulty(current_difficulty: str):
-    from .uno.settings import UnoDifficulty
+def uno_settings(message: types.Message):
+    from .uno.settings import UnoDifficulty, UnoMode, extract_current_difficulty, extract_current_mode
 
     builder = InlineKeyboardBuilder()
 
+    current_difficulty = extract_current_difficulty(message)
+
     for difficulty in UnoDifficulty:
-        if difficulty.name != current_difficulty:
-            builder.button(text=difficulty.word.capitalize(), callback_data=Games(game='uno', value=difficulty))
+        if difficulty is not current_difficulty:
+            builder.button(text=difficulty.word.capitalize(), callback_data=Games(game='uno', value=difficulty.name))
+
+    current_mode = extract_current_mode(message)
+
+    for mode in UnoMode:
+        if mode is not current_mode:
+            builder.button(text=mode.word.capitalize(), callback_data=Games(game='uno', value=mode.name))
 
     builder.button(text=_("Back"), callback_data=Games(game='uno', value='back'))
 
-    builder.adjust(2)
+    builder.adjust(2, 1)
     return builder.as_markup()
 
 
-def uno_show_cards():
+def uno_show_cards(is_draw_black: bool):
     builder = InlineKeyboardBuilder()
+
+    if is_draw_black:
+        builder.button(text=_("Check black card"), callback_data=Games(game='uno', value='check_draw_black_card'))
+
     builder.button(text=_("Show cards"), switch_inline_query_current_chat="uno")
+
+    builder.adjust(1)
     return builder.as_markup()
 
 
@@ -65,6 +80,8 @@ def uno_uno():
 
 
 def rps_show_vars():
+    from .rps import RPSVars
+
     builder = InlineKeyboardBuilder()
 
     for item in RPSVars:

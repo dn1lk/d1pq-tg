@@ -1,35 +1,35 @@
 import asyncio
 from random import choice
 
-from aiogram import Router, F, types, Bot
+from aiogram import Router, F, types, Bot, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
 from . import DRAW_CARD
-from .process import UnoData, UnoColors
+from .process import UnoData, UnoColors, UnoBot
 from .process.exceptions import UnoNoUsersException
-from .process.core import pre, finish, skip_turn, process
+from .process.core import pre, finish, pass_turn, process
+from .process.middleware import UnoDataMiddleware
 from .. import keyboards as k
 
 router = Router(name='game:uno:user')
+router.message.outer_middleware(UnoDataMiddleware())
+router.callback_query.outer_middleware(UnoDataMiddleware())
 
 
-async def user_filter(event: types.Message | types.CallbackQuery, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-
+async def user_filter(event: types.Message | types.CallbackQuery, data_uno: UnoData):
     if event.from_user.id in data_uno.users:
         return {'data_uno': data_uno}
 
 
 @router.message(F.sticker.set_name == 'uno_cards', user_filter)
+@flags.uno
 async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
     card = data_uno.check_sticker(message.from_user.id, message.sticker)
     accept, decline = data_uno.filter_card(message.from_user.id, card)
 
     if accept:
-        from .bot import UnoBot
-
         bot = UnoBot(message, state.bot, data_uno)
 
         for task in asyncio.all_tasks():
@@ -45,19 +45,16 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data
         except UnoNoUsersException:
             await finish(message, data_uno, state)
     elif decline:
-        await data_uno.add_card(bot, message.from_user)
+        data_uno.add_card(bot, message.from_user)
         await state.update_data(uno=data_uno.dict())
 
         await message.reply(decline.format(user=get_username(message.from_user)))
 
 
 @router.message(F.text == DRAW_CARD)
-async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-
+@flags.uno
+async def skip_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
     if message.from_user.id == data_uno.current_user_id:
-        from .bot import UnoBot
-
         bot = UnoBot(message, bot, data_uno)
 
         for task in asyncio.all_tasks():
@@ -65,7 +62,7 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
                 task.cancel()
                 break
 
-        await skip_turn(message, data_uno, state)
+        await pass_turn(message, data_uno, state)
     else:
         user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
         await message.reply(
@@ -75,10 +72,9 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext):
         )
 
 
-@router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors.get_colors()])))
-async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games):
-    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
-
+@router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors])))
+@flags.uno
+async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games, data_uno: UnoData):
     if query.from_user.id == data_uno.current_user_id:
         data_uno.current_card.color = UnoColors[callback_data.value]
 
@@ -96,6 +92,7 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
 
 @router.callback_query(k.Games.filter(F.value == 'uno'), user_filter)
+@flags.uno
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData):
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
@@ -115,7 +112,7 @@ async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, d
             )
         )
     else:
-        await data_uno.add_card(bot, uno_user, 2)
+        data_uno.add_card(bot, uno_user, 2)
         await query.message.edit_text(
             _("{user} gives {uno_user} 2 cards!").format(
                 user=get_username(query.from_user),

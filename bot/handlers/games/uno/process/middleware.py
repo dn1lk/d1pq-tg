@@ -52,7 +52,7 @@ class UnoDataMiddleware(BaseMiddleware):
             state: Optional[FSMContext] = data.get('state')
 
             if state:
-                data_uno = (await state.get_data()).get('data_uno')
+                data_uno = (await state.get_data()).get('uno')
                 data['data_uno'] = UnoData(**data_uno) if data_uno else None
 
         return await handler(event, data)

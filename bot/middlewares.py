@@ -62,8 +62,7 @@ class LogMiddleware(BaseMiddleware):
             event: types.Update,
             data: Dict[str, Any]
     ) -> Any:
-        event_data = "\n".join([f'  {key} - {value}' for key, value in event])
-        logging.debug(f'New event - {event.event_type}:\n{event_data}')
+        logging.debug(f'New event - {event.event_type}:\n{event}')
         return await handler(event, data)
 
 

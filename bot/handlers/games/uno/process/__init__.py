@@ -7,6 +7,7 @@ from aiogram.utils.i18n import gettext as _
 
 from .cards import UnoCard, UnoEmoji, UnoColors, get_cards
 from .data import UnoData, UnoUser
+from .bot import UnoBot
 from .exceptions import UnoNoUsersException
 
 
@@ -25,7 +26,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
 
         await close_timeout(message, state)
     else:
-        answer = _("Time is over.") + " " + await data_uno.add_card(state.bot, message.entities[-1].user)
+        answer = _("Time is over.") + " " + data_uno.add_card(state.bot, message.entities[-1].user)
         await state.update_data(uno=data_uno.dict())
 
         poll_message = await message.answer_poll(

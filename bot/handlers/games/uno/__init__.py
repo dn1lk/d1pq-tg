@@ -8,7 +8,6 @@ DRAW_CARD = __("Take a card.")
 
 def setup():
     router = Router(name='game:uno')
-
     router.message.filter(Game.uno)
     router.poll.filter(Game.uno)
     router.chat_member.filter(Game.uno)

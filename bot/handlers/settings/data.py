@@ -1,4 +1,5 @@
 from aiogram import Router, F, types, flags
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 from bot.utils.database.context import DataBaseContext
@@ -8,8 +9,10 @@ router = Router(name="settings:data")
 
 
 @router.callback_query(k.Settings.filter(F.name == 'delete'))
-async def delete_handler(query: types.CallbackQuery, db: DataBaseContext):
+async def delete_handler(query: types.CallbackQuery, state: FSMContext, db: DataBaseContext):
     await db.clear()
+    await state.clear()
+
     await query.message.edit_text(_("<b>The data was successfully deleted.</b>"))
 
 

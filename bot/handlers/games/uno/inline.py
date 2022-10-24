@@ -1,17 +1,20 @@
-from aiogram import Router, F, types
+from aiogram import Router, F, types, flags
 from aiogram.filters import MagicData
 from aiogram.utils.i18n import gettext as _
 
 from . import DRAW_CARD
 from .process import UnoData
+from .process.middleware import UnoDataMiddleware
 
 router = Router(name='game:uno:inline')
+router.inline_query.outer_middleware(UnoDataMiddleware())
 
 command = '/play uno'
 thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
 
 @router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
+@flags.uno
 async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
     cards = data_uno.users.get(inline.from_user.id)
 

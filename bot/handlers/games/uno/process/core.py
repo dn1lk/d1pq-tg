@@ -1,11 +1,12 @@
 import asyncio
-from random import choice
+from random import choice, random
 
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 
 from bot.handlers import get_username
+from . import UnoColors, UnoEmoji
 from .data import UnoData
 from .exceptions import UnoNoCardsException, UnoOneCardException
 from ... import keyboards as k
@@ -27,13 +28,13 @@ async def say_uno(message: types.Message, data: UnoData, state: FSMContext):
     asyncio.create_task(coro(state), name=f'{bot}:{message.from_user.id}:uno')
 
 
-async def skip_turn(message: types.Message, data: UnoData, state: FSMContext):
+async def pass_turn(message: types.Message, data: UnoData, state: FSMContext):
     special = await data.apply_current_special(state)
 
     if special:
         await message.answer(special)
 
-    data.skipped_user_id = data.current_user_id
+    data.current_special.passed = data.current_user_id
 
     user = await state.bot.get_me() if data.current_user_id == state.bot.id else message.from_user
     await post(message, data, state, data.add_card(state.bot, user))
@@ -62,6 +63,8 @@ async def change_color(message: types.Message, data: UnoData, state: FSMContext,
 
 
 async def kick_for_cards(message: types.Message, data: UnoData, state: FSMContext):
+    await data.remove_user(state)
+
     if message.from_user.id == state.bot.id:
         answer = _("Well, I have run out of cards. I have to remain only an observer =(.")
     else:
@@ -70,30 +73,48 @@ async def kick_for_cards(message: types.Message, data: UnoData, state: FSMContex
         )
 
     await message.answer(answer)
-    await data.remove_user(state)
 
 
-async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMContext):
-    await message.answer(_("{user} is kicked from the game.").format(
-        user=get_username(user))
-    )
-    await data.remove_user(state)
+async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMContext, user: types.User):
+    await data.remove_user(state, user.id)
+    await message.answer(_("{user} is kicked from the game.").format(user=get_username(user)))
 
 
-async def finish(data: UnoData, state: FSMContext):
+async def finish(message: types.Message, data: UnoData, state: FSMContext):
     answer = await data.finish(state)
 
     for number, winner in enumerate(data.winners.items(), start=1):
-        user, cards_amount = winner
-        user = await data.get_user(state, user)
+        winner_id, winner_data = winner
+        user = await data.get_user(state, winner_id)
         answer += f'\n{_("WINNER") if number == 1 else number}: {get_username(user)} - ' + \
-                  ___("{amount} card played.", "{amount} cards played.", cards_amount).format(amount=cards_amount)
+                  ___(
+                      "{amount} card played,",
+                      "{amount} cards played,",
+                      winner_data.cards_played,
+                  ).format(amount=winner_data.cards_played) + \
+                  " " + \
+                  ___(
+                      "{points} point earned.",
+                      "{points} points earned.",
+                      winner_data.points,
+                  ).format(winner_data.points)
 
-    await state.bot.send_message(state.key.chat_id, answer)
+    await message.answer(answer)
 
 
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
     data.current_index = data.next_index
+
+    if data.prev_user_id == state.bot.id and random() < 1 / data.settings.difficulty:
+        accept, decline = data.check_draw_black()
+
+        if decline:
+            decline = _(
+                "Oh no. I checked {user} cards and don't see any cards with matched color, only black.\n"
+                "I can get 6 cards =("
+            )
+        await message.reply((accept or decline).format(user=await data.get_user(state, data.prev_user_id)))
+
     await state.update_data(uno=data.dict())
 
     from .bot import UnoBot
@@ -104,7 +125,6 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
     if cards or data.current_user_id == state.bot.id:
         asyncio.create_task(bot.gen(state, cards), name=str(bot))
     else:
-        user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
         message = await message.reply(
             answer + "\n\n" + choice(
                 (
@@ -114,8 +134,10 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
                     _("Player's turn {user}."),
                     _("I pass the turn to the player {user}."),
                 )
-            ).format(user=get_username(user)),
-            reply_markup=k.uno_show_cards(),
+            ).format(user=get_username(await data.get_user(state))),
+            reply_markup=k.uno_show_cards(
+                data.current_card.emoji == UnoEmoji.draw and data.current_card.color is UnoColors.black
+            ),
         )
 
         from . import uno_timeout
@@ -137,8 +159,7 @@ async def process(message: types.Message, data: UnoData, state: FSMContext, acce
     special = await data.update_current_special()
 
     if special:
-        user = (await state.bot.get_chat_member(message.chat.id, data.current_user_id)).user
-        accept = special.format(user=get_username(user))
+        accept = special.format(user=get_username(await data.get_user(state)))
 
     await post(message, data, state, accept)
 

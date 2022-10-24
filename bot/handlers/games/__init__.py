@@ -60,6 +60,7 @@ def setup():
     router = Router(name='game')
 
     from .cts import setup as cts_rt
+    from .uno import setup as uno_rt
     from .rnd import router as rnd_rt
     from .rps import router as rps_rt
     from .core import router as core_rt
@@ -67,6 +68,7 @@ def setup():
     sub_routers = (
         core_rt,
         cts_rt(),
+        uno_rt(),
         rps_rt,
         rnd_rt,
     )

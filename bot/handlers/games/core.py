@@ -14,6 +14,21 @@ router = Router(name='game:core')
 router.message.filter(CustomCommandFilter(commands=['play', 'поиграем']))
 
 
+@router.message(F.text.endswith(('uno', 'уно')), Game.uno)
+async def uno_join_handler(message: types.Message, state: FSMContext):
+    from .uno.process import UnoData, UnoUser
+
+    data_uno = UnoData(**(await state.get_data())['uno'])
+
+    if message.from_user.id in data_uno.users:
+        await message.reply(_("You already in the game."))
+    else:
+        data_uno.users[message.from_user.id] = UnoUser(cards=data_uno.pop_from_cards(data_uno.cards, 7))
+        await state.update_data(uno=data_uno.dict())
+
+        await message.answer(_("{user} join to current game.").format(user=get_username(message.from_user)))
+
+
 @router.message(F.text.endswith(('uno', 'уно')))
 async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     from .uno.settings import UnoDifficulty, UnoMode
@@ -22,7 +37,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
             "<b>Let's play UNO?</b>\n\n"
             "One minute to make a decision!\n"
             "Difficulty: <b>{difficulty}</b>.\n"
-            "Mode: <b>{mode}</b>\n\n"
+            "Mode: <b>{mode}</b>.\n\n"
             "<b>Already in the game:</b>\n"
             "{user}"
         ).format(
