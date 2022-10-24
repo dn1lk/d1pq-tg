@@ -23,7 +23,7 @@ class RPSVars(str, Enum):
             self.paper: _("Paper"),
         }
 
-        return f'{self.value} {items.get(self)}'
+        return f'{self} {items[self]}'
 
     @property
     def resolve(self):

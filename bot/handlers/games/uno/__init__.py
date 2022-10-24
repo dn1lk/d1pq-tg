@@ -11,7 +11,7 @@ def setup():
     router.message.filter(Game.uno)
     router.poll.filter(Game.uno)
     router.chat_member.filter(Game.uno)
-    router.callback_query.filter(k.Games.filter(F.game == 'uno'))
+    router.callback_query.filter(k.UnoGame.filter(F.game))
 
     from .process.middleware import UnoFSMContextMiddleware
 

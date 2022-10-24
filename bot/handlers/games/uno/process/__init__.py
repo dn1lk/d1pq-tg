@@ -9,9 +9,10 @@ from .bot import UnoBot
 from .cards import UnoCard, UnoEmoji, UnoColors, get_deck
 from .data import UnoData, UnoUser
 from .exceptions import UnoNoUsersException
+from ... import keyboards as k
 
 
-async def uno_timeout(message: types.Message, state: FSMContext):
+async def timeout(message: types.Message, state: FSMContext):
     data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
     data_uno.timer_amount -= 1
 
@@ -46,3 +47,8 @@ async def uno_timeout(message: types.Message, state: FSMContext):
         from .core import post
 
         await post(message, data_uno, state, answer)
+
+
+async def timeout_exception(message: types.Message, state: FSMContext):
+    data_uno: UnoData = UnoData(**(await state.get_data())['uno'])
+    await message.edit_reply_markup(k.uno_show_cards(data_uno))

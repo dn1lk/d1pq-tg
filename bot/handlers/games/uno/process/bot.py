@@ -50,13 +50,12 @@ class UnoBot:
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) * self.data.settings.difficulty.value)
+            await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) * self.data.settings.difficulty)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
             try:
                 if cards:
                     self.data.current_card, accept = choice(cards)
-                    print(accept)
                     self.message = await self.message.answer_sticker(self.data.current_card.file_id)
 
                     try:
@@ -102,7 +101,7 @@ class UnoBot:
     async def uno(self, _):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) * self.data.settings.difficulty.value)
+                await asyncio.sleep(choice(range(0, 4)) / len(self.data.users) * self.data.settings.difficulty)
                 await self.message.edit_text(str(UNO))
         except asyncio.CancelledError:
             await self.message.delete_reply_markup()
@@ -110,7 +109,7 @@ class UnoBot:
     async def uno_user(self, state: FSMContext):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) * self.data.settings.difficulty.value)
+                await asyncio.sleep(choice(range(1, 8)) / len(self.data.users) * self.data.settings.difficulty)
                 self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
                 self.data.add_card(self.bot, self.message.entities[0].user, 2)

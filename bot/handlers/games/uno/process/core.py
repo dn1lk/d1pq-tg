@@ -9,6 +9,7 @@ from bot.handlers import get_username
 from .cards import UnoColors, UnoEmoji
 from .data import UnoData
 from .exceptions import UnoNoCardsException, UnoOneCardException
+from ..settings import UnoMode
 from ... import keyboards as k
 
 
@@ -56,10 +57,10 @@ async def change_color(message: types.Message, data: UnoData, state: FSMContext,
 
         await state.update_data(uno=data.dict())
 
-        from . import uno_timeout
+        from . import timeout
         from ... import timer
 
-        timer(state, uno_timeout, message=message)
+        timer(state, timeout, message=message)
 
 
 async def kick_for_cards(message: types.Message, data: UnoData, state: FSMContext):
@@ -107,8 +108,9 @@ async def finish(message: types.Message, data: UnoData, state: FSMContext):
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
     data.current_index = data.next_index
 
-    if data.prev_user_id == state.bot.id and data.current_card and \
-            data.current_card.cost == 50 and data.current_special.drawn and \
+    if data.prev_user_id == state.bot.id and \
+            data.current_special.drawn and \
+            data.current_card.cost == 50 and \
             random() < 1 / data.settings.difficulty / len(data.users[tuple(data.users)[data.current_index - 2]].cards):
         await message.reply(await data.check_draw_black_card(state))
 
@@ -132,20 +134,20 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
                     _("I pass the turn to the player {user}."),
                 )
             ).format(user=get_username(await data.get_user(state))),
-            reply_markup=k.uno_show_cards(data.current_card),
+            reply_markup=k.uno_show_cards(data),
         )
 
-        from . import uno_timeout
+        from . import timeout, timeout_exception
         from ... import timer
 
-        timer(state, uno_timeout, message=message)
+        timer(state, timeout, timeout_exception, message=message)
 
 
 async def process(message: types.Message, data: UnoData, state: FSMContext, accept: str = ""):
     if data.current_card.color is UnoColors.black:
         return await change_color(message, data, state, accept)
 
-    if data.current_card.emoji != UnoEmoji.draw:
+    if data.current_card.emoji != UnoEmoji.draw or not data.current_special.drawn:
         special = await data.apply_current_special(state)
 
         if special:

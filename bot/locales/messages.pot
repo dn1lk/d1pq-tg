@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-24 22:05+0300\n"
+"POT-Creation-Date: 2022-10-24 23:49+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -328,31 +328,31 @@ msgstr ""
 msgid "Eh, classic. {user}, your turn."
 msgstr ""
 
-#: handlers/games/keyboards.py:15 handlers/games/uno/process/__init__.py:34
+#: handlers/games/keyboards.py:19 handlers/games/uno/process/__init__.py:34
 msgid "Yes"
 msgstr ""
 
-#: handlers/games/keyboards.py:16
+#: handlers/games/keyboards.py:20
 msgid "No"
 msgstr ""
 
-#: handlers/games/keyboards.py:17
+#: handlers/games/keyboards.py:21
 msgid "Settings"
 msgstr ""
 
-#: handlers/games/keyboards.py:18
+#: handlers/games/keyboards.py:22
 msgid "LET'S PLAY!"
 msgstr ""
 
-#: handlers/games/keyboards.py:41 handlers/settings/keyboards.py:30
+#: handlers/games/keyboards.py:45 handlers/settings/keyboards.py:30
 msgid "Back"
 msgstr ""
 
-#: handlers/games/keyboards.py:53
-msgid "Check black card"
+#: handlers/games/keyboards.py:56
+msgid "Is Wild card legal?"
 msgstr ""
 
-#: handlers/games/keyboards.py:55
+#: handlers/games/keyboards.py:64
 msgid "Show cards"
 msgstr ""
 
@@ -610,45 +610,45 @@ msgstr ""
 msgid "Only {user} can customize the game."
 msgstr ""
 
-#: handlers/games/uno/user.py:63
+#: handlers/games/uno/user.py:61
 msgid "You already have a lot of cards in your hand. I will not give you more!"
 msgstr ""
 
-#: handlers/games/uno/user.py:67
+#: handlers/games/uno/user.py:65
 msgid ""
 "Of course, I don't mind, but now it's {user}'s turn.\n"
 "We'll have to wait =)."
 msgstr ""
 
-#: handlers/games/uno/user.py:79
+#: handlers/games/uno/user.py:77
 msgid "{user} changes the color to {color}!"
 msgstr ""
 
-#: handlers/games/uno/user.py:87
+#: handlers/games/uno/user.py:85
 msgid "When you'll get a black card, choose this color ;)."
 msgstr ""
 
-#: handlers/games/uno/user.py:112
+#: handlers/games/uno/user.py:109
 msgid "Only {user} can verify the legitimacy of using this card."
 msgstr ""
 
-#: handlers/games/uno/user.py:130
+#: handlers/games/uno/user.py:127
 msgid "On reaction =)."
 msgstr ""
 
-#: handlers/games/uno/user.py:131
+#: handlers/games/uno/user.py:128
 msgid "Yep!"
 msgstr ""
 
-#: handlers/games/uno/user.py:132
+#: handlers/games/uno/user.py:129
 msgid "Ok, you won't get cards."
 msgstr ""
 
-#: handlers/games/uno/user.py:139
+#: handlers/games/uno/user.py:136
 msgid "{user} gives {uno_user} 2 cards!"
 msgstr ""
 
-#: handlers/games/uno/user.py:150
+#: handlers/games/uno/user.py:147
 msgid "You are not in the game!"
 msgstr ""
 
@@ -672,45 +672,45 @@ msgstr ""
 msgid "I choice {color}."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:69
+#: handlers/games/uno/process/bot.py:68
 msgid "My move is made."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:70
+#: handlers/games/uno/process/bot.py:69
 msgid "Expected? But I don't care."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:71
+#: handlers/games/uno/process/bot.py:70
 msgid "BA-DUM-TSS!"
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:72
+#: handlers/games/uno/process/bot.py:71
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent"
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:76
+#: handlers/games/uno/process/bot.py:75
 msgid "I still have cards in my hand."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:77
+#: handlers/games/uno/process/bot.py:76
 msgid "Curious, but I know all the hands in the game... I dealt them."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:78
+#: handlers/games/uno/process/bot.py:77
 msgid "Maybe I can even win this game!"
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:79
+#: handlers/games/uno/process/bot.py:78
 msgid "Oh, I don't envy the next player..."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:80
+#: handlers/games/uno/process/bot.py:79
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr ""
 
-#: handlers/games/uno/process/bot.py:81
+#: handlers/games/uno/process/bot.py:80
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr ""
 
@@ -734,59 +734,59 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: handlers/games/uno/process/core.py:21
+#: handlers/games/uno/process/core.py:22
 msgid "I have one card left!"
 msgstr ""
 
-#: handlers/games/uno/process/core.py:24
+#: handlers/games/uno/process/core.py:25
 msgid "Player {user} has one card left!"
 msgstr ""
 
-#: handlers/games/uno/process/core.py:67
+#: handlers/games/uno/process/core.py:68
 msgid "Well, I have run out of my hand. I have to remain only an observer =(."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:69
+#: handlers/games/uno/process/core.py:70
 msgid "{user} puts his last card and leaves the game as the winner."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:78
+#: handlers/games/uno/process/core.py:79
 msgid "{user} is kicked from the game."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:89
+#: handlers/games/uno/process/core.py:90
 msgid "{amount} card played,"
 msgid_plural "{amount} cards played,"
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/games/uno/process/core.py:95
+#: handlers/games/uno/process/core.py:96
 msgid "{points} point earned."
 msgid_plural "{points} points earned."
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/games/uno/process/core.py:104
+#: handlers/games/uno/process/core.py:105
 msgid "Next round!"
 msgstr ""
 
-#: handlers/games/uno/process/core.py:128
+#: handlers/games/uno/process/core.py:130
 msgid "{user}, your turn."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:129
+#: handlers/games/uno/process/core.py:131
 msgid "{user}, your move."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:130
+#: handlers/games/uno/process/core.py:132
 msgid "Now {user} is moving."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:131
+#: handlers/games/uno/process/core.py:133
 msgid "Player's turn {user}."
 msgstr ""
 
-#: handlers/games/uno/process/core.py:132
+#: handlers/games/uno/process/core.py:134
 msgid "I pass the turn to the player {user}."
 msgstr ""
 

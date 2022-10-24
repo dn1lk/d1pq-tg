@@ -30,8 +30,6 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data
         for task in asyncio.all_tasks():
             if task.get_name() == str(bot):
                 task.cancel()
-                print(1, list[task.get_coro()])
-                print(2, task.get_stack())
                 break
 
         data_uno.current_card = card
@@ -70,7 +68,7 @@ async def pass_handler(message: types.Message, bot: Bot, state: FSMContext, data
         )
 
 
-@router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors])))
+@router.callback_query(k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])))
 async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games, data_uno: UnoData):
     if query.from_user.id == data_uno.current_user_id:
         data_uno.current_card.color = UnoColors[callback_data.value]
@@ -88,33 +86,30 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
 
 @router.callback_query(
-    k.Games.filter(F.value == 'check_draw_black_card'),
-    MagicData(F.event.from_user.id == F.data_uno.prev_user_id),
+    k.UnoGame.filter(F.value == 'check_draw_black_card'),
+    MagicData(F.event.from_user.id == F.callback_data.target),
 )
 async def check_draw_black_card_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
     from .process.core import post
 
-    await query.message.answer(
-        await post(
-            query.message,
-            data_uno,
-            state,
-            await data_uno.check_draw_black_card(state)
-        )
+    await post(
+        query.message.reply_to_message,
+        data_uno,
+        state,
+        await data_uno.check_draw_black_card(state)
     )
 
+    await query.message.edit_reply_markup(k.uno_show_cards(data_uno))
 
-@router.callback_query(
-    k.Games.filter(F.value == 'check_draw_black_card'),
-    MagicData(F.event.from_user.id == F.data_uno.prev_user_id),
-)
+
+@router.callback_query(k.UnoGame.filter(F.value == 'check_draw_black_card'))
 async def check_draw_black_card_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
     await query.answer(_("Only {user} can verify the legitimacy of using this card.").format(
-        user=get_username(await data_uno.get_user(state, data_uno.prev_user_id)))
+        user=(await data_uno.get_user(state, data_uno.prev_user_id)).first_name)
     )
 
 
-@router.callback_query(k.Games.filter(F.value == 'uno'), MagicData(F.data_uno))
+@router.callback_query(k.UnoGame.filter(F.value == 'uno'), MagicData(F.data_uno))
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData):
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
@@ -145,6 +140,6 @@ async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, d
     await state.update_data(uno=data_uno.dict())
 
 
-@router.callback_query(k.Games.filter(F.value == 'uno'))
+@router.callback_query(k.UnoGame.filter(F.value == 'uno'))
 async def uno_no_game_handler(query: types.CallbackQuery):
     await query.answer(_("You are not in the game!"))

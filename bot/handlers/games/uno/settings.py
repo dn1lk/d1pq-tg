@@ -52,14 +52,14 @@ def extract_current_difficulty(message: types.Message) -> UnoDifficulty:
             return difficulty
 
 
-@router.callback_query(F.from_user.id == F.message.entities[4].user.id, k.Games.filter(F.value == 'settings'))
+@router.callback_query(F.from_user.id == F.message.entities[4].user.id, k.UnoGame.filter(F.value == 'settings'))
 async def settings_handler(query: types.CallbackQuery):
     await query.message.edit_reply_markup(k.uno_settings(query.message))
 
 
 @router.callback_query(
     F.from_user.id == F.message.entities[4].user.id,
-    k.Games.filter(F.value.in_([difficulty.name for difficulty in UnoDifficulty]))
+    k.UnoGame.filter(F.value.in_([difficulty.name for difficulty in UnoDifficulty]))
 )
 async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k.Games):
     await query.message.edit_text(
@@ -81,7 +81,7 @@ def extract_current_mode(message: types.Message) -> UnoMode:
 
 @router.callback_query(
     F.from_user.id == F.message.entities[4].user.id,
-    k.Games.filter(F.value.in_([mode.name for mode in UnoMode]))
+    k.UnoGame.filter(F.value.in_([mode.name for mode in UnoMode]))
 )
 async def mode_change_handler(query: types.CallbackQuery, callback_data: k.Games):
     await query.message.edit_text(
@@ -93,7 +93,7 @@ async def mode_change_handler(query: types.CallbackQuery, callback_data: k.Games
     )
 
 
-@router.callback_query(F.from_user.id == F.message.entities[4].user.id, k.Games.filter(F.value == 'back'))
+@router.callback_query(F.from_user.id == F.message.entities[4].user.id, k.UnoGame.filter(F.value == 'back'))
 async def settings_back_handler(query: types.CallbackQuery):
     await query.message.edit_reply_markup(k.uno_start())
 

@@ -20,13 +20,17 @@ WINNER = (
 )
 
 
-def timer(state: FSMContext, coroutine, **kwargs) -> asyncio.Task:
+def timer(state: FSMContext, coroutine, exception=None, **kwargs) -> asyncio.Task:
     async def waiter():
         raw_state = await state.get_state()
 
-        await asyncio.sleep(60)
-        if raw_state == await state.get_state():
-            return await coroutine(state=state, **kwargs)
+        try:
+            await asyncio.sleep(60)
+            if raw_state == await state.get_state():
+                return await coroutine(state=state, **kwargs)
+        except asyncio.CancelledError:
+            if exception:
+                await exception(state=state, **kwargs)
 
     name = 'game' + ':' + str(state.key.chat_id)
 

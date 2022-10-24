@@ -33,7 +33,7 @@ async def start_filter(query: types.CallbackQuery):
         return {'user_ids': user_ids}
 
 
-@router.callback_query(k.Games.filter(F.value == 'start'), start_filter)
+@router.callback_query(k.UnoGame.filter(F.value == 'start'), start_filter)
 async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,
@@ -73,12 +73,12 @@ async def start_handler(
     await post(message, data_uno, state, _("So, <b>let's start the game.</b>"))
 
 
-@router.callback_query(k.Games.filter(F.value == 'start'))
+@router.callback_query(k.UnoGame.filter(F.value == 'start'))
 async def start_no_owner_handler(query: types.CallbackQuery):
     await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[3].user.first_name))
 
 
-@router.callback_query(k.Games.filter(F.value == 'join'))
+@router.callback_query(k.UnoGame.filter(F.value == 'join'))
 async def join_handler(query: types.CallbackQuery):
     user_ids = get_user_ids(query.message.entities)
 
@@ -95,7 +95,7 @@ async def join_handler(query: types.CallbackQuery):
         await query.answer(_("Now there are one more players!"))
 
 
-@router.callback_query(k.Games.filter(F.value == 'leave'))
+@router.callback_query(k.UnoGame.filter(F.value == 'leave'))
 async def leave_handler(query: types.CallbackQuery):
     user_ids = get_user_ids(query.message.entities)
 
