@@ -208,7 +208,7 @@ class UnoData(BaseModel):
             if card.color is self.cards[-2].color:
                 self.current_index = self.prev_index
 
-                accept = _("I see cards with matched color, not only black.\n {user} can get 4 cards!")
+                accept = _("I see cards with matched color, not only black.\n{user} can get 4 cards!")
                 return accept, None
 
         self.current_special.drawn += 2
