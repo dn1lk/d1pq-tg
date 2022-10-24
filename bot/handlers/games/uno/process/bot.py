@@ -56,9 +56,9 @@ class UnoBot:
             try:
                 if cards:
                     self.data.current_card, accept = choice(cards)
+                    self.message = await self.message.answer_sticker(self.data.current_card.file_id)
+                    
                     try:
-                        self.message = await self.message.answer_sticker(self.data.current_card.file_id)
-
                         await pre(
                             self.message,
                             self.data,
@@ -85,9 +85,8 @@ class UnoBot:
                     except UnoNoUsersException:
                         await finish(self.message, self.data, state)
                     except asyncio.CancelledError:
-                        if self.message.from_id.id == self.bot.id:
-                            await self.message.delete()
-                            await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
+                        await self.message.delete()
+                        await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
                 else:
                     await pass_turn(self.message, self.data, state)
 
