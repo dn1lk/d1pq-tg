@@ -39,7 +39,7 @@ async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
             types.InlineQueryResultArticle(
                 id='no_cards',
                 title=command,
-                input_message_content=types.InputMessageContent(message_text=_("/play uno")),
+                input_message_content=types.InputMessageContent(message_text=command),
                 description=_("Join to the game."),
                 thumb_url=thumb_url,
             )

@@ -22,6 +22,8 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
 
     if message.from_user.id in data_uno.users:
         await message.reply(_("You already in the game."))
+    elif len(data_uno.users) == 10:
+        await message.reply(_("Already 10 people are playing the game. Just wait."))
     else:
         data_uno.users[message.from_user.id] = UnoUser(cards=data_uno.pop_from_cards(data_uno.cards, 7))
         await state.update_data(uno=data_uno.dict())

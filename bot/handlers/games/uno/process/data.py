@@ -214,7 +214,7 @@ class UnoData(BaseModel):
 
         self.current_special.drawn += 2
 
-        decline = _("Nope. {user} don't has any cards of the matched color.\nYou get 6 cards!")
+        decline = _("Nope. {user} don't has any cards of the matched color.\nYou can get 6 cards!")
         return None, decline
 
     def update_current_special(self):
