@@ -49,8 +49,8 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data
 
 
 @router.message(F.text == DRAW_CARD)
-async def skip_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
-    if message.from_user.id == data_uno.current_user_id:
+async def pass_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
+    if message.from_user.id == data_uno.current_user_id and len(data_uno.users[data_uno.current_user_id].cards) < 20:
         bot = UnoBot(message, bot, data_uno)
 
         for task in asyncio.all_tasks():
@@ -59,6 +59,8 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext, data
                 break
 
         await pass_turn(message, data_uno, state)
+    elif len(data_uno.users[data_uno.current_user_id].cards) >= 20:
+        await message.reply(_("You already have a lot of cards in your hand. I will not give you more!"))
     else:
         user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
         await message.reply(
