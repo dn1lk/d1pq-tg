@@ -54,7 +54,7 @@ async def get_gen_args(
                 'text': await yalm.gen(
                     i18n.current_locale,
                     message.text,
-                    choice(yalm.intros.get(i18n.current_locale, 'en'))
+                    choice(yalm.intros['ru'])
                 )
             }
 
@@ -65,7 +65,7 @@ async def get_gen_args(
     return await choice([gen_markov, gen_sticker, gen_balaboba])()
 
 
-@router.message(filters.MagicData(F.reply_to_message.from_user.id == F.bot.id))
+@router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
 @flags.throttling('gen')
 @flags.data('messages')
 @flags.gen
@@ -96,11 +96,7 @@ async def chance_filter(message: types.Message, bot: Bot, db: DataBaseContext) -
         return random() < (chance / await bot.get_chat_member_count(message.chat.id))
 
 
-@router.message(
-    ~F.from_user.is_bot,
-    f.LevenshteinFilter(lev={'hello', 'hey', 'здравствуйте', 'привет'}),
-    chance_filter,
-)
+@router.message(chance_filter, f.LevenshteinFilter(lev={'hello', 'hey', 'здравствуйте', 'привет'}))
 async def hello_handler(message: types.Message):
     await message.answer(
         choice(
@@ -116,8 +112,8 @@ async def hello_handler(message: types.Message):
 
 
 @router.message(F.chat.type == 'private')
-@router.message(f.LevenshteinFilter(lev={'delete', 'делите'}))
 @router.message(chance_filter)
+@router.message(f.LevenshteinFilter(lev={'delete', 'делите'}))
 @flags.throttling('gen')
 @flags.data('messages')
 @flags.gen

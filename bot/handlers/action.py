@@ -28,7 +28,7 @@ async def my_leave_handler(_, db: DataBaseContext):
     await db.clear()
 
 
-@router.message(filters.MagicData(F.left_chat_member.id == F.bot.id))
+@router.message(filters.MagicData(F.event.left_chat_member.id == F.bot.id))
 async def my_leave_message_handler(_):
     pass
 

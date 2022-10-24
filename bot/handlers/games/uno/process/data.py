@@ -88,9 +88,8 @@ class UnoData(BaseModel):
                 accept = choice(
                     (
                         _("So... {user}."),
-                        _("Wow, you got {emoji} {color}!").format(
-                            emoji=card.color.value,
-                            color=card.color.name
+                        _("Wow, you got {color}!").format(
+                            color=card.color.word
                         ),
                     )
                 )
@@ -117,8 +116,8 @@ class UnoData(BaseModel):
                 else:
                     decline = _("No, this card is wrong. Take another one!")
             elif self.current_special.drawn:
-                if card.emoji == self.current_card.emoji and self.current_card.cost != 50 or \
-                        card.color is self.current_card.color:
+                if card.emoji == self.current_card.emoji and \
+                        (self.current_card.cost != 50 or card.color is self.current_card.color):
                     accept = choice(
                         (
                             _("{user} doesn't want to take cards."),
@@ -139,7 +138,7 @@ class UnoData(BaseModel):
                 else:
                     decline = _("{user}, your turn is skipped =(.")
             else:
-                if card.emoji == self.current_card.emoji:
+                if self.current_card and card.emoji == self.current_card.emoji:
                     accept = choice(
                         (
                             _("{user} keeps throwing cards..."),
@@ -316,7 +315,7 @@ class UnoData(BaseModel):
         await remove_state()
 
         self.winners[user_id] = UnoWinner(
-            points=sum(card.cost for card in sum(user_data.cards for user_data in self.users.values())),
+            points=sum(sum(card.cost for card in user_data.cards) for user_data in self.users.values()),
             cards_played=cards_played,
         )
 

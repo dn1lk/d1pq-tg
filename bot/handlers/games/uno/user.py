@@ -1,7 +1,8 @@
 import asyncio
 from random import choice
 
-from aiogram import Router, F, types, Bot, flags
+from aiogram import Router, F, types, Bot
+from aiogram.filters import MagicData
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -18,13 +19,7 @@ router.message.outer_middleware(UnoDataMiddleware())
 router.callback_query.outer_middleware(UnoDataMiddleware())
 
 
-async def user_filter(event: types.Message | types.CallbackQuery, data_uno: UnoData):
-    if event.from_user.id in data_uno.users:
-        return {'data_uno': data_uno}
-
-
-@router.message(F.sticker.set_name == 'uno_cards', user_filter)
-@flags.uno
+@router.message(F.sticker.set_name == 'uno_by_bp1lh_bot', MagicData(F.data_uno))
 async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
     card = data_uno.check_sticker(message.from_user.id, message.sticker)
     accept, decline = data_uno.filter_card(message.from_user.id, card)
@@ -52,7 +47,6 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data
 
 
 @router.message(F.text == DRAW_CARD)
-@flags.uno
 async def skip_handler(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData):
     if message.from_user.id == data_uno.current_user_id:
         bot = UnoBot(message, bot, data_uno)
@@ -73,15 +67,13 @@ async def skip_handler(message: types.Message, bot: Bot, state: FSMContext, data
 
 
 @router.callback_query(k.Games.filter(F.value.in_([color.value for color in UnoColors])))
-@flags.uno
 async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games, data_uno: UnoData):
     if query.from_user.id == data_uno.current_user_id:
         data_uno.current_card.color = UnoColors[callback_data.value]
 
         await query.message.edit_text(
-            _("{user} changes the color to {emoji} {color}!").format(
+            _("{user} changes the color to {color}!").format(
                 user=get_username(query.from_user),
-                emoji=data_uno.current_card.color.value,
                 color=data_uno.current_card.color.word,
             )
         )
@@ -91,13 +83,12 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
         await query.answer(_("When you'll get a black card, choose this color ;)."))
 
 
-@router.callback_query(k.Games.filter(F.value == 'uno'), user_filter)
-@flags.uno
+@router.callback_query(k.Games.filter(F.value == 'uno'), MagicData(F.data_uno))
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData):
     uno_user = query.message.entities[0].user if query.message.entities else await bot.get_me()
 
     for task in asyncio.all_tasks():
-        if task.get_name().endswith(str(uno_user.id) + ":" + "uno"):
+        if task.get_name().endswith(f'{uno_user.id}:uno'):
             task.cancel()
             break
 

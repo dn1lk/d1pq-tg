@@ -1,26 +1,41 @@
-from enum import Enum
+from enum import Enum, EnumMeta
 
 from aiogram import types, Bot
 from aiogram.utils.i18n import gettext as _
 from pydantic import BaseModel
 
 
-class UnoColors(int, Enum):
-    blue = 0
-    green = 1
-    red = 2
-    yellow = 3
+class UnoColorsMeta(EnumMeta):
+    def __getitem__(cls, item):
+        if item in cls._member_map_:
+            return cls._member_map_[item]
+        else:
+            for member in cls:
+                if item in member.value:
+                    return member
 
-    black = 4
+    def get_colors(cls, exclude: set = None):
+        if exclude:
+            return (color for color in cls.get_colors() if color not in exclude)
+        return cls
+
+
+class UnoColors(str, Enum, metaclass=UnoColorsMeta):
+    blue = "🔵"
+    green = "🟢"
+    red = "🔴"
+    yellow = "🟡"
+
+    black = "⚫"
 
     @property
     def word(self) -> str:
         colors = {
-            self.blue: "🔵" + " " + _("Blue"),
-            self.green: "🟢" + " " + _("Green"),
-            self.red: "🔴" + " " + _("Red"),
-            self.yellow: "🟡" + " " + _("Yellow"),
-            self.black: "⚫" + " " + _("Black"),
+            self.blue: self.blue.value + " " + _("Blue"),
+            self.green: self.green.value + " " + _("Green"),
+            self.red: self.red.value + " " + _("Red"),
+            self.yellow: self.yellow.value + " " + _("Yellow"),
+            self.black: self.black.value + " " + _("Black"),
         }
 
         return colors[self]
@@ -44,8 +59,8 @@ class UnoCard(BaseModel):
 
 async def get_cards(bot: Bot) -> list[UnoCard]:
     def get(stickers: list[types.Sticker]):
-        for color in tuple(UnoColors)[:-1]:
-            for cost, sticker in enumerate(stickers[color.value:-3:4]):
+        for enum, color in enumerate(UnoColors.get_colors(exclude={UnoColors.black})):
+            for cost, sticker in enumerate(stickers[enum:-3:4]):
                 yield UnoCard(
                     file_unique_id=sticker.file_unique_id,
                     file_id=sticker.file_id,

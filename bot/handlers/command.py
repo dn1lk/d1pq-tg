@@ -85,7 +85,7 @@ async def choose_no_args_handler(
 
 @router.message(F.chat.type == 'private', CustomCommandFilter(commands=['who', 'кто']))
 async def who_private_handler(message: types.Message):
-    await message.answer(_("This command only works in <b>chats</b>, alas =(."))
+    await message.answer(_("This command only works in <b>chats</b>, alas =("))
 
 
 @router.message(CustomCommandFilter(commands=['who', 'кто'], magic=F.args))
@@ -220,7 +220,7 @@ async def history_handler(
 ):
     """tell a story, рассказать историю"""
 
-    query = command.args or choice([message.split() for message in messages] if messages else [_("history")])
+    query = command.args or choice(messages or [_("history")])
 
     if choice(['balaboba', 'markov']) == 'balaboba':
         answer = await yalm.gen(i18n.current_locale, query, 6)
@@ -231,6 +231,7 @@ async def history_handler(
     await message.answer(answer)
 
 
+'''
 @router.message(CustomCommandFilter(commands=['future', 'погадай'], magic=F.args))
 @flags.chat_action("typing")
 async def future_handler(
@@ -261,3 +262,4 @@ async def future_no_args_handler(
                 messages=messages)
         )
     )
+'''

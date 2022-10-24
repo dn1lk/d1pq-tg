@@ -16,7 +16,7 @@ async def uno_timeout(message: types.Message, state: FSMContext):
     data_uno.timer_amount -= 1
 
     if data_uno.current_card and data_uno.current_card.color is UnoColors.black:
-        data_uno.current_card.color = choice(tuple(UnoColors)[:-1])
+        data_uno.current_card.color = choice(UnoColors.get_colors(exclude={UnoColors.black}))
         await message.edit_text(_("Current color: {color}").format(color=data_uno.current_card.color.word))
 
     if not data_uno.timer_amount or len(data_uno.users) == 2 and state.bot.id in data_uno.users:

@@ -33,7 +33,7 @@ books = listdir('bot/locales/en/books')
 @lru_cache(maxsize=4)
 def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
     with open(
-            config.BASE_DIR / 'locales' / locale / book,
+            config.BASE_DIR / 'locales' / locale / 'books' / book,
             'r',
             encoding='UTF-8'
     ) as f:

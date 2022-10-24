@@ -1,4 +1,4 @@
-from aiogram import Router, F, types, flags
+from aiogram import Router, F, types
 from aiogram.filters import MagicData
 from aiogram.utils.i18n import gettext as _
 
@@ -13,7 +13,6 @@ command = '/play uno'
 thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
 
-@flags.uno
 @router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
 async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
     user_data = data_uno.users.get(inline.from_user.id)
@@ -49,7 +48,7 @@ async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
 
 
 @router.inline_query(F.query.lower() == "uno")
-async def inline_handler(inline: types.InlineQuery):
+async def inline_no_data_handler(inline: types.InlineQuery):
     await inline.answer(
         [
             types.InlineQueryResultArticle(

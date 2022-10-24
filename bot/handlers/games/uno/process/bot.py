@@ -84,6 +84,9 @@ class UnoBot:
 
                     except UnoNoUsersException:
                         await finish(self.message, self.data, state)
+                    except asyncio.CancelledError:
+                        await self.message.delete()
+                        await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
                 else:
                     await pass_turn(self.message, self.data, state)
 

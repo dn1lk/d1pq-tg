@@ -1,7 +1,7 @@
 from typing import Dict, Any, Callable, Awaitable, Optional, Union
 
 from aiogram import BaseMiddleware
-from aiogram.dispatcher.flags import get_flag
+from aiogram.dispatcher.flags import extract_flags
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
@@ -46,13 +46,10 @@ class UnoDataMiddleware(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
-        flag_data: Optional[Union[str, set]] = get_flag(data, 'uno')
+        state: Optional[FSMContext] = data.get('state')
 
-        if flag_data:
-            state: Optional[FSMContext] = data.get('state')
-
-            if state:
-                data_uno = (await state.get_data()).get('uno')
-                data['data_uno'] = UnoData(**data_uno) if data_uno else None
+        if state:
+            data_uno = (await state.get_data()).get('uno')
+            data['data_uno'] = UnoData(**data_uno) if data_uno else None
 
         return await handler(event, data)

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Any, Awaitable, Callable, Union, Optional
 
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
-from aiogram.dispatcher.flags import get_flag
+from aiogram.dispatcher.flags import get_flag, extract_flags
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey, BaseStorage
 from aiogram.utils.chat_action import ChatActionMiddleware
@@ -37,8 +37,9 @@ class DataMiddleware(BaseMiddleware):
                 if value:
                     data[key] = value
 
-            if get_flag(data, 'gen') and event.text:
+            if 'uno' in extract_flags(data) and event.text:
                 messages = markov.set_data(event.text, data.get('messages'))
+
                 if messages:
                     data['messages'] = messages
                     await db.set_data(messages=messages)

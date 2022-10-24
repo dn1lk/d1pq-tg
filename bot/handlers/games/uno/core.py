@@ -41,7 +41,7 @@ async def start_handler(
         state: FSMContext,
         user_ids: list[int],
 ):
-    async def get_uno_users(cards):
+    async def get_uno_users():
         for user_id in user_ids:
             key = StorageKey(
                 bot_id=state.key.bot_id,
@@ -73,7 +73,7 @@ async def start_handler(
         )
 
     cards = await get_cards(bot)
-    users = {user_id: UnoUser(cards=cards) async for user_id, cards in get_uno_users(cards)}
+    users = {user_id: UnoUser(cards=cards) async for user_id, cards in get_uno_users()}
     await state.set_state(Game.uno)
 
     data_uno = UnoData(
@@ -85,7 +85,7 @@ async def start_handler(
 
     from .process.core import post
 
-    await post(message, data_uno, state, _("So, <b>let's start the game.</b>") + "\n\n")
+    await post(message, data_uno, state, _("So, <b>let's start the game.</b>"))
 
 
 @router.callback_query(k.Games.filter(F.value == 'start'))

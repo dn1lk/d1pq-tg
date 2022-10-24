@@ -14,7 +14,6 @@ router.chat_member.outer_middleware(UnoDataMiddleware())
 
 @router.chat_member()
 @flags.data('members')
-@flags.uno
 async def leave_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,

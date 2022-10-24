@@ -97,7 +97,7 @@ async def finish(message: types.Message, data: UnoData, state: FSMContext):
                       "{points} point earned.",
                       "{points} points earned.",
                       winner_data.points,
-                  ).format(winner_data.points)
+                  ).format(points=winner_data.points)
 
     await message.answer(answer)
 
@@ -105,8 +105,8 @@ async def finish(message: types.Message, data: UnoData, state: FSMContext):
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
     data.current_index = data.next_index
 
-    if data.current_card and data.current_card.color is UnoColors.black and \
-            data.prev_user_id == state.bot.id and \
+    if data.prev_user_id == state.bot.id and data.current_card and \
+            data.current_card.cost == 50 and data.current_card.emoji == UnoEmoji.draw and \
             random() < 1 / data.settings.difficulty:
         accept, decline = data.check_draw_black()
 
@@ -140,7 +140,9 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
                 )
             ).format(user=get_username(await data.get_user(state))),
             reply_markup=k.uno_show_cards(
-                data.current_card.emoji == UnoEmoji.draw and data.current_card.color is UnoColors.black
+                data.current_card and
+                data.current_card.emoji == UnoEmoji.draw and
+                data.current_card.color is UnoColors.black
             ),
         )
 
