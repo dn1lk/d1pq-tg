@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-10-24 23:49+0300\n"
+"POT-Creation-Date: 2022-10-25 00:32+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -232,23 +232,23 @@ msgstr ""
 msgid "I am the winner in this game."
 msgstr ""
 
-#: handlers/games/__init__.py:42
+#: handlers/games/__init__.py:46
 msgid "Your time is up."
 msgstr ""
 
-#: handlers/games/__init__.py:48
+#: handlers/games/__init__.py:52
 msgid "You know I won't play with you! Maybe..."
 msgstr ""
 
-#: handlers/games/__init__.py:49
+#: handlers/games/__init__.py:53
 msgid "Well don't play with me!"
 msgstr ""
 
-#: handlers/games/__init__.py:50
+#: handlers/games/__init__.py:54
 msgid "I thought we were playing..."
 msgstr ""
 
-#: handlers/games/__init__.py:51
+#: handlers/games/__init__.py:55
 msgid "It's too slow, I won't play with you!"
 msgstr ""
 
@@ -328,27 +328,27 @@ msgstr ""
 msgid "Eh, classic. {user}, your turn."
 msgstr ""
 
-#: handlers/games/keyboards.py:19 handlers/games/uno/process/__init__.py:34
+#: handlers/games/keyboards.py:20 handlers/games/uno/process/__init__.py:35
 msgid "Yes"
 msgstr ""
 
-#: handlers/games/keyboards.py:20
+#: handlers/games/keyboards.py:21
 msgid "No"
 msgstr ""
 
-#: handlers/games/keyboards.py:21
+#: handlers/games/keyboards.py:22
 msgid "Settings"
 msgstr ""
 
-#: handlers/games/keyboards.py:22
+#: handlers/games/keyboards.py:23
 msgid "LET'S PLAY!"
 msgstr ""
 
-#: handlers/games/keyboards.py:45 handlers/settings/keyboards.py:30
+#: handlers/games/keyboards.py:46 handlers/settings/keyboards.py:30
 msgid "Back"
 msgstr ""
 
-#: handlers/games/keyboards.py:56
+#: handlers/games/keyboards.py:57
 msgid "Is Wild card legal?"
 msgstr ""
 
@@ -628,43 +628,43 @@ msgstr ""
 msgid "When you'll get a black card, choose this color ;)."
 msgstr ""
 
-#: handlers/games/uno/user.py:109
+#: handlers/games/uno/user.py:107
 msgid "Only {user} can verify the legitimacy of using this card."
 msgstr ""
 
-#: handlers/games/uno/user.py:127
+#: handlers/games/uno/user.py:125
 msgid "On reaction =)."
 msgstr ""
 
-#: handlers/games/uno/user.py:128
+#: handlers/games/uno/user.py:126
 msgid "Yep!"
 msgstr ""
 
-#: handlers/games/uno/user.py:129
+#: handlers/games/uno/user.py:127
 msgid "Ok, you won't get cards."
 msgstr ""
 
-#: handlers/games/uno/user.py:136
+#: handlers/games/uno/user.py:134
 msgid "{user} gives {uno_user} 2 cards!"
 msgstr ""
 
-#: handlers/games/uno/user.py:147
+#: handlers/games/uno/user.py:145
 msgid "You are not in the game!"
 msgstr ""
 
-#: handlers/games/uno/process/__init__.py:20
+#: handlers/games/uno/process/__init__.py:21
 msgid "Current color: {color}"
 msgstr ""
 
-#: handlers/games/uno/process/__init__.py:29
+#: handlers/games/uno/process/__init__.py:30
 msgid "Time is over."
 msgstr ""
 
-#: handlers/games/uno/process/__init__.py:33
+#: handlers/games/uno/process/__init__.py:34
 msgid "Kick a player from the game?"
 msgstr ""
 
-#: handlers/games/uno/process/__init__.py:34
+#: handlers/games/uno/process/__init__.py:35
 msgid "No, keep playing"
 msgstr ""
 
