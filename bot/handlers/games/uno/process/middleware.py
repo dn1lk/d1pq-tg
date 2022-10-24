@@ -1,7 +1,6 @@
-from typing import Dict, Any, Callable, Awaitable, Optional, Union
+from typing import Dict, Any, Callable, Awaitable, Optional
 
 from aiogram import BaseMiddleware
-from aiogram.dispatcher.flags import extract_flags
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
