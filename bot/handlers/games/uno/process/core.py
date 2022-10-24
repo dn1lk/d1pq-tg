@@ -75,8 +75,8 @@ async def kick_for_cards(message: types.Message, data: UnoData, state: FSMContex
 
 
 async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMContext, user: types.User):
-    await data.remove_user(state, user.id)
     await message.answer(_("{user} is kicked from the game.").format(user=get_username(user)))
+    await data.remove_user(state, user.id)
 
 
 async def finish(message: types.Message, data: UnoData, state: FSMContext):
