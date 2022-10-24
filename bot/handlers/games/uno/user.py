@@ -30,6 +30,8 @@ async def user_handler(message: types.Message, bot: Bot, state: FSMContext, data
         for task in asyncio.all_tasks():
             if task.get_name() == str(bot):
                 task.cancel()
+                print(1, list[task.get_coro()])
+                print(2, task.get_stack())
                 break
 
         data_uno.current_card = card
@@ -81,6 +83,33 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
         await process(query.message.reply_to_message, data_uno, state)
     else:
         await query.answer(_("When you'll get a black card, choose this color ;)."))
+
+
+@router.callback_query(
+    k.Games.filter(F.value == 'check_draw_black_card'),
+    MagicData(F.event.from_user.id == F.data_uno.prev_user_id),
+)
+async def check_draw_black_card_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
+    from .process.core import post
+
+    await query.message.answer(
+        await post(
+            query.message,
+            data_uno,
+            state,
+            await data_uno.check_draw_black_card(state)
+        )
+    )
+
+
+@router.callback_query(
+    k.Games.filter(F.value == 'check_draw_black_card'),
+    MagicData(F.event.from_user.id == F.data_uno.prev_user_id),
+)
+async def check_draw_black_card_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
+    await query.answer(_("Only {user} can verify the legitimacy of using this card.").format(
+        user=get_username(await data_uno.get_user(state, data_uno.prev_user_id)))
+    )
 
 
 @router.callback_query(k.Games.filter(F.value == 'uno'), MagicData(F.data_uno))

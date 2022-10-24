@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from .bot import UnoBot
-from .cards import UnoCard, UnoEmoji, UnoColors, get_cards
+from .cards import UnoCard, UnoEmoji, UnoColors, get_deck
 from .data import UnoData, UnoUser
 from .exceptions import UnoNoUsersException
 

@@ -66,7 +66,7 @@ async def kick_for_cards(message: types.Message, data: UnoData, state: FSMContex
     await data.remove_user(state)
 
     if message.from_user.id == state.bot.id:
-        answer = _("Well, I have run out of cards. I have to remain only an observer =(.")
+        answer = _("Well, I have run out of my hand. I have to remain only an observer =(.")
     else:
         answer = _("{user} puts his last card and leaves the game as the winner.").format(
             user=get_username(message.from_user)
@@ -83,10 +83,10 @@ async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMC
 async def finish(message: types.Message, data: UnoData, state: FSMContext):
     answer = await data.finish(state)
 
-    for number, winner in enumerate(data.winners.items(), start=1):
+    for number, winner in enumerate(dict(sorted(data.winners, key=lambda i: i.points)).items(), start=1):
         winner_id, winner_data = winner
         user = await data.get_user(state, winner_id)
-        answer += f'\n{_("WINNER") if number == 1 else number}: {get_username(user)} - ' + \
+        answer += f'\n\n{_("WINNER") if number == 1 else number}: {get_username(user)} - ' + \
                   ___(
                       "{amount} card played,",
                       "{amount} cards played,",
@@ -99,25 +99,19 @@ async def finish(message: types.Message, data: UnoData, state: FSMContext):
                       winner_data.points,
                   ).format(points=winner_data.points)
 
-    await message.answer(answer)
+    message = await message.answer(answer)
+
+    if data.users:
+        await post(message, data, state, _("Next round!"))
 
 
 async def post(message: types.Message, data: UnoData, state: FSMContext, answer: str):
     data.current_index = data.next_index
 
     if data.prev_user_id == state.bot.id and data.current_card and \
-            data.current_card.cost == 50 and data.current_card.emoji == UnoEmoji.draw and \
+            data.current_card.cost == 50 and data.current_special.drawn and \
             random() < 1 / data.settings.difficulty:
-        accept, decline = data.check_draw_black()
-
-        if decline:
-            decline = _(
-                "Oh no. I checked {user} cards and don't see any cards with matched color, only black.\n"
-                "I can get 6 cards =("
-            )
-        await message.reply(
-            (accept or decline).format(user=get_username(await data.get_user(state, data.prev_user_id)))
-        )
+        await message.reply(await data.check_draw_black_card(state))
 
     await state.update_data(uno=data.dict())
 
@@ -139,11 +133,7 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
                     _("I pass the turn to the player {user}."),
                 )
             ).format(user=get_username(await data.get_user(state))),
-            reply_markup=k.uno_show_cards(
-                data.current_card and
-                data.current_card.emoji == UnoEmoji.draw and
-                data.current_card.color is UnoColors.black
-            ),
+            reply_markup=k.uno_show_cards(data.current_card),
         )
 
         from . import uno_timeout

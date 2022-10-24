@@ -57,7 +57,7 @@ class UnoCard(BaseModel):
     cost: int
 
 
-async def get_cards(bot: Bot) -> list[UnoCard]:
+async def get_deck(bot: Bot) -> list[UnoCard]:
     def get(stickers: list[types.Sticker]):
         for enum, color in enumerate(UnoColors.get_colors(exclude={UnoColors.black})):
             for cost, sticker in enumerate(stickers[enum:-3:4]):
@@ -78,7 +78,7 @@ async def get_cards(bot: Bot) -> list[UnoCard]:
                 cost=50,
             )
 
-    cards = list(get((await bot.get_sticker_set('uno_by_bp1lh_bot')).stickers))
-    cards.extend([card for card in cards if card.cost != 0])
+    deck = list(get((await bot.get_sticker_set('uno_by_bp1lh_bot')).stickers))
+    deck.extend([card for card in deck if card.cost != 0])
 
-    return cards
+    return deck

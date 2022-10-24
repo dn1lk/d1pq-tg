@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from bot.handlers import get_username
 from .cards import UnoCard, UnoColors, UnoEmoji
 from .exceptions import UnoNoCardsException, UnoNoUsersException, UnoOneCardException
-from ..settings import UnoSettings
+from ..settings import UnoSettings, UnoMode
 
 
 class UnoUser(BaseModel):
@@ -19,8 +19,8 @@ class UnoUser(BaseModel):
 
 
 class UnoWinner(BaseModel):
-    points: int
-    cards_played: int
+    points: int = 0
+    cards_played: int = 0
 
 
 class UnoSpecials(BaseModel):
@@ -31,7 +31,7 @@ class UnoSpecials(BaseModel):
 
 
 class UnoData(BaseModel):
-    cards: list[UnoCard]
+    deck: list[UnoCard]
     users: dict[int, UnoUser]
     winners: dict[int, UnoWinner] = {}
 
@@ -77,7 +77,7 @@ class UnoData(BaseModel):
         accept, decline = False, False
 
         if not card:
-            return accept, _("What a joke, this card is not from your deck, {user}.")
+            return accept, _("What a joke, this card is not from your hand, {user}.")
 
         if user_id == self.current_user_id:
             if not self.current_card:
@@ -106,7 +106,8 @@ class UnoData(BaseModel):
 
         elif user_id == self.prev_user_id:
             if self.current_special.passed:
-                if card.emoji == self.current_card.emoji or card.color is self.current_card.color:
+                if card is self.users[user_id].cards[-1] and \
+                        (card.emoji == self.current_card.emoji or card.color is self.current_card.color):
                     accept = choice(
                         (
                             _("{user}, you're in luck!"),
@@ -116,8 +117,7 @@ class UnoData(BaseModel):
                 else:
                     decline = _("No, this card is wrong. Take another one!")
             elif self.current_special.drawn:
-                if card.emoji == self.current_card.emoji and \
-                        (self.current_card.cost != 50 or card.color is self.current_card.color):
+                if card.emoji == self.current_card.emoji and card.cost == self.current_card.cost:
                     accept = choice(
                         (
                             _("{user} doesn't want to take cards."),
@@ -172,49 +172,54 @@ class UnoData(BaseModel):
         return accept, decline
 
     @staticmethod
-    def pop_from_cards(cards, amount: int = 1):
-        shuffle(cards)
+    def pop_from_deck(deck, amount: int = 1):
+        shuffle(deck)
 
-        for card in cards[:amount]:
-            cards.remove(card)
+        for card in deck[:amount]:
+            deck.remove(card)
 
-        return cards[:amount]
+        return deck[:amount]
 
     def add_card(self, bot: Bot, user: types.User, amount: int = 1) -> str:
-        self.users[user.id].cards.extend(self.pop_from_cards(self.cards, amount))
+        self.users[user.id].cards.extend(self.pop_from_deck(self.deck, amount))
 
         if user.id == bot.id:
             answer = _("I take")
         else:
             answer = _("{user} receives").format(user=get_username(user))
 
-        return answer + " " + ___("{amount} card.", "{amount} cards.", amount).format(amount=amount)
+        return answer + " " + ___("a card.", "{amount} cards.", amount).format(amount=amount)
 
     def update_turn(self, user_id):
         self.current_index = tuple(self.users).index(user_id)
         self.users[self.current_user_id].cards_played += 1
         self.users[self.current_user_id].cards.remove(self.current_card)
-        self.cards.append(self.current_card)
+        self.deck.append(self.current_card)
 
         if len(self.users[self.current_user_id].cards) == 1:
             raise UnoOneCardException("The user has one card in UNO game")
         elif not self.users[self.current_user_id].cards:
             raise UnoNoCardsException("The user has run out of cards in UNO game")
 
-    def check_draw_black(self) -> tuple[str | None, str | None]:
-        user_id = tuple(self.users)[self.current_index - 2]
-
-        for card in self.users[user_id].cards:
-            if card.color is self.cards[-2].color:
+    async def check_draw_black_card(self, state: FSMContext) -> str:
+        for card in self.users[tuple(self.users)[self.current_index - 2]].cards:
+            if card.color is self.deck[-2].color:
                 self.current_index = self.prev_index
+                answer = _("I see cards with matched color, not only black.")
+                break
+        else:
+            self.current_special.drawn += 2
 
-                accept = _("I see cards with matched color, not only black.\n{user} can get 4 cards!")
-                return accept, None
+            if self.prev_user_id == state.bot.id:
+                answer = _("Oh no. I checked {user} cards and don't see any cards with matched color, only black.")
+            else:
+                answer = _("Nope. {user} don't has any cards of the matched color.")
 
-        self.current_special.drawn += 2
+        user = await self.get_user(state, self.prev_user_id)
+        answer = answer.format(user=get_username(user)), self.add_card(state.bot, user, self.current_special.drawn)
+        self.current_special.drawn = 0
 
-        decline = _("Nope. {user} don't has any cards of the matched color.\nYou can get 6 cards!")
-        return None, decline
+        return "\n".join(answer)
 
     def update_current_special(self):
         if self.current_card.emoji == UnoEmoji.reverse:
@@ -296,6 +301,24 @@ class UnoData(BaseModel):
             )
         )
 
+    @staticmethod
+    async def add_user(state: FSMContext, user_id: int, deck: list[UnoCard]) -> UnoUser:
+        async def add_state():
+            from .. import Game
+
+            key = StorageKey(
+                bot_id=state.key.bot_id,
+                chat_id=user_id,
+                user_id=user_id,
+                destiny=state.key.destiny
+            )
+
+            await state.storage.set_state(state.bot, key, Game.uno)
+            await state.storage.update_data(state.bot, key, {'uno_chat_id': state.key.chat_id})
+
+        await add_state()
+        return UnoUser(cards=UnoData.pop_from_deck(deck, 7))
+
     async def remove_user(self, state: FSMContext, user_id: int = None):
         async def remove_state():
             key = StorageKey(
@@ -314,8 +337,14 @@ class UnoData(BaseModel):
         del self.users[user_id]
         await remove_state()
 
+        points = sum(sum(card.cost for card in user_data.cards) for user_data in self.users.values())
+
+        if user_id in self.winners:
+            points += self.winners[user_id].points
+            cards_played += self.winners[user_id].cards_played
+
         self.winners[user_id] = UnoWinner(
-            points=sum(sum(card.cost for card in user_data.cards) for user_data in self.users.values()),
+            points=points,
             cards_played=cards_played,
         )
 
@@ -333,6 +362,15 @@ class UnoData(BaseModel):
         except UnoNoUsersException:
             await self.remove_user(state, tuple(self.users)[0])
 
-        await state.clear()
+        if self.settings.mode is not UnoMode.with_points or max(self.winners.values(), key=lambda i: i.points) >= 500:
+            await state.clear()
+            return _("<b>Game over.</b>")
+        else:
+            self.current_card = None
 
-        return _("<b>Game over.</b>") + "\n"
+            for winner in self.winners:
+                self.users[winner] = await self.add_user(state, winner, self.deck)
+
+            self.current_index = -1
+
+            return _("<b>Round over.</b>")

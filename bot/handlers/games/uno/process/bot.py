@@ -72,8 +72,8 @@ class UnoBot:
                                         "On a scale of 10, rate the quality of this move.\n"
                                         "Where 0 is very good, 10 is excellent"
                                     ),
-                                    _("I still have cards in my deck."),
-                                    _("Curious, but I know all the cards in the game... I dealt them."),
+                                    _("I still have cards in my hand."),
+                                    _("Curious, but I know all the hands in the game... I dealt them."),
                                     _("Maybe I can even win this game!"),
                                     _("Oh, I don't envy the next player..."),
                                     _("Br-b. Ah. Yes. No. ..."),
@@ -85,8 +85,12 @@ class UnoBot:
                     except UnoNoUsersException:
                         await finish(self.message, self.data, state)
                     except asyncio.CancelledError:
+                        self.data = UnoData(**(await state.get_data())['uno'])
+
                         await self.message.delete()
                         await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
+
+                        await state.update_data(uno=self.data.dict())
                 else:
                     await pass_turn(self.message, self.data, state)
 

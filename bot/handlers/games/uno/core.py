@@ -3,11 +3,10 @@ from random import choice, random
 
 from aiogram import Bot, Router, F, types
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.base import StorageKey
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from .process import UnoData, UnoUser, get_cards
+from .process import UnoData, get_deck
 from .settings import UnoSettings, extract_current_difficulty, extract_current_mode
 from .. import Game, keyboards as k
 
@@ -41,20 +40,6 @@ async def start_handler(
         state: FSMContext,
         user_ids: list[int],
 ):
-    async def get_uno_users():
-        for user_id in user_ids:
-            key = StorageKey(
-                bot_id=state.key.bot_id,
-                chat_id=user_id,
-                user_id=user_id,
-                destiny=state.key.destiny
-            )
-
-            await state.storage.set_state(bot, key, Game.uno)
-            await state.storage.update_data(bot, key, {'uno_chat_id': message.chat.id})
-
-            yield user_id, UnoData.pop_from_cards(cards, 7)
-
     message = query.message if isinstance(query, types.CallbackQuery) else query
     message = await message.delete_reply_markup()
 
@@ -72,12 +57,12 @@ async def start_handler(
             )
         )
 
-    cards = await get_cards(bot)
-    users = {user_id: UnoUser(cards=cards) async for user_id, cards in get_uno_users()}
+    deck = await get_deck(bot)
+    users = {user_id: await UnoData.add_user(state, user_id, deck) for user_id in user_ids}
     await state.set_state(Game.uno)
 
     data_uno = UnoData(
-        cards=cards,
+        deck=deck,
         users=users,
         current_index=choice(range(len(users))),
         settings=UnoSettings(difficulty=extract_current_difficulty(message), mode=extract_current_mode(message)),

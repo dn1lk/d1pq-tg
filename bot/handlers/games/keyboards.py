@@ -3,7 +3,6 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-
 class Games(CallbackData, prefix='game'):
     game: str
     value: str | None
@@ -44,10 +43,12 @@ def uno_settings(message: types.Message):
     return builder.as_markup()
 
 
-def uno_show_cards(is_draw_black: bool):
+def uno_show_cards(current_card: "UnoCard"):
+    from .uno.process import UnoEmoji
+
     builder = InlineKeyboardBuilder()
 
-    if is_draw_black:
+    if current_card and current_card.cost == 50 and current_card.emoji is UnoEmoji.draw:
         builder.button(text=_("Check black card"), callback_data=Games(game='uno', value='check_draw_black_card'))
 
     builder.button(text=_("Show cards"), switch_inline_query_current_chat="uno")

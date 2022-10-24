@@ -16,7 +16,7 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'])
 
 @router.message(F.text.endswith(('uno', 'уно')), Game.uno)
 async def uno_join_handler(message: types.Message, state: FSMContext):
-    from .uno.process import UnoData, UnoUser
+    from .uno.process import UnoData
 
     data_uno = UnoData(**(await state.get_data())['uno'])
 
@@ -25,7 +25,7 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
     elif len(data_uno.users) == 10:
         await message.reply(_("Already 10 people are playing the game. Just wait."))
     else:
-        data_uno.users[message.from_user.id] = UnoUser(cards=data_uno.pop_from_cards(data_uno.cards, 7))
+        data_uno.users[message.from_user.id] = await data_uno.add_user(state, message.from_user.id, data_uno.deck)
         await state.update_data(uno=data_uno.dict())
 
         await message.answer(_("{user} join to current game.").format(user=get_username(message.from_user)))
