@@ -80,12 +80,12 @@ async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMC
 
 
 async def finish(message: types.Message, data: UnoData, state: FSMContext):
-    answer = await data.finish(state)
+    answer = await data.finish(state) + "\n"
 
     for enum, winner in enumerate(dict(sorted(data.winners.items(), key=lambda i: i[1].points)).items(), start=1):
         winner_id, winner_data = winner
         user = await data.get_user(state, winner_id)
-        answer += f'\n\n{_("WINNER") if enum == 1 else enum}: {get_username(user)} - ' + \
+        answer += f'\n{_("WINNER") if enum == 1 else enum}: {get_username(user)} - ' + \
                   ___(
                       "{amount} card played,",
                       "{amount} cards played,",
@@ -161,7 +161,7 @@ async def process(message: types.Message, data: UnoData, state: FSMContext, acce
 
 async def pre(message: types.Message, data: UnoData, state: FSMContext, accept: str):
     try:
-        data.update_turn(message.from_user.id)
+        data.update_turn(state, message.from_user.id)
     except UnoOneCardException:
         await say_uno(message, data, state)
     except UnoNoCardsException:

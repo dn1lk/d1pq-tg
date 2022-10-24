@@ -190,7 +190,7 @@ class UnoData(BaseModel):
 
         return answer + " " + ___("a card.", "{amount} cards.", amount).format(amount=amount)
 
-    def update_turn(self, user_id):
+    def update_turn(self, state: FSMContext, user_id: int) -> None:
         self.current_index = tuple(self.users).index(user_id)
         self.users[self.current_user_id].cards_played += 1
         self.users[self.current_user_id].cards.remove(self.current_card)
@@ -199,6 +199,7 @@ class UnoData(BaseModel):
         if len(self.users[self.current_user_id].cards) == 1:
             raise UnoOneCardException("The user has one card in UNO game")
         elif not self.users[self.current_user_id].cards:
+            self.apply_current_special(state)
             raise UnoNoCardsException("The user has run out of cards in UNO game")
 
     async def check_draw_black_card(self, state: FSMContext) -> str:
