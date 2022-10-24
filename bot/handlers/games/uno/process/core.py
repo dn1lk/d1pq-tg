@@ -82,10 +82,10 @@ async def kick_for_inactivity(message: types.Message, data: UnoData, state: FSMC
 async def finish(message: types.Message, data: UnoData, state: FSMContext):
     answer = await data.finish(state)
 
-    for number, winner in enumerate(dict(sorted(data.winners.items(), key=lambda i: i[1].points)).items(), start=1):
+    for enum, winner in enumerate(dict(sorted(data.winners.items(), key=lambda i: i[1].points)).items(), start=1):
         winner_id, winner_data = winner
         user = await data.get_user(state, winner_id)
-        answer += f'\n\n{_("WINNER") if number == 1 else number}: {get_username(user)} - ' + \
+        answer += f'\n\n{_("WINNER") if enum == 1 else enum}: {get_username(user)} - ' + \
                   ___(
                       "{amount} card played,",
                       "{amount} cards played,",
