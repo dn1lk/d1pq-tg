@@ -53,6 +53,9 @@ class UnoBot:
             await asyncio.sleep(choice(range(1, 6)) / len(self.data.users) * self.data.settings.difficulty)
             self.data: UnoData = UnoData(**(await state.get_data())['uno'])
 
+            if self.data.prev_user_id == state.bot.id:
+                await self.message.delete()
+
             try:
                 if cards:
                     self.data.current_card, accept = choice(cards)
@@ -85,12 +88,13 @@ class UnoBot:
                     except UnoNoUsersException:
                         await finish(self.message, self.data, state)
                     except asyncio.CancelledError:
-                        self.data = UnoData(**(await state.get_data())['uno'])
+                        if self.message.sticker:
+                            await self.message.delete()
 
-                        await self.message.delete()
-                        await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
+                            self.data = (await self.state.get_data()]['uno']
+                            await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
 
-                        await state.update_data(uno=self.data.dict())
+                            await state.update_data(uno=self.data.dict())
                 else:
                     await pass_turn(self.message, self.data, state)
 
