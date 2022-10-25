@@ -39,7 +39,7 @@ class RPSVars(str, Enum):
 @router.callback_query(k.Games.filter(F.game == 'rps'))
 @flags.throttling('rps')
 async def answer_handler(query: types.CallbackQuery, callback_data: k.Games):
-    bot_var: RPSVars = choice(*RPSVars)
+    bot_var: RPSVars = choice(tuple(RPSVars))
     user_var: RPSVars = RPSVars(callback_data.value)
 
     await query.answer(_("Your choice: {user_var}").format(user_var=user_var.word))
