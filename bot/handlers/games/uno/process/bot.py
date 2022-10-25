@@ -1,6 +1,5 @@
 import asyncio
 from random import choice
-from typing import Generator
 
 from aiogram import Bot, types, exceptions
 from aiogram.fsm.context import FSMContext
@@ -39,7 +38,7 @@ class UnoBot:
 
         return _("I choice {color}.").format(color=self.data.current_card.color.word)
 
-    def get_cards(self) -> Generator:
+    def get_cards(self) -> tuple:
         def get():
             for card in self.data.users[self.bot.id].cards:
                 accept, decline = self.data.filter_card(self.bot.id, card)
@@ -47,7 +46,7 @@ class UnoBot:
                     yield card, accept
 
         if self.bot.id in self.data.users:
-            return get()
+            return tuple(get())
 
     async def gen(self, state: FSMContext, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
