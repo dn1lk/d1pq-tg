@@ -31,7 +31,7 @@ async def errors_handler(event: ErrorEvent, bot: Bot):
             bot.owner_id,
             (
                 f'ERROR while event <b>{event.update.event_type}</b>\n\n'
-                f'{traceback.format_exc(limit=5)}'
+                f'{traceback.format_exc(limit=3)}'
             )
         )
     except exceptions.TelegramBadRequest:
