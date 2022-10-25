@@ -91,7 +91,7 @@ class UnoBot:
                         if self.message.sticker:
                             await self.message.delete()
 
-                            self.data = (await state.get_data()]['uno']
+                            self.data: UnoData = UnoData(**(await state.get_data())['uno'])
                             await self.message.answer(self.data.add_card(self.bot, self.message.from_user))
 
                             await state.update_data(uno=self.data.dict())
