@@ -122,7 +122,7 @@ async def post(message: types.Message, data: UnoData, state: FSMContext, answer:
 
     if cards or data.current_user_id == state.bot.id:
         bot.message = await message.reply(answer, reply_markup=k.uno_show_cards(data))
-        asyncio.create_task(bot.gen(state, *cards), name=str(bot))
+        asyncio.create_task(bot.gen(state, cards), name=str(bot))
     else:
         message = await message.reply(
             answer + "\n\n" + choice(
