@@ -60,7 +60,7 @@ async def pass_handler(message: types.Message, bot: Bot, state: FSMContext, data
     elif len(data_uno.users[data_uno.current_user_id].cards) >= 20:
         await message.reply(_("You already have a lot of cards in your hand. I will not give you more!"))
     else:
-        user = (await bot.get_chat_member(message.chat.id, data_uno.current_user_id)).user
+        user = await data_uno.get_user(state)
         await message.reply(
             _("Of course, I don't mind, but now it's {user}'s turn.\nWe'll have to wait =).").format(
                 user=get_username(user)
@@ -82,7 +82,7 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 
         await process(query.message.reply_to_message, data_uno, state)
     else:
-        await query.answer(_("When you'll get a black card, choose this color ;)."))
+        await query.answer(_("When you'll get a black card, choose this color ;)"))
 
 
 @router.callback_query(

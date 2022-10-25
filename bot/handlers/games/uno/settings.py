@@ -100,4 +100,6 @@ async def settings_back_handler(query: types.CallbackQuery):
 
 @router.callback_query()
 async def settings_no_owner_handler(query: types.CallbackQuery):
-    await query.answer(_("Only {user} can customize the game.").format(user=query.message.entities[4].user.first_name))
+    await query.answer(_("Only {user} can customize the game.").format(
+        user=query.message.entities[4].user.first_name)
+    )

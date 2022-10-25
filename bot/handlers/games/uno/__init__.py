@@ -13,11 +13,6 @@ def setup():
     router.chat_member.filter(Games.uno)
     router.callback_query.filter(k.UnoGame.filter(F.game))
 
-    from .process.middleware import UnoFSMContextMiddleware
-
-    router.inline_query.outer_middleware(UnoFSMContextMiddleware())
-    router.poll.outer_middleware(UnoFSMContextMiddleware())
-
     from .transitions import router as action_rt
     from .core import router as core_rt
     from .inline import router as inline_rt

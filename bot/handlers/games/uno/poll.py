@@ -4,8 +4,10 @@ from aiogram import Router, types
 from aiogram.fsm.context import FSMContext
 
 from .process import UnoData
+from .process.middleware import UnoFSMContextMiddleware
 
 router = Router(name='game:uno:poll')
+router.inline_query.outer_middleware(UnoFSMContextMiddleware())
 
 
 async def close_poll_timer(message: types.Message, state: FSMContext, user: types.User):
@@ -17,7 +19,6 @@ async def close_poll_timer(message: types.Message, state: FSMContext, user: type
 
         if poll.options[0].voter_count > poll.options[1].voter_count and user.id in data_uno.users:
             from .process.core import kick_for_inactivity
-
             await kick_for_inactivity(message, data_uno, state, user)
     finally:
         await message.delete()
