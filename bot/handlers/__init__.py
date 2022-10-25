@@ -1,26 +1,24 @@
-from aiogram import Bot, types
-from aiogram.utils.i18n import gettext as _, lazy_gettext as __
+from aiogram import Dispatcher, types, html
+from aiogram.utils.i18n import lazy_gettext as __
 
-NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: /{command} {args}")
+__all__ = 'NO_ARGS', 'setup', 'get_username', 'get_commands'
+
+NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: <code>/{command} {args}</code>")
 
 
 def get_username(user: types.User) -> str:
-    return f'<a href="tg://user?id={user.id}">{user.first_name or _("user")}</a>'
+    return html.link(html.quote(user.first_name), f"tg://user?id={user.id}")
 
 
-def get_command_list(
-        bot: Bot,
-        locale: str,
-        index: slice | None = None,
-) -> str:
-    return '\n'.join((f'/{command.command} - {command.description}' for command in bot.commands[locale][index]))
+def get_commands(commands: dict[str, tuple[types.BotCommand]], locale: str, index: slice | None = None) -> str:
+    return '\n'.join(f'/{command.command} - {command.description}' for command in commands[locale][index])
 
 
-def setup(dp):
+def setup(dp: Dispatcher):
     from .settings import setup as setting_rt
     from .games import setup as game_rt
+    from .transitions import setup as transitions_rt
 
-    from .action import router as action_rt
     from .command import router as command_rt
     from .error import router as error_rt
     from .other import router as other_rt
@@ -29,7 +27,7 @@ def setup(dp):
         setting_rt(),
         game_rt(),
         command_rt,
-        action_rt,
+        transitions_rt(),
         other_rt,
         error_rt,
     )

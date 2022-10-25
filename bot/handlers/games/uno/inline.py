@@ -22,7 +22,7 @@ async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
             types.InlineQueryResultCachedSticker(
                 id='draw',
                 sticker_file_id='CAACAgIAAxUAAWNTyJCPqf4Upyd2mc0hDDM-9UD5AALgHwACheugSmbCtLV865YXKgQ',
-                input_message_content=types.InputMessageContent(message_text=str(DRAW_CARD)),
+                input_message_content=types.InputMessageContent(message_text=DRAW_CARD.value),
             )
         ]
         answer.extend(

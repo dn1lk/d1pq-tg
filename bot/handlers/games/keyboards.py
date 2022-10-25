@@ -73,10 +73,7 @@ def uno_color():
     builder = InlineKeyboardBuilder()
 
     for color in UnoColors.get_colors(exclude={UnoColors.black}):
-        builder.button(
-            text=color.word,
-            callback_data=UnoGame(value=color.value)
-        )
+        builder.button(text=color.word, callback_data=UnoGame(value=color))
 
     builder.adjust(1)
     return builder.as_markup()

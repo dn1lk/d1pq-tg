@@ -6,8 +6,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
+__all__ = 'Games', 'WINNER', 'timer', 'win_timeout', 'close_timeout', 'setup'
 
-class Game(StatesGroup):
+
+class Games(StatesGroup):
     uno = State()
     cts = State()
     rnd = State()
@@ -32,7 +34,7 @@ def timer(state: FSMContext, coroutine, exception=None, **kwargs) -> asyncio.Tas
             if exception:
                 await exception(state=state, **kwargs)
 
-    name = 'game' + ':' + str(state.key.chat_id)
+    name = f'game:{state.key.chat_id}'
 
     for task in asyncio.all_tasks():
         if task.get_name() == name:
@@ -43,7 +45,7 @@ def timer(state: FSMContext, coroutine, exception=None, **kwargs) -> asyncio.Tas
 
 
 async def win_timeout(message: types.Message, state: FSMContext):
-    await close_timeout(message, state, answer=_("Your time is up.") + " " + str(choice(WINNER)))
+    await close_timeout(message, state, answer=f'{_("Your time is up.")} {choice(WINNER)}')
 
 
 async def close_timeout(message: types.Message, state: FSMContext, answer: str | None = None):
@@ -63,16 +65,17 @@ async def close_timeout(message: types.Message, state: FSMContext, answer: str |
 def setup():
     router = Router(name='game')
 
-    from .cts import setup as cts_rt
     from .uno import setup as uno_rt
+
+    from .cts import router as cts_rt
     from .rnd import router as rnd_rt
     from .rps import router as rps_rt
     from .core import router as core_rt
 
     sub_routers = (
         core_rt,
-        cts_rt(),
         uno_rt(),
+        cts_rt,
         rps_rt,
         rnd_rt,
     )

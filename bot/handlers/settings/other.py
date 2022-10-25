@@ -12,9 +12,10 @@ async def get_answer(chat_id: int, user_id: int, bot: Bot) -> dict:
     if chat_id == user_id:
         chat = _("dialogue")
     else:
+        admins = ', '.join(get_username(admin.user) for admin in await bot.get_chat_administrators(chat_id))
         chat = _("chat - they are only available to the administrator - {admins}").format(
-            admins=', '.join([get_username(admin.user) for admin in await bot.get_chat_administrators(chat_id)])
-        ) or _("only I don't know who it is... So")
+            admins=admins or _("only I don't know who it is... So")
+        )
 
     return {
         'text': _("My settings for this {chat}:").format(chat=chat),
@@ -24,9 +25,10 @@ async def get_answer(chat_id: int, user_id: int, bot: Bot) -> dict:
 
 @router.callback_query(f.AdminFilter(is_admin=False))
 async def no_admin_handler(query: types.CallbackQuery):
-    return query.answer(_("These commands are only available to the administrator."))
+    await query.answer(_("These commands are only available to the administrator."))
 
 
 @router.callback_query(k.Settings.filter(F.name == 'back'))
 async def query_handler(query: types.CallbackQuery, bot: Bot):
     await query.message.edit_text(**await get_answer(query.message.chat.id, query.from_user.id, bot))
+    await query.answer()

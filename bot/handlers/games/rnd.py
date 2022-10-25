@@ -1,23 +1,22 @@
 from random import choice
 
-from aiogram import Router, F, types
+from aiogram import Router, F, types, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from . import Game
+from . import Games
 
 router = Router(name='game:rnd')
-router.message.filter(Game.rnd)
+router.message.filter(Games.rnd)
 
 
 @router.message(F.chat.type == 'private', F.text.in_(set(map(str, range(1, 11)))))
 async def private_handler(message: types.Message):
     bot_var = str(choice(range(1, 11)))
 
-    await message.reply(
-        _("Ok, so... My choice is {bot_var}.\n").format(bot_var=bot_var) +
-        (_("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(."))
-    )
+    answer = _("Ok, so... My choice is {bot_var}.\n").format(bot_var=html.bold(bot_var))
+    matched = (_("Our numbers matched!") if bot_var == message.text else _("Our numbers don't match =(."))
+    await message.reply(answer + matched)
 
 
 @router.message(F.text.in_(set(map(str, range(1, 11)))))

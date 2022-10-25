@@ -13,10 +13,7 @@ def set_data(text: str, messages: list | None = None) -> list | None:
     elif not messages:
         messages = []
 
-    sentences = [
-        sentence for sentence in markovify.split_into_sentences(text) if
-        len(sentence.split()) > 1 and sentence not in messages
-    ]
+    sentences = set(markovify.split_into_sentences(text))
 
     if sentences:
         messages.extend(sentences)
@@ -34,7 +31,7 @@ books = listdir('bot/locales/en/books')
 def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
     with open(
             config.BASE_DIR / 'locales' / locale / 'books' / book,
-            'r',
+            mode='r',
             encoding='UTF-8'
     ) as f:
         return markovify.Text(f.read(), state_size=state_size)
@@ -44,7 +41,7 @@ def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
 def get_none(locale: str) -> markovify.Text:
     with open(
             config.BASE_DIR / 'locales' / locale / 'none.txt',
-            'r',
+            mode='r',
             encoding='UTF-8'
     ) as f:
         return markovify.Text(f.read(), retain_original=False)
@@ -56,8 +53,7 @@ def gen(
         text: str = None,
         state_size: int = 2,
         tries: int = 500,
-        min_words: int = None,
-        max_words: int = None,
+        **kwargs,
 ) -> str:
     model = get_base(locale, choice(books), state_size=state_size)
 
@@ -67,10 +63,7 @@ def gen(
         if len(messages) > 50 * state_size:
             model = model_messages
         else:
-            model = markovify.combine(
-                models=(model_messages, model),
-                weights=(100, 0.01)
-            )
+            model = markovify.combine(models=(model_messages, model), weights=(100, 0.01))
 
     try:
         if text:
@@ -78,12 +71,11 @@ def gen(
                 beginning=choice(text.split()),
                 strict=False,
                 tries=state_size * tries,
-                min_words=min_words,
-                max_words=max_words,
+                **kwargs,
             )
 
             if not answer:
-                raise markovify.text.ParamError("`make_sentence_with_start` didn't have an answer")
+                raise markovify.text.ParamError("`make_sentence_with_start` didn't return an answer")
         else:
             raise markovify.text.ParamError(
                 f"`make_sentence_with_start` for this model requires a string "
@@ -91,10 +83,6 @@ def gen(
                 f"Yours has 0 words"
             )
     except (markovify.text.ParamError, LookupError, TypeError):
-        answer = model.make_sentence(
-            tries=state_size * tries,
-            min_words=min_words,
-            max_words=max_words,
-        )
+        answer = model.make_sentence(tries=state_size * tries, **kwargs)
 
     return answer or get_none(locale).make_sentence()

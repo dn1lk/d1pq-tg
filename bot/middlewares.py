@@ -32,12 +32,12 @@ class DataMiddleware(BaseMiddleware):
 
                 if key == 'chance':
                     bot: Bot = data['bot']
-                    value = round(float(value) / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
+                    value = round(value / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
 
                 if value:
                     data[key] = value
 
-            if 'uno' in extract_flags(data) and event.text:
+            if 'gen' in extract_flags(data).values() and event.text:
                 messages = markov.set_data(event.text, data.get('messages'))
 
                 if messages:
@@ -63,12 +63,14 @@ class LogMiddleware(BaseMiddleware):
             event: types.Update,
             data: Dict[str, Any]
     ) -> Any:
-        logging.debug(f'New event - {event.event_type}:\n{event}')
+        logging.debug(f'New event - {event.event_type}:\n{event.event}')
         return await handler(event, data)
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    timeouts = {'gen': 3, 'rps': 0.5}
+    timeouts = {
+        'gen': 3,
+    }
 
     def __init__(self, storage: BaseStorage):
         self.storage = storage
@@ -144,7 +146,7 @@ class UnhandledMiddleware(BaseMiddleware):
                 if messages:
                     await db.set_data(messages=messages)
 
-            elif event.sticker and event.sticker.set_name != "uno_cards":
+            elif event.sticker and event.sticker.set_name != 'uno_by_bp1lh_bot':
                 stickers: list[str] = await db.get_data('stickers')
 
                 if event.sticker.set_name not in stickers:
@@ -158,7 +160,7 @@ class UnhandledMiddleware(BaseMiddleware):
 class Middleware:
     inner: Optional[BaseMiddleware] = None
     outer: Optional[BaseMiddleware] = None
-    observers: Optional[Union[tuple, str]] = 'update'
+    observers: Optional[Union[str, set]] = 'update'
 
 
 def setup(dp: Dispatcher):
@@ -166,27 +168,25 @@ def setup(dp: Dispatcher):
 
     from locales.middleware import I18nContextMiddleware
     from utils.database.middleware import DataBaseContextMiddleware
-    from handlers.settings.commands.middleware import CustomCommandsMiddleware
 
     middlewares = (
         Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
-        Middleware(inner=DataMiddleware(), observers=('message', 'callback_query')),
+        Middleware(inner=DataMiddleware(), observers={'message', 'callback_query'}),
         Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage, pool_db=dp['pool_db'])),
-        Middleware(outer=CustomCommandsMiddleware(), observers='message'),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
         Middleware(outer=UnhandledMiddleware(), observers='message'),
     )
 
     for middleware in middlewares:
         if isinstance(middleware.observers, str):
-            middleware.observers = [middleware.observers]
+            middleware.observers = {middleware.observers}
 
         for observer in middleware.observers:
             register = dp.observers[observer]
 
             if middleware.inner:
                 register.middleware(middleware.inner)
-            elif middleware.outer:
+            else:
                 register.outer_middleware(middleware.outer)

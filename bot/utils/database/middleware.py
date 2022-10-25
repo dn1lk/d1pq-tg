@@ -21,6 +21,7 @@ class DataBaseContextMiddleware(BaseMiddleware):
         bot: Bot = data["bot"]
         chat_id: int = data.get("event_chat", data["event_from_user"]).id
         data["db"] = self.get_context(bot, chat_id)
+
         return await handler(event, data)
 
     def get_context(

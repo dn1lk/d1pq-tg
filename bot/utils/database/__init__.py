@@ -4,6 +4,8 @@ from asyncpg import Pool, Connection, create_pool
 
 from bot import config
 
+__all__ = 'setup'
+
 
 async def init_connection(conn: Connection):
     await conn.set_type_codec(

@@ -1,16 +1,16 @@
 from aiogram import Router, F
 from aiogram.utils.i18n import lazy_gettext as __
 
-from .. import Game, keyboards as k
+from .. import Games, keyboards as k
 
 DRAW_CARD = __("Take a card.")
 
 
 def setup():
     router = Router(name='game:uno')
-    router.message.filter(Game.uno)
-    router.poll.filter(Game.uno)
-    router.chat_member.filter(Game.uno)
+    router.message.filter(Games.uno)
+    router.poll.filter(Games.uno)
+    router.chat_member.filter(Games.uno)
     router.callback_query.filter(k.UnoGame.filter(F.game))
 
     from .process.middleware import UnoFSMContextMiddleware
@@ -18,7 +18,7 @@ def setup():
     router.inline_query.outer_middleware(UnoFSMContextMiddleware())
     router.poll.outer_middleware(UnoFSMContextMiddleware())
 
-    from .action import router as action_rt
+    from .transitions import router as action_rt
     from .core import router as core_rt
     from .inline import router as inline_rt
     from .poll import router as poll_rt

@@ -1,45 +1,43 @@
-from random import choices, choice
-from re import findall, split
+from random import choices, choice, random
+from re import split
 
-from aiogram import Router, Bot, F, types, filters, flags
+from aiogram import Router, Bot, F, types, filters, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.utils import markov, balaboba
-from . import NO_ARGS, get_username, get_command_list
-from .settings.commands.filter import CustomCommandFilter
+from . import NO_ARGS, get_username, get_commands
+from .settings.commands import CustomCommandFilter, CustomCommandsMiddleware
 
 router = Router(name="commands")
+router.message.outer_middleware(CustomCommandsMiddleware())
 
 
-@router.message(CustomCommandFilter(commands=['start', 'начать']))
-async def start_handler(message: types.Message, bot: Bot, i18n: I18n):
-    await message.answer(
-        _(
-            "Hello, {user}. "
-            "I am a text generator bot and in some cases a great conversationalist.\n\n"
-            "If you write me a message or a command, something might happen.\n\n"
-        ).format(user=get_username(message.from_user)) +
-        get_command_list(bot, i18n.current_locale, slice(2)),
+@router.message(CustomCommandFilter('start', 'начать'))
+async def start_handler(message: types.Message, i18n: I18n, commands: dict[str, tuple[types.BotCommand]]):
+    answer = _(
+        "I am a text generator bot and in some cases a great conversationalist.\n\n"
+        "If you write me a message or a command, something might happen.\n\n"
     )
 
+    commands = get_commands(commands, i18n.current_locale, slice(2))
+    await message.answer(answer + commands)
 
-@router.message(CustomCommandFilter(commands=['settings', 'настройки']))
+
+@router.message(CustomCommandFilter('settings', 'настройки'))
 async def settings_handler(message: types.Message, bot: Bot):
     """set up the bot, настроить бота"""
 
     from .settings.other import get_answer
-
     await message.answer(**await get_answer(message.chat.id, message.from_user.id, bot))
 
 
-@router.message(CustomCommandFilter(commands=['help', 'помощь']))
-async def help_handler(message: types.Message, bot: Bot, i18n: I18n):
+@router.message(CustomCommandFilter('help', 'помощь'))
+async def help_handler(message: types.Message, i18n: I18n, commands: dict[str, tuple[types.BotCommand]]):
     """get a list of main commands, получить список основных команд"""
 
-    await message.answer(
-        _("List of my main commands - I only accept them together with the required request, in one message:\n\n") +
-        get_command_list(bot, i18n.current_locale, slice(2, None))
-    )
+    answer = _("List of my main commands - I only accept them together with the required request, in one message:\n\n")
+    commands = get_commands(commands, i18n.current_locale, slice(2, None))
+    await message.answer(answer + commands)
 
 
 async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
@@ -49,20 +47,16 @@ async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs)
     }
 
 
-@router.message(CustomCommandFilter(commands=['choose', 'выбери'], magic=F.args))
-async def choose_handler(
-        message: types.Message,
-        command: filters.CommandObject
-):
+@router.message(CustomCommandFilter('choose', 'выбери', magic=F.args))
+async def choose_handler(message: types.Message, command: filters.CommandObject):
     """make a choice, сделать выбор"""
 
-    await message.answer(
-        _("I choose <b>{choice}</b>.").format(choice=choice(split(r'\W+or\W+|\W+или\W+|\W+', command.args)))
-    )
+    chosen = choice(split(r'\W+or\W+|\W+или\W+|\W{2,}', command.args))
+    await message.answer(_("I choose {choice}.").format(choice=html.bold(html.quote(chosen))))
 
 
-@router.message(CustomCommandFilter(commands=['choose', 'выбери']))
-@flags.data('messages')
+@router.message(CustomCommandFilter('choose', 'выбери'))
+@flags.throttling('gen')
 @flags.chat_action("typing")
 async def choose_no_args_handler(
         message: types.Message,
@@ -78,17 +72,17 @@ async def choose_no_args_handler(
     await message.answer(
         NO_ARGS.format(
             command=command.command,
-            args=_("{args[0]} or {args[1]}").format(args=choices(findall(r'\w{4,}', str(args)), k=2))
+            args=_("{args[0]} or {args[1]}").format(args=choices([arg for arg in args if len(arg) > 3]), k=2)
         )
     )
 
 
-@router.message(F.chat.type == 'private', CustomCommandFilter(commands=['who', 'кто']))
+@router.message(F.chat.type == 'private', CustomCommandFilter('who', 'кто'))
 async def who_private_handler(message: types.Message):
     await message.answer(_("This command only works in <b>chats</b>, alas =("))
 
 
-@router.message(CustomCommandFilter(commands=['who', 'кто'], magic=F.args))
+@router.message(CustomCommandFilter('who', 'кто', magic=F.args))
 @flags.data('members')
 async def who_chat_handler(
         message: types.Message,
@@ -109,7 +103,7 @@ async def who_chat_handler(
                     _("Maybe it's"),
                     _("Wait! It's")
                 )
-            ) + " " + get_username(member.user) + " " + f"<b>{command.args}</b>"
+            ) + f"{get_username(member.user)} {html.bold(html.quote(command.args))}"
         else:
             answer = (_("Oh, I don't know you guys... Give me a time."))
     else:
@@ -121,8 +115,8 @@ async def who_chat_handler(
     await message.answer(answer)
 
 
-@router.message(CustomCommandFilter(commands=['who', 'кто']))
-@flags.data('messages')
+@router.message(CustomCommandFilter('who', 'кто'))
+@flags.throttling('gen')
 @flags.chat_action("typing")
 async def who_chat_no_args_handler(
         message: types.Message,
@@ -130,7 +124,7 @@ async def who_chat_no_args_handler(
         i18n: I18n,
         messages: list | None = None,
 ):
-    message = await message.answer(_("<b>Who???</b>"))
+    message = await message.answer(html.bold(_("Who???")))
     await message.answer(
         NO_ARGS.format(
             **await get_command_args(
@@ -141,7 +135,7 @@ async def who_chat_no_args_handler(
     )
 
 
-@router.message(CustomCommandFilter(commands=['play', 'поиграем'], magic=F.args))
+@router.message(CustomCommandFilter('play', 'поиграем', magic=F.args))
 async def game_handler(message: types.Message):
     """play in a game, сыграть в игру"""
 
@@ -157,7 +151,7 @@ async def game_handler(message: types.Message):
     )
 
 
-@router.message(CustomCommandFilter(commands=['play', 'поиграем']))
+@router.message(CustomCommandFilter('play', 'поиграем'))
 async def game_no_args_handler(message: types.Message):
     await message.answer(
         _(
@@ -167,7 +161,7 @@ async def game_no_args_handler(message: types.Message):
     )
 
 
-@router.message(CustomCommandFilter(commands=['question', 'вопросик'], magic=F.args))
+@router.message(CustomCommandFilter('question', 'вопросик', magic=F.args))
 @flags.chat_action("typing")
 async def question_handler(
         message: types.Message,
@@ -187,8 +181,8 @@ async def question_handler(
     await message.answer(answer)
 
 
-@router.message(CustomCommandFilter(commands=['question', 'вопросик']))
-@flags.data('messages')
+@router.message(CustomCommandFilter('question', 'вопросик'))
+@flags.throttling('gen')
 @flags.chat_action("typing")
 async def question_no_args_handler(
         message: types.Message,
@@ -207,9 +201,8 @@ async def question_no_args_handler(
     )
 
 
-@router.message(CustomCommandFilter(commands=['history', 'короче']))
+@router.message(CustomCommandFilter('history', 'короче'))
 @flags.throttling('gen')
-@flags.data('messages')
 @flags.chat_action("typing")
 async def history_handler(
         message: types.Message,
@@ -220,19 +213,19 @@ async def history_handler(
 ):
     """tell a story, рассказать историю"""
 
-    query = command.args or choice(messages or [_("history")])
+    query = html.quote(command.args) or choice(messages or [_("history")])
 
-    if choice(['balaboba', 'markov']) == 'balaboba':
+    if random() > 0.5:
         answer = await yalm.gen(i18n.current_locale, query, 6)
     else:
-        query = (_("In short, ")) + query
+        query = _("In short, {query}").format(query=query)
         answer = markov.gen(i18n.current_locale, messages, query, state_size=2, tries=150000, min_words=50)
 
     await message.answer(answer)
 
 
 '''
-@router.message(CustomCommandFilter(commands=['future', 'погадай'], magic=F.args))
+@router.message(CustomCommandFilter('future', 'погадай', magic=F.args))
 @flags.chat_action("typing")
 async def future_handler(
         message: types.Message,
@@ -245,8 +238,8 @@ async def future_handler(
     await message.answer(await yalm.gen(i18n.current_locale, command.args, 10))
 
 
-@router.message(CustomCommandFilter(commands=['future', 'погадай']))
-@flags.data('messages')
+@router.message(CustomCommandFilter('future', 'погадай'))
+@flags.throttling('gen')
 @flags.chat_action("typing")
 async def future_no_args_handler(
         message: types.Message,

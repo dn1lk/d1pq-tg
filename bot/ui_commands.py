@@ -22,15 +22,15 @@ def get_bot_commands(router: Router, locale: str):
         yield from get_bot_commands(sub_router, locale)
 
 
-async def set_bot_commands(bot: Bot, dp: Dispatcher) -> dict:
+async def set_bot_commands(bot: Bot, dp: Dispatcher) -> dict[str, tuple]:
     commands_dict = {}
 
     for locale in config.i18n.available_locales:
-        commands_dict[locale] = list(get_bot_commands(dp, locale))
+        commands_dict[locale] = tuple(get_bot_commands(dp, locale))
 
         data = (
             (
-                list(filter(lambda command: command.command != 'settings', commands_dict[locale])),
+                [command for command in commands_dict[locale] if command.command != 'settings'],
                 BotCommandScopeDefault()
             ),
             (
@@ -38,7 +38,7 @@ async def set_bot_commands(bot: Bot, dp: Dispatcher) -> dict:
                 BotCommandScopeAllChatAdministrators(),
             ),
             (
-                list(filter(lambda command: command.command != 'who', commands_dict[locale])),
+                [command for command in commands_dict[locale] if command.command != 'who'],
                 BotCommandScopeAllPrivateChats()
             ),
         )

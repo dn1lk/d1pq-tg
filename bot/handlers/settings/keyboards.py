@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _, I18n
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -9,7 +11,7 @@ class Settings(CallbackData, prefix='set'):
 
 
 def settings():
-    datas = {
+    buttons = {
         'commands': _('Add command'),
         'locale': _('Change language'),
         'chance': _('Change generation chance'),
@@ -19,51 +21,47 @@ def settings():
 
     builder = InlineKeyboardBuilder()
 
-    for name, text in datas.items():
+    for name, text in buttons.items():
         builder.button(text=text, callback_data=Settings(name=name))
 
     builder.adjust(1)
     return builder.as_markup()
 
 
-def back(builder: InlineKeyboardBuilder):
+def settings_back(builder: InlineKeyboardBuilder):
     return builder.button(text=_("Back"), callback_data=Settings(name='back'))
 
 
-def get_locale_var(locales: tuple) -> zip:
+@lru_cache(maxsize=1)
+def get_locale_vars(locales: tuple) -> zip:
     return zip(locales, ('English', 'Русский'))
 
 
 def locale(i18n: I18n):
     builder = InlineKeyboardBuilder()
 
-    for code, language in get_locale_var(i18n.available_locales):
+    for code, language in get_locale_vars(i18n.available_locales):
         if code != i18n.current_locale:
             builder.button(text=language, callback_data=Settings(name='locale', value=code))
 
-    back(builder)
+    settings_back(builder)
     builder.adjust(1)
     return builder.as_markup()
 
 
 def chance(markov_chance: int | float):
-    datas = list()
+    builder = InlineKeyboardBuilder()
 
     for i in 6, 10:
         math = round(markov_chance / i, 2)
 
         if markov_chance > 10:
-            datas.append(('-' + str(math), markov_chance - math))
+            builder.button(text=f'-{math}', callback_data=Settings(name='chance', value=markov_chance - math))
 
         if markov_chance < 90:
-            datas.append(('+' + str(math), markov_chance + math))
+            builder.button(text=f'+{math}', callback_data=Settings(name='chance', value=markov_chance + math))
 
-    builder = InlineKeyboardBuilder()
-
-    for text, value in datas:
-        builder.button(text=text, callback_data=Settings(name='chance', value=value))
-
-    back(builder)
+    settings_back(builder)
     builder.adjust(2)
     return builder.as_markup()
 
@@ -75,25 +73,23 @@ def accuracy(markov_state: int):
         if i != markov_state:
             builder.button(text=str(i), callback_data=Settings(name='accuracy', value=i))
 
-    back(builder)
+    settings_back(builder)
     builder.adjust(3, 1)
     return builder.as_markup()
 
 
-def data(**datas):
+def data(**buttons):
+    text = _('{action} {item} recording')
     builder = InlineKeyboardBuilder()
 
-    for key, value in datas.items():
+    for key, value in buttons.items():
         builder.button(
-            text=_('{action} {item} recording').format(
-                action=_('Enable') if value[1] else _('Disable'),
-                item=key.lower(),
-            ),
+            text=text.format(action=_('Enable') if value[1] else _('Disable'), item=key.lower()),
             callback_data=Settings(name=key, value=value[1])
         )
 
     builder.button(text=_('Delete all data'), callback_data=Settings(name='delete'))
 
-    back(builder)
+    settings_back(builder)
     builder.adjust(1)
     return builder.as_markup()

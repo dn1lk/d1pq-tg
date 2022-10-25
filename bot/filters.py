@@ -57,7 +57,7 @@ class AdminFilter(filters.BaseFilter):
     def __init__(self, is_admin: bool = True) -> None:
         self.is_admin: bool = is_admin
 
-    async def __call__(self, obj: Union[types.Message, types.CallbackQuery], bot: Bot) -> bool:
+    async def __call__(self, obj: Union[types.Message, types.CallbackQuery], bot: Bot, owner_id: int) -> bool:
         if isinstance(obj, types.Message):
             chat_id = obj.chat.id
         elif isinstance(obj, types.CallbackQuery):
@@ -65,8 +65,8 @@ class AdminFilter(filters.BaseFilter):
         else:
             return False
 
-        if obj.from_user.id in (chat_id, bot.owner_id) or \
-                obj.from_user.id in map(lambda member: member.user.id, await bot.get_chat_administrators(chat_id)):
+        if obj.from_user.id in (chat_id, owner_id) or \
+                obj.from_user.id in (member.user.id for member in await bot.get_chat_administrators(chat_id)):
             return self.is_admin
-        else:
-            return not self.is_admin
+
+        return not self.is_admin

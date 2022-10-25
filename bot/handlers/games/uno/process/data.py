@@ -249,7 +249,7 @@ class UnoData(BaseModel):
     def special_reverse(self) -> str:
         if len(self.users) > 2:
             user_id = self.current_user_id
-            self.users = dict(reversed(self.users.items()))
+            self.users = dict(reversed(*self.users.items()))
             self.current_index = tuple(self.users).index(user_id)
 
             return choice(
@@ -305,7 +305,7 @@ class UnoData(BaseModel):
     @staticmethod
     async def add_user(state: FSMContext, user_id: int, deck: list[UnoCard]) -> UnoUser:
         async def add_state():
-            from .. import Game
+            from .. import Games
 
             key = StorageKey(
                 bot_id=state.key.bot_id,
@@ -314,7 +314,7 @@ class UnoData(BaseModel):
                 destiny=state.key.destiny
             )
 
-            await state.storage.set_state(state.bot, key, Game.uno)
+            await state.storage.set_state(state.bot, key, Games.uno)
             await state.storage.update_data(state.bot, key, {'uno_chat_id': state.key.chat_id})
 
         await add_state()

@@ -32,6 +32,5 @@ async def leave_handler(
         except UnoNoUsersException:
             await finish(message, data_uno, state)
 
-    from ... import action
-
-    await action.leave_handler(event, bot, db, members)
+    from ...transitions.group import leave_handler
+    await leave_handler(event, bot, db, members)

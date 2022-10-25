@@ -5,13 +5,19 @@ from aiogram import Router, Bot, F, types, flags, filters
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.handlers import NO_ARGS
+from bot import filters as f
 from bot.utils import markov
 from bot.utils.database.context import DataBaseContext
+from .filter import CustomCommandFilter
 from .middleware import CustomCommandsMiddleware
 from .. import Settings, keyboards as k
+from ... import NO_ARGS
+
+__all__ = 'CustomCommandFilter', 'CustomCommandsMiddleware', 'router'
 
 router = Router(name='settings:commands')
+router.message.filter(Settings.command, f.AdminFilter(is_admin=True))
+router.message.outer_middleware(CustomCommandsMiddleware())
 router.callback_query.outer_middleware(CustomCommandsMiddleware())
 
 
@@ -20,8 +26,8 @@ router.callback_query.outer_middleware(CustomCommandsMiddleware())
 async def commands_handler(
         query: types.CallbackQuery,
         state: FSMContext,
-        bot: Bot,
         i18n: I18n,
+        commands: dict[str, tuple[types.BotCommand]],
         messages: list | None = None,
         custom_commands: dict | None = None,
 ):
@@ -37,7 +43,7 @@ async def commands_handler(
             "{no_args} - and I will answer this command."
         ).format(
             no_args=NO_ARGS.format(
-                command=choice(bot.commands[i18n.current_locale]).command,
+                command=choice(commands[i18n.current_locale]).command,
                 args=choice(findall(r'\w+', str(args))).lower()
             )
         )
@@ -51,24 +57,25 @@ async def commands_handler(
     await message.answer(_("Current custom commands:") + "\n\n" + custom_commands)
 
 
-async def commands_setup_no_args_filter(
+async def commands_setup_filter(
         message: types.Message,
         bot: Bot,
+        commands: dict[str, tuple[types.BotCommand]],
         command_magic: F | None = None
 ):
-    return await filters.Command(
-        commands=[command.command for command in bot.commands['en']],
-        ignore_case=True,
-        magic=command_magic
-    )(message, bot)
+    return await filters.Command(*(command.command for command in commands['en']), magic=command_magic)(message, bot)
 
 
-async def commands_setup_filter(message, bot):
-    return await commands_setup_no_args_filter(message, bot, F.args)
+async def commands_setup_with_args_filter(
+        message: types.Message,
+        bot: Bot,
+        commands: dict[str, tuple[types.BotCommand]]
+):
+    return await commands_setup_filter(message, bot, commands, F.args.regexp(r'\w+'))
 
 
-@router.message(commands_setup_filter)
-async def commands_setup_handler(
+@router.message(commands_setup_with_args_filter)
+async def commands_setup_with_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         db: DataBaseContext,
@@ -98,9 +105,9 @@ async def commands_setup_handler(
     await message.answer(answer)
 
 
-@router.message(commands_setup_no_args_filter)
-@flags.data('messages')
-async def commands_setup_no_args_handler(
+@router.message(commands_setup_filter)
+@flags.throttling('gen')
+async def commands_setup_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
@@ -112,12 +119,7 @@ async def commands_setup_no_args_handler(
         args = messages + args
 
     message = await message.answer(_("<b>Custom command not recognized.</b>"))
-    await message.answer(
-        NO_ARGS.format(
-            command=command.command,
-            args=choice(findall(r'\w+', str(args))).lower()
-        )
-    )
+    await message.answer(NO_ARGS.format(command=command.command, args=choice(sum(args)).lower()))
 
 
 @router.message()

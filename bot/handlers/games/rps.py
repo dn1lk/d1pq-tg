@@ -1,7 +1,7 @@
 from enum import Enum
 from random import choice
 
-from aiogram import Router, F, types, flags
+from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import gettext as _
 
 from . import keyboards as k
@@ -39,7 +39,7 @@ class RPSVars(str, Enum):
 @router.callback_query(k.Games.filter(F.game == 'rps'))
 @flags.throttling('rps')
 async def answer_handler(query: types.CallbackQuery, callback_data: k.Games):
-    bot_var: RPSVars = choice(tuple(RPSVars))
+    bot_var: RPSVars = choice(*RPSVars)
     user_var: RPSVars = RPSVars(callback_data.value)
 
     await query.answer(_("Your choice: {user_var}").format(user_var=user_var.word))
@@ -59,8 +59,8 @@ async def answer_handler(query: types.CallbackQuery, callback_data: k.Games):
         loses += 1
         result = _("my defeat...")
 
+    score = _("Score: {loses}-{wins}.\nPlay again?").format(loses=html.bolt(loses), wins=html.bolt(wins))
     await query.message.edit_text(
-        f'{bot_var.word}! {get_username(query.from_user)}, {result}\n\n' +
-        _("Score: <b>{loses}</b>-<b>{wins}</b>.\nPlay again?").format(loses=loses, wins=wins),
+        f'{bot_var.word}! {get_username(query.from_user)}, {result}\n\n{score}',
         reply_markup=k.rps_show_vars()
     )

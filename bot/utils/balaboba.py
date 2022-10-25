@@ -8,12 +8,13 @@ class Yalm:
     @classmethod
     async def setup(cls) -> "Yalm":
         yalm = cls()
+        locales = {
+            'ru': 'intros',
+            'en': 'intros_eng',
+        }
 
-        for locale in ("ru", "en"):
-            response = await yalm._get_response(
-                method="GET",
-                endpoint="intros" if locale == "ru" else "intros_eng",
-            )
+        for locale, intro in locales.items():
+            response = await yalm._get_response(method="GET", endpoint=intro)
             yalm.intros[locale] = tuple(intro[0] for intro in response["intros"])
 
         return yalm
@@ -39,32 +40,16 @@ class Yalm:
 
             return get_none(locale).make_sentence()
 
-    async def _get_response(
-            self,
-            *,
-            method: str,
-            endpoint: str,
-            json: dict | None = None,
-    ):
-        if not self.session or self.session.closed:
+    async def _get_response(self, method: str, endpoint: str, json: dict | None = None):
+        if self.session.closed:
             self.session = ClientSession()
 
-        return await self._fetch(
-            method=method,
-            endpoint=endpoint,
-            json=json,
-        )
+        return await self._fetch(method=method, endpoint=endpoint, json=json)
 
-    async def _fetch(
-            self,
-            method: str,
-            endpoint: str,
-            json: dict,
-    ):
+    async def _fetch(self, method: str, endpoint: str, json: dict):
         async with self.session.request(
                 method,
-                f"https://yandex.ru/lab/api/yalm/{endpoint}",
+                f'https://yandex.ru/lab/api/yalm/{endpoint}',
                 json=json,
-                raise_for_status=True,
         ) as response:
             return await response.json()

@@ -11,9 +11,7 @@ import config
 async def setup(dp: Dispatcher, bot: Bot):
     user: types.User = await bot.me()
     webhook_logger = logging.getLogger("aiogram.webhook")
-    webhook_logger.info(
-        "Setup webhook for bot @%s id=%d - %r", user.username, bot.id, user.full_name
-    )
+    webhook_logger.info("Setup webhook for bot @%s id=%d - %r", user.username, bot.id, user.full_name)
 
     await bot.set_webhook(
         url=config.heroku.domain_url + '/webhook/' + bot.token,

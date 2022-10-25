@@ -1,9 +1,15 @@
+from functools import lru_cache
 from random import choice
 
 from pydantic import BaseModel
 
-from bot import filters as f
-from . import get_cities
+from bot import config, filters as f
+
+
+@lru_cache(maxsize=2)
+def get_cities(locale: str) -> list:
+    with open(config.BASE_DIR / 'locales' / locale / 'cities.txt', 'r', encoding='utf8') as r:
+        return r.read().splitlines()
 
 
 class CtsData(BaseModel):
@@ -35,7 +41,7 @@ class CtsData(BaseModel):
                     yield city
             yield None
 
-        self.bot_var = choice(tuple(get_city()))
+        self.bot_var = choice(*get_city())
 
         if self.bot_var:
             self.cities.append(self.bot_var)

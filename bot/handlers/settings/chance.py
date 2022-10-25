@@ -1,4 +1,4 @@
-from aiogram import Router, Bot, F, types, flags
+from aiogram import Router, Bot, F, types, flags, html
 from aiogram.utils.i18n import gettext as _
 
 from bot.utils.database.context import DataBaseContext
@@ -13,30 +13,33 @@ async def chance_update_handler(
         query: types.CallbackQuery,
         callback_data: k.Settings,
         bot: Bot,
-        db: DataBaseContext
+        db: DataBaseContext,
 ):
     chance = float(callback_data.value)
 
     if chance <= 10:
-        answer = _("The chance of text generation has reached the limit: <b>{chance}%</b>, below is impossible.")
+        answer = _("The chance of text generation has reached the limit: {chance}%, below is impossible.")
     elif chance >= 90:
-        answer = _("The chance of text generation has reached the limit: <b>{chance}%</b>, higher is impossible.")
+        answer = _("The chance of text generation has reached the limit: {chance}%, higher is impossible.")
     else:
-        answer = _("Text generation chance successfully updated: <b>{chance}%</b>.")
-
-    answer = answer.format(chance=chance) + str(UPDATE_AGAIN)
+        answer = _("Text generation chance successfully updated: {chance}%.")
 
     await db.set_data(chance=chance * await bot.get_chat_member_count(query.message.chat.id) / 100)
-    await query.message.edit_text(answer, reply_markup=k.chance(chance))
+    await query.message.edit_text(
+        answer.format(chance=html.bold(chance)) + UPDATE_AGAIN.value,
+        reply_markup=k.chance(chance)
+    )
+    await query.answer()
 
 
 @router.callback_query()
 @flags.data('chance')
 async def chance_handler(
         query: types.CallbackQuery,
-        chance: float
+        chance: float,
 ):
     await query.message.edit_text(
-        _("Current text generation chance: <b>{chance}%</b>.").format(chance=chance) + str(UPDATE),
+        _("Current text generation chance: {chance}%.").format(chance=html.bold(chance)) + UPDATE.value,
         reply_markup=k.chance(chance)
     )
+    await query.answer()

@@ -15,20 +15,25 @@ async def locale_update_handler(
         callback_data: k.Settings,
         db: DataBaseContext,
 ):
+    answer = _(
+        "<b>The language has been successfully updated.</b>\n\n"
+        "Already the next message will be in the language: {locale}."
+    )
     await db.set_data(locale=callback_data.value)
     await query.message.edit_text(
-        _(
-            "<b>The language has been successfully updated.</b>\n\n"
-            "Already the next message will be in the language: {locale}."
-        ).format(locale=dict(k.get_locale_var(i18n.available_locales))[callback_data.value])
+        answer.format(locale=dict(k.get_locale_vars(i18n.available_locales))[callback_data.value])
     )
+    await query.answer()
 
 
 @router.callback_query()
 async def locale_handler(query: types.CallbackQuery, i18n: I18n):
+    answer = _(
+        "<b>Update bot language.</b>\n\n"
+        "Current language: <b>{locale}</b>. Available languages:"
+    )
     await query.message.edit_text(
-        _("<b>Update bot language.</b>\n\nCurrent language: <b>{locale}</b>. Available languages:").format(
-            locale=dict(k.get_locale_var(i18n.available_locales))[i18n.current_locale]
-        ),
+        answer.format(locale=dict(k.get_locale_vars(i18n.available_locales))[i18n.current_locale]),
         reply_markup=k.locale(i18n)
     )
+    await query.answer()

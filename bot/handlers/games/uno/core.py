@@ -8,7 +8,7 @@ from aiogram.utils.i18n import gettext as _
 from bot.handlers import get_username
 from .process import UnoData, get_deck
 from .settings import UnoSettings, extract_current_difficulty, extract_current_mode
-from .. import Game, keyboards as k
+from .. import Games, keyboards as k
 
 router = Router(name='game:uno:core')
 
@@ -59,7 +59,7 @@ async def start_handler(
 
     deck = await get_deck(bot)
     users = {user_id: await UnoData.add_user(state, user_id, deck) for user_id in user_ids}
-    await state.set_state(Game.uno)
+    await state.set_state(Games.uno)
 
     data_uno = UnoData(
         deck=deck,
