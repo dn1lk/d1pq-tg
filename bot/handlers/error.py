@@ -26,18 +26,17 @@ async def edit_handler(event: ErrorEvent, bot: Bot):
 
 @router.errors()
 async def errors_handler(event: ErrorEvent, bot: Bot):
-    trcback = traceback.format_exc().splitlines()
-    formatted_trcback = "\n".join(trcback[-3:])
+    trcback = traceback.format_exc()[-7:]
     
     try:
         await bot.send_message(
             bot.owner_id,
             (
                 f'ERROR while event <b>{event.update.event_type}</b>\n\n'
-                f'{formatted_trcback}'
+                f'{trcback}'
             )
         )
     except exceptions.TelegramBadRequest:
         logging.critical("TelegramBadRequest: can't send error message")
     finally:
-        logging.error(formatted_trcback)
+        logging.error(trcback)
