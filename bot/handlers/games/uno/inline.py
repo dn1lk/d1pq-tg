@@ -7,7 +7,9 @@ from .process import UnoData
 from .process.middleware import UnoDataMiddleware, UnoFSMContextMiddleware
 
 router = Router(name='game:uno:inline')
-router.inline_query.outer_middleware(UnoFSMContextMiddleware(), UnoDataMiddleware())
+router.inline_query.outer_middleware(UnoFSMContextMiddleware())
+router.inline_query.outer_middleware(UnoDataMiddleware())
+
 
 command = '/play uno'
 thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
