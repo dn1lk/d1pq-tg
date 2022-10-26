@@ -59,14 +59,14 @@ async def start_handler(
 
     deck = await get_deck(bot)
     users = {user_id: await UnoData.add_user(state, user_id, deck) for user_id in user_ids}
-    await state.set_state(Games.uno)
-
     data_uno = UnoData(
         deck=deck,
         users=users,
         current_index=choice(range(len(users))),
         settings=UnoSettings(difficulty=extract_current_difficulty(message), mode=extract_current_mode(message)),
     )
+
+    await state.set_state(Games.uno)
 
     from .process.core import post
 
