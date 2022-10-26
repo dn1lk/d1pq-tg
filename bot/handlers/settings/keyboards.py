@@ -34,6 +34,7 @@ def settings_back(builder: InlineKeyboardBuilder):
 
 @lru_cache(maxsize=1)
 def get_locale_vars(locales: tuple) -> zip:
+    print(locales)
     return zip(locales, ('English', 'Русский'))
 
 
