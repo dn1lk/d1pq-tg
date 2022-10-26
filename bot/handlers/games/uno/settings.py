@@ -45,12 +45,11 @@ class UnoSettings(BaseModel):
 
 
 def get_bold_entity(message: types.Message):
-    print(message.entities)
     return [entity for entity in message.entities if entity.type == 'bold']
 
 
 def extract_current_difficulty(message: types.Message) -> UnoDifficulty:
-    difficulty_word = get_bold_entity(message)[0].extract_from(message.text)
+    difficulty_word = get_bold_entity(message)[1].extract_from(message.text)
 
     for difficulty in UnoDifficulty:
         if difficulty.word == difficulty_word:
@@ -77,7 +76,7 @@ async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k
 
 
 def extract_current_mode(message: types.Message) -> UnoMode:
-    mode_word = get_bold_entity(message)[1].extract_from(message.text)
+    mode_word = get_bold_entity(message)[2].extract_from(message.text)
 
     for mode in UnoMode:
         if mode.word == mode_word:
