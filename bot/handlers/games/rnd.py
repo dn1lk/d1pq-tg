@@ -11,7 +11,7 @@ router.message.filter(Games.rnd)
 
 
 @router.message(F.chat.type == 'private', F.text.in_(set(map(str, range(1, 11)))))
-async def private_handler(message: types.Message):
+async def private_handler(message: types.Message, state: FSMContext):
     await state.clear()
     bot_var = str(choice(range(1, 11)))
 
