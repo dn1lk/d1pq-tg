@@ -44,7 +44,7 @@ class UnoSettings(BaseModel):
     mode: UnoMode
 
 
-def get_bold_entity(message: types.Message)
+def get_bold_entity(message: types.Message):
     return [entity for entity in message.entities if entity.type == 'bold']
 
 
