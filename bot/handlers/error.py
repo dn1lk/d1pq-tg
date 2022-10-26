@@ -32,7 +32,7 @@ async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int):
     tracback = '\n'.join(traceback.format_exc().splitlines()[-9:])
 
     try:
-        await bot.send_message(owner_id, html.bold(title) + html.pre(html.quote(tracback), language='python'))
+        await bot.send_message(owner_id, html.bold(title) + html.pre_language(html.quote(tracback), language='python'))
     except TelegramBadRequest:
         logging.critical("TelegramBadRequest: can't send error message")
     finally:
