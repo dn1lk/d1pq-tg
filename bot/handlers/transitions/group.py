@@ -46,7 +46,7 @@ async def join_handler(
         members: list | None = None
 ):
     if members:
-        await db.set_data(members={*members, event.new_chat_member.user.id})
+        await db.set_data(members=[*members, event.new_chat_member.user.id])
 
     if event.new_chat_member.user.is_bot:
         answer = (
