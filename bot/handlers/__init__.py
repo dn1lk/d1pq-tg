@@ -3,7 +3,7 @@ from aiogram.utils.i18n import lazy_gettext as __
 
 __all__ = 'NO_ARGS', 'setup', 'get_username', 'get_commands'
 
-NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: <pre>/{command} {args}</pre>")
+NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: <code>/{command} {args}</code>")
 
 
 def get_username(user: types.User) -> str:
