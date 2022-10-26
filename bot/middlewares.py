@@ -16,8 +16,8 @@ from utils.database.context import DataBaseContext
 class DataMiddleware(BaseMiddleware):
     async def __call__(
             self,
-            handler: Callable[[Union[types.Message, types.CallbackQuery], Dict[str, Any]], Awaitable[Any]],
-            event: Union[types.Message, types.CallbackQuery],
+            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            event: types.TelegramObject,
             data: Dict[str, Any]
     ) -> Any:
         db: DataBaseContext = data['db']
@@ -172,7 +172,7 @@ def setup(dp: Dispatcher):
     middlewares = (
         Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
-        Middleware(inner=DataMiddleware(), observers={'message', 'callback_query'}),
+        Middleware(inner=DataMiddleware(), observers={'message', 'callback_query', 'chat_member'}),
         Middleware(outer=LogMiddleware()),
         Middleware(outer=DataBaseContextMiddleware(storage=dp.storage, pool_db=dp['pool_db'])),
         Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
