@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _, I18n
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -32,9 +30,7 @@ def settings_back(builder: InlineKeyboardBuilder):
     return builder.button(text=_("Back"), callback_data=Settings(name='back'))
 
 
-@lru_cache(maxsize=2)
 def get_locale_vars(locales: tuple) -> zip:
-    print(locales)
     return zip(locales, ('English', 'Русский'))
 
 
