@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from . import Games, keyboards as k, timer, win_timeout
+from . import Games, keyboards as k, timer, win_timeout, close_timeout
 from .. import get_username
 from ..settings.commands import CustomCommandFilter, CustomCommandsMiddleware
 
