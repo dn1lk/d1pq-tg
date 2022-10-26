@@ -103,7 +103,7 @@ async def who_chat_handler(
                     _("Maybe it's"),
                     _("Wait! It's")
                 )
-            ) + f"{get_username(member.user)} {html.bold(html.quote(command.args))}"
+            ) + f" {get_username(member.user)} {html.bold(html.quote(command.args))}"
         else:
             answer = (_("Oh, I don't know you guys... Give me a time."))
     else:
