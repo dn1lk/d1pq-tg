@@ -75,7 +75,7 @@ async def start_handler(
 
 @router.callback_query(k.UnoGame.filter(F.value == 'start'))
 async def start_no_owner_handler(query: types.CallbackQuery):
-    await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[3].user.first_name))
+    await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[4].user.first_name))
 
 
 @router.callback_query(k.UnoGame.filter(F.value == 'join'))
