@@ -32,7 +32,7 @@ def settings_back(builder: InlineKeyboardBuilder):
     return builder.button(text=_("Back"), callback_data=Settings(name='back'))
 
 
-@lru_cache(maxsize=1)
+@lru_cache(maxsize=2)
 def get_locale_vars(locales: tuple) -> zip:
     print(locales)
     return zip(locales, ('English', 'Русский'))
