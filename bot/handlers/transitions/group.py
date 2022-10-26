@@ -73,7 +73,6 @@ async def leave_handler(
         db: DataBaseContext,
         members: list | None = None,
 ):
-    print(members)
     if members and event.new_chat_member.user.id in members:
         members.remove(event.new_chat_member.user.id)
         await db.update_data(members=members)
