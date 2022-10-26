@@ -33,6 +33,7 @@ async def timeout(message: types.Message, state: FSMContext):
         poll_message = await message.answer_poll(
             _("Kick a player from the game?"),
             options=[_("Yes"), _("No, keep playing")],
+            is_anonymous=False,
         )
 
         from ..poll import close_poll_timer
