@@ -78,8 +78,8 @@ async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k
 def extract_current_mode(message: types.Message) -> UnoMode:
     mode_word = get_bold_entity(message)[1].extract_from(message.text)
 
-    for difficulty in UnoMode:
-        if difficulty.word == mode_word:
+    for mode in UnoMode:
+        if mode.word == mode_word:
             return difficulty
 
 
