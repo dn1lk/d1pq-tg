@@ -80,7 +80,7 @@ def extract_current_mode(message: types.Message) -> UnoMode:
 
     for mode in UnoMode:
         if mode.word == mode_word:
-            return difficulty
+            return mode
 
 
 @router.callback_query(
