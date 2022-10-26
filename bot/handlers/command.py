@@ -213,7 +213,7 @@ async def history_handler(
 ):
     """tell a story, рассказать историю"""
 
-    query = html.quote(command.args) or choice(messages or [_("history")])
+    query = html.quote(command.args) if command.args else choice(messages or [_("history")])
 
     if random() > 0.5:
         answer = await yalm.gen(i18n.current_locale, query, 6)
