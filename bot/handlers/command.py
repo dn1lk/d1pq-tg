@@ -171,11 +171,11 @@ async def question_handler(
 ):
     """answer the question, ответить на вопрос"""
 
-    command.args = html.quote(command.args)
-    message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=html.bold(command.args)))
+    args = html.quote(command.args)
+    message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=html.bold(args)))
 
     if len(command.args) < 20:
-        answer = await yalm.gen(i18n.current_locale, command.args, 8)
+        answer = await yalm.gen(i18n.current_locale, args, 8)
     else:
         answer = _("Let's do it sooner!")
 
