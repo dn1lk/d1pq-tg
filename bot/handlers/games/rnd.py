@@ -12,6 +12,7 @@ router.message.filter(Games.rnd)
 
 @router.message(F.chat.type == 'private', F.text.in_(set(map(str, range(1, 11)))))
 async def private_handler(message: types.Message):
+    await state.clear()
     bot_var = str(choice(range(1, 11)))
 
     answer = _("Ok, so... My choice is {bot_var}.\n").format(bot_var=html.bold(bot_var))
