@@ -59,9 +59,9 @@ class UnoBot:
             try:
                 if cards:
                     self.data.current_card, accept = choice(cards)
-                    self.message = await self.message.answer_sticker(self.data.current_card.file_id)
 
                     try:
+                        self.message = await self.message.answer_sticker(self.data.current_card.file_id)
                         await pre(
                             self.message,
                             self.data,
