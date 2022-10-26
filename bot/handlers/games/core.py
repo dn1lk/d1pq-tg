@@ -91,12 +91,14 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
 @router.message(F.chat.type == 'private', F.text.endswith(('rnd', 'рнд')))
 async def rnd_private_handler(message: types.Message, state: FSMContext):
     await state.set_state(Games.rnd)
-    await message.answer(
+    message = await message.answer(
         _(
             "Hmm, you are trying your luck... Well, ender any number between 1 and 10 and I'll choose "
             "my own and we find out if our thoughts are the same ;)."
         )
     )
+
+    timer(state, close_timeout, message=message)
 
 
 @router.message(F.text.endswith(('rnd', 'рнд')))
