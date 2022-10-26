@@ -72,7 +72,7 @@ async def choose_no_args_handler(
     await message.answer(
         NO_ARGS.format(
             command=command.command,
-            args=_("{args[0]} or {args[1]}").format(args=choices([arg for arg in args if len(arg) > 3]), k=2)
+            args=_("{args[0]} or {args[1]}").format(args=choices([arg for arg in args if len(arg) > 3], k=2))
         )
     )
 
