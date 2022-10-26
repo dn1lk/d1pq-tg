@@ -41,7 +41,7 @@ class CtsData(BaseModel):
                     yield city
             yield None
 
-        self.bot_var = choice(*get_city())
+        self.bot_var = choice(tuple(get_city()))
 
         if self.bot_var:
             self.cities.append(self.bot_var)
