@@ -2,7 +2,7 @@ import asyncio
 import logging
 import traceback
 
-from aiogram import Router, Bot
+from aiogram import Router, Bot, html
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 from aiogram.filters import ExceptionTypeFilter, ExceptionMessageFilter
 from aiogram.types.error_event import ErrorEvent
