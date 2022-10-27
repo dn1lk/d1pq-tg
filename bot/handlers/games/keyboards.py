@@ -11,7 +11,6 @@ class Games(CallbackData, prefix='game'):
 
 class UnoGame(Games, prefix='game'):
     game: str = 'uno'
-    target: int = None
 
 
 def uno_start():
@@ -27,17 +26,17 @@ def uno_start():
 
 
 def uno_settings(message: types.Message):
-    from .uno.settings import UnoDifficulty, UnoMode, extract_current_difficulty, extract_current_mode
+    from .uno.settings import UnoDifficulty, UnoMode, extract_difficulty, extract_mode
 
     builder = InlineKeyboardBuilder()
 
-    current_difficulty = extract_current_difficulty(message)
+    current_difficulty = extract_difficulty(message)
 
     for difficulty in UnoDifficulty:
         if difficulty is not current_difficulty:
             builder.button(text=difficulty.word.capitalize(), callback_data=UnoGame(value=difficulty.name))
 
-    current_mode = extract_current_mode(message)
+    current_mode = extract_mode(message)
 
     for mode in UnoMode:
         if mode is not current_mode:
@@ -49,17 +48,11 @@ def uno_settings(message: types.Message):
     return builder.as_markup()
 
 
-def uno_show_cards(data_uno: "UnoData"):
+def uno_show_cards(bluffed: int):
     builder = InlineKeyboardBuilder()
 
-    if data_uno.current_special.drawn and data_uno.current_card.cost == 50:
-        builder.button(
-            text=_("Is Wild card legal?"),
-            callback_data=UnoGame(
-                value='check_draw_black_card',
-                target=data_uno.prev_user_id,
-            )
-        )
+    if bluffed:
+        builder.button(text=_("Bluff!"), callback_data=UnoGame(value='bluff'))
 
     builder.button(text=_("Show cards"), switch_inline_query_current_chat="uno")
 
@@ -79,7 +72,7 @@ def uno_color():
     return builder.as_markup()
 
 
-def uno_uno():
+def uno_say():
     from .uno.process.bot import UNO
 
     builder = InlineKeyboardBuilder()

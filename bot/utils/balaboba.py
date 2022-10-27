@@ -36,8 +36,7 @@ class Yalm:
             else:
                 return answer["text"]
         except (ClientResponseError, KeyError):
-            from markov import get_none
-
+            from .markov import get_none
             return get_none(locale).make_sentence()
 
     async def _get_response(self, method: str, endpoint: str, json: dict | None = None):

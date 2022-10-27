@@ -45,7 +45,8 @@ class UnoEmoji(str, Enum):
     reverse = '🔃'
     skip = '🚫'
     color = '🌈'
-    draw = '➕'
+    draw_2 = '➕'
+    draw_4 = '✖'
 
 
 class UnoCard(BaseModel):
@@ -55,6 +56,9 @@ class UnoCard(BaseModel):
 
     color: UnoColors
     cost: int
+
+    def __radd__(self, other):
+        return self.cost.__add__(other)
 
 
 async def get_deck(bot: Bot) -> list[UnoCard]:

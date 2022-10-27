@@ -44,22 +44,25 @@ class UnoSettings(BaseModel):
     mode: UnoMode
 
 
-def get_bold_entity(message: types.Message):
-    print(message.entities)
-    return [entity for entity in message.entities if entity.type == 'bold']
+def get_settings(entities: list[types.MessageEntity]):
+    return [entity for entity in entities if entity.type == 'bold']
 
 
-def extract_current_difficulty(message: types.Message) -> UnoDifficulty:
-    difficulty_word = get_bold_entity(message)[1].extract_from(message.text)
+def extract_difficulty(message: types.Message) -> UnoDifficulty:
+    difficulty_word = get_settings(message.entities)[1].extract_from(message.text)
 
     for difficulty in UnoDifficulty:
         if difficulty.word == difficulty_word:
             return difficulty
 
 
-@router.callback_query(F.from_user.id == F.message.entities[4].user.id, k.UnoGame.filter(F.value == 'settings'))
+@router.callback_query(
+    F.from_user.id == F.message.entities[4].user.id,
+    k.UnoGame.filter(F.value == 'settings')
+)
 async def settings_handler(query: types.CallbackQuery):
     await query.message.edit_reply_markup(k.uno_settings(query.message))
+    await query.answer()
 
 
 @router.callback_query(
@@ -69,15 +72,16 @@ async def settings_handler(query: types.CallbackQuery):
 async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k.Games):
     await query.message.edit_text(
         query.message.html_text.replace(
-            extract_current_difficulty(query.message).word,
+            extract_difficulty(query.message).word,
             UnoDifficulty[callback_data.value].word,
         ),
         reply_markup=k.uno_start(),
     )
+    await query.answer()
 
 
-def extract_current_mode(message: types.Message) -> UnoMode:
-    mode_word = get_bold_entity(message)[2].extract_from(message.text)
+def extract_mode(message: types.Message) -> UnoMode:
+    mode_word = get_settings(message.entities)[2].extract_from(message.text)
 
     for mode in UnoMode:
         if mode.word == mode_word:
@@ -91,16 +95,18 @@ def extract_current_mode(message: types.Message) -> UnoMode:
 async def mode_change_handler(query: types.CallbackQuery, callback_data: k.Games):
     await query.message.edit_text(
         query.message.html_text.replace(
-            extract_current_mode(query.message).word,
+            extract_mode(query.message).word,
             UnoMode[callback_data.value].word,
         ),
         reply_markup=k.uno_start(),
     )
+    await query.answer()
 
 
 @router.callback_query(F.from_user.id == F.message.entities[4].user.id, k.UnoGame.filter(F.value == 'back'))
 async def settings_back_handler(query: types.CallbackQuery):
     await query.message.edit_reply_markup(k.uno_start())
+    await query.answer()
 
 
 @router.callback_query()

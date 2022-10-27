@@ -13,7 +13,7 @@ async def get_answer(chat_id: int, user_id: int, bot: Bot) -> dict:
         chat = _("dialogue")
     else:
         admins = ', '.join(get_username(admin.user) for admin in await bot.get_chat_administrators(chat_id))
-        chat = _("chat - they are only available to the administrator - {admins}").format(
+        chat = _("chat - only for {admins}").format(
             admins=admins or _("only I don't know who it is... So")
         )
 
@@ -25,7 +25,7 @@ async def get_answer(chat_id: int, user_id: int, bot: Bot) -> dict:
 
 @router.callback_query(f.AdminFilter(is_admin=False))
 async def no_admin_handler(query: types.CallbackQuery):
-    await query.answer(_("These commands are only available to the administrator."))
+    await query.answer(_("Only for administrators."))
 
 
 @router.callback_query(k.Settings.filter(F.name == 'back'))

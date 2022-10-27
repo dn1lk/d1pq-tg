@@ -18,8 +18,7 @@ router.message.outer_middleware(CustomCommandsMiddleware())
 @router.message(F.text.endswith(('uno', 'уно')), Games.uno)
 async def uno_join_handler(message: types.Message, state: FSMContext):
     from .uno.process import UnoData
-
-    data_uno = UnoData(**(await state.get_data())['uno'])
+    data_uno = await UnoData.get(state)
 
     if message.from_user.id in data_uno.users:
         await message.reply(_("You already in the game."))
@@ -27,7 +26,7 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
         await message.reply(_("Already 10 people are playing in the game. Just wait."))
     else:
         data_uno.users[message.from_user.id] = await data_uno.add_user(state, message.from_user.id, data_uno.deck)
-        await state.update_data(uno=data_uno.dict())
+        await data_uno.update(state)
 
         await message.answer(_("{user} join to current game.").format(user=get_username(message.from_user)))
 
@@ -55,7 +54,6 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     )
 
     from .uno.core import start_timer
-
     timer(state, start_timer, message=message, bot=bot)
 
 
@@ -122,6 +120,10 @@ async def rnd_chat_handler(message: types.Message, bot: Bot, state: FSMContext, 
 
 
 async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext, stickers: list | None):
+    async def get_winners(rnd_data: dict[str, int]):
+        for user_id in rnd_data.get(bot_var, ()):
+            yield get_username((await bot.get_chat_member(message.chat.id, user_id)).user)
+
     async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=20):
         await asyncio.sleep(60)
 
@@ -136,10 +138,8 @@ async def rnd_finish_handler(message: types.Message, bot: Bot, state: FSMContext
     bot_var = str(choice(range(1, 11)))
 
     data = await state.get_data()
-    winners = [
-        get_username((await bot.get_chat_member(message.chat.id, user_id)).user) for user_id in
-        data.pop('rnd', {}).get(bot_var, ())
-    ]
+    winners = (winner async for winner in get_winners(data.pop('rnd', {})))
+
     await state.set_data(data)
 
     answer = _("So, my variant is {bot_var}.\n").format(bot_var=html.bold(bot_var))

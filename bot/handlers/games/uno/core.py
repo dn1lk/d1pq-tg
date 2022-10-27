@@ -6,9 +6,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from .process import UnoData, get_deck
-from .settings import UnoSettings, extract_current_difficulty, extract_current_mode
-from .. import Games, keyboards as k
+from .settings import UnoSettings, extract_difficulty, extract_mode
+from .. import keyboards as k
 
 router = Router(name='game:uno:core')
 
@@ -46,7 +45,7 @@ async def start_handler(
     if random() < 2 / len(user_ids):
         user_ids.append(bot.id)
 
-        await message.edit_text(message.html_text + '\n' + get_username(await bot.get_me()))
+        await message.edit_text(f'{message.html_text}\n{get_username(await bot.get_me())}')
         await message.answer(
             choice(
                 (
@@ -57,20 +56,10 @@ async def start_handler(
             )
         )
 
-    deck = await get_deck(bot)
-    users = {user_id: await UnoData.add_user(state, user_id, deck) for user_id in user_ids}
-    data_uno = UnoData(
-        deck=deck,
-        users=users,
-        current_index=choice(range(len(users))),
-        settings=UnoSettings(difficulty=extract_current_difficulty(message), mode=extract_current_mode(message)),
-    )
+    settings = UnoSettings(difficulty=extract_difficulty(message), mode=extract_mode(message))
 
-    await state.set_state(Games.uno)
-
-    from .process.core import post
-
-    await post(message, data_uno, state, _("So, <b>let's start the game.</b>"))
+    from .process.core import start
+    await start(message, state, user_ids, settings)
 
 
 @router.callback_query(k.UnoGame.filter(F.value == 'start'))

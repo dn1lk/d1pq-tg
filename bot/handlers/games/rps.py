@@ -42,8 +42,6 @@ async def answer_handler(query: types.CallbackQuery, callback_data: k.Games):
     bot_var: RPSVars = choice(tuple(RPSVars))
     user_var: RPSVars = RPSVars(callback_data.value)
 
-    await query.answer(_("Your choice: {user_var}").format(user_var=user_var.word))
-
     loses, wins = (
         int(entity.extract_from(query.message.text)) for entity in query.message.entities[-2:]
     ) if len(query.message.entities) > 1 else (0, 0)
@@ -64,3 +62,5 @@ async def answer_handler(query: types.CallbackQuery, callback_data: k.Games):
         f'{bot_var.word}! {get_username(query.from_user)}, {result}\n\n{score}',
         reply_markup=k.rps_show_vars()
     )
+
+    await query.answer(_("Your choice: {user_var}").format(user_var=user_var.word))
