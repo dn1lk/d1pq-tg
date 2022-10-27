@@ -36,8 +36,8 @@ async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, 
     answer = choice(
         (
             _("{user} gifts player {uno_user} 2 cards."),
-            _("{user} gives {uno_user} 2 cards."),
-            _("{user} presents {uno_user} with 2 cards."),
+            _("{user} gives player {uno_user} 2 cards."),
+            _("{user} presents player {uno_user} with 2 cards."),
         )
     )
 
@@ -197,13 +197,13 @@ async def finish(state: FSMContext, data: UnoData) -> types.Message:
                     enum = _("WINNER")
 
                 answer_cards = ___(
-                    "{amount} card played",
+                    "card played",
                     "{amount} cards played",
                     winner_data.cards_played,
                 ).format(amount=winner_data.cards_played)
 
                 answer_points = ___(
-                    "{points} point earned",
+                    "point earned",
                     "{points} points earned",
                     winner_data.points,
                 ).format(points=winner_data.points)

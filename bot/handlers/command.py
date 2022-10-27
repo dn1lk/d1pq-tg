@@ -63,7 +63,7 @@ async def choose_no_args_handler(
         command: filters.CommandObject,
         i18n: I18n,
         messages: list | None = None):
-    message = await message.answer(_("<b>What to choose?</b>"))
+    message = await message.answer(html.bold(_("What to choose?")))
 
     args = markov.get_base(i18n.current_locale, choice(markov.books)).parsed_sentences
     if messages:
