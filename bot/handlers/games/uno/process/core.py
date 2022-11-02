@@ -25,10 +25,10 @@ async def start(
 
 
 async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, user: types.User):
-    uno_user = message.entities[0].user
+    uno_user = message.entities[0].user if message.entities else await state.bot.get_me()
 
     if user.id == uno_user.id:
-        return await message.delete_reply_markup()
+        asyncio.current_task().cancel()
 
     data.pick_card(uno_user, 2)
     await data.update(state)
@@ -144,7 +144,7 @@ async def post(message: types.Message, state: FSMContext, data: UnoData, answer:
 
         if data.settings.mode or len(data.users) == 1:
             if data.current_state.drawn:
-                user = await data.get_user(state)
+                user = state.bot.id if data.current_user_id == state.bot.id else await data.get_user(state)
                 await data.play_draw(user)
 
             return await finish(state, data)

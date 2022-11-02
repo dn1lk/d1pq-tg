@@ -4,7 +4,6 @@ from aiogram import BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
-from aiogram.utils.i18n import I18n
 
 from .data import UnoData
 

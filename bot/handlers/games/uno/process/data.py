@@ -122,7 +122,12 @@ class UnoData(BaseModel):
         return UnoUser(cards=UnoData.pop_from_deck(deck, 7))
 
     async def get_user(self, state: FSMContext, user_id: int = None) -> types.User:
-        member = await state.bot.get_chat_member(state.key.chat_id, user_id or self.current_user_id)
+        user_id = user_id or self.current_user_id
+
+        if user_id == state.bot.id:
+            return await state.bot.get_me()
+
+        member = await state.bot.get_chat_member(state.key.chat_id, user_id)
         return member.user
 
     async def remove_user(self, state: FSMContext, user_id: int):
@@ -264,6 +269,7 @@ class UnoData(BaseModel):
         self.users[user_id].cards.remove(self.current_card)
 
         self.deck.append(self.current_card)
+        print(self.deck[-2:])
 
     def update_uno(self, user: types.User):
         self.current_state.uno = user.id
@@ -379,15 +385,19 @@ class UnoData(BaseModel):
             deck.remove(card)
             yield card
 
-    def pick_card(self, user: types.User, amount: int = 1) -> str:
+    def pick_card(self, user: types.User | int, amount: int = 1) -> str:
         self.users[user.id].cards.extend(self.pop_from_deck(self.deck, amount))
 
-        answer_pick = _("{user} receives").format(user=get_username(user))
+        if isinstance(user, int):
+            answer_pick = _("I receive")
+        else:
+            answer_pick = _("{user} receives").format(user=get_username(user))
+
         answer_amount = ___("a card.", "{amount} cards.", amount).format(amount=amount)
 
         return f'{answer_pick} {answer_amount}'
 
-    async def play_draw(self, user: types.User) -> str:
+    async def play_draw(self, user: types.User | int) -> str:
         if not self.current_state.drawn:
             self.current_state.passed = self.current_user_id
             self.current_state.drawn = 1
@@ -415,7 +425,11 @@ class UnoData(BaseModel):
                     )
                 )
 
-        user = await self.get_user(state, self.current_state.bluffed)
+        if self.current_state.bluffed == state.bot.id:
+            user = state.bot.id
+        else:
+            user = await self.get_user(state, self.current_state.bluffed)
+
         answer_pick = self.pick_card(user, self.current_state.drawn)
 
         self.current_state.drawn = self.current_state.bluffed = 0

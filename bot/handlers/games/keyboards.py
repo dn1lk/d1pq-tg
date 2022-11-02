@@ -11,6 +11,7 @@ class Games(CallbackData, prefix='game'):
 
 class UnoGame(Games, prefix='game'):
     game: str = 'uno'
+    index: int = None
 
 
 def uno_start():
@@ -26,21 +27,31 @@ def uno_start():
 
 
 def uno_settings(message: types.Message):
-    from .uno.settings import UnoDifficulty, UnoMode, extract_difficulty, extract_mode
+    from .uno.settings import UnoDifficulty, UnoMode, UnoAdd
 
     builder = InlineKeyboardBuilder()
 
-    current_difficulty = extract_difficulty(message)
+    current_difficulty = UnoDifficulty.extract(message)
 
     for difficulty in UnoDifficulty:
         if difficulty is not current_difficulty:
-            builder.button(text=difficulty.word.capitalize(), callback_data=UnoGame(value=difficulty.name))
+            builder.button(
+                text=difficulty.word.capitalize(),
+                callback_data=UnoGame(value=difficulty.name)
+            )
 
-    current_mode = extract_mode(message)
+    current_mode = UnoMode.extract(message)
 
     for mode in UnoMode:
         if mode is not current_mode:
             builder.button(text=mode.word.capitalize(), callback_data=UnoGame(value=mode.name))
+
+    for enum, name in enumerate(UnoAdd.names()):
+        change_add = UnoAdd.off if UnoAdd.extract(message, enum) else UnoAdd.on
+        builder.button(
+            text=f'{change_add.changer} {name.lower()}',
+            callback_data=UnoGame(value=change_add.name, index=enum)
+        )
 
     builder.button(text=_("Back"), callback_data=UnoGame(value='back'))
 

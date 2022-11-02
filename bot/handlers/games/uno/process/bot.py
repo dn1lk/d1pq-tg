@@ -111,11 +111,6 @@ class UnoBot:
 
                 await asyncio.sleep(choice(timeout) / m)
 
-            except asyncio.CancelledError:
-                if self.message.reply_markup:
-                    await self.message.delete_reply_markup()
-
-            try:
                 self.data: UnoData = await UnoData.get(self.state)
 
                 from .core import proceed_uno
@@ -124,6 +119,9 @@ class UnoBot:
             except exceptions.TelegramRetryAfter as retry:
                 await asyncio.sleep(retry.retry_after)
                 self.message = await retry.method
+
+            finally:
+                await self.message.delete_reply_markup()
 
     async def gen_poll(self, user: types.User):
         try:

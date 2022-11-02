@@ -76,12 +76,14 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 @router.callback_query(k.UnoGame.filter(F.value == 'bluff'))
 async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
     if query.from_user.id == data_uno.current_user_id:
-        await query.message.edit_reply_markup(k.uno_show_cards(0))
+        await query.message.delete()
 
         answer = await data_uno.play_bluff(state)
+        data_uno.current_index = data_uno.prev_index
 
         from .process.core import post
         await post(query.message, state, data_uno, answer)
+
         await query.answer(_("You see right through people!"))
     else:
         user = await data_uno.get_user(state, data_uno.current_user_id)
@@ -90,22 +92,34 @@ async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno:
         await query.answer(answer.format(user=user.first_name))
 
 
-@router.callback_query(k.UnoGame.filter(F.value == 'uno'), MagicData(F.data_uno))
+@router.callback_query(k.UnoGame.filter(F.value == 'uno'), MagicData(F.data_uno.users.get(F.event.from_user.id)))
 async def uno_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
-    from .process.core import proceed_uno
-    await proceed_uno(query.message, state, data_uno, query.from_user)
+    from .process import UnoBot
+    bot = UnoBot(query.message, state, data_uno)
 
-    if query.from_user.id == query.message.entities[0].user.id:
-        answer = (
-            _("On reaction =)."),
-            _("Yep!"),
-            _("Ok, you won't get cards."),
-        )
+    for task in asyncio.all_tasks():
+        if task.get_name() == f'{bot}:uno':
+            task.cancel()
+            break
     else:
+        return query.answer(_("Next time be faster!"))
+
+    from .process.core import proceed_uno
+
+    try:
+        await proceed_uno(query.message, state, data_uno, query.from_user)
+
         answer = (
             _("Good job!"),
             _("And you don't want to lose =)"),
             _("You will be reminded of it."),
+        )
+
+    except asyncio.CancelledError:
+        answer = (
+            _("On reaction =)."),
+            _("Yep!"),
+            _("Ok, you won't get cards."),
         )
 
     await query.answer(choice(answer))

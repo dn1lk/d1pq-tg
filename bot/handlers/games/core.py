@@ -7,6 +7,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
 from . import Games, keyboards as k, timer, win_timeout, close_timeout
+from .uno.settings import UnoAdd
 from .. import get_username
 from ..settings.commands import CustomCommandFilter, CustomCommandsMiddleware
 
@@ -38,6 +39,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
         "One minute to make a decision!\n"
         "Difficulty: {difficulty}.\n"
         "Mode: {mode}.\n\n"
+        "{additives}\n\n"
         "<b>Already in the game:</b>\n"
         "{user}"
     )
@@ -49,6 +51,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
             user=get_username(message.from_user),
             difficulty=html.bold(UnoDifficulty.normal.word),
             mode=html.bold(UnoMode.fast.word),
+            additives='\n'.join(f'{name}: {html.bold(UnoAdd.on.word)}.' for name in UnoAdd.names()),
         ),
         reply_markup=k.uno_start(),
     )

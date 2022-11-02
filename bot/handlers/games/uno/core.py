@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from .settings import UnoSettings, extract_difficulty, extract_mode
+from .settings import UnoSettings
 from .. import keyboards as k
 
 router = Router(name='game:uno:core')
@@ -42,6 +42,8 @@ async def start_handler(
     message = query.message if isinstance(query, types.CallbackQuery) else query
     message = await message.delete_reply_markup()
 
+    settings = UnoSettings.extract(message)
+
     if random() < 2 / len(user_ids):
         user_ids.append(bot.id)
 
@@ -56,15 +58,8 @@ async def start_handler(
             )
         )
 
-    settings = UnoSettings(difficulty=extract_difficulty(message), mode=extract_mode(message))
-
     from .process.core import start
     await start(message, state, user_ids, settings)
-
-
-@router.callback_query(k.UnoGame.filter(F.value == 'start'))
-async def start_no_owner_handler(query: types.CallbackQuery):
-    await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[4].user.first_name))
 
 
 @router.callback_query(k.UnoGame.filter(F.value == 'join'))
@@ -114,3 +109,13 @@ async def leave_handler(query: types.CallbackQuery):
             await query.answer(_("Now there is one less player!"))
     else:
         await query.answer(_("You are not in the list yet!"))
+
+
+@router.callback_query(k.UnoGame.filter(F.value == 'start'))
+async def start_no_owner_handler(query: types.CallbackQuery):
+    await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[7].user.first_name))
+
+
+@router.callback_query()
+async def settings_no_owner_handler(query: types.CallbackQuery):
+    await query.answer(_("Only {user} can customize the game.").format(user=query.message.entities[7].user.first_name))

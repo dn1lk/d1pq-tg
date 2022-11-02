@@ -21,8 +21,8 @@ def setup():
     sub_routers = (
         user_rt,
         inline_rt,
-        core_rt,
         settings_rt,
+        core_rt,
         action_rt,
     )
 
