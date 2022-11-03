@@ -6,7 +6,7 @@ from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.fsm.strategy import FSMStrategy
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(levelname)s - %(name)s - %(message)s")
 logging.info("Start bot")
 
