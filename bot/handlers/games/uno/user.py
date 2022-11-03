@@ -35,76 +35,103 @@ async def user_handler(message: types.Message, state: FSMContext, data_uno: UnoD
         await message.reply(decline.format(user=get_username(message.from_user)))
 
 
-@router.message(F.text == DRAW_CARD)
+@router.message(
+    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
+    F.text == DRAW_CARD,
+)
 async def pass_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    if message.from_user.id == data_uno.current_user_id:
-        from .process.core import proceed_pass
-        await proceed_pass(message, state, data_uno)
-    else:
-        user = await data_uno.get_user(state)
-        await message.reply(
-            _(
-                "Of course, I don't mind, but now it's {user}'s turn.\n"
-                "We'll have to wait =)."
-            ).format(user=get_username(user))
-        )
+    from .process.core import proceed_pass
+    await proceed_pass(message, state, data_uno)
+
+
+@router.message(F.text == DRAW_CARD)
+async def pass_no_current_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
+    user = await data_uno.get_user(state)
+    await message.reply(
+        _(
+            "Of course, I don't mind, but now it's {user}'s turn.\n"
+            "We'll have to wait =)."
+        ).format(user=get_username(user))
+    )
 
 
 @router.message(
     MagicData(F.event.from_user.id == F.data_uno.current_user_id),
-    F.entities.func(lambda entities: any(entity.user for entity in entities)),
+    F.entities.func(lambda entities: entities[0].type in ('mention', 'text_mention')),
 )
 async def seven_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    for entity in message.entities:
-        if entity.user and entity.user.id in data_uno.users:
-            answer = data_uno.play_seven(message.from_user, entity.user)
-            await data_uno.update(state)
+    user = message.entities[0].user
 
-            return await message.answer(
-                answer.format(
-                    seven_user=get_username(message.from_user),
-                    user=get_username(entity.user),
-                )
-            )
+    if not user:
+        for user_id in data_uno.users:
+            user = await data_uno.get_user(state, user_id)
 
-    await message.answer(_("{user} is not playing with us.").format(user=get_username(message.entities[0].user)))
+            if user.username == message.entities[0].extract_from(message.text):
+                seven_user = user
+    else:
+        seven_user = user if user in data_uno.users else None
 
+    if seven_user:
+        answer = data_uno.play_seven(message.from_user, seven_user)
+        await data_uno.update(state)
 
-@router.callback_query(k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])))
-async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games, data_uno: UnoData):
-    if query.from_user.id == data_uno.current_user_id:
-        data_uno.current_card.color = UnoColors[callback_data.value]
-
-        await query.message.edit_text(
-            _("{user} changes the color to {color}!").format(
-                user=get_username(query.from_user),
-                color=data_uno.current_card.color.word,
+        await message.answer(
+            answer.format(
+                user=get_username(message.from_user),
+                seven_user=get_username(seven_user),
             )
         )
 
-        from .process.core import proceed_turn
-        await proceed_turn(query.message, state, data_uno)
-        await query.answer()
     else:
-        await query.answer(_("When you'll get a black card, choose this color ;)"))
+        await message.answer(_("{user} is not playing with us.").format(user=get_username(seven_user)))
+
+
+@router.callback_query(
+    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
+    k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])),
+)
+async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games, data_uno: UnoData):
+    data_uno.current_card.color = UnoColors[callback_data.value]
+
+    await query.message.edit_text(
+        _("{user} changes the color to {color}!").format(
+            user=get_username(query.from_user),
+            color=data_uno.current_card.color.word,
+        )
+    )
+
+    from .process.core import proceed_turn
+    await proceed_turn(query.message, state, data_uno)
+
+    await query.answer()
+
+
+@router.callback_query(k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])))
+async def color_no_current_handler(query: types.CallbackQuery):
+    await query.answer(_("When you'll get a black card, choose this color ;)"))
+
+
+@router.callback_query(
+    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
+    k.UnoGame.filter(F.value == 'bluff'),
+)
+async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
+    await query.message.edit_reply_markup(k.uno_show_cards(0))
+
+    answer = await data_uno.play_bluff(state)
+
+    from .process.core import post
+    await post(query.message, state, data_uno, answer)
+
+    await query.answer(_("You see right through people!"))
 
 
 @router.callback_query(k.UnoGame.filter(F.value == 'bluff'))
-async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
-    if query.from_user.id == data_uno.current_user_id:
-        await query.message.edit_reply_markup(k.uno_show_cards(0))
+async def bluff_no_current_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
+    user = await data_uno.get_user(state, data_uno.current_user_id)
+    answer = _("Only {user} can verify the legitimacy of using this card.")
 
-        answer = await data_uno.play_bluff(state)
-
-        from .process.core import post
-        await post(query.message, state, data_uno, answer)
-
-        await query.answer(_("You see right through people!"))
-    else:
-        user = await data_uno.get_user(state, data_uno.current_user_id)
-        answer = _("Only {user} can verify the legitimacy of using this card.")
-
-        await query.answer(answer.format(user=user.first_name))
+    await query.answer(answer.format(user=user.first_name))
 
 
 @router.callback_query(

@@ -1,12 +1,15 @@
 from aiogram import Dispatcher, types, html
-from aiogram.utils.i18n import lazy_gettext as __
+from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
 __all__ = 'NO_ARGS', 'setup', 'get_username', 'get_commands'
 
 NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: <code>/{command} {args}</code>")
 
 
-def get_username(user: types.User) -> str:
+def get_username(user: types.User = None) -> str:
+    if not user:
+        return _("user")
+
     return html.link(html.quote(user.first_name), f"tg://user?id={user.id}")
 
 
