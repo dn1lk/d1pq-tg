@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Any, Awaitable, Callable, Union, Optional
 
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
-from aiogram.dispatcher.flags import get_flag, extract_flags
+from aiogram.dispatcher.flags import get_flag
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey, BaseStorage
 from aiogram.utils.chat_action import ChatActionMiddleware
@@ -16,8 +16,11 @@ from utils.database.context import DataBaseContext
 class DataMiddleware(BaseMiddleware):
     async def __call__(
             self,
-            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
-            event: types.TelegramObject,
+            handler: Callable[
+                [types.Message | types.CallbackQuery | types.ChatMemberUpdated, Dict[str, Any]],
+                Awaitable[Any]
+            ],
+            event: types.Message | types.CallbackQuery | types.ChatMemberUpdated,
             data: Dict[str, Any]
     ) -> Any:
         db: DataBaseContext = data['db']
@@ -37,12 +40,12 @@ class DataMiddleware(BaseMiddleware):
                 if value:
                     data[key] = value
 
-            if 'gen' in extract_flags(data).values() and event.text:
-                messages = markov.set_data(event.text, data.get('messages'))
+        if get_flag(data, 'throttling') == 'gen' and event.text:
+            messages = markov.set_data(event.text, data.get('messages'))
 
-                if messages:
-                    data['messages'] = messages
-                    await db.set_data(messages=messages)
+            if messages:
+                data['messages'] = messages
+                await db.set_data(messages=messages)
 
         result = await handler(event, data)
 

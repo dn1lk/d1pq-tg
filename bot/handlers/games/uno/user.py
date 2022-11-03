@@ -60,16 +60,21 @@ async def pass_no_current_handler(message: types.Message, state: FSMContext, dat
     F.entities.func(lambda entities: entities[0].type in ('mention', 'text_mention')),
 )
 async def seven_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    user = message.entities[0].user
+    async def get_seven_user():
+        if message.entities[0].user:
+            user = message.entities[0].user
 
-    if not user:
-        for user_id in data_uno.users:
-            user = await data_uno.get_user(state, user_id)
+            if user in data_uno.users:
+                return user
 
-            if user.username == message.entities[0].extract_from(message.text):
-                seven_user = user
-    else:
-        seven_user = user if user in data_uno.users else None
+        else:
+            for user_id in data_uno.users:
+                user = await data_uno.get_user(state, user_id)
+
+                if user.username == message.entities[0].extract_from(message.text):
+                    return user
+
+    seven_user = await get_seven_user()
 
     if seven_user:
         answer = data_uno.play_seven(message.from_user, seven_user)
@@ -83,7 +88,7 @@ async def seven_handler(message: types.Message, state: FSMContext, data_uno: Uno
         )
 
     else:
-        await message.answer(_("{user} is not playing with us.").format(user=get_username(seven_user)))
+        await message.answer(_("{user} is not playing with us.").format(user=get_username(message.entities[0].user)))
 
 
 @router.callback_query(

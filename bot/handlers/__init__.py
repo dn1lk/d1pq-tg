@@ -8,7 +8,7 @@ NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor exa
 
 def get_username(user: types.User = None) -> str:
     if not user:
-        return _("user")
+        return _("User")
 
     return html.link(html.quote(user.first_name), f"tg://user?id={user.id}")
 
