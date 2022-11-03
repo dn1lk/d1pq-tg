@@ -20,8 +20,8 @@ class UnoSettingsMeta(EnumMeta):
 
 
 class UnoDifficulty(int, Enum, metaclass=UnoSettingsMeta):
-    easy = 3
-    normal = 2
+    easy = 5
+    normal = 3
     hard = 1
 
     @property

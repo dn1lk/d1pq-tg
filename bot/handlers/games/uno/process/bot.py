@@ -22,28 +22,14 @@ class UnoBot:
     def __str__(self):
         return f'uno:{self.message.chat.id}'
 
-    def gen_color(self):
-        cards = self.data.users[self.state.bot.id].cards
-
-        if self.data.settings.difficulty is UnoDifficulty.hard:
-            colors = [card.color for card in cards]
-            self.data.current_card.color = max(set(colors), key=colors.count)
-        else:
-            self.data.current_card.color = choice(cards).color
-
-        return _("I choice {color}.").format(color=self.data.current_card.color.word)
-
-    def get_cards(self) -> tuple:
-        def get():
-            for card in self.data.users[bot_id].cards:
-                accept, decline = self.data.filter_card(bot_id, card)
-                if accept:
-                    yield card, accept
-
+    def get_cards(self):
         bot_id = self.state.bot.id
 
         if bot_id in self.data.users:
-            yield from get()
+            for card in self.data.users[bot_id]:
+                accept, decline = self.data.filter_card(bot_id, card)
+                if accept:
+                    yield card, accept
 
     async def gen_turn(self, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
@@ -55,7 +41,6 @@ class UnoBot:
             try:
                 if cards:
                     self.data.current_card, accept = choice(cards)
-                    print(accept)
                     self.message = await self.message.answer_sticker(self.data.current_card.file_id)
 
                     try:
@@ -92,17 +77,33 @@ class UnoBot:
 
                 else:
                     from .core import proceed_pass
-                    await proceed_pass(self.message, self.state, self.data)
+                    self.message = await proceed_pass(self.message, self.state, self.data)
 
             except exceptions.TelegramRetryAfter as retry:
                 await asyncio.sleep(retry.retry_after)
                 self.message = await retry.method
 
+    def gen_color(self) -> str:
+        cards = self.data.users[self.state.bot.id]
+
+        if self.data.settings.difficulty is UnoDifficulty.hard:
+            colors = [card.color for card in cards]
+            self.data.current_card.color = max(set(colors), key=colors.count)
+        else:
+            self.data.current_card.color = choice(cards).color
+
+        return _("I choice {color}.").format(color=self.data.current_card.color.word)
+
+    async def gen_seven(self) -> str:
+        seven_user_id = choice([user_id for user_id in self.data.users if user_id != self.state.bot.id])
+        seven_user = await self.data.get_user(self.state, seven_user_id)
+
+        return self.data.play_seven(self.message.from_user, seven_user)
+
     async def gen_uno(self):
         async with ChatActionSender.typing(chat_id=self.message.chat.id):
             try:
                 m = len(self.data.users) * self.data.settings.difficulty
-                user = await self.state.bot.get_me()
 
                 if self.message.entities[0].user.id == self.state.bot.id:
                     timeout = range(0, 4)
@@ -111,14 +112,15 @@ class UnoBot:
 
                 await asyncio.sleep(choice(timeout) / m)
 
+                user = await self.state.bot.get_me()
                 self.data: UnoData = await UnoData.get(self.state)
 
                 from .core import proceed_uno
-                self.message = await proceed_uno(self.message, self.state, self.data, user)
+                await proceed_uno(self.message, self.state, self.data, user)
 
             except exceptions.TelegramRetryAfter as retry:
                 await asyncio.sleep(retry.retry_after)
-                self.message = await retry.method
+                await retry.method
 
             finally:
                 await self.message.delete_reply_markup()

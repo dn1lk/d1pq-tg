@@ -10,7 +10,6 @@ router = Router(name='game:uno:inline')
 router.inline_query.outer_middleware(UnoFSMContextMiddleware())
 router.inline_query.outer_middleware(UnoDataMiddleware())
 
-
 command = '/play uno'
 thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
 
@@ -18,16 +17,16 @@ thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MK
 @router.inline_query(F.query.lower() == "uno", MagicData(F.data_uno))
 async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
     def get_cards():
-        for enum, card in enumerate(user_data.cards[offset:offset+size]):
+        for enum, card in enumerate(user_cards[offset:offset + size]):
             yield types.InlineQueryResultCachedSticker(
                 id=str(offset + enum),
                 sticker_file_id=card.file_id,
             )
 
-    user_data = data_uno.users.get(inline.from_user.id)
+    user_cards = data_uno.users.get(inline.from_user.id)
     next_offset = None
 
-    if user_data:
+    if user_cards:
         if inline.offset:
             offset = int(inline.offset)
             size = 50
@@ -48,7 +47,7 @@ async def inline_handler(inline: types.InlineQuery, data_uno: UnoData):
             answer.extend(get_cards())
 
         if len(answer) == 50:
-            next_offset = str(offset + min(len(user_data.cards), size))
+            next_offset = str(offset + min(len(user_cards), size))
 
     else:
         answer = [

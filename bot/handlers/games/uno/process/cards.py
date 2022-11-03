@@ -42,11 +42,14 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
 
 
 class UnoEmoji(str, Enum):
+    null = '0️⃣'
+    seven = '7️⃣'
+
     reverse = '🔃'
     skip = '🚫'
     color = '🌈'
-    draw_2 = '➕'
-    draw_4 = '✖'
+    draw_two = '➕'
+    draw_four = '✖'
 
 
 class UnoCard(BaseModel):

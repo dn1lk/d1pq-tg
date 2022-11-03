@@ -8,7 +8,7 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
 from . import DRAW_CARD
-from .process import UnoData, UnoColors, UnoBot
+from .process import UnoData, UnoColors
 from .process.middleware import UnoDataMiddleware
 from .. import keyboards as k
 
@@ -38,10 +38,6 @@ async def user_handler(message: types.Message, state: FSMContext, data_uno: UnoD
 @router.message(F.text == DRAW_CARD)
 async def pass_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
     if message.from_user.id == data_uno.current_user_id:
-        for task in asyncio.all_tasks():
-            if task.get_name().startswith('uno'):
-                task.cancel()
-
         from .process.core import proceed_pass
         await proceed_pass(message, state, data_uno)
     else:
@@ -52,6 +48,26 @@ async def pass_handler(message: types.Message, state: FSMContext, data_uno: UnoD
                 "We'll have to wait =)."
             ).format(user=get_username(user))
         )
+
+
+@router.message(
+    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
+    F.entities.func(lambda entities: any(entity.user for entity in entities)),
+)
+async def seven_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
+    for entity in message.entities:
+        if entity.user and entity.user.id in data_uno.users:
+            answer = data_uno.play_seven(message.from_user, entity.user)
+            await data_uno.update(state)
+
+            return await message.answer(
+                answer.format(
+                    seven_user=get_username(message.from_user),
+                    user=get_username(entity.user),
+                )
+            )
+
+    await message.answer(_("{user} is not playing with us.").format(user=get_username(message.entities[0].user)))
 
 
 @router.callback_query(k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])))
@@ -76,10 +92,9 @@ async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_
 @router.callback_query(k.UnoGame.filter(F.value == 'bluff'))
 async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
     if query.from_user.id == data_uno.current_user_id:
-        await query.message.delete()
+        await query.message.edit_reply_markup(k.uno_show_cards(0))
 
         answer = await data_uno.play_bluff(state)
-        data_uno.current_index = data_uno.prev_index
 
         from .process.core import post
         await post(query.message, state, data_uno, answer)
@@ -92,7 +107,10 @@ async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno:
         await query.answer(answer.format(user=user.first_name))
 
 
-@router.callback_query(k.UnoGame.filter(F.value == 'uno'), MagicData(F.data_uno.users.get(F.event.from_user.id)))
+@router.callback_query(
+    k.UnoGame.filter(F.value == 'uno'),
+    MagicData(F.event.from_user.func(lambda user: F.data_uno.users.get(user.id)))
+)
 async def uno_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
     from .process import UnoBot
     bot = UnoBot(query.message, state, data_uno)
