@@ -141,12 +141,14 @@ class UnoData(BaseModel):
 
         del self.users[user_id]
 
+        cards_played = 0
         points = sum(sum(card.cost for card in user_cards) for user_cards in self.users.values())
 
         if user_id in self.stats:
             points += self.stats[user_id].points
+            cards_played = self.stats[user_id].cards_played
 
-        self.stats[user_id] = UnoStats(points=points)
+        self.stats[user_id] = UnoStats(points=points, cards_played=cards_played)
 
     def get_card(self, user_id, sticker: types.Sticker) -> UnoCard | None:
         for card in self.users[user_id]:
