@@ -22,13 +22,12 @@ class UnoBot:
         self.data: UnoData = data
 
     def get_cards(self):
-        bot_id = self.state.bot.id
+        cards = self.data.users.get(self.state.bot.id, [])
 
-        if bot_id in self.data.users:
-            for card in self.data.users[bot_id]:
-                accept, decline = self.data.filter_card(bot_id, card)
-                if accept:
-                    yield card, accept
+        for card in cards:
+            accept, decline = self.data.filter_card(self.state.bot.id, card)
+            if accept:
+                yield card, accept
 
     async def gen_turn(self, timer: Timer, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
@@ -140,8 +139,8 @@ class UnoBot:
         await self.message.answer(self.data.play_seven(self.message.from_user, seven_user))
 
     async def gen_uno(self):
-        async with ChatActionSender.typing(chat_id=self.message.chat.id):
-            try:
+        try:
+            async with ChatActionSender.typing(chat_id=self.message.chat.id):
                 m = len(self.data.users) * self.data.settings.difficulty
 
                 if self.message.entities[0].user.id == self.state.bot.id:
@@ -157,12 +156,12 @@ class UnoBot:
                 from .process import proceed_uno
                 await proceed_uno(self.message, self.state, self.data, user)
 
-            except exceptions.TelegramRetryAfter as retry:
-                await asyncio.sleep(retry.retry_after)
-                await retry.method
+        except exceptions.TelegramRetryAfter as retry:
+            await asyncio.sleep(retry.retry_after)
+            await retry.method
 
-            finally:
-                await self.message.delete_reply_markup()
+        finally:
+            await self.message.delete_reply_markup()
 
     @staticmethod
     async def gen_poll(message: types.Message, state: FSMContext, timer: Timer, user: types.User):

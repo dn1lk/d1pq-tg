@@ -13,7 +13,7 @@ def get_locale_vars(locales: tuple) -> tuple[tuple[str, str], ...]:
 
 
 @router.callback_query(k.SettingsKeyboard.filter(F.value))
-async def locale_update_handler(
+async def update_handler(
         query: types.CallbackQuery,
         i18n: I18n,
         callback_data: k.SettingsKeyboard,
@@ -31,7 +31,7 @@ async def locale_update_handler(
 
 
 @router.callback_query()
-async def locale_handler(query: types.CallbackQuery, i18n: I18n):
+async def start_handler(query: types.CallbackQuery, i18n: I18n):
     locales = get_locale_vars(i18n.available_locales)
     answer = _(
         "<b>Update bot language.</b>\n\n"

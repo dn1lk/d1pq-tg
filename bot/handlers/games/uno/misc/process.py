@@ -7,7 +7,7 @@ from aiogram.utils.i18n import gettext as _, ngettext as ___
 
 from bot.handlers import get_username
 from bot.utils.timer import Timer
-from . import keyboards as k
+from . import keyboards as k, UnoEmoji
 from .data import UnoData, UnoStats
 from ..settings import UnoSettings
 
@@ -117,13 +117,13 @@ async def next_turn(
         timer[timer.get_name(state, 'game:uno')] = asyncio.create_task(bot.gen_uno())
 
     elif not data.users[message.from_user.id]:
+        if data.current_state.drawn:
+            user = state.bot.id if data.current_user_id == state.bot.id else await data.get_user(state)
+            data.play_draw(user)
+
         await kick_for_cards(message, state, data)
 
         if data.settings.mode or len(data.users) == 1:
-            if data.current_state.drawn:
-                user = state.bot.id if data.current_user_id == state.bot.id else await data.get_user(state)
-                data.play_draw(user)
-
             return await finish(state, timer, data)
 
     await data.set_data(state)
@@ -146,7 +146,7 @@ async def next_turn(
 
         message = await message.reply(
             f'{answer}\n{answer_next}',
-            reply_markup=k.show_cards(data.current_state.bluffed),
+            reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.draw_four and data.current_state.drawn),
         )
 
     if cards or data.current_user_id == state.bot.id:

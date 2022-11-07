@@ -65,4 +65,4 @@ async def timeout_done(message: types.Message, state: FSMContext, timer: Timer):
 
     if message.reply_markup and \
             message.reply_markup.inline_keyboard[0][0].callback_data == k.UnoKeyboard(action='bluff').pack():
-        await message.edit_reply_markup(k.show_cards(0))
+        await message.edit_reply_markup(k.show_cards(False))

@@ -54,7 +54,7 @@ def settings(message: types.Message):
     return builder.as_markup()
 
 
-def show_cards(bluffed: int):
+def show_cards(bluffed: bool):
     builder = InlineKeyboardBuilder()
 
     if bluffed:

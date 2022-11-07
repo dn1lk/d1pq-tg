@@ -25,7 +25,7 @@ async def setup() -> Pool:
                 members         BIGINT ARRAY,
                 commands        JSON,
                 chance          FLOAT               DEFAULT 2,
-                accuracy        SMALLINT            DEFAULT 3
+                accuracy        SMALLINT            DEFAULT 2
             );"""
         )
 

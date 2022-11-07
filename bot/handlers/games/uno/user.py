@@ -138,8 +138,12 @@ async def bluff_handler(query: types.CallbackQuery, state: FSMContext, timer: Ti
 @router.message(F.entities.func(lambda tts: tts[0].type in ('mention', 'text_mention')))
 class SevenHandler(MessageHandler):
     @property
-    def state(self):
+    def state(self) -> FSMContext:
         return self.data['state']
+
+    @property
+    def timer(self) -> Timer:
+        return self.data['timer']
 
     async def handle(self):
         data_uno = await UnoData.get_data(self.state)
@@ -172,11 +176,11 @@ class SevenHandler(MessageHandler):
             for user_id in data_uno.users:
                 user = await data_uno.get_user(self.state, user_id)
 
-                if user.username == self.event.entities[0].extract_from(self.event.text):
+                if user.username in self.event.text:
                     return user
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action.in_([color for color in UnoColors])))
+@router.callback_query(k.UnoKeyboard.filter(F.action.in_([color.name for color in UnoColors.get_colors()])))
 async def color_handler(
         query: types.CallbackQuery,
         state: FSMContext,

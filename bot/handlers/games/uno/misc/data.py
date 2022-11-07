@@ -54,7 +54,10 @@ class UnoData(GamesData):
 
     @property
     def current_user_id(self) -> int:
-        return tuple(self.users)[self.current_index]
+        try:
+            return tuple(self.users)[self.current_index]
+        except IndexError:
+            return tuple(self.users)[0]
 
     @property
     def next_user_id(self) -> int:
@@ -262,7 +265,7 @@ class UnoData(GamesData):
         return answer
 
     def update_seven(self):
-        self.current_state.seven_0 = self.current_user_id
+        self.current_state.seven = self.current_user_id
 
     def update_draw(self) -> str:
         if self.current_card.emoji == UnoEmoji.draw_four:
@@ -396,7 +399,7 @@ class UnoData(GamesData):
             }
         )
 
-        answer_to = _("cards with player {seven_user}").format(seven_user=get_username(seven_user))
+        answer_to = _("cards with player {seven_user}.").format(seven_user=get_username(seven_user))
         self.current_state.seven = 0
 
         return f'{answer} {answer_to}'
@@ -413,19 +416,22 @@ class UnoData(GamesData):
 
     async def play_bluff(self, state: FSMContext):
         if self.current_state.bluffed:
-            answer = _("Bluff! I see suitable cards, not only wilds.")
+            if self.current_state.bluffed == state.bot.id:
+                answer = _("Yes, it was a bluff =(")
+            else:
+                answer = _("Bluff! I see suitable cards, not only wilds.")
         else:
-            self.current_state.bluffed = self.prev_user_id
+            self.current_state.bluffed = self.current_user_id
             self.current_state.drawn += 2
 
             if self.current_state.bluffed == state.bot.id:
-                answer = _("Ah, no. I decided to check you and there were no suitable cards =(")
+                answer = _("Ah, no. There were no suitable cards =(")
             else:
                 answer = choice(
                     (
-                        _("Nope. It is not bluff."),
+                        _("Nope. It is not a bluff."),
                         _("Shhh, this card was legal."),
-                        _("I also thought that this card does not belong here. But only it is suitable...")
+                        _("This card is suitable.")
                     )
                 )
 
@@ -435,7 +441,7 @@ class UnoData(GamesData):
             user = await self.get_user(state, self.current_state.bluffed)
 
         answer_pick = self.play_draw(user)
-        return f'{answer}\n{answer_pick}'
+        return f'{answer} {answer_pick}'
 
     async def finish(self, state: FSMContext):
         while self.users:

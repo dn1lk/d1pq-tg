@@ -10,7 +10,7 @@ router.callback_query.filter(k.SettingsKeyboard.filter(F.action == 'chance'))
 
 
 @router.callback_query(k.SettingsKeyboard.filter(F.value))
-async def chance_update_handler(
+async def update_handler(
         query: types.CallbackQuery,
         callback_data: k.SettingsKeyboard,
         bot: Bot,
@@ -38,7 +38,7 @@ async def chance_update_handler(
 
 @router.callback_query()
 @flags.data('chance')
-async def chance_handler(
+async def start_handler(
         query: types.CallbackQuery,
         chance: float,
 ):

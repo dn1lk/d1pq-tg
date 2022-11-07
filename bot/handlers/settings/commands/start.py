@@ -14,7 +14,7 @@ router = Router(name='settings:commands:start')
 
 @router.callback_query(k.SettingsKeyboard.filter(F.action == 'commands'))
 @flags.data('messages')
-async def commands_handler(
+async def start_handler(
         query: types.CallbackQuery,
         state: FSMContext,
         i18n: I18n,

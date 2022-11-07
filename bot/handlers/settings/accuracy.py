@@ -10,7 +10,7 @@ router.callback_query.filter(k.SettingsKeyboard.filter(F.action == 'accuracy'))
 
 
 @router.callback_query(k.SettingsKeyboard.filter(F.value))
-async def accuracy_update_handler(
+async def update_handler(
         query: types.CallbackQuery,
         callback_data: k.SettingsKeyboard,
         db: DataBaseContext,
@@ -28,7 +28,7 @@ async def accuracy_update_handler(
 
 @router.callback_query()
 @flags.data('accuracy')
-async def accuracy_handler(
+async def start_handler(
         query: types.CallbackQuery,
         accuracy: int,
 ):
