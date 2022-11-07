@@ -39,7 +39,7 @@ class DataMiddleware(BaseMiddleware):
                 data[key] = value
 
         if get_flag(data, 'throttling') == 'gen' and event.text:
-            messages = markov.set_data(event.text, await db.get_data('messages') or [])
+            messages = markov.set_data(event.text, await db.get_data('messages'))
             data['messages'] = messages
 
             if messages:
