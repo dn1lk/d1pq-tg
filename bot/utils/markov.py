@@ -5,9 +5,11 @@ from random import choice
 import markovify
 
 
-def set_data(text: str, messages: list) -> list:
+def set_data(text: str, messages: list | None) -> list:
     if messages == ['disabled']:
         return []
+    elif not messages:
+        messages = []
 
     sentences = markovify.split_into_sentences(text)
 
