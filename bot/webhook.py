@@ -15,7 +15,7 @@ async def setup(dp: Dispatcher, bot: Bot):
 
     await bot.set_webhook(
         url=config.heroku.domain_url + '/webhook/' + bot.token,
-        allowed_updates=dp.resolve_used_update_types()
+        allowed_updates=dp.resolve_used_update_types(),
     )
 
     aiohttp_logger = logging.getLogger("aiohttp.access")

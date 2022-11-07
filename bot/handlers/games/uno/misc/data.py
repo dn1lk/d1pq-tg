@@ -1,4 +1,3 @@
-import asyncio
 from random import choice, shuffle, randrange
 
 from aiogram import types, html
@@ -10,6 +9,7 @@ from pydantic import BaseModel
 from bot.handlers import get_username
 from .cards import UnoCard, UnoColors, UnoEmoji, get_deck
 from ..settings import UnoSettings
+from ... import GamesData
 
 
 class UnoStats(BaseModel):
@@ -18,15 +18,17 @@ class UnoStats(BaseModel):
 
 
 class UnoStates(BaseModel):
-    drawn: int = 0
     skipped: int = 0
+    drawn: int = 0
 
-    passed: int = 0
     bluffed: int = 0
+    passed: int = 0
+
+    seven: int = 0
     uno: int = 0
 
 
-class UnoData(BaseModel):
+class UnoData(GamesData):
     deck: list[UnoCard]
     users: dict[int, list[UnoCard]]
     stats: dict[int, UnoStats] = {}
@@ -64,63 +66,49 @@ class UnoData(BaseModel):
             state: FSMContext,
             user_ids: list[int],
             settings: UnoSettings,
-            winners: dict[int, UnoStats] = None
+            stats: dict[int, UnoStats] = None
     ):
         deck = await get_deck(state.bot)
         users = {user_id: await cls.add_user(state, user_id, deck) for user_id in user_ids}
         current_index = randrange(len(users))
 
         current_card = deck[-1]
-        while current_card.emoji == UnoEmoji.draw_four:
+        while current_card.color is UnoColors.black:
             current_card = choice(deck)
 
-        winners = winners or {}
-
-        from .. import Games
+        from ... import Games
         await state.set_state(Games.uno)
 
         return cls(
             deck=deck,
             users=users,
-            winners=winners,
+            stats=stats,
             current_index=current_index,
             current_card=current_card,
             settings=settings,
         )
 
-    @classmethod
-    async def get(cls, state: FSMContext):
-        data = await state.get_data()
-
-        if 'uno' in data:
-            return cls(**data['uno'])
-
-    async def update(self, state: FSMContext):
-        return await state.update_data(uno=self.dict())
-
     @staticmethod
     async def add_user(state: FSMContext, user_id: int, deck: list[UnoCard]) -> list[UnoCard]:
-        async def add_state():
-            from .. import Games
+        from ... import Games
 
-            key = StorageKey(
-                bot_id=state.key.bot_id,
-                chat_id=user_id,
-                user_id=user_id,
-                destiny=state.key.destiny
-            )
+        key = StorageKey(
+            bot_id=state.key.bot_id,
+            chat_id=user_id,
+            user_id=user_id,
+            destiny='uno_room'
+        )
 
-            await state.storage.set_state(state.bot, key, Games.uno)
-            await state.storage.update_data(state.bot, key, {'uno_room_id': state.key.chat_id})
+        await state.storage.set_state(state.bot, key, Games.uno)
+        await state.storage.set_data(state.bot, key, {'0': state.key.chat_id})
 
-        await add_state()
         return list(UnoData.pop_from_deck(deck, 7))
 
     async def get_user(self, state: FSMContext, user_id: int = None) -> types.User:
         user_id = user_id or self.current_user_id
 
         if user_id == state.bot.id:
-            return await state.bot.get_me()
+            return await state.bot.me()
 
         member = await state.bot.get_chat_member(state.key.chat_id, user_id)
         return member.user
@@ -131,24 +119,18 @@ class UnoData(BaseModel):
                 bot_id=state.key.bot_id,
                 chat_id=user_id,
                 user_id=user_id,
-                destiny=state.key.destiny,
+                destiny='uno_room',
             )
 
             await state.storage.set_state(state.bot, key)
             await state.storage.set_data(state.bot, key, {})
 
         await remove_state()
-
         del self.users[user_id]
 
-        cards_played = 0
-        points = sum(sum(card.cost for card in user_cards) for user_cards in self.users.values())
-
-        if user_id in self.stats:
-            points += self.stats[user_id].points
-            cards_played = self.stats[user_id].cards_played
-
-        self.stats[user_id] = UnoStats(points=points, cards_played=cards_played)
+        self.stats.setdefault(user_id, UnoStats()).points += sum(
+            sum(card.cost for card in user_cards) for user_cards in self.users.values()
+        )
 
     def get_card(self, user_id, sticker: types.Sticker) -> UnoCard | None:
         for card in self.users[user_id]:
@@ -260,11 +242,7 @@ class UnoData(BaseModel):
     def update_turn(self, user_id: int):
         self.current_index = tuple(self.users).index(user_id)
 
-        if user_id in self.stats:
-            self.stats[user_id].cards_played += 1
-        else:
-            self.stats[user_id] = UnoStats(cards_played=1)
-
+        self.stats.setdefault(user_id, UnoStats()).cards_played += 1
         self.users[user_id].remove(self.current_card)
         self.deck.append(self.current_card.copy())
 
@@ -280,8 +258,11 @@ class UnoData(BaseModel):
 
         self.users = dict(zip(self.users.keys(), cards))
 
-        answer = _("All players have exchanged cards with their neighbors on the right!")
+        answer = _("We have exchanged cards with next neighbors!")
         return answer
+
+    def update_seven(self):
+        self.current_state.seven_0 = self.current_user_id
 
     def update_draw(self) -> str:
         if self.current_card.emoji == UnoEmoji.draw_four:
@@ -361,8 +342,15 @@ class UnoData(BaseModel):
     def update_state(self):
         self.current_state.passed = self.current_state.skipped = 0
 
-        if self.settings.seven_0 and self.current_card.emoji == UnoEmoji.null and self.users[self.current_user_id]:
-            return self.update_null()
+        if self.settings.seven_0 and self.users[self.current_user_id]:
+            if self.current_card.emoji == UnoEmoji.null:
+                return self.update_null()
+
+            if self.current_card.emoji == UnoEmoji.seven:
+                if len(self.users) == 2:
+                    return self.update_null()
+
+                return self.update_seven()
 
         if self.current_card.emoji in (UnoEmoji.draw_two, UnoEmoji.draw_four):
             return self.update_draw()
@@ -397,20 +385,20 @@ class UnoData(BaseModel):
 
     def play_seven(self, user: types.User | int, seven_user: types.User):
         if isinstance(user, int):
-            user_id = user
             answer = _("I exchange")
         else:
-            user_id = user.id
             answer = _("{user} exchanges").format(user=get_username(user))
 
         self.users.update(
             {
-                user_id: self.users[seven_user.id],
-                seven_user.id: self.users[user_id],
+                self.current_state.seven: self.users[seven_user.id],
+                seven_user.id: self.users[self.current_state.seven],
             }
         )
 
         answer_to = _("cards with player {seven_user}").format(seven_user=get_username(seven_user))
+        self.current_state.seven = 0
+
         return f'{answer} {answer_to}'
 
     def play_draw(self, user: types.User | int) -> str:
@@ -450,10 +438,6 @@ class UnoData(BaseModel):
         return f'{answer}\n{answer_pick}'
 
     async def finish(self, state: FSMContext):
-        for task in asyncio.all_tasks():
-            if task.get_name().startswith('uno') and task is not asyncio.current_task():
-                task.cancel()
-
         while self.users:
             await self.remove_user(state, self.next_user_id)
 

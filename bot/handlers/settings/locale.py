@@ -1,18 +1,22 @@
-from aiogram import Router, F, types
+from aiogram import Router, F, types, html
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.utils.database.context import DataBaseContext
-from . import keyboards as k
+from .misc import keyboards as k
 
 router = Router(name="settings:locale")
-router.callback_query.filter(k.Settings.filter(F.name == 'locale'))
+router.callback_query.filter(k.SettingsKeyboard.filter(F.action == 'locale'))
 
 
-@router.callback_query(k.Settings.filter(F.value))
+def get_locale_vars(locales: tuple) -> tuple[tuple[str, str], ...]:
+    return tuple(zip(locales, ('English', 'Русский')))
+
+
+@router.callback_query(k.SettingsKeyboard.filter(F.value))
 async def locale_update_handler(
         query: types.CallbackQuery,
         i18n: I18n,
-        callback_data: k.Settings,
+        callback_data: k.SettingsKeyboard,
         db: DataBaseContext,
 ):
     answer = _(
@@ -21,19 +25,21 @@ async def locale_update_handler(
     )
     await db.set_data(locale=callback_data.value)
     await query.message.edit_text(
-        answer.format(locale=dict(k.get_locale_vars(i18n.available_locales))[callback_data.value])
+        answer.format(locale=dict(get_locale_vars(i18n.available_locales))[callback_data.value])
     )
     await query.answer()
 
 
 @router.callback_query()
 async def locale_handler(query: types.CallbackQuery, i18n: I18n):
+    locales = get_locale_vars(i18n.available_locales)
     answer = _(
         "<b>Update bot language.</b>\n\n"
-        "Current language: <b>{locale}</b>. Available languages:"
+        "Current language: {locale}. Available languages:"
     )
+
     await query.message.edit_text(
-        answer.format(locale=dict(k.get_locale_vars(i18n.available_locales))[i18n.current_locale]),
-        reply_markup=k.locale(i18n)
+        answer.format(locale=html.bold(dict(locales)[i18n.current_locale])),
+        reply_markup=k.locale(locales, i18n.current_locale)
     )
     await query.answer()

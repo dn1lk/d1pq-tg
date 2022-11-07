@@ -12,11 +12,9 @@ class CustomCommandsMiddleware(BaseMiddleware):
             event: types.Message,
             data: Dict[str, Any]
     ) -> Any:
-        if 'custom_commands' not in data:
-            db: DataBaseContext = data['db']
-            custom_commands: Optional[dict] = await db.get_data('commands')
+        db: DataBaseContext = data['db']
+        custom_commands: Optional[dict] = await db.get_data('commands')
 
-            if custom_commands:
-                data['custom_commands'] = custom_commands
+        data['custom_commands'] = custom_commands or {}
 
         return await handler(event, data)

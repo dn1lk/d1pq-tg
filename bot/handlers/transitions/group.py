@@ -6,6 +6,7 @@ from aiogram.utils.i18n import gettext as _, I18n
 from bot.utils.database.context import DataBaseContext
 from .. import get_username, get_commands
 
+
 router = Router(name='transitions:group')
 
 
@@ -69,7 +70,7 @@ async def join_action_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
         db: DataBaseContext,
-        members: list | None = None
+        members: list | None,
 ):
     if members:
         await db.set_data(members=[*members, event.new_chat_member.user.id])
@@ -83,7 +84,7 @@ async def join_action_handler(
 async def join_message_handler(
         message: types.Message,
         db: DataBaseContext,
-        members: list | None = None
+        members: list | None,
 ):
     if members:
         await db.set_data(members=members.extend(member for member in message.new_chat_members))
@@ -123,7 +124,7 @@ async def leave_action_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
         db: DataBaseContext,
-        members: list | None = None,
+        members: list | None,
 ):
     await remove_member(db, members, event.new_chat_member.user.id)
 
@@ -136,7 +137,7 @@ async def leave_action_handler(
 async def leave_message_handler(
         message: types.Message,
         db: DataBaseContext,
-        members: list | None = None,
+        members: list | None,
 ):
     await remove_member(db, members, message.left_chat_member.id)
 

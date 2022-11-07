@@ -6,24 +6,25 @@ from asyncpg import Pool
 
 
 class DataBaseContext:
-    def __init__(self, bot: Bot, storage: BaseStorage, key: StorageKey, pool_db: Pool):
+    def __init__(self, bot: Bot, key: StorageKey, storage: BaseStorage, pool_db: Pool):
         self.bot = bot
-        self.storage = storage
         self.key = key
+        self.storage = storage
 
         self.pool_db = pool_db
 
-    async def get_data(self, key: str) -> Any:
-        data = (await self.storage.get_data(bot=self.bot, key=self.key)).get(key)
+    async def get_data(self, column: str) -> Any:
+        data = (await self.storage.get_data(bot=self.bot, key=self.key)).get(column)
 
-        if data == 'null':
-            data = None
-        elif not data:
+        if not data:
             async with self.pool_db.acquire() as conn:
-                data = await conn.fetchval(f"SELECT {key} FROM data WHERE id = $1;", self.key.chat_id) or \
-                       await conn.fetchval(f"SELECT {key} FROM data WHERE id = 0;")
+                data = await conn.fetchval(f"SELECT {column} FROM data WHERE id = $1;", self.key.chat_id) or \
+                       await conn.fetchval(f"SELECT {column} FROM data WHERE id = 0;")
 
-            await self.storage.update_data(bot=self.bot, key=self.key, data={key: data or 'null'})
+            await self.storage.update_data(bot=self.bot, key=self.key, data={column: data or 'NULL'})
+
+        elif data == 'NULL':
+            data = None
 
         return data
 
@@ -32,9 +33,9 @@ class DataBaseContext:
             kwargs.update(data)
 
         async with self.pool_db.acquire() as conn:
-            for key, data in kwargs.items():
+            for column, data in kwargs.items():
                 await conn.execute(
-                    f"INSERT INTO data (id, {key}) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET {key} = $2;",
+                    f"INSERT INTO data (id, {column}) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET {column} = $2;",
                     self.key.chat_id, data
                 )
 
@@ -45,8 +46,8 @@ class DataBaseContext:
             kwargs.update(data)
 
         async with self.pool_db.acquire() as conn:
-            for key, data in kwargs.items():
-                await conn.execute(f"UPDATE data SET {key} = $2 WHERE id = $1;", self.key.chat_id, data)
+            for column, data in kwargs.items():
+                await conn.execute(f"UPDATE data SET {column} = $2 WHERE id = $1;", self.key.chat_id, data)
 
         await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
 

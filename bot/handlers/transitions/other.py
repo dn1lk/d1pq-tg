@@ -1,6 +1,6 @@
 from aiogram import Router, F
 
-router = Router(name='transitions:private')
+router = Router(name='transitions:other')
 
 
 @router.message(F.new_chat_members | F.left_chat_member)

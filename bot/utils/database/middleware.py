@@ -1,43 +1,40 @@
 from typing import Callable, Dict, Any, Awaitable
 
-from aiogram import BaseMiddleware, Bot, types
-from aiogram.fsm.storage.base import BaseStorage, StorageKey
+from aiogram import BaseMiddleware, types
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.base import StorageKey
 from asyncpg import Pool
 
 from .context import DataBaseContext
 
 
 class DataBaseContextMiddleware(BaseMiddleware):
-    def __init__(self, storage: BaseStorage, pool_db: Pool):
-        self.storage = storage
-        self.pool_db = pool_db
-
     async def __call__(
             self,
             handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
             event: types.TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
-        bot: Bot = data["bot"]
-        chat_id: int = data.get("event_chat", data["event_from_user"]).id
-        data["db"] = self.get_context(bot, chat_id)
+        pool_db: Pool = data["pool_db"]
+        state: FSMContext = data["state"]
 
+        data["db"] = self.get_context(pool_db, state)
         return await handler(event, data)
 
+    @staticmethod
     def get_context(
-            self,
-            bot: Bot,
-            chat_id: int,
+            pool_db: Pool,
+            state: FSMContext,
             destiny: str = 'database',
     ) -> DataBaseContext:
         return DataBaseContext(
-            bot=bot,
-            pool_db=self.pool_db,
-            storage=self.storage,
+            bot=state.bot,
             key=StorageKey(
-                bot_id=bot.id,
-                chat_id=chat_id,
-                user_id=chat_id,
+                bot_id=state.key.bot_id,
+                chat_id=state.key.chat_id,
+                user_id=state.key.chat_id,
                 destiny=destiny,
-            )
+            ),
+            storage=state.storage,
+            pool_db=pool_db,
         )

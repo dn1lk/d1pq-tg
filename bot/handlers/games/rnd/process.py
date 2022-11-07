@@ -4,15 +4,18 @@ from aiogram import Router, F, types, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from . import Games
+from bot.utils.timer import Timer
+from .. import Games
 
-router = Router(name='game:rnd')
+router = Router(name='game:rnd:process')
 router.message.filter(Games.rnd)
 
 
-@router.message(F.chat.type == 'private', F.text.in_(set(map(str, range(1, 11)))))
-async def private_handler(message: types.Message, state: FSMContext):
+@router.message(F.chat.type == 'private', F.text.in_(tuple(map(str, range(1, 11)))))
+async def private_handler(message: types.Message, state: FSMContext, timer: Timer):
+    await timer.cancel(timer.get_name(state, name='game'))
     await state.clear()
+
     bot_var = str(choice(range(1, 11)))
 
     answer = _("Ok, so... My choice is {bot_var}.\n").format(bot_var=html.bold(bot_var))
@@ -20,23 +23,19 @@ async def private_handler(message: types.Message, state: FSMContext):
     await message.reply(answer + matched)
 
 
-@router.message(F.text.in_(set(map(str, range(1, 11)))))
-async def answer_handler(message: types.Message, state: FSMContext):
-    user_var: dict[str, list] = (await state.get_data()).get('rnd', {})
+@router.message(F.text.in_(tuple(map(str, range(1, 11)))))
+async def chat_handler(message: types.Message, state: FSMContext):
+    user_vars: dict[str, list] = await state.get_data() or {}
 
-    if message.from_user.id in sum(user_var.values(), []):
+    if user_vars and message.from_user.id in sum(user_vars.values(), []):
         answer = (
             _("You have already made your choice."),
             _("Cunning, but you already used your try."),
             _("So let's write it down ... Seen in a scam."),
         )
     else:
-        if message.text in user_var:
-            user_var[message.text].append(message.from_user.id)
-        else:
-            user_var[message.text] = [message.from_user.id]
-
-        await state.update_data(rnd=user_var)
+        user_vars.setdefault(message.text, []).append(message.from_user.id)
+        await state.set_data(user_vars)
 
         answer = (
             _("Your choice has been accepted."),

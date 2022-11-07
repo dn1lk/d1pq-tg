@@ -2,7 +2,7 @@ from random import choice
 
 from aiogram import Bot, types
 
-from bot.utils.database.context import DataBaseContext
+from .database.context import DataBaseContext
 
 
 async def gen(message: types.Message, bot: Bot, db: DataBaseContext) -> str:

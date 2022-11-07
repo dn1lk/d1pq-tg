@@ -10,7 +10,7 @@ class CustomCommandFilter(filters.Command):
             bot: Bot,
             custom_commands: Optional[dict[str, tuple]] = None
     ) -> Union[bool, Dict[str, Any]]:
-        if custom_commands and self.commands[0] in custom_commands:
+        if self.commands[0] in custom_commands:
             self.commands = (*self.commands, custom_commands[self.commands[0]])
 
         return await super().__call__(message, bot)

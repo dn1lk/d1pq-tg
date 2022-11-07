@@ -2,14 +2,14 @@ from random import choices, choice, random
 from re import split
 
 from aiogram import Router, Bot, F, types, filters, flags, html
+from aiogram.filters import MagicData
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.utils import markov, balaboba
 from . import NO_ARGS, get_username, get_commands
-from .settings.commands import CustomCommandFilter, CustomCommandsMiddleware
+from .settings.commands import CustomCommandFilter
 
 router = Router(name="commands")
-router.message.outer_middleware(CustomCommandsMiddleware())
 
 
 @router.message(CustomCommandFilter('start', 'начать'))
@@ -27,8 +27,8 @@ async def start_handler(message: types.Message, i18n: I18n, commands: dict[str, 
 async def settings_handler(message: types.Message, bot: Bot):
     """set up the bot, настроить бота"""
 
-    from .settings.other import get_answer
-    await message.answer(**await get_answer(message.chat.id, message.from_user.id, bot))
+    from .settings import get_setup_answer
+    await message.answer(**await get_setup_answer(message, bot))
 
 
 @router.message(CustomCommandFilter('help', 'помощь'))
@@ -43,7 +43,7 @@ async def help_handler(message: types.Message, i18n: I18n, commands: dict[str, t
 async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
     return {
         'command': command.command,
-        'args': (markov.gen(locale=i18n.current_locale, text=command.command, max_words=5, **kwargs)).lower()
+        'args': markov.gen(locale=i18n.current_locale, text=command.command, max_words=5, **kwargs).lower()
     }
 
 
@@ -62,17 +62,15 @@ async def choose_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: list | None = None):
+        messages: list[str],
+):
     message = await message.answer(html.bold(_("What to choose?")))
 
-    args = markov.get_base(i18n.current_locale, choice(markov.books)).parsed_sentences
-    if messages:
-        args = messages + args
-
+    from .settings.commands import get_args
     await message.answer(
         NO_ARGS.format(
             command=command.command,
-            args=_("{args[0]} or {args[1]}").format(args=choices(sum([arg for arg in args if len(arg) > 3], []), k=2))
+            args=_(" or ").join(choices(get_args(i18n, messages), k=2))
         )
     )
 
@@ -82,35 +80,39 @@ async def who_private_handler(message: types.Message):
     await message.answer(_("This command only works in <b>chats</b>, alas =("))
 
 
-@router.message(CustomCommandFilter('who', 'кто', magic=F.args))
+@router.message(CustomCommandFilter('who', 'кто', magic=F.args), MagicData(F.members))
 @flags.data('members')
 async def who_chat_handler(
         message: types.Message,
         bot: Bot,
         command: filters.CommandObject,
-        members: list | None = None,
+        members: list[int],
 ):
     """find the desired participant, найти участника чата по описанию"""
 
-    if members:
-        if len(members) > 1:
-            member = await bot.get_chat_member(message.chat.id, choice(members))
-            answer = choice(
-                (
-                    _("Hmmm, I think"),
-                    _("I guess"),
-                    _("Oh, I admit"),
-                    _("Maybe it's"),
-                    _("Wait! It's")
-                )
-            ) + f" {get_username(member.user)} {html.bold(html.quote(command.args))}"
-        else:
-            answer = (_("Oh, I don't know you guys... Give me a time."))
+    if len(members) > 1:
+        member = await bot.get_chat_member(message.chat.id, choice(members))
+        answer = choice(
+            (
+                _("Hmmm, I think"),
+                _("I guess"),
+                _("Oh, I admit"),
+                _("Maybe it's"),
+                _("Wait! It's")
+            )
+        ) + f" {get_username(member.user)} {html.bold(html.quote(command.args))}"
     else:
-        answer = _(
-            "<b>This command requires permission to record chat participants.</b>\n\n"
-            "/settings - give permission."
-        )
+        answer = (_("Oh, I don't know you guys... Give me a time."))
+
+    await message.answer(answer)
+
+
+@router.message(CustomCommandFilter('who', 'кто', magic=F.args))
+async def who_chat_no_members_handler(message: types.Message):
+    answer = _(
+        "<b>This command requires permission to record chat participants.</b>\n\n"
+        "/settings - give permission."
+    )
 
     await message.answer(answer)
 
@@ -122,7 +124,7 @@ async def who_chat_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: list | None = None,
+        messages: list[str],
 ):
     message = await message.answer(html.bold(_("Who???")))
     await message.answer(
@@ -189,7 +191,7 @@ async def question_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: list | None = None
+        messages: list[str],
 ):
     message = await message.answer(html.bold(_("So what's the question?")))
     await message.answer(
@@ -210,7 +212,7 @@ async def history_handler(
         command: filters.CommandObject,
         i18n: I18n,
         yalm: balaboba.Yalm,
-        messages: list | None = None,
+        messages: list[str],
 ):
     """tell a story, рассказать историю"""
 
@@ -246,7 +248,8 @@ async def future_no_args_handler(
         message: types.Message,
         command: filters.CommandObject,
         i18n: I18n,
-        messages: list | None = None):
+        messages: list[str],
+):
     message = await message.answer(_("<b>On coffee grounds?</b>"))
     await message.answer(
         NO_ARGS.format(

@@ -4,7 +4,7 @@ from aiogram import Router, F, types, html
 from aiogram.utils.i18n import gettext as _
 from pydantic import BaseModel
 
-from .. import keyboards as k
+from .misc import keyboards as k
 
 router = Router(name='game:uno:settings')
 router.callback_query.filter(F.from_user.id == F.message.entities[7].user.id)
@@ -70,8 +70,12 @@ class UnoAdd(int, Enum, metaclass=UnoSettingsMeta):
 
         return words.get(self)
 
+    @classmethod
+    def extract(cls, message: types.Message, n: int) -> "UnoAdd":
+        return cls.meta_extract(message, 2 + n)
+
     @property
-    def changer(self) -> str:
+    def switcher(self) -> str:
         changers = {
             self.off: _("Disable"),
             self.on: _("Enable"),
@@ -79,12 +83,8 @@ class UnoAdd(int, Enum, metaclass=UnoSettingsMeta):
 
         return changers.get(self)
 
-    @classmethod
-    def extract(cls, message: types.Message, n: int) -> "UnoAdd":
-        return cls.meta_extract(message, 2 + n)
-
     @staticmethod
-    def names():
+    def get_names():
         return (
             _('Stacking'),
             _('Seven-O'),
@@ -115,53 +115,53 @@ class UnoSettings(BaseModel):
         return [entity for entity in entities if entity.type == 'bold'][1:-1]
 
 
-@router.callback_query(k.UnoGame.filter(F.value == 'settings'))
+@router.callback_query(k.UnoKeyboard.filter(F.action == 'settings'))
 async def settings_handler(query: types.CallbackQuery):
-    await query.message.edit_reply_markup(k.uno_settings(query.message))
+    await query.message.edit_reply_markup(k.settings(query.message))
     await query.answer()
 
 
-@router.callback_query(k.UnoGame.filter(F.value.in_([difficulty.name for difficulty in UnoDifficulty])))
-async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k.Games):
+@router.callback_query(k.UnoKeyboard.filter(F.action.in_([difficulty.name for difficulty in UnoDifficulty])))
+async def difficulty_change_handler(query: types.CallbackQuery, callback_data: k.UnoKeyboard):
     await query.message.edit_text(
         query.message.html_text.replace(
             UnoDifficulty.extract(query.message).word,
-            UnoDifficulty[callback_data.value].word,
+            UnoDifficulty[callback_data.action].word,
         ),
-        reply_markup=k.uno_start(),
+        reply_markup=k.start(),
     )
     await query.answer()
 
 
-@router.callback_query(k.UnoGame.filter(F.value.in_([mode.name for mode in UnoMode])))
-async def mode_change_handler(query: types.CallbackQuery, callback_data: k.Games):
+@router.callback_query(k.UnoKeyboard.filter(F.action.in_([mode.name for mode in UnoMode])))
+async def mode_change_handler(query: types.CallbackQuery, callback_data: k.UnoKeyboard):
     await query.message.edit_text(
         query.message.html_text.replace(
             UnoMode.extract(query.message).word,
-            UnoMode[callback_data.value].word,
+            UnoMode[callback_data.action].word,
         ),
-        reply_markup=k.uno_start(),
+        reply_markup=k.start(),
     )
     await query.answer()
 
 
-@router.callback_query(k.UnoGame.filter(F.value.in_([add.name for add in UnoAdd])))
-async def additive_change_handler(query: types.CallbackQuery, callback_data: k.UnoGame):
-    new_add = UnoAdd[callback_data.value]
+@router.callback_query(k.UnoKeyboard.filter(F.action.in_([add.name for add in UnoAdd])))
+async def additive_change_handler(query: types.CallbackQuery, callback_data: k.UnoKeyboard):
+    new_add = UnoAdd[callback_data.action]
     old_add = UnoAdd.off if new_add else UnoAdd.on
-    name = UnoAdd.names()[callback_data.index]
+    name = UnoAdd.get_names()[callback_data.value]
 
     await query.message.edit_text(
         query.message.html_text.replace(
             f'{name}: {html.bold(old_add.word)}',
             f'{name}: {html.bold(new_add.word)}',
         ),
-        reply_markup=k.uno_start(),
+        reply_markup=k.start(),
     )
     await query.answer()
 
 
-@router.callback_query(k.UnoGame.filter(F.value == 'back'))
+@router.callback_query(k.UnoKeyboard.filter(F.action == 'back'))
 async def settings_back_handler(query: types.CallbackQuery):
-    await query.message.edit_reply_markup(k.uno_start())
+    await query.message.edit_reply_markup(k.start())
     await query.answer()

@@ -1,9 +1,11 @@
 from aiogram import Dispatcher, types, html
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
-__all__ = 'NO_ARGS', 'setup', 'get_username', 'get_commands'
 
-NO_ARGS = __("\n\nWrite a request together with command in one message.\nFor example: <code>/{command} {args}</code>")
+NO_ARGS = __(
+    "\n\nWrite a request together with command in one message.\n"
+    "For example: <code>/{command} {args}</code>"
+)
 
 
 def get_username(user: types.User = None) -> str:
@@ -18,19 +20,20 @@ def get_commands(commands: dict[str, tuple[types.BotCommand]], locale: str, inde
 
 
 def setup(dp: Dispatcher):
-    from .settings import setup as setting_rt
-    from .games import setup as game_rt
-    from .transitions import setup as transitions_rt
+    from .games import setup as game_st
 
+    game_st(dp)
+
+    from .settings import setup as setting_st
+    from .transitions import setup as transitions_st
     from .command import router as command_rt
     from .error import router as error_rt
     from .other import router as other_rt
 
     sub_routers = (
-        setting_rt(),
-        game_rt(),
+        setting_st(),
         command_rt,
-        transitions_rt(),
+        transitions_st(),
         other_rt,
         error_rt,
     )

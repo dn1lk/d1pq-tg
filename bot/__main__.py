@@ -27,10 +27,9 @@ async def main():
 
     dp['owner_id'] = config.bot.owner
 
-    from utils import database as db, balaboba as yalm
+    import utils
 
-    dp['pool_db'] = pool_db = await db.setup()
-    dp['yalm'] = yalm = await yalm.Yalm.setup()
+    await utils.setup(dp)
 
     import middlewares
     import handlers
@@ -57,8 +56,8 @@ async def main():
             logging.exception(exceptions.TelegramNetworkError)
         finally:
             await bot.session.close()
-            await yalm.session.close()
-            await pool_db.close()
+            await dp['yalm'].close()
+            await dp['pool_db'].close()
 
 
 if __name__ == "__main__":

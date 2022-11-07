@@ -2,20 +2,21 @@ from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import gettext as _
 
 from bot.utils.database.context import DataBaseContext
-from . import UPDATE, UPDATE_AGAIN, keyboards as k
+from . import UPDATE, UPDATE_AGAIN
+from .misc import keyboards as k
 
 router = Router(name="settings:accuracy")
-router.callback_query.filter(k.Settings.filter(F.name == 'accuracy'))
+router.callback_query.filter(k.SettingsKeyboard.filter(F.action == 'accuracy'))
 
 
-@router.callback_query(k.Settings.filter(F.value))
+@router.callback_query(k.SettingsKeyboard.filter(F.value))
 async def accuracy_update_handler(
         query: types.CallbackQuery,
-        callback_data: k.Settings,
+        callback_data: k.SettingsKeyboard,
         db: DataBaseContext,
 ):
     accuracy = int(callback_data.value)
-    answer = _("Text generation accuracy updated successfully: {accuracy}.")
+    answer = _("OK. Current text generation accuracy: {accuracy}.")
 
     await db.set_data(accuracy=accuracy)
     await query.message.edit_text(
@@ -32,8 +33,8 @@ async def accuracy_handler(
         accuracy: int,
 ):
     answer = _(
-        "Current text generation accuracy: {accuracy}.\n\n"
-        "The larger the value, the more accurate, but the text generation will take longer."
+        "Current text generation accuracy: {accuracy}.\n"
+        "More value - better, but longer generation, less - vice versa."
     )
 
     await query.message.edit_text(

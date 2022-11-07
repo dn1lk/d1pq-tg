@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from dataclasses import dataclass
 from typing import Dict, Any, Awaitable, Callable, Union, Optional
 
@@ -37,14 +36,13 @@ class DataMiddleware(BaseMiddleware):
                     bot: Bot = data['bot']
                     value = round(value / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
 
-                if value:
-                    data[key] = value
+                data[key] = value
 
         if get_flag(data, 'throttling') == 'gen' and event.text:
-            messages = markov.set_data(event.text, data.get('messages'))
+            messages = markov.set_data(event.text, await db.get_data('messages') or [])
+            data['messages'] = messages
 
             if messages:
-                data['messages'] = messages
                 await db.set_data(messages=messages)
 
         result = await handler(event, data)
@@ -53,21 +51,9 @@ class DataMiddleware(BaseMiddleware):
             members: Optional[list] = data.get('members', await db.get_data('members'))
 
             if members and data['event_from_user'].id not in members:
-                members.append(data['event_from_user'].id)
-                await db.update_data(members=members)
+                await db.update_data(members=[*members, data['event_from_user'].id])
 
         return result
-
-
-class LogMiddleware(BaseMiddleware):
-    async def __call__(
-            self,
-            handler: Callable[[types.Update, Dict[str, Any]], Awaitable[Any]],
-            event: types.Update,
-            data: Dict[str, Any]
-    ) -> Any:
-        logging.debug(f'New event - {event.event_type}:\n{event.event}')
-        return await handler(event, data)
 
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -169,16 +155,17 @@ class Middleware:
 def setup(dp: Dispatcher):
     from bot import config
 
+    from handlers.settings.commands import CustomCommandsMiddleware
     from locales.middleware import I18nContextMiddleware
     from utils.database.middleware import DataBaseContextMiddleware
 
     middlewares = (
+        Middleware(outer=DataBaseContextMiddleware()),
+        Middleware(outer=CustomCommandsMiddleware(), observers={'message', 'callback_query'}),
         Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers={'message', 'callback_query', 'chat_member'}),
-        Middleware(outer=LogMiddleware()),
-        Middleware(outer=DataBaseContextMiddleware(storage=dp.storage, pool_db=dp['pool_db'])),
-        Middleware(outer=I18nContextMiddleware(i18n=config.i18n)),
+        Middleware(inner=I18nContextMiddleware(i18n=config.i18n)),
         Middleware(outer=UnhandledMiddleware(), observers='message'),
     )
 

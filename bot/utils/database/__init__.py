@@ -1,13 +1,8 @@
-from json import dumps, loads
-
 from asyncpg import Pool, Connection, create_pool
-
-from bot import config
-
-__all__ = 'setup'
 
 
 async def init_connection(conn: Connection):
+    from json import dumps, loads
     await conn.set_type_codec(
         typename='json',
         encoder=dumps,
@@ -17,11 +12,12 @@ async def init_connection(conn: Connection):
 
 
 async def setup() -> Pool:
+    from bot import config
     pool: Pool = await create_pool(config.heroku.database_url, max_size=20, init=init_connection)
 
     async with pool.acquire() as conn:
         await conn.execute(
-            """CREATE TABLE IF NOT EXISTS data (
+            """CREATE TABLE IF NOT EXISTS record (
                 id              BIGINT              PRIMARY KEY NOT NULL,
                 locale          TEXT,                
                 messages        TEXT ARRAY,
@@ -33,6 +29,6 @@ async def setup() -> Pool:
             );"""
         )
 
-        await conn.execute(f"INSERT INTO data (id) VALUES (0) ON CONFLICT (id) DO NOTHING;")
+        await conn.execute(f"INSERT INTO record (id) VALUES (0) ON CONFLICT (id) DO NOTHING;")
 
     return pool

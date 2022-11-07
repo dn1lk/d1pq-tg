@@ -1,180 +1,229 @@
-import asyncio
 from random import choice
 
 from aiogram import Router, F, types
-from aiogram.filters import MagicData
 from aiogram.fsm.context import FSMContext
+from aiogram.handlers import MessageHandler
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
+from bot.utils.timer import Timer
 from . import DRAW_CARD
-from .process import UnoData, UnoColors
-from .process.middleware import UnoDataMiddleware
-from .. import keyboards as k
-
-router = Router(name='game:uno:user')
-router.message.outer_middleware(UnoDataMiddleware())
-router.callback_query.outer_middleware(UnoDataMiddleware())
+from .misc import UnoData, UnoColors, keyboards as k
 
 
-@router.message(F.sticker.set_name == 'uno_by_bp1lh_bot', MagicData(F.data_uno))
-async def user_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    card = data_uno.get_card(message.from_user.id, message.sticker)
-    accept, decline = data_uno.filter_card(message.from_user.id, card)
-
-    if accept:
-        data_uno.current_card = card
-        data_uno.timer_amount = 3
-
-        from .process.core import pre
-        await pre(message, state, data_uno, accept)
-    elif decline:
-        data_uno.pick_card(message.from_user)
-        await data_uno.update(state)
-
-        await message.reply(decline.format(user=get_username(message.from_user)))
+router = Router(name='game:uno:process')
 
 
-@router.message(
-    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
-    F.text == DRAW_CARD,
-)
-async def pass_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    from .process.core import proceed_pass
-    await proceed_pass(message, state, data_uno)
+@router.message(F.sticker.set_name == 'uno_by_bp1lh_bot')
+class TurnHandler(MessageHandler):
+    @property
+    def state(self):
+        return self.data['state']
+
+    @property
+    def timer(self):
+        return self.data['timer']
+
+    async def handle(self):
+        data_uno = await UnoData.get_data(self.state)
+
+        card = data_uno.get_card(self.from_user.id, self.event.sticker)
+        accept, decline = data_uno.filter_card(self.from_user.id, card)
+
+        if accept:
+            await self.timer.cancel(self.timer.get_name(self.state, 'game'))
+
+            data_uno.current_card = card
+            data_uno.timer_amount = 3
+            data_uno.update_turn(self.from_user.id)
+
+            self.event = await self.proceed_turn(data_uno, accept)
+
+            if self.event:
+                from .misc import timeout, timeout_done
+                await self.timer.create(
+                    self.state,
+                    timeout,
+                    timeout_done,
+                    name='game',
+                    message=self.event,
+                    timer=self.timer,
+                )
+
+        elif decline:
+            data_uno.pick_card(self.from_user)
+            await data_uno.set_data(self.state)
+
+            await self.event.reply(decline.format(user=get_username(self.from_user)))
+
+    async def proceed_turn(self, data_uno: UnoData, answer: str):
+        if data_uno.current_card.color is UnoColors.black:
+            await data_uno.set_data(self.state)
+
+            answer_color = choice(
+                (
+                    _("Finally, we will change the color.\nWhat will {user} choose?"),
+                    _("New color, new light.\nby {user}."),
+                )
+            )
+
+            return await self.event.answer(
+                answer_color.format(user=get_username(self.from_user)),
+                reply_markup=k.choice_color(),
+            )
+
+        answer = data_uno.update_state() or answer
+
+        if data_uno.current_state.seven:
+            await data_uno.set_data(self.state)
+
+            answer_seven = _(
+                "{user}, with whom will you exchange cards?\n"
+                "Mention (@) this player in your next message."
+            )
+
+            return await self.event.answer(
+                answer_seven.format(user=get_username(self.from_user)),
+            )
+
+        from .misc.process import proceed_turn
+        await proceed_turn(self.event, self.state, self.timer, data_uno, answer)
 
 
 @router.message(F.text == DRAW_CARD)
-async def pass_no_current_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    user = await data_uno.get_user(state)
-    await message.reply(
-        _(
-            "Of course, I don't mind, but now it's {user}'s turn.\n"
-            "We'll have to wait =)."
-        ).format(user=get_username(user))
-    )
+async def pass_handler(message: types.Message, state: FSMContext, timer: Timer):
+    data_uno = await UnoData.get_data(state)
+
+    if message.from_user.id == data_uno.current_user_id:
+        await timer.cancel(timer.get_name(state, 'game'))
+
+        data_uno.current_state.passed = message.from_user.id
+        answer = data_uno.play_draw(message.from_user)
+
+        from .misc.process import next_turn
+        await next_turn(message, state, timer, data_uno, answer)
+
+    else:
+        user = await data_uno.get_user(state)
+        await message.reply(
+            _(
+                "Of course, I don't mind, but now it's {user}'s turn.\n"
+                "We'll have to wait =)."
+            ).format(user=get_username(user))
+        )
 
 
-@router.message(
-    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
-    F.entities.func(lambda entities: entities[0].type in ('mention', 'text_mention')),
-)
-async def seven_handler(message: types.Message, state: FSMContext, data_uno: UnoData):
-    async def get_seven_user():
-        if message.entities[0].user:
-            user = message.entities[0].user
+@router.callback_query(k.UnoKeyboard.filter(F.action == 'bluff'))
+async def bluff_handler(query: types.CallbackQuery, state: FSMContext, timer: Timer):
+    data_uno = await UnoData.get_data(state)
+
+    if query.from_user.id == data_uno.current_user_id:
+        await timer.cancel(timer.get_name(state, 'game'))
+
+        answer = await data_uno.play_bluff(state)
+
+        from .misc.process import next_turn
+        await next_turn(query.message, state, timer, data_uno, answer)
+
+        await query.answer()
+
+    else:
+        user = await data_uno.get_user(state)
+        answer = _("Only {user} can verify the legitimacy of using this card.")
+
+        await query.answer(answer.format(user=user.first_name))
+
+
+@router.message(F.entities.func(lambda tts: tts[0].type in ('mention', 'text_mention')))
+class SevenHandler(MessageHandler):
+    @property
+    def state(self):
+        return self.data['state']
+
+    async def handle(self):
+        data_uno = await UnoData.get_data(self.state)
+
+        if self.from_user.id == data_uno.current_state.seven:
+            seven_user = await self.get_seven_user(data_uno)
+
+            if seven_user:
+                await self.timer.cancel(self.timer.get_name(self.state, 'game'))
+
+                answer = data_uno.play_seven(self.event.from_user, seven_user)
+                await data_uno.set_data(self.state)
+
+                from .misc.process import proceed_turn
+                await proceed_turn(self.event, self.state, self.timer, data_uno, answer)
+
+            else:
+                await self.event.answer(_("{user} is not playing with us.").format(
+                    user=get_username(self.event.entities[0].user))
+                )
+
+    async def get_seven_user(self, data_uno: UnoData):
+        if self.event.entities[0].user:
+            user = self.event.entities[0].user
 
             if user in data_uno.users:
                 return user
 
         else:
             for user_id in data_uno.users:
-                user = await data_uno.get_user(state, user_id)
+                user = await data_uno.get_user(self.state, user_id)
 
-                if user.username == message.entities[0].extract_from(message.text):
+                if user.username == self.event.entities[0].extract_from(self.event.text):
                     return user
 
-    seven_user = await get_seven_user()
 
-    if seven_user:
-        answer = data_uno.play_seven(message.from_user, seven_user)
-        await data_uno.update(state)
+@router.callback_query(k.UnoKeyboard.filter(F.action.in_([color for color in UnoColors])))
+async def color_handler(
+        query: types.CallbackQuery,
+        state: FSMContext,
+        timer: Timer,
+        callback_data: k.UnoKeyboard,
+):
+    data_uno = await UnoData.get_data(state)
 
-        await message.answer(
-            answer.format(
-                user=get_username(message.from_user),
-                seven_user=get_username(seven_user),
+    if query.from_user.id == data_uno.current_user_id:
+        await timer.cancel(timer.get_name(state, 'game'))
+
+        data_uno.current_card.color = UnoColors[callback_data.action]
+
+        await query.message.edit_text(
+            _("{user} changes the color to {color}!").format(
+                user=get_username(query.from_user),
+                color=data_uno.current_card.color.word,
             )
         )
+        await query.answer()
 
+        from .misc.process import proceed_turn
+        await proceed_turn(query.message, state, timer, data_uno)
     else:
-        await message.answer(_("{user} is not playing with us.").format(user=get_username(message.entities[0].user)))
+        await query.answer(_("When you'll get a black card, choose this color ;)"))
 
 
-@router.callback_query(
-    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
-    k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])),
-)
-async def color_handler(query: types.CallbackQuery, state: FSMContext, callback_data: k.Games, data_uno: UnoData):
-    data_uno.current_card.color = UnoColors[callback_data.value]
+@router.callback_query(k.UnoKeyboard.filter(F.action == 'uno'))
+async def uno_handler(query: types.CallbackQuery, state: FSMContext, timer: Timer):
+    data_uno = await UnoData.get_data(state)
 
-    await query.message.edit_text(
-        _("{user} changes the color to {color}!").format(
-            user=get_username(query.from_user),
-            color=data_uno.current_card.color.word,
-        )
-    )
+    if query.from_user.id in data_uno.users:
+        task = await timer.cancel(timer.get_name(state, 'game:uno'))
 
-    from .process.core import proceed_turn
-    await proceed_turn(query.message, state, data_uno)
+        if not task:
+            return query.answer(_("Next time be faster!"))
 
-    await query.answer()
-
-
-@router.callback_query(k.UnoGame.filter(F.value.in_([color.value for color in UnoColors])))
-async def color_no_current_handler(query: types.CallbackQuery):
-    await query.answer(_("When you'll get a black card, choose this color ;)"))
-
-
-@router.callback_query(
-    MagicData(F.event.from_user.id == F.data_uno.current_user_id),
-    k.UnoGame.filter(F.value == 'bluff'),
-)
-async def bluff_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
-    await query.message.edit_reply_markup(k.uno_show_cards(0))
-
-    answer = await data_uno.play_bluff(state)
-
-    from .process.core import post
-    await post(query.message, state, data_uno, answer)
-
-    await query.answer(_("You see right through people!"))
-
-
-@router.callback_query(k.UnoGame.filter(F.value == 'bluff'))
-async def bluff_no_current_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
-    user = await data_uno.get_user(state, data_uno.current_user_id)
-    answer = _("Only {user} can verify the legitimacy of using this card.")
-
-    await query.answer(answer.format(user=user.first_name))
-
-
-@router.callback_query(
-    k.UnoGame.filter(F.value == 'uno'),
-    MagicData(F.event.from_user.func(lambda user: F.data_uno.users.get(user.id)))
-)
-async def uno_handler(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData):
-    from .process import UnoBot
-    bot = UnoBot(query.message, state, data_uno)
-
-    for task in asyncio.all_tasks():
-        if task.get_name() == f'{bot}:uno':
-            task.cancel()
-            break
-    else:
-        return query.answer(_("Next time be faster!"))
-
-    from .process.core import proceed_uno
-
-    try:
+        from .misc.process import proceed_uno
         await proceed_uno(query.message, state, data_uno, query.from_user)
 
         answer = (
             _("Good job!"),
             _("And you don't want to lose =)"),
-            _("You will be reminded of it."),
-        )
-
-    except asyncio.CancelledError:
-        answer = (
             _("On reaction =)."),
             _("Yep!"),
-            _("Ok, you won't get cards."),
+            _("Like a pro.")
         )
 
-    await query.answer(choice(answer))
-
-
-@router.callback_query(k.UnoGame.filter(F.value == 'uno'))
-async def uno_no_game_handler(query: types.CallbackQuery):
-    await query.answer(_("You are not in the game!"))
+        await query.answer(choice(answer))
+    else:
+        await query.answer(_("You are not in the game!"))

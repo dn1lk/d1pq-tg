@@ -19,6 +19,9 @@ class Yalm:
 
         return yalm
 
+    async def close(self):
+        await self.session.close()
+
     async def gen(self, locale: str, query: str, intro: int | None = 0) -> str:
         try:
             answer = await self._get_response(

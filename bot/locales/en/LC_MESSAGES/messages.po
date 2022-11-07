@@ -1020,11 +1020,11 @@ msgid "Current text generation chance: {chance}%."
 msgstr ""
 
 #: handlers/settings/data.py:16
-msgid "The data was successfully deleted."
+msgid "The record was successfully deleted."
 msgstr ""
 
 #: handlers/settings/data.py:21
-msgid "{item} recording is {status}."
+msgid "{item} record is {status}."
 msgstr ""
 
 #: handlers/settings/data.py:25
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: handlers/settings/data.py:51
 msgid ""
-"I am recording some information about this chat.\n"
+"I am record some information about this chat.\n"
 "\n"
 msgstr ""
 
@@ -1059,7 +1059,7 @@ msgstr ""
 
 #: handlers/settings/data.py:64
 msgid ""
-"- <b>{item} recording</b> - {description}.\n"
+"- <b>{item} record</b> - {description}.\n"
 "\n"
 msgstr ""
 
@@ -1080,11 +1080,11 @@ msgid "Change generation accuracy"
 msgstr ""
 
 #: handlers/settings/keyboards.py:17
-msgid "Change data policy"
+msgid "Change record policy"
 msgstr ""
 
 #: handlers/settings/keyboards.py:79
-msgid "{action} {item} recording"
+msgid "{action} {item} record"
 msgstr ""
 
 #: handlers/settings/keyboards.py:84
@@ -1096,7 +1096,7 @@ msgid "Disable"
 msgstr ""
 
 #: handlers/settings/keyboards.py:88
-msgid "Delete all data"
+msgid "Delete all record"
 msgstr ""
 
 #: handlers/settings/locale.py:18
@@ -1416,18 +1416,18 @@ msgstr ""
 #~ msgid "Current text generation chance: <b>{chance}%</b>."
 #~ msgstr ""
 
-#~ msgid "<b>The data was successfully deleted.</b>"
+#~ msgid "<b>The record was successfully deleted.</b>"
 #~ msgstr ""
 
-#~ msgid "<b>{item} recording is {status}.</b>"
+#~ msgid "<b>{item} record is {status}.</b>"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "<b>I am recording some information about this chat.</b>\n"
+#~ "<b>I am record some information about this chat.</b>\n"
 #~ "\n"
 #~ msgstr ""
 
-#~ msgid "- <b>{item} recording</b> - {description}."
+#~ msgid "- <b>{item} record</b> - {description}."
 #~ msgstr ""
 
 #~ msgid "chat - they are only available to the administrator - {admins}"

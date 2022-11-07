@@ -11,11 +11,12 @@ from bot.utils.database.context import DataBaseContext
 from . import get_username
 
 router = Router(name='message')
-router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
+router.message.filter(~F.from_user.is_bot, F.text, filters.StateFilter(None))
 
 
 def answer_check(answer: str) -> str:
-    answer = (answer[0].upper() + answer[1:]).strip()
+    answer = answer.strip()
+    answer = answer[0].upper() + answer[1:]
 
     if answer[-1] not in '!?:.()>':
         answer += '.'
@@ -24,16 +25,16 @@ def answer_check(answer: str) -> str:
 
 
 async def get_gen_args(
-        message: types.Message,
-        bot: Bot,
-        i18n: I18n,
-        db: DataBaseContext,
-        yalm: balaboba.Yalm,
+    message: types.Message,
+    bot: Bot,
+    i18n: I18n,
+    db: DataBaseContext,
+    yalm: balaboba.Yalm,
+    messages: list[str],
 ) -> dict:
     async def gen_markov() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id):
             accuracy: int | None = await db.get_data('accuracy')
-            messages: list | None = await db.get_data('messages')
 
             return {
                 'text': markov.gen(
@@ -69,13 +70,14 @@ async def get_gen_args(
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
 @flags.throttling('gen')
 async def gen_reply_handler(
-        message: types.Message,
-        bot: Bot,
-        i18n: I18n,
-        db: DataBaseContext,
-        yalm: balaboba.Yalm,
+    message: types.Message,
+    bot: Bot,
+    i18n: I18n,
+    db: DataBaseContext,
+    yalm: balaboba.Yalm,
+    messages: list[str],
 ):
-    answer = await get_gen_args(message, bot, i18n, db, yalm)
+    answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
 
     if 'text' in answer:
         answer['text'] = answer_check(answer['text'])
@@ -88,7 +90,7 @@ async def gen_reply_handler(
 
 async def chance_filter(message: types.Message, bot: Bot, db: DataBaseContext) -> bool:
     if datetime.now(tz=message.date.tzinfo) - message.date < timedelta(minutes=5):
-        chance: float | None = await db.get_data('chance')
+        chance: float = await db.get_data('chance')
 
         return random() < (chance / await bot.get_chat_member_count(message.chat.id))
 
@@ -113,13 +115,14 @@ async def hello_handler(message: types.Message):
 @router.message(f.LevenshteinFilter(lev={'delete', 'делите'}))
 @flags.throttling('gen')
 async def gen_answer_handler(
-        message: types.Message,
-        bot: Bot,
-        i18n: I18n,
-        db: DataBaseContext,
-        yalm: balaboba.Yalm,
+    message: types.Message,
+    bot: Bot,
+    i18n: I18n,
+    db: DataBaseContext,
+    yalm: balaboba.Yalm,
+    messages: list[str],
 ):
-    answer = await get_gen_args(message, bot, i18n, db, yalm)
+    answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
 
     if 'text' in answer:
         answer['text'] = answer_check(answer['text'])

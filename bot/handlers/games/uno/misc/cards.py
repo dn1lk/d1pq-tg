@@ -11,7 +11,7 @@ class UnoColorsMeta(EnumMeta):
             return cls._member_map_[item]
         else:
             for member in cls:
-                if item in member.value:
+                if item in member.action:
                     return member
 
     def get_colors(cls, exclude: set = None):
