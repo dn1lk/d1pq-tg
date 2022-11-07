@@ -65,7 +65,7 @@ def gen(
         else:
             model = markovify.combine(models=(model_messages, model), weights=(100, 0.01))
 
-    if text:
+    try:
         beginning = choice(text.split())
 
         answer: str | None = model.make_sentence_with_start(
@@ -76,7 +76,7 @@ def gen(
         )
 
         answer = answer.replace(f'{beginning} ', '', 1)
-    else:
+    except:
         answer = model.make_sentence(tries=state_size * tries, **kwargs)
 
     return answer or get_none(locale).make_sentence()
