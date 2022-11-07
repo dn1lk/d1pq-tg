@@ -4,11 +4,9 @@ from aiogram import Bot, BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
-from aiogram.utils.i18n import I18n
 
 from bot.locales.middleware import I18nContextMiddleware
 from bot.utils.database.context import DataBaseContext
-from bot.utils.database.middleware import DataBaseContextMiddleware
 
 
 class UnoFSMContextMiddleware(BaseMiddleware):

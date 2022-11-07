@@ -1,8 +1,7 @@
 from aiogram import Router, Bot, F, types
-from aiogram.utils.i18n import gettext as _
 from aiogram.fsm.state import StatesGroup, State
+from aiogram.utils.i18n import gettext as _
 from aiogram.utils.i18n import lazy_gettext as __
-
 
 from bot import filters as f
 from .misc import keyboards as k
@@ -15,7 +14,6 @@ class Settings(StatesGroup):
 
 UPDATE = __("\n\nUpdate:")
 UPDATE_AGAIN = __("\n\nUpdate again:")
-
 
 router = Router(name='settings')
 

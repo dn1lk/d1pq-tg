@@ -7,9 +7,8 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.utils.timer import Timer
 from .misc.data import CTSData
-from .. import WINNER, Games, win_timeout
 from .misc.middleware import CTSDataMiddleware
-
+from .. import WINNER, Games, win_timeout
 
 router = Router(name='game:cts:process')
 router.message.filter(Games.cts)

@@ -1,7 +1,6 @@
 from aiogram import Router
 from aiogram.utils.i18n import lazy_gettext as __
 
-
 DRAW_CARD = __("Take a card.")
 
 

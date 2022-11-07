@@ -9,7 +9,6 @@ from .. import Settings
 from ..misc import keyboards as k
 from ... import NO_ARGS
 
-
 router = Router(name='settings:commands:start')
 
 

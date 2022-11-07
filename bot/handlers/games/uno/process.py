@@ -6,8 +6,8 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
 from bot.utils.timer import Timer
-from .settings import UnoSettings
 from .misc import keyboards as k
+from .settings import UnoSettings
 
 router = Router(name='game:uno:process')
 

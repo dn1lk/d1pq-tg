@@ -7,9 +7,9 @@ from aiogram.utils.i18n import gettext as _, ngettext as ___
 
 from bot.handlers import get_username
 from bot.utils.timer import Timer
+from . import keyboards as k
 from .data import UnoData, UnoStats
 from ..settings import UnoSettings
-from . import keyboards as k
 
 
 async def start(

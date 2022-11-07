@@ -25,12 +25,12 @@ def answer_check(answer: str) -> str:
 
 
 async def get_gen_args(
-    message: types.Message,
-    bot: Bot,
-    i18n: I18n,
-    db: DataBaseContext,
-    yalm: balaboba.Yalm,
-    messages: list[str],
+        message: types.Message,
+        bot: Bot,
+        i18n: I18n,
+        db: DataBaseContext,
+        yalm: balaboba.Yalm,
+        messages: list[str],
 ) -> dict:
     async def gen_markov() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id):
@@ -70,12 +70,12 @@ async def get_gen_args(
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
 @flags.throttling('gen')
 async def gen_reply_handler(
-    message: types.Message,
-    bot: Bot,
-    i18n: I18n,
-    db: DataBaseContext,
-    yalm: balaboba.Yalm,
-    messages: list[str],
+        message: types.Message,
+        bot: Bot,
+        i18n: I18n,
+        db: DataBaseContext,
+        yalm: balaboba.Yalm,
+        messages: list[str],
 ):
     answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
 
@@ -115,12 +115,12 @@ async def hello_handler(message: types.Message):
 @router.message(f.LevenshteinFilter(lev={'delete', 'делите'}))
 @flags.throttling('gen')
 async def gen_answer_handler(
-    message: types.Message,
-    bot: Bot,
-    i18n: I18n,
-    db: DataBaseContext,
-    yalm: balaboba.Yalm,
-    messages: list[str],
+        message: types.Message,
+        bot: Bot,
+        i18n: I18n,
+        db: DataBaseContext,
+        yalm: balaboba.Yalm,
+        messages: list[str],
 ):
     answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
 

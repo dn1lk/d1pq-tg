@@ -5,7 +5,6 @@ from bot.utils.database.context import DataBaseContext
 from . import UPDATE, UPDATE_AGAIN
 from .misc import keyboards as k
 
-
 router = Router(name="settings:chance")
 router.callback_query.filter(k.SettingsKeyboard.filter(F.action == 'chance'))
 

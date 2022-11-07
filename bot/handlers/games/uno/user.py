@@ -10,7 +10,6 @@ from bot.utils.timer import Timer
 from . import DRAW_CARD
 from .misc import UnoData, UnoColors, keyboards as k
 
-
 router = Router(name='game:uno:process')
 
 

@@ -1,7 +1,6 @@
 from aiogram import Dispatcher, types, html
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
-
 NO_ARGS = __(
     "\n\nWrite a request together with command in one message.\n"
     "For example: <code>/{command} {args}</code>"

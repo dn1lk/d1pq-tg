@@ -6,7 +6,6 @@ from aiogram.utils.i18n import gettext as _, I18n
 from bot.utils.database.context import DataBaseContext
 from .. import get_username, get_commands
 
-
 router = Router(name='transitions:group')
 
 

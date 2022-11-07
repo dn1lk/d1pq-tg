@@ -6,11 +6,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.utils.timer import Timer
+from . import keyboards as k
 from .bot import UnoBot
 from .cards import UnoCard, UnoEmoji, UnoColors
 from .data import UnoData
 from ..settings import UnoMode
-from . import keyboards as k
 
 
 async def timeout(message: types.Message, state: FSMContext, timer: Timer):
