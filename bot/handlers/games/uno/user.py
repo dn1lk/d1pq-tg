@@ -9,8 +9,10 @@ from bot.handlers import get_username
 from bot.utils.timer import Timer
 from . import DRAW_CARD
 from .misc import UnoData, UnoColors, keyboards as k
+from .. import Games
 
 router = Router(name='game:uno:process')
+router.message.filter(Games.uno)
 
 
 @router.message(F.sticker.set_name == 'uno_by_bp1lh_bot')
