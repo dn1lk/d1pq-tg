@@ -34,15 +34,15 @@ class LevenshteinFilter(filters.BaseFilter):
 
     async def __call__(self, obj: Union[types.Message, types.InlineQuery, types.Poll]) -> bool:
         match obj:
-            catch types.Message:
+            case types.Message:
                 text = obj.text or obj.caption
                 if not text and obj.poll:
                     text = obj.poll.question
-            catch types.InlineQuery:
+            case types.InlineQuery:
                 text = obj.query
-            catch types.Poll:
+            case types.Poll:
                 text = obj.question
-            catch _:
+            case _:
                 return False
 
         if not text:
