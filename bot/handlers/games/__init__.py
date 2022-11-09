@@ -8,9 +8,9 @@ from pydantic import BaseModel
 
 
 class Games(StatesGroup):
-    uno = State()
-    cts = State()
-    rnd = State()
+    UNO = State()
+    CTS = State()
+    RND = State()
 
 
 class GamesData(BaseModel):

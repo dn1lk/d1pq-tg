@@ -25,7 +25,7 @@ class Timer:
     def get_name(state, name: str):
         return f'{state.key.chat_id}:{name}'
 
-    async def create(
+    def create(
             self,
             state: FSMContext,
             coroutine=None,
@@ -40,7 +40,7 @@ class Timer:
 
                 if coroutine:
                     await coroutine(state=state, **kwargs)
-            except asyncio.CancelledError:
+            finally:
                 if coroutine_done:
                     await coroutine_done(state=state, **kwargs)
 
@@ -61,3 +61,6 @@ class Timer:
                 pass
 
             return task
+
+
+timer = Timer()

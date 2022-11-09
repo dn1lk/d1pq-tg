@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher, exceptions
+from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.fsm.strategy import FSMStrategy
 
@@ -52,12 +52,10 @@ async def main():
     finally:
         try:
             await bot.send_message(dp['owner_id'], 'Bot stopping...')
-        except exceptions.TelegramNetworkError:
-            logging.exception(exceptions.TelegramNetworkError)
         finally:
             await bot.session.close()
-            await dp['yalm'].close()
             await dp['pool_db'].close()
+            await dp['yalm'].close()
 
 
 if __name__ == "__main__":

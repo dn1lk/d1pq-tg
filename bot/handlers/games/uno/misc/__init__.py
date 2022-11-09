@@ -5,15 +5,14 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import Timer
-from . import keyboards as k
+from bot.utils.timer import timer
 from .bot import UnoBot
 from .cards import UnoCard, UnoEmoji, UnoColors
 from .data import UnoData
 from ..settings import UnoMode
 
 
-async def timeout(message: types.Message, state: FSMContext, timer: Timer):
+async def timeout(message: types.Message, state: FSMContext):
     data_uno: UnoData = await UnoData.get_data(state)
     data_uno.timer_amount -= 1
 
@@ -24,7 +23,7 @@ async def timeout(message: types.Message, state: FSMContext, timer: Timer):
         data_uno.settings.mode = UnoMode.fast
 
         from .process import finish
-        return await finish(state, timer, data_uno)
+        return await finish(state, data_uno)
 
     answer = _("Time is over.") + " " + data_uno.pick_card(message.entities[-1].user)
     await data_uno.set_data(state)
@@ -34,13 +33,12 @@ async def timeout(message: types.Message, state: FSMContext, timer: Timer):
         options=[_("Yes"), _("No, keep playing")],
     )
 
-    timer[timer.get_name(state, 'game:poll')] = asyncio.create_task(
-        UnoBot.gen_poll(
-            poll_message,
-            state,
-            timer,
-            message.entities[-1].user,
-        )
+    timer.create(
+        state,
+        coroutine_done=UnoBot.gen_poll,
+        name='game:poll',
+        message=poll_message,
+        user=message.entities[-1].user,
     )
 
     await asyncio.sleep(2)
@@ -50,19 +48,21 @@ async def timeout(message: types.Message, state: FSMContext, timer: Timer):
         await message.edit_text(_("Current color: {color}").format(color=data_uno.current_card.color.word))
 
         from .process import proceed_turn
-        await proceed_turn(message, state, timer, data_uno)
+        await proceed_turn(message, state, data_uno)
 
     else:
         from .process import next_turn
-        await next_turn(message, state, timer, data_uno, answer)
+        await next_turn(message, state, data_uno, answer)
 
 
-async def timeout_done(message: types.Message, state: FSMContext, timer: Timer):
+async def timeout_done(message: types.Message, state: FSMContext):
     task_name = timer.get_name(state, 'game')
 
     await timer.cancel(f"{task_name}:uno")
     await timer.cancel(f"{task_name}:poll")
 
+    from . import keyboards as k
+
     if message.reply_markup and \
-            message.reply_markup.inline_keyboard[0][0].callback_data == k.UnoKeyboard(action='bluff').pack():
+            message.reply_markup.inline_keyboard[0][0].callback_data == k.UnoKeyboard(action=k.UnoActions.BLUFF).pack():
         await message.edit_reply_markup(k.show_cards(False))

@@ -13,7 +13,7 @@ async def update(query: types.CallbackQuery, callback_data: k.SettingsKeyboard):
     answer = _("{item} recording is {status}.")
     await query.message.edit_text(
         answer.format(
-            item=RecordData[callback_data.action].word,
+            item=callback_data.action.word,
             status=html.bold(_("disabled") if callback_data.value else _("enabled"))
         )
     )
@@ -21,19 +21,19 @@ async def update(query: types.CallbackQuery, callback_data: k.SettingsKeyboard):
     await query.answer()
 
 
-@router.callback_query(k.SettingsKeyboard.filter(F.action == RecordData.messages.name))
+@router.callback_query(k.SettingsKeyboard.filter(F.action == RecordData.MESSAGES))
 async def messages_update_handler(query: types.CallbackQuery, db: DataBaseContext, callback_data: k.SettingsKeyboard):
     await db.set_data(messages=["disabled"] if callback_data.value else None)
     await update(query, callback_data)
 
 
-@router.callback_query(k.SettingsKeyboard.filter(F.action == RecordData.members.name))
+@router.callback_query(k.SettingsKeyboard.filter(F.action == RecordData.MEMBERS))
 async def members_update_handler(query: types.CallbackQuery, db: DataBaseContext, callback_data: k.SettingsKeyboard):
     await db.set_data(members=None if callback_data.value else [query.from_user.id])
     await update(query, callback_data)
 
 
-@router.callback_query(k.SettingsKeyboard.filter(F.action == 'delete'))
+@router.callback_query(k.SettingsKeyboard.filter(F.action == RecordData.DELETE))
 async def delete_handler(query: types.CallbackQuery, state: FSMContext, db: DataBaseContext):
     await db.clear()
     await state.clear()

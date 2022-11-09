@@ -32,8 +32,8 @@ async def my_return_handler(event: types.ChatMemberUpdated, bot: Bot):
 async def my_join_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
+        commands: dict[str, tuple[types.BotCommand]],
         i18n: I18n,
-        commands: dict[str, tuple[types.BotCommand]]
 ):
     answer = _(
         "{chat}, hello! Let's start with answering the obvious questions:\n"

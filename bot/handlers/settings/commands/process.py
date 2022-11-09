@@ -18,25 +18,18 @@ async def process_filter(message: types.Message, bot: Bot, commands: dict[str, t
     return await filters.Command(*commands['en'])(message, bot)
 
 
-router.message.filter(
-    Settings.command,
-    process_filter,
-    f.AdminFilter(is_admin=True),
-)
+router.message.filter(Settings.command, process_filter, f.AdminFilter(is_admin=True))
 
 
 @router.message(MagicData(F.command.args.regexp(r'\w+')))
 async def setup_handler(
         message: types.Message,
-        command: filters.CommandObject,
         db: DataBaseContext,
         state: FSMContext,
-        custom_commands: dict
+        custom_commands: dict,
+        command: filters.CommandObject,
 ):
     if len(command.args.split()) == 1:
-        if not custom_commands:
-            custom_commands = {}
-
         if command.args in custom_commands.values():
             answer = _("{prefix}{custom_command} is already in my database. Try another.").format(
                 prefix=command.prefix,
@@ -67,8 +60,8 @@ async def setup_handler(
 @flags.throttling('gen')
 async def decline_handler(
         message: types.Message,
-        command: filters.CommandObject,
         i18n: I18n,
+        command: filters.CommandObject,
         messages: list | None,
 ):
     message = await message.answer(html.bold(_("Custom command not recognized.")))

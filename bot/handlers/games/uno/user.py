@@ -6,13 +6,13 @@ from aiogram.handlers import MessageHandler
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from . import DRAW_CARD
 from .misc import UnoData, UnoColors, keyboards as k
 from .. import Games
 
 router = Router(name='game:uno:process')
-router.message.filter(Games.uno)
+router.message.filter(Games.UNO)
 
 
 @router.message(F.sticker.set_name == 'uno_by_bp1lh_bot')
@@ -21,10 +21,6 @@ class TurnHandler(MessageHandler):
     def state(self):
         return self.data['state']
 
-    @property
-    def timer(self):
-        return self.data['timer']
-
     async def handle(self):
         data_uno = await UnoData.get_data(self.state)
 
@@ -32,7 +28,7 @@ class TurnHandler(MessageHandler):
         accept, decline = data_uno.filter_card(self.from_user.id, card)
 
         if accept:
-            await self.timer.cancel(self.timer.get_name(self.state, 'game'))
+            await timer.cancel(self.timer.get_name(self.state, 'game'))
 
             data_uno.current_card = card
             data_uno.timer_amount = 3
@@ -42,13 +38,12 @@ class TurnHandler(MessageHandler):
 
             if self.event:
                 from .misc import timeout, timeout_done
-                await self.timer.create(
+                await timer.create(
                     self.state,
                     timeout,
                     timeout_done,
                     name='game',
                     message=self.event,
-                    timer=self.timer,
                 )
 
         elif decline:
@@ -88,11 +83,11 @@ class TurnHandler(MessageHandler):
             )
 
         from .misc.process import proceed_turn
-        await proceed_turn(self.event, self.state, self.timer, data_uno, answer)
+        await proceed_turn(self.event, self.state, data_uno, answer)
 
 
 @router.message(F.text == DRAW_CARD)
-async def pass_handler(message: types.Message, state: FSMContext, timer: Timer):
+async def pass_handler(message: types.Message, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     if message.from_user.id == data_uno.current_user_id:
@@ -102,7 +97,7 @@ async def pass_handler(message: types.Message, state: FSMContext, timer: Timer):
         answer = data_uno.play_draw(message.from_user)
 
         from .misc.process import next_turn
-        await next_turn(message, state, timer, data_uno, answer)
+        await next_turn(message, state, data_uno, answer)
 
     else:
         user = await data_uno.get_user(state)
@@ -114,8 +109,8 @@ async def pass_handler(message: types.Message, state: FSMContext, timer: Timer):
         )
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'bluff'))
-async def bluff_handler(query: types.CallbackQuery, state: FSMContext, timer: Timer):
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.BLUFF))
+async def bluff_handler(query: types.CallbackQuery, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     if query.from_user.id == data_uno.current_user_id:
@@ -124,7 +119,7 @@ async def bluff_handler(query: types.CallbackQuery, state: FSMContext, timer: Ti
         answer = await data_uno.play_bluff(state)
 
         from .misc.process import next_turn
-        await next_turn(query.message, state, timer, data_uno, answer)
+        await next_turn(query.message, state, data_uno, answer)
 
         await query.answer()
 
@@ -135,15 +130,11 @@ async def bluff_handler(query: types.CallbackQuery, state: FSMContext, timer: Ti
         await query.answer(answer.format(user=user.first_name))
 
 
-@router.message(F.entities.func(lambda tts: tts[0].type in ('mention', 'text_mention')))
+@router.message(F.entities.type.in_(('mention', 'text_mention')))
 class SevenHandler(MessageHandler):
     @property
     def state(self) -> FSMContext:
         return self.data['state']
-
-    @property
-    def timer(self) -> Timer:
-        return self.data['timer']
 
     async def handle(self):
         data_uno = await UnoData.get_data(self.state)
@@ -152,13 +143,13 @@ class SevenHandler(MessageHandler):
             seven_user = await self.get_seven_user(data_uno)
 
             if seven_user:
-                await self.timer.cancel(self.timer.get_name(self.state, 'game'))
+                await timer.cancel(self.timer.get_name(self.state, 'game'))
 
                 answer = data_uno.play_seven(self.event.from_user, seven_user)
                 await data_uno.set_data(self.state)
 
                 from .misc.process import proceed_turn
-                await proceed_turn(self.event, self.state, self.timer, data_uno, answer)
+                await proceed_turn(self.event, self.state, data_uno, answer)
 
             else:
                 await self.event.answer(_("{user} is not playing with us.").format(
@@ -180,11 +171,10 @@ class SevenHandler(MessageHandler):
                     return user
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action.in_([color.name for color in UnoColors.get_colors()])))
+@router.callback_query(k.UnoKeyboard.filter(F.action.in_(UnoColors)))
 async def color_handler(
         query: types.CallbackQuery,
         state: FSMContext,
-        timer: Timer,
         callback_data: k.UnoKeyboard,
 ):
     data_uno = await UnoData.get_data(state)
@@ -192,7 +182,7 @@ async def color_handler(
     if query.from_user.id == data_uno.current_user_id:
         await timer.cancel(timer.get_name(state, 'game'))
 
-        data_uno.current_card.color = UnoColors[callback_data.action]
+        data_uno.current_card.color = callback_data.action
 
         await query.message.edit_text(
             _("{user} changes the color to {color}!").format(
@@ -203,13 +193,13 @@ async def color_handler(
         await query.answer()
 
         from .misc.process import proceed_turn
-        await proceed_turn(query.message, state, timer, data_uno)
+        await proceed_turn(query.message, state, data_uno)
     else:
         await query.answer(_("When you'll get a black card, choose this color ;)"))
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'uno'))
-async def uno_handler(query: types.CallbackQuery, state: FSMContext, timer: Timer):
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.UNO))
+async def uno_handler(query: types.CallbackQuery, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     if query.from_user.id in data_uno.users:

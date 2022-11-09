@@ -2,7 +2,7 @@ from aiogram import Router, Bot, F, types, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from .misc import UnoData, keyboards as k
 from .settings import UnoDifficulty, UnoMode, UnoAdd
 from .. import Games
@@ -13,7 +13,7 @@ router = Router(name='game:start')
 router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'], magic=F.args.in_(('uno', 'уно'))))
 
 
-@router.message(Games.uno)
+@router.message(Games.UNO)
 async def uno_join_handler(message: types.Message, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
@@ -29,7 +29,7 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
 
 
 @router.message()
-async def uno_handler(message: types.Message, bot: Bot, state: FSMContext, timer: Timer):
+async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     answer = _(
         "<b>Let's play UNO?</b>\n\n"
         "One minute to make a decision!\n"
@@ -47,8 +47,8 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext, timer
             mode=html.bold(UnoMode.fast.word),
             additives='\n'.join(f'{name}: {html.bold(UnoAdd.on.word)}.' for name in UnoAdd.get_names()),
         ),
-        reply_markup=k.start(),
+        reply_markup=k.setup(),
     )
 
     from .process import start_timer
-    await timer.create(state, start_timer, name='game', message=message, bot=bot, timer=timer)
+    await timer.create(state, start_timer, name='game', message=message, bot=bot)

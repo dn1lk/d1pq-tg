@@ -33,11 +33,9 @@ async def gen(answer: str, locale: str):
     request.input = text
 
     try:
-        return {
-            'voice': types.BufferedInputFile(
-                tts_client.synthesize_speech(request=request).audio_content,
-                'bp1lh-voice'
-            )
-        }
+        return types.BufferedInputFile(
+            tts_client.synthesize_speech(request=request).audio_content,
+            'bp1lh-voice'
+        )
     except GoogleAPICallError:
-        return {'text': answer}
+        return

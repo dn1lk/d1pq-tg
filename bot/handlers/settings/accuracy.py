@@ -6,7 +6,7 @@ from . import UPDATE, UPDATE_AGAIN
 from .misc import keyboards as k
 
 router = Router(name="settings:accuracy")
-router.callback_query.filter(k.SettingsKeyboard.filter(F.action == 'accuracy'))
+router.callback_query.filter(k.SettingsKeyboard.filter(F.action == k.SettingsAction.ACCURACY))
 
 
 @router.callback_query(k.SettingsKeyboard.filter(F.value))
@@ -15,13 +15,12 @@ async def update_handler(
         callback_data: k.SettingsKeyboard,
         db: DataBaseContext,
 ):
-    accuracy = int(callback_data.value)
     answer = _("OK. Current text generation accuracy: {accuracy}.")
 
-    await db.set_data(accuracy=accuracy)
+    await db.set_data(accuracy=callback_data.value)
     await query.message.edit_text(
-        answer.format(accuracy=html.bold(accuracy)) + UPDATE_AGAIN.value,
-        reply_markup=k.accuracy(accuracy)
+        answer.format(accuracy=html.bold(callback_data.value)) + UPDATE_AGAIN.value,
+        reply_markup=k.accuracy(callback_data.value)
     )
     await query.answer()
 

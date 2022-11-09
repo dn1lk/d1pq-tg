@@ -6,16 +6,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 
 from bot.handlers import get_username
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from . import keyboards as k, UnoEmoji
-from .data import UnoData, UnoStats
-from ..settings import UnoSettings
+from .data import UnoData, UnoStats, UnoSettings
 
 
 async def start(
         message: types.Message,
         state: FSMContext,
-        timer: Timer,
         user_ids: list[int],
         settings: UnoSettings,
         stats: dict[int, UnoStats] = None
@@ -26,7 +24,7 @@ async def start(
     from .bot import UnoBot
     bot = UnoBot(message, state, data)
 
-    await bot.proceed_turn(timer, _("The first card is discarded."))
+    await bot.proceed_turn(_("The first card is discarded."))
 
 
 async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, user: types.User):
@@ -49,7 +47,7 @@ async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, 
     await message.edit_text(answer.format(user=get_username(user), uno_user=get_username(uno_user)))
 
 
-async def kick_for_kick(state: FSMContext, timer: Timer, data: UnoData, user: types.User):
+async def kick_for_kick(state: FSMContext, data: UnoData, user: types.User):
     await data.remove_user(state, user.id)
     await data.set_data(state)
 
@@ -57,10 +55,10 @@ async def kick_for_kick(state: FSMContext, timer: Timer, data: UnoData, user: ty
     await state.bot.send_message(state.key.chat_id, answer)
 
     if not data.settings.mode or len(data.users) == 1:
-        await finish(state, timer, data)
+        await finish(state, data)
 
 
-async def kick_for_idle(message: types.Message, state: FSMContext, timer: Timer, data: UnoData, user: types.User):
+async def kick_for_idle(message: types.Message, state: FSMContext, data: UnoData, user: types.User):
     await data.remove_user(state, user.id)
     await data.set_data(state)
 
@@ -68,7 +66,7 @@ async def kick_for_idle(message: types.Message, state: FSMContext, timer: Timer,
     await message.answer(answer)
 
     if not data.settings.mode or len(data.users) == 1:
-        await finish(state, timer, data)
+        await finish(state, data)
 
 
 async def kick_for_cards(message: types.Message, state: FSMContext, data: UnoData):
@@ -88,20 +86,18 @@ async def kick_for_cards(message: types.Message, state: FSMContext, data: UnoDat
 async def proceed_turn(
         message: types.Message,
         state: FSMContext,
-        timer: Timer,
         data_uno: UnoData,
         answer: str = ""
 ) -> types.Message:
     user = await data_uno.get_user(state)
     answer = answer.format(user=get_username(user))
 
-    return await next_turn(message, state, timer, data_uno, answer)
+    return await next_turn(message, state, data_uno, answer)
 
 
 async def next_turn(
         message: types.Message,
         state: FSMContext,
-        timer: Timer,
         data: UnoData,
         answer: str
 ) -> types.Message:
@@ -124,7 +120,7 @@ async def next_turn(
         await kick_for_cards(message, state, data)
 
         if data.settings.mode or len(data.users) == 1:
-            return await finish(state, timer, data)
+            return await finish(state, data)
 
     await data.set_data(state)
 
@@ -146,20 +142,20 @@ async def next_turn(
 
         message = await message.reply(
             f'{answer}\n{answer_next}',
-            reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.draw_four and data.current_state.drawn),
+            reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.DRAW_FOUR and data.current_state.drawn),
         )
 
     if cards or data.current_user_id == state.bot.id:
         timer_name = timer.get_name(state, 'game')
         await timer.cancel(timer_name)
 
-        timer[timer_name] = asyncio.create_task(bot.gen_turn(timer, cards))
+        timer[timer_name] = asyncio.create_task(bot.gen_turn(cards))
     else:
         from . import timeout, timeout_done
-        await timer.create(state, timeout, timeout_done, name='game', message=message, timer=timer)
+        await timer.create(state, timeout, timeout_done, name='game', message=message)
 
 
-async def finish(state: FSMContext, timer: Timer, data: UnoData) -> types.Message:
+async def finish(state: FSMContext, data: UnoData) -> types.Message:
     await timer.cancel(timer.get_name(state, 'game'))
     await data.finish(state)
 
@@ -193,6 +189,6 @@ async def finish(state: FSMContext, timer: Timer, data: UnoData) -> types.Messag
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Game over.")) + answer)
     else:
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Round over.")) + answer)
-        await start(message, state, timer, list(data.stats), data.settings, data.stats)
+        await start(message, state, list(data.stats), data.settings, data.stats)
 
     return message

@@ -28,9 +28,7 @@ async def get_setup_answer(message: types.Message, bot: Bot) -> dict:
         chat = _("dialogue")
     else:
         admins = ', '.join(get_username(admin.user) for admin in await bot.get_chat_administrators(message.chat.id))
-        chat = _("chat - only for {admins}").format(
-            admins=admins or _("admins")
-        )
+        chat = _("chat - only for {admins}").format(admins=admins or _("admins"))
 
     return {
         'text': _("My settings of this {chat}:").format(chat=chat),
@@ -38,7 +36,7 @@ async def get_setup_answer(message: types.Message, bot: Bot) -> dict:
     }
 
 
-@router.callback_query(k.SettingsKeyboard.filter(F.action == 'back'))
+@router.callback_query(k.SettingsKeyboard.filter(F.action == k.SettingsAction.BACK))
 async def back_handler(query: types.CallbackQuery, bot: Bot):
     await query.message.edit_text(**await get_setup_answer(query.message, bot))
     await query.answer()

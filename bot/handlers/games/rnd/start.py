@@ -8,7 +8,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
 from bot.utils.database.context import DataBaseContext
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from .. import Games, close_timeout
 from ... import get_username
 from ...settings.commands import CustomCommandFilter
@@ -18,11 +18,11 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 
 @router.message(F.chat.type == 'private')
-async def private_handler(message: types.Message, state: FSMContext, timer: Timer):
+async def private_handler(message: types.Message, state: FSMContext):
     task_name = timer.get_name(state, 'game')
     await timer.cancel(task_name)
 
-    await state.set_state(Games.rnd)
+    await state.set_state(Games.RND)
     message = await message.answer(
         _(
             "Hmm, you are trying your luck... Well, ender any number between 1 and 10 and I'll choose "
@@ -43,10 +43,6 @@ class ChatHandler(MessageHandler):
     def db(self) -> DataBaseContext:
         return self.data['db']
 
-    @property
-    def timer(self) -> Timer:
-        return self.data['timer']
-
     async def handle(self):
         task_name = self.timer.get_name(self.state, 'game')
         await self.timer.cancel(task_name)
@@ -62,12 +58,12 @@ class ChatHandler(MessageHandler):
         async with ChatActionSender.typing(chat_id=self.chat.id):
             await asyncio.sleep(2)
 
-            await self.state.set_state(Games.rnd)
+            await self.state.set_state(Games.RND)
             await self.state.set_data({})
 
             self.event = await self.event.answer(_("LET THE BATTLE BEGIN!"))
 
-        self.timer[task_name] = asyncio.create_task(self.finish())
+        timer[task_name] = asyncio.create_task(self.finish())
 
     async def finish(self):
         async def get_stickers():

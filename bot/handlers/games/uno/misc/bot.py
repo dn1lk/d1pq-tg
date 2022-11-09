@@ -6,7 +6,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import Timer
 from .cards import UnoColors
 from .data import UnoData
 from ..settings import UnoDifficulty
@@ -29,7 +28,7 @@ class UnoBot:
             if accept:
                 yield card, accept
 
-    async def gen_turn(self, timer: Timer, cards: tuple | None):
+    async def gen_turn(self, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
             m = len(self.data.users) * self.data.settings.difficulty
             await asyncio.sleep(choice(range(1, 6)) / m)
@@ -67,7 +66,7 @@ class UnoBot:
                     )
 
                     self.data.update_turn(self.message.from_user.id)
-                    await self.proceed_turn(timer, answer)
+                    await self.proceed_turn(answer)
 
                 except asyncio.CancelledError:
                     await self.message.delete()
@@ -80,9 +79,9 @@ class UnoBot:
                     await self.message.answer(answer)
 
             else:
-                await self.proceed_pass(timer)
+                await self.proceed_pass()
 
-    async def proceed_turn(self, timer: Timer, answer: str = ""):
+    async def proceed_turn(self, answer: str = ""):
         answer = self.data.update_state() or answer
 
         if self.data.current_card.color is UnoColors.black:
@@ -92,9 +91,9 @@ class UnoBot:
             await self.gen_seven()
 
         from .process import proceed_turn
-        await proceed_turn(self.message, self.state, timer, self.data, answer)
+        await proceed_turn(self.message, self.state, self.data, answer)
 
-    async def proceed_pass(self, timer: Timer):
+    async def proceed_pass(self):
         if self.data.current_state.bluffed:
             m = self.data.settings.difficulty
             n = 0.5
@@ -113,13 +112,13 @@ class UnoBot:
                 answer = await self.data.play_bluff(self.state)
 
                 from .process import next_turn
-                return await next_turn(self.message, self.state, timer, self.data, answer)
+                return await next_turn(self.message, self.state, self.data, answer)
 
         self.data.current_state.passed = self.state.bot.id
         answer = self.data.play_draw(self.data.current_state.passed)
 
         from .process import next_turn
-        await next_turn(self.message, self.state, timer, self.data, answer)
+        await next_turn(self.message, self.state, self.data, answer)
 
     async def gen_color(self):
         cards = self.data.users[self.state.bot.id]
@@ -164,17 +163,12 @@ class UnoBot:
             await self.message.delete_reply_markup()
 
     @staticmethod
-    async def gen_poll(message: types.Message, state: FSMContext, timer: Timer, user: types.User):
-        try:
-            await asyncio.sleep(60)
+    async def gen_poll(message: types.Message, state: FSMContext, user: types.User):
+        poll = await state.bot.stop_poll(state.key.chat_id, message.message_id)
+        data_uno: UnoData = await UnoData.get_data(state)
 
-        except asyncio.CancelledError:
-            poll = await state.bot.stop_poll(state.key.chat_id, message.message_id)
-            data_uno: UnoData = await UnoData.get_data(state)
+        if poll.options[0].voter_count > poll.options[1].voter_count and user.id in data_uno.users:
+            from .process import kick_for_idle
+            await kick_for_idle(message, state, data_uno, user)
 
-            if poll.options[0].voter_count > poll.options[1].voter_count and user.id in data_uno.users:
-                from .process import kick_for_idle
-                await kick_for_idle(message, state, timer, data_uno, user)
-
-        finally:
-            await message.delete()
+        await message.delete()

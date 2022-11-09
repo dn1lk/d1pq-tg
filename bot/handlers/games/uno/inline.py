@@ -43,7 +43,7 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
                     types.InlineQueryResultCachedSticker(
                         id='draw',
                         sticker_file_id='CAACAgIAAxUAAWNTyJCPqf4Upyd2mc0hDDM-9UD5AALgHwACheugSmbCtLV865YXKgQ',
-                        input_message_content=types.InputMessageContent(message_text=DRAW_CARD.value),
+                        input_message_content=types.InputTextMessageContent(message_text=DRAW_CARD.value),
                     )
                 ]
 
@@ -57,7 +57,7 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
                 types.InlineQueryResultArticle(
                     id='no_cards',
                     title=command,
-                    input_message_content=types.InputMessageContent(message_text=command),
+                    input_message_content=types.InputTextMessageContent(message_text=command),
                     description=_("Join to the game."),
                     thumb_url=thumb_url,
                 )
@@ -68,7 +68,7 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
             types.InlineQueryResultArticle(
                 id='no_game',
                 title=command,
-                input_message_content=types.InputMessageContent(message_text=command),
+                input_message_content=types.InputTextMessageContent(message_text=command),
                 description=_("Start a new game."),
                 thumb_url=thumb_url,
             )

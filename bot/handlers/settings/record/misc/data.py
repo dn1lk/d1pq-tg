@@ -1,29 +1,34 @@
-from enum import Enum
+from enum import Enum, auto
 
 from aiogram.utils.i18n import gettext as _
 
 from bot.utils.database.context import DataBaseContext
 
 
-class RecordData(int, Enum):
-    messages = 1
-    members = 2
+class RecordData(Enum):
+    def _generate_next_value_(name, *args):
+        return name.lower()
+
+    MESSAGES = auto()
+    MEMBERS = auto()
+
+    DELETE = auto()
 
     @property
-    def word(self):
-        words = {
-            self.messages: _("Messages"),
-            self.members: _("Members"),
-        }
+    def word(self) -> str | None:
+        match self:
+            case self.MESSAGES:
+                return _("Messages")
+            case self.MEMBERS:
+                return _("Members")
+            case self.DELETE:
+                return _('Delete all records')
 
-        return words.get(self)
+    async def switch(self, dp: DataBaseContext) -> int | None:
+        item = await dp.get_data(self.name.lower())
 
-    async def switch(self, dp: DataBaseContext) -> int:
-        item = await dp.get_data(self.name)
-
-        switches = {
-            self.messages: item != ['disabled'],
-            self.members: item,
-        }
-
-        return 1 if switches.get(self) else 0
+        match self:
+            case self.MESSAGES:
+                return int(item != ['disabled'])
+            case self.MEMBERS:
+                return int(item)

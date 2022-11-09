@@ -4,8 +4,6 @@ from typing import Dict, Any, Awaitable, Callable, Union, Optional
 
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.base import StorageKey, BaseStorage
 from aiogram.utils.chat_action import ChatActionMiddleware
 
 from utils import markov
@@ -57,12 +55,25 @@ class DataMiddleware(BaseMiddleware):
 
 
 class ThrottlingMiddleware(BaseMiddleware):
+    tasks = {}
     timeouts = {
         'gen': 3,
     }
 
-    def __init__(self, storage: BaseStorage):
-        self.storage = storage
+    def __setitem__(self, name: str, task: asyncio.Task):
+        def del_task(t: asyncio.Task):
+            if t is self[name]:
+                del self.tasks[name]
+
+        self.tasks[name] = task
+        task.set_name(name)
+        task.add_done_callback(del_task)
+
+    def __getitem__(self, name):
+        return self.tasks.get(name)
+
+    def __delitem__(self, name):
+        self.tasks[name].cancel()
 
     async def __call__(
             self,
@@ -73,44 +84,15 @@ class ThrottlingMiddleware(BaseMiddleware):
         throttling = get_flag(data, 'throttling')
 
         if throttling:
-            bot: Bot = data['bot']
             chat_id: int = data.get('event_chat', data['event_from_user']).id
-            state = self.get_context(bot, chat_id)
+            task_name = f'{chat_id}:{throttling}'
 
-            if throttling in await state.get_data():
+            if task_name in self.tasks:
                 return
 
-            await state.update_data({throttling: True})
-            self.timer(state, throttling)
+            self[task_name] = asyncio.create_task(asyncio.sleep(self.timeouts[throttling]))
 
         return await handler(event, data)
-
-    def get_context(
-            self,
-            bot: Bot,
-            chat_id: int,
-            destiny: str = 'throttling',
-    ) -> FSMContext:
-        return FSMContext(
-            bot=bot,
-            storage=self.storage,
-            key=StorageKey(
-                user_id=chat_id,
-                chat_id=chat_id,
-                bot_id=bot.id,
-                destiny=destiny,
-            ),
-        )
-
-    def timer(self, state: FSMContext, key: str):
-        async def waiter():
-            await asyncio.sleep(self.timeouts[key])
-            data = await state.get_data()
-
-            if data.pop(key, None):
-                await state.set_data(data)
-
-        asyncio.create_task(waiter(), name=f'{state.key.destiny}:{state.key.chat_id}')
 
 
 class UnhandledMiddleware(BaseMiddleware):
@@ -162,7 +144,7 @@ def setup(dp: Dispatcher):
     middlewares = (
         Middleware(outer=DataBaseContextMiddleware()),
         Middleware(outer=CustomCommandsMiddleware(), observers={'message', 'callback_query'}),
-        Middleware(inner=ThrottlingMiddleware(dp.storage), observers='message'),
+        Middleware(inner=ThrottlingMiddleware(), observers='message'),
         Middleware(inner=ChatActionMiddleware()),
         Middleware(inner=DataMiddleware(), observers={'message', 'callback_query', 'chat_member'}),
         Middleware(inner=I18nContextMiddleware(i18n=config.i18n)),

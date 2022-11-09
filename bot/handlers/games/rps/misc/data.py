@@ -4,26 +4,30 @@ from aiogram.utils.i18n import gettext as _
 
 
 class RPSData(str, Enum):
-    rock = "🪨"
-    scissors = "✂"
-    paper = "📜"
+    ROCK = "🪨"
+    SCISSORS = "✂"
+    PAPER = "📜"
 
     @property
-    def word(self) -> str:
-        items = {
-            self.rock: _("rock"),
-            self.scissors: _("scissors"),
-            self.paper: _("paper"),
-        }
+    def word(self) -> str | None:
+        match self:
+            case self.ROCK:
+                item = _("rock")
+            case self.SCISSORS:
+                item = _("scissors")
+            case self.PAPER:
+                item = _("paper")
+            case _:
+                return
 
-        return f'{self} {items[self]}'
+        return f'{self} {item}'
 
     @property
     def resolve(self):
-        items = {
-            self.rock: self.scissors,
-            self.scissors: self.paper,
-            self.paper: self.rock,
-        }
-
-        return items.get(self)
+        match self:
+            case self.ROCK:
+                return self.SCISSORS
+            case self.SCISSORS:
+                return self.PAPER
+            case self.PAPER:
+                return self.ROCK

@@ -1,3 +1,4 @@
+from enum import IntEnum, EnumMeta
 from random import choice, shuffle, randrange
 
 from aiogram import types, html
@@ -8,13 +9,113 @@ from pydantic import BaseModel
 
 from bot.handlers import get_username
 from .cards import UnoCard, UnoColors, UnoEmoji, get_deck
-from ..settings import UnoSettings
 from ... import GamesData
 
 
-class UnoStats(BaseModel):
-    points: int = 0
-    cards_played: int = 0
+class UnoSettingsMeta(EnumMeta):
+    def meta_extract(cls, message: types.Message, index: int):
+        enum_word = UnoSettings.get(message.entities)[index].extract_from(message.text)
+
+        for enum in cls:
+            if enum.word == enum_word:
+                return enum
+
+    def next(cls, current_enum: IntEnum):
+        tuple_cls = tuple(cls)
+        return tuple_cls[(tuple_cls.index(current_enum) + 1) % len(cls)]
+
+
+class UnoDifficulty(IntEnum, metaclass=UnoSettingsMeta):
+    easy = 5
+    normal = 3
+    hard = 1
+
+    @property
+    def word(self) -> str:
+        match self:
+            case self.easy:
+                return _('slowpoke')
+            case self.normal:
+                return _('common man')
+            case self.hard:
+                return _('genius')
+
+    @classmethod
+    def extract(cls, message: types.Message) -> "UnoDifficulty":
+        return cls.meta_extract(message, 0)
+
+
+class UnoMode(IntEnum, metaclass=UnoSettingsMeta):
+    fast = 0
+    with_points = 1
+
+    @property
+    def word(self) -> str:
+        match self:
+            case self.fast:
+                return _('fast')
+            case self.with_points:
+                return _('with points')
+
+    @classmethod
+    def extract(cls, message: types.Message) -> "UnoMode":
+        return cls.meta_extract(message, 1)
+
+
+class UnoAdd(IntEnum, metaclass=UnoSettingsMeta):
+    off = 0
+    on = 1
+
+    @property
+    def word(self) -> str:
+        match self:
+            case self.off:
+                return _("disabled")
+            case self.on:
+                return _("enabled")
+
+    @classmethod
+    def extract(cls, message: types.Message, n: int) -> "UnoAdd":
+        return cls.meta_extract(message, 2 + n)
+
+    @property
+    def switcher(self) -> str:
+        match self:
+            case self.off:
+                return _("Enable")
+            case self.on:
+                return _("Disable")
+
+    @staticmethod
+    def get_names():
+        return (
+            _('Stacking'),
+            _('Seven-O'),
+            _('Jump-in'),
+        )
+
+
+class UnoSettings(BaseModel):
+    difficulty: UnoDifficulty
+    mode: UnoMode
+
+    stacking: UnoAdd
+    seven_0: UnoAdd
+    jump_in: UnoAdd
+
+    @classmethod
+    def extract(cls, message: types.Message) -> "UnoSettings":
+        return cls(
+            difficulty=UnoDifficulty.extract(message),
+            mode=UnoMode.extract(message),
+            stacking=UnoAdd.extract(message, 0),
+            seven_0=UnoAdd.extract(message, 1),
+            jump_in=UnoAdd.extract(message, 2),
+        )
+
+    @staticmethod
+    def get(entities: list[types.MessageEntity]) -> list[types.MessageEntity]:
+        return [entity for entity in entities if entity.type == 'bold'][1:-1]
 
 
 class UnoStates(BaseModel):
@@ -26,6 +127,11 @@ class UnoStates(BaseModel):
 
     seven: int = 0
     uno: int = 0
+
+
+class UnoStats(BaseModel):
+    points: int = 0
+    cards_played: int = 0
 
 
 class UnoData(GamesData):
@@ -80,7 +186,7 @@ class UnoData(GamesData):
             current_card = choice(deck)
 
         from ... import Games
-        await state.set_state(Games.uno)
+        await state.set_state(Games.UNO)
 
         return cls(
             deck=deck,
@@ -102,7 +208,7 @@ class UnoData(GamesData):
             destiny='uno_room'
         )
 
-        await state.storage.set_state(state.bot, key, Games.uno)
+        await state.storage.set_state(state.bot, key, Games.UNO)
         await state.storage.set_data(state.bot, key, {'0': state.key.chat_id})
 
         return list(UnoData.pop_from_deck(deck, 7))
@@ -146,99 +252,100 @@ class UnoData(GamesData):
         if not card:
             return accept, _("What a joke, this card is not from your hand, {user}.")
 
-        if user_id == self.current_user_id:
-            if self.current_state.drawn:
-                if self.settings.stacking and card.emoji == self.current_card.emoji:
+        match user_id:
+            case self.current_user_id:
+                if self.current_state.drawn:
+                    if self.settings.stacking and card.emoji == self.current_card.emoji:
+                        accept = choice(
+                            (
+                                _("{user} doesn't want to take cards."),
+                                _("What a heat, +cards to the queue!"),
+                            )
+                        )
+                    else:
+                        decline = _("{user}, calm down and take the cards!")
+
+                elif card.color is UnoColors.black:
+                    accept = _("Black card by {user}!")
+
+                elif card.color is self.current_card.color:
                     accept = choice(
                         (
-                            _("{user} doesn't want to take cards."),
-                            _("What a heat, +2 to the queue!"),
+                            _("So... {user}."),
+                            _("Wow, you got {color}!").format(
+                                color=card.color.word
+                            ),
                         )
                     )
+
+                elif card.emoji == self.current_card.emoji:
+                    accept = _("{user} changes color!")
+
                 else:
-                    decline = _("{user}, calm down and take the cards!")
+                    decline = choice(
+                        (
+                            _("{user}, attempt not counted, get a card! =)."),
+                            _("Just. Skip. Turn."),
+                            _("Someday {user} will be able to make the right turn.")
+                        )
+                    )
 
-            elif card.color is UnoColors.black:
-                accept = _("Black card by {user}!")
+            case self.prev_user_id:
+                if self.current_state.passed:
+                    if card is self.users[user_id][-1] and \
+                            (card.emoji == self.current_card.emoji or card.color is self.current_card.color):
+                        accept = choice(
+                            (
+                                _("{user}, you're in luck!"),
+                                _("{user}, is that honest?"),
+                            )
+                        )
+                    else:
+                        decline = _("No, this card is wrong. Take another one!")
 
-            elif card.color is self.current_card.color:
+                elif self.current_state.skipped:
+                    if card.emoji == self.current_card.emoji:
+                        accept = choice(
+                            (
+                                _("{user} is unskippable!"),
+                                _("{user}, you can't be skipped!"),
+                                _("Skips are not for you =).")
+                            )
+                        )
+                    else:
+                        decline = _("{user}, your turn is skipped =(.")
+
+                else:
+                    if card.emoji == self.current_card.emoji:
+                        accept = choice(
+                            (
+                                _("{user} keeps throwing cards..."),
+                                _("{user}, will anyone stop you?"),
+                            )
+                        )
+                    else:
+                        decline = _("{user}, you have already made your turn.")
+
+            case _ if self.settings.jump_in and card.file_unique_id == self.current_card.file_unique_id:
                 accept = choice(
                     (
-                        _("So... {user}."),
-                        _("Wow, you got {color}!").format(
-                            color=card.color.word
-                        ),
+                        _("We've been interrupted!"),
+                        _("I bet {user} will win this game!"),
+                        _("Suddenly, {user}."),
                     )
                 )
 
-            elif card.emoji == self.current_card.emoji:
-                accept = _("{user} changes color!")
-
-            else:
+            case _:
                 decline = choice(
                     (
-                        _("{user}, attempt not counted, get a card! =)."),
-                        _("Just. Skip. Turn."),
-                        _("Someday {user} will be able to make the right turn.")
+                        _("Hold your horses, {user}. Now is not your turn."),
+                        _("Hey, {user}. Your card doesn't belong this turn."),
+                        _("No. No no no. No. Again, NO!"),
+                        _("Someone explain to {user} how to play."),
+                        _("Can I just give {user} a card and we'll pretend like nothing happened?"),
+                        _("I'm betting on {user}'s defeat."),
                     )
                 )
-
-        elif user_id == self.prev_user_id:
-            if self.current_state.passed:
-                if card is self.users[user_id][-1] and \
-                        (card.emoji == self.current_card.emoji or card.color is self.current_card.color):
-                    accept = choice(
-                        (
-                            _("{user}, you're in luck!"),
-                            _("{user}, is that honest?"),
-                        )
-                    )
-                else:
-                    decline = _("No, this card is wrong. Take another one!")
-
-            elif self.current_state.skipped:
-                if card.emoji == self.current_card.emoji:
-                    accept = choice(
-                        (
-                            _("{user} is unskippable!"),
-                            _("{user}, you can't be skipped!"),
-                            _("Skips are not for you =).")
-                        )
-                    )
-                else:
-                    decline = _("{user}, your turn is skipped =(.")
-
-            else:
-                if card.emoji == self.current_card.emoji:
-                    accept = choice(
-                        (
-                            _("{user} keeps throwing cards..."),
-                            _("{user}, will anyone stop you?"),
-                        )
-                    )
-                else:
-                    decline = _("{user}, you have already made your turn.")
-
-        elif self.settings.jump_in and card.file_unique_id == self.current_card.file_unique_id:
-            accept = choice(
-                (
-                    _("We've been interrupted!"),
-                    _("I bet {user} will win this game!"),
-                    _("Suddenly, {user}."),
-                )
-            )
-
-        else:
-            decline = choice(
-                (
-                    _("Hold your horses, {user}. Now is not your turn."),
-                    _("Hey, {user}. Your card doesn't belong this turn."),
-                    _("No. No no no. No. Again, NO!"),
-                    _("Someone explain to {user} how to play."),
-                    _("Can I just give {user} a card and we'll pretend like nothing happened?"),
-                    _("I'm betting on {user}'s defeat."),
-                )
-            )
 
         return accept, decline
 
@@ -249,8 +356,8 @@ class UnoData(GamesData):
         self.users[user_id].remove(self.current_card)
         self.deck.append(self.current_card.copy())
 
-    def update_uno(self, user: types.User) -> str:
-        self.current_state.uno = user.id
+    @staticmethod
+    def update_uno(user: types.User) -> str:
         answer = _("{user} has one card left!").format(user=get_username(user))
 
         return answer
@@ -264,11 +371,14 @@ class UnoData(GamesData):
         answer = _("We have exchanged cards with next neighbors!")
         return answer
 
-    def update_seven(self):
+    def update_seven(self) -> str | None:
+        if len(self.users) == 2:
+            return self.update_null()
+
         self.current_state.seven = self.current_user_id
 
     def update_draw(self) -> str:
-        if self.current_card.emoji == UnoEmoji.draw_four:
+        if self.current_card.emoji == UnoEmoji.DRAW_FOUR:
             self.current_state.drawn += 4
             answer = self.update_bluff()
         else:
@@ -345,24 +455,20 @@ class UnoData(GamesData):
     def update_state(self):
         self.current_state.passed = self.current_state.skipped = 0
 
-        if self.settings.seven_0 and self.users[self.current_user_id]:
-            if self.current_card.emoji == UnoEmoji.null:
+        match self.current_card.emoji:
+            case UnoEmoji.NULL if self.settings.seven_0 and self.users[self.current_user_id]:
                 return self.update_null()
-
-            if self.current_card.emoji == UnoEmoji.seven:
-                if len(self.users) == 2:
-                    return self.update_null()
-
+            case UnoEmoji.SEVEN if self.settings.seven_0 and self.users[self.current_user_id]:
                 return self.update_seven()
 
-        if self.current_card.emoji in (UnoEmoji.draw_two, UnoEmoji.draw_four):
-            return self.update_draw()
+            case UnoEmoji.DRAW_TWO | UnoEmoji.DRAW_FOUR:
+                return self.update_draw()
 
-        if self.current_card.emoji == UnoEmoji.reverse:
-            return self.update_reverse()
+            case UnoEmoji.REVERSE:
+                return self.update_reverse()
 
-        if self.current_card.emoji == UnoEmoji.skip:
-            return self.update_skip()
+            case UnoEmoji.SKIP:
+                return self.update_skip()
 
     @staticmethod
     def pop_from_deck(deck, amount: int = 1):
@@ -417,7 +523,7 @@ class UnoData(GamesData):
     async def play_bluff(self, state: FSMContext):
         if self.current_state.bluffed:
             if self.current_state.bluffed == state.bot.id:
-                answer = _("Yes, it was a bluff =(")
+                answer = _("Yes, it was a bluff hehe.")
             else:
                 answer = _("Bluff! I see suitable cards, not only wilds.")
         else:

@@ -1,52 +1,50 @@
 from random import choice
 
-from aiogram import Router, types, F
-from aiogram.filters import MagicData
+from aiogram import Router, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from .misc.data import CTSData
-from .misc.middleware import CTSDataMiddleware
 from .. import WINNER, Games, win_timeout
 
 router = Router(name='game:cts:process')
-router.message.filter(Games.cts)
-router.message.outer_middleware(CTSDataMiddleware())
-
-
-@router.message(CTSData.filter(), MagicData(F.data_cts.bot_var))
-async def answer_handler(message: types.Message, state: FSMContext, timer: Timer, data_cts: CTSData):
-    message = await message.reply(
-        choice(
-            (
-                _("Hmm."),
-                _("And you're smarter than you look."),
-                _("Right!"),
-            )
-        ) + _(" My word: {bot_var}.").format(bot_var=data_cts.bot_var)
-    )
-
-    await data_cts.set_data(state)
-    await timer.create(state, win_timeout, name='game', message=message)
+router.message.filter(Games.CTS)
 
 
 @router.message(CTSData.filter())
-async def lose_handler(message: types.Message, state: FSMContext, timer: Timer):
+async def answer_handler(message: types.Message, state: FSMContext):
     await timer.cancel(timer.get_name(state, name='game'))
-    await state.clear()
+    data_cts = await CTSData.get_data(state)
 
-    await message.reply(choice(
-        (
-            _("Okay, I have nothing to write on {letter}... Victory is yours."),
-            _("Can't find the right something on {letter}... My defeat."),
-            _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
+    if data_cts.bot_var:
+        message = await message.reply(
+            choice(
+                (
+                    _("Hmm."),
+                    _("And you're smarter than you look."),
+                    _("Right!"),
+                )
+            ) + _(" My word: {bot_var}.").format(bot_var=data_cts.bot_var)
         )
-    ).format(letter=f'"{message.text[-1]}"'))
+
+        await data_cts.set_data(state)
+        await timer.create(state, win_timeout, name='game', message=message)
+    else:
+        await state.clear()
+
+        await message.reply(choice(
+            (
+                _("Okay, I have nothing to write on {letter}... Victory is yours."),
+                _("Can't find the right something on {letter}... My defeat."),
+                _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
+            )
+        ).format(letter=f'"{message.text[-1]}"'))
 
 
 @router.message()
-async def mistake_handler(message: types.Message, state: FSMContext, data_cts: CTSData, timer: Timer):
+async def mistake_handler(message: types.Message, state: FSMContext):
+    data_cts = await CTSData.get_data(state)
     data_cts.fail_amount -= 1
 
     if data_cts.fail_amount:

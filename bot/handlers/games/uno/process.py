@@ -5,9 +5,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.handlers import get_username
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from .misc import keyboards as k
-from .settings import UnoSettings
+from .misc.data import UnoSettings
 
 router = Router(name='game:uno:process')
 
@@ -16,11 +16,11 @@ def get_user_ids(entities: list[types.MessageEntity]) -> list[int]:
     return [entity.user.id for entity in entities if entity.user]
 
 
-async def start_timer(message: types.Message, bot: Bot, state: FSMContext, timer: Timer):
-    await start_handler(message, bot, state, timer, get_user_ids(message.entities))
+async def start_timer(message: types.Message, bot: Bot, state: FSMContext):
+    await start_handler(message, bot, state, get_user_ids(message.entities))
 
 
-async def start_filter(query: types.CallbackQuery, state: FSMContext, timer: Timer):
+async def start_filter(query: types.CallbackQuery, state: FSMContext):
     user_ids = get_user_ids(query.message.entities)
 
     if query.from_user.id == user_ids[0]:
@@ -28,12 +28,11 @@ async def start_filter(query: types.CallbackQuery, state: FSMContext, timer: Tim
         return {'user_ids': user_ids}
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'start'), start_filter)
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.START), start_filter)
 async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,
         state: FSMContext,
-        timer: Timer,
         user_ids: list[int],
 ):
     message = query.message if isinstance(query, types.CallbackQuery) else query
@@ -56,10 +55,10 @@ async def start_handler(
         )
 
     from .misc.process import start
-    await start(message, state, timer, user_ids, settings)
+    await start(message, state, user_ids, settings)
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'join'))
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.JOIN))
 async def join_handler(query: types.CallbackQuery):
     user_ids = get_user_ids(query.message.entities)
 
@@ -76,8 +75,8 @@ async def join_handler(query: types.CallbackQuery):
         await query.answer(_("Now there are one more players!"))
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'leave'))
-async def leave_handler(query: types.CallbackQuery, state: FSMContext, timer: Timer):
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.LEAVE))
+async def leave_handler(query: types.CallbackQuery, state: FSMContext):
     user_ids = get_user_ids(query.message.entities)
 
     if query.from_user.id in user_ids:
@@ -105,11 +104,11 @@ async def leave_handler(query: types.CallbackQuery, state: FSMContext, timer: Ti
         await query.answer(_("You are not in the list yet!"))
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'start'))
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.START))
 async def start_no_owner_handler(query: types.CallbackQuery):
     await query.answer(_("Only {user} can start the game.").format(user=query.message.entities[7].user.first_name))
 
 
-@router.callback_query(k.UnoKeyboard.filter(F.action == 'settings'))
+@router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.SETTINGS))
 async def settings_no_owner_handler(query: types.CallbackQuery):
     await query.answer(_("Only {user} can set up the game.").format(user=query.message.entities[7].user.first_name))

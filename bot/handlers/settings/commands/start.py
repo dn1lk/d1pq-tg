@@ -12,15 +12,15 @@ from ... import NO_ARGS
 router = Router(name='settings:commands:start')
 
 
-@router.callback_query(k.SettingsKeyboard.filter(F.action == 'commands'))
+@router.callback_query(k.SettingsKeyboard.filter(F.action == k.SettingsAction.COMMAND))
 @flags.data('messages')
 async def start_handler(
         query: types.CallbackQuery,
         state: FSMContext,
         i18n: I18n,
+        custom_commands: dict,
         commands: dict[str, tuple[types.BotCommand]],
         messages: list | None,
-        custom_commands: dict,
 ):
     await state.set_state(Settings.command)
 

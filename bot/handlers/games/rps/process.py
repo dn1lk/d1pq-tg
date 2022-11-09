@@ -34,7 +34,7 @@ async def process_handler(query: types.CallbackQuery, callback_data: k.RPSKeyboa
     score = _("Score: {loses}-{wins}.\nPlay again?").format(loses=html.bold(loses), wins=html.bold(wins))
     await query.message.edit_text(
         f'{bot_var.word}! {get_username(query.from_user)}, {result}\n\n{score}',
-        reply_markup=k.show_vars()
+        reply_markup=query.message.reply_markup
     )
 
     await query.answer(_("Your choice: {user_var}").format(user_var=user_var.word))

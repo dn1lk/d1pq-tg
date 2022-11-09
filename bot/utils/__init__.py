@@ -7,6 +7,3 @@ async def setup(dp: Dispatcher):
 
     from . import balaboba
     dp['yalm'] = await balaboba.Yalm.setup()
-
-    from . import timer
-    dp['timer'] = timer.Timer()

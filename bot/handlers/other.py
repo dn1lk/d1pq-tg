@@ -6,7 +6,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters as f
-from bot.utils import balaboba, markov, voice, sticker
+from bot.utils import balaboba, markov, tts, sticker
 from bot.utils.database.context import DataBaseContext
 from . import get_username
 
@@ -27,14 +27,14 @@ def answer_check(answer: str) -> str:
 async def get_gen_args(
         message: types.Message,
         bot: Bot,
-        i18n: I18n,
-        db: DataBaseContext,
         yalm: balaboba.Yalm,
+        db: DataBaseContext,
+        i18n: I18n,
         messages: list[str],
 ) -> dict:
     async def gen_markov() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id):
-            accuracy: int | None = await db.get_data('accuracy')
+            accuracy: int = await db.get_data('accuracy')
 
             return {
                 'text': markov.gen(
@@ -48,7 +48,12 @@ async def get_gen_args(
     async def gen_voice() -> dict:  # now working :(
         async with ChatActionSender.record_voice(chat_id=message.chat.id):
             answer = await gen_markov()
-            return await voice.gen(answer=answer['text'], locale=i18n.current_locale)
+            voice = await tts.gen(answer=answer['text'], locale=i18n.current_locale)
+
+            if not voice:
+                return answer
+
+            return {'voice': voice}
 
     async def gen_balaboba() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id):
@@ -67,17 +72,17 @@ async def get_gen_args(
     return await choice([gen_markov, gen_sticker, gen_balaboba])()
 
 
-@router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
+@router.message(filters.MagicData(F.event.reply_to_message.from_user.id is F.bot.id))
 @flags.throttling('gen')
 async def gen_reply_handler(
         message: types.Message,
         bot: Bot,
-        i18n: I18n,
-        db: DataBaseContext,
         yalm: balaboba.Yalm,
+        db: DataBaseContext,
+        i18n: I18n,
         messages: list[str],
 ):
-    answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
+    answer = await get_gen_args(message, bot, yalm, db, i18n, messages)
 
     if 'text' in answer:
         answer['text'] = answer_check(answer['text'])
@@ -117,12 +122,12 @@ async def hello_handler(message: types.Message):
 async def gen_answer_handler(
         message: types.Message,
         bot: Bot,
-        i18n: I18n,
-        db: DataBaseContext,
         yalm: balaboba.Yalm,
+        db: DataBaseContext,
+        i18n: I18n,
         messages: list[str],
 ):
-    answer = await get_gen_args(message, bot, i18n, db, yalm, messages)
+    answer = await get_gen_args(message, bot, yalm, db, i18n, messages)
 
     if 'text' in answer:
         answer['text'] = answer_check(answer['text'])

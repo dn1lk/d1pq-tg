@@ -4,15 +4,15 @@ from aiogram import Router, F, types, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from .. import Games
 
 router = Router(name='game:rnd:process')
-router.message.filter(Games.rnd)
+router.message.filter(Games.RND)
 
 
 @router.message(F.chat.type == 'private', F.text.in_(tuple(map(str, range(1, 11)))))
-async def private_handler(message: types.Message, state: FSMContext, timer: Timer):
+async def private_handler(message: types.Message, state: FSMContext):
     await timer.cancel(timer.get_name(state, name='game'))
     await state.clear()
 

@@ -4,7 +4,7 @@ from aiogram import Router, types, F, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, I18n
 
-from bot.utils.timer import Timer
+from bot.utils.timer import timer
 from .misc.data import CTSData, get_cities
 from .. import Games, win_timeout
 from ...settings.commands import CustomCommandFilter
@@ -14,7 +14,7 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 
 @router.message()
-async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n, timer: Timer):
+async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
     task_name = timer.get_name(state, 'game')
     await timer.cancel(task_name)
 
@@ -36,7 +36,7 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n, tim
         data_cts = CTSData()
         answer = _("You start! Your word?")
 
-    await state.set_state(Games.cts)
+    await state.set_state(Games.CTS)
     await data_cts.set_data(state)
 
     await timer.create(state, win_timeout, name='game', message=await message.answer(answer))

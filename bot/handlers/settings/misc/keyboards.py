@@ -1,43 +1,75 @@
+from enum import Enum, auto
+
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from ..record.misc.data import RecordData
+
+
+class SettingsAction(Enum):
+    def _generate_next_value_(name, *args):
+        return name.lower()
+
+    COMMAND = auto()
+    LOCALE = auto()
+    CHANCE = auto()
+    ACCURACY = auto()
+    RECORD = auto()
+
+    BACK = auto()
+
+    @property
+    def word(self) -> str | None:
+        match self:
+            case self.COMMAND:
+                return _('Add command')
+            case self.LOCALE:
+                return _('Change language')
+            case self.CHANCE:
+                return _('Change generation chance')
+            case self.ACCURACY:
+                return _('Change generation accuracy')
+            case self.RECORD:
+                return _('Change record policy')
+
+            case self.BACK:
+                return _("Back")
+
 
 class SettingsKeyboard(CallbackData, prefix='set'):
-    action: str
-    value: int | str | None
+    action: SettingsAction | RecordData
+    value: int | float | str = None
 
 
 def settings():
-    buttons = {
-        'commands': _('Add command'),
-        'locale': _('Change language'),
-        'chance': _('Change generation chance'),
-        'accuracy': _('Change generation accuracy'),
-        'record': _('Change record policy'),
-    }
-
     builder = InlineKeyboardBuilder()
 
-    for action, text in buttons.items():
-        builder.button(text=text, callback_data=SettingsKeyboard(action=action))
+    for action in tuple(SettingsAction)[:5]:
+        builder.button(text=action.word, callback_data=SettingsKeyboard(action=action))
 
     builder.adjust(1)
     return builder.as_markup()
 
 
-def settings_back(builder: InlineKeyboardBuilder):
-    return builder.button(text=_("Back"), callback_data=SettingsKeyboard(action='back'))
+def back(builder: InlineKeyboardBuilder):
+    return builder.button(
+        text=SettingsAction.BACK.word,
+        callback_data=SettingsKeyboard(action=SettingsAction.BACK)
+    )
 
 
-def locale(locales: tuple[tuple[str, str], ...], current_locale: str):
+def locale(locales: dict[str, str], current_locale: str):
     builder = InlineKeyboardBuilder()
 
-    for code, language in locales:
+    for code, language in locales.items():
         if code != current_locale:
-            builder.button(text=language, callback_data=SettingsKeyboard(action='locale', value=code))
+            builder.button(
+                text=language,
+                callback_data=SettingsKeyboard(action=SettingsAction.LOCALE, value=code)
+            )
 
-    settings_back(builder)
+    back(builder)
     builder.adjust(1)
     return builder.as_markup()
 
@@ -49,12 +81,18 @@ def chance(markov_chance: int | float):
         math = round(markov_chance / i, 2)
 
         if markov_chance > 10:
-            builder.button(text=f'-{math}', callback_data=SettingsKeyboard(action='chance', value=markov_chance - math))
+            builder.button(
+                text=f'-{math}',
+                callback_data=SettingsKeyboard(action=SettingsAction.CHANCE, value=markov_chance - math)
+            )
 
         if markov_chance < 90:
-            builder.button(text=f'+{math}', callback_data=SettingsKeyboard(action='chance', value=markov_chance + math))
+            builder.button(
+                text=f'+{math}',
+                callback_data=SettingsKeyboard(action=SettingsAction.CHANCE, value=markov_chance + math)
+            )
 
-    settings_back(builder)
+    back(builder)
     builder.adjust(2)
     return builder.as_markup()
 
@@ -64,25 +102,25 @@ def accuracy(markov_state: int):
 
     for i in range(1, 5):
         if i != markov_state:
-            builder.button(text=str(i), callback_data=SettingsKeyboard(action='accuracy', value=i))
+            builder.button(text=str(i), callback_data=SettingsKeyboard(action=SettingsAction.ACCURACY, value=i))
 
-    settings_back(builder)
+    back(builder)
     builder.adjust(3, 1)
     return builder.as_markup()
 
 
-def data(buttons: dict):
+def record(buttons: dict[RecordData, int]):
     text = _('{action} {data} recording')
     builder = InlineKeyboardBuilder()
 
     for action, value in buttons.items():
         builder.button(
             text=text.format(action=_('Disable') if value else _('Enable'), data=action.word.lower()),
-            callback_data=SettingsKeyboard(action=action.name, value=value)
+            callback_data=SettingsKeyboard(action=action, value=value)
         )
 
-    builder.button(text=_('Delete all records'), callback_data=SettingsKeyboard(action='delete'))
+    builder.button(text=RecordData.DELETE.word, callback_data=SettingsKeyboard(action=RecordData.DELETE))
 
-    settings_back(builder)
+    back(builder)
     builder.adjust(1)
     return builder.as_markup()

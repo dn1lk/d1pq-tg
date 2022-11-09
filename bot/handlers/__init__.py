@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from aiogram import Dispatcher, types, html
 from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
@@ -14,8 +16,9 @@ def get_username(user: types.User = None) -> str:
     return html.link(html.quote(user.first_name), f"tg://user?id={user.id}")
 
 
-def get_commands(commands: dict[str, tuple[types.BotCommand]], locale: str, index: slice | None = None) -> str:
-    return '\n'.join(f'/{command.command} - {command.description}' for command in commands[locale][index])
+@lru_cache(maxsize=2)
+def get_commands(commands: tuple[types.BotCommand]) -> str:
+    return '\n'.join(f'/{command.command} - {command.description}' for command in commands)
 
 
 def setup(dp: Dispatcher):

@@ -16,7 +16,7 @@ async def my_migrated_to_message_handler(message: types.Message):
     await message.answer(_("Ouch, it's just a migrated group..."))
 
 
-@router.message(filters.MagicData(F.event.left_chat_member.id == F.bot.id))
+@router.message(filters.MagicData(F.event.left_chat_member.id is F.bot.id))
 async def my_leave_message_handler(_):
     pass
 

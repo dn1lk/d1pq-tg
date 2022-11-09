@@ -13,13 +13,13 @@ router = Router(name="commands")
 
 
 @router.message(CustomCommandFilter('start', 'начать'))
-async def start_handler(message: types.Message, i18n: I18n, commands: dict[str, tuple[types.BotCommand]]):
+async def start_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
     answer = _(
         "I am a text generator bot and in some cases a great conversationalist.\n\n"
         "If you write me a message or a command, something might happen.\n\n"
     )
 
-    commands = get_commands(commands, i18n.current_locale, slice(2))
+    commands = get_commands(commands[i18n.current_locale][:2])
     await message.answer(answer + commands)
 
 
@@ -32,11 +32,11 @@ async def settings_handler(message: types.Message, bot: Bot):
 
 
 @router.message(CustomCommandFilter('help', 'помощь'))
-async def help_handler(message: types.Message, i18n: I18n, commands: dict[str, tuple[types.BotCommand]]):
+async def help_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
     """get a list of main commands, получить список основных команд"""
 
     answer = _("List of my main commands - I only accept them together with the required request, in one message:\n\n")
-    commands = get_commands(commands, i18n.current_locale, slice(2, None))
+    commands = get_commands(commands[i18n.current_locale][2:])
     await message.answer(answer + commands)
 
 
@@ -60,8 +60,8 @@ async def choose_handler(message: types.Message, command: filters.CommandObject)
 @flags.chat_action("typing")
 async def choose_no_args_handler(
         message: types.Message,
-        command: filters.CommandObject,
         i18n: I18n,
+        command: filters.CommandObject,
         messages: list[str],
 ):
     message = await message.answer(html.bold(_("What to choose?")))
@@ -167,9 +167,9 @@ async def game_no_args_handler(message: types.Message):
 @flags.chat_action("typing")
 async def question_handler(
         message: types.Message,
+        yalm: balaboba.Yalm,
         command: filters.CommandObject,
         i18n: I18n,
-        yalm: balaboba.Yalm,
 ):
     """answer the question, ответить на вопрос"""
 
@@ -177,7 +177,7 @@ async def question_handler(
     message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=html.bold(args)))
 
     if len(command.args) < 20:
-        answer = await yalm.gen(i18n.current_locale, args, 8)
+        answer = await yalm.gen(i18n.current_locale, ' '.join(set(choices(args.split(), k=3))), 8)
     else:
         answer = _("Let's do it sooner!")
 
@@ -209,9 +209,9 @@ async def question_no_args_handler(
 @flags.chat_action("typing")
 async def history_handler(
         message: types.Message,
+        yalm: balaboba.Yalm,
         command: filters.CommandObject,
         i18n: I18n,
-        yalm: balaboba.Yalm,
         messages: list[str],
 ):
     """tell a story, рассказать историю"""
@@ -232,9 +232,9 @@ async def history_handler(
 @flags.chat_action("typing")
 async def future_handler(
         message: types.Message,
+        yalm: balaboba.Yalm,
         command: filters.CommandObject,
         i18n: I18n,
-        yalm: balaboba.Yalm,
 ):
     """predict the future, предсказать будущее"""
 
