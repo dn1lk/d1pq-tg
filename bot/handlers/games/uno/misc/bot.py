@@ -108,7 +108,7 @@ class UnoBot:
             else:
                 m *= len(cards) / 6
 
-            if random() < 1 / m:
+            if random() < 1 / m or 5:
                 answer = await self.data.play_bluff(self.state)
                 return await next_turn(self.message, self.state, self.data, answer)
 
