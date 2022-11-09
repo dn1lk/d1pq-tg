@@ -90,9 +90,12 @@ class ThrottlingMiddleware(BaseMiddleware):
             if task_name in self.tasks:
                 return
 
-            self[task_name] = asyncio.create_task(asyncio.sleep(self.timeouts[throttling]))
+            self[task_name] = asyncio.create_task(self.timer(self.timeouts[throttling]))
 
         return await handler(event, data)
+
+    async def timer(self, delay: int):
+        await asyncio.sleep(delay)
 
 
 class UnhandledMiddleware(BaseMiddleware):
