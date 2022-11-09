@@ -192,7 +192,7 @@ async def color_handler(
         )
 
         await query.answer()
-        answer = data_uno.update_state()
+        answer = data_uno.update_state() or ""
 
         from .misc.process import proceed_turn
         await proceed_turn(query.message, state, data_uno, answer)
