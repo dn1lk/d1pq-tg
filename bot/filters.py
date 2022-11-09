@@ -6,7 +6,7 @@ from aiogram import Bot, types, filters
 class LevenshteinFilter(filters.BaseFilter):
     def __init__(self, lev: set[str], ignore_case: bool = True):
         self.lev: set[str] = lev
-        self.ignore_case: bool = lev_ignore_case
+        self.ignore_case: bool = ignore_case
 
     @staticmethod
     def lev_distance(lev: str, text: str):
