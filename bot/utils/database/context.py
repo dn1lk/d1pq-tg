@@ -17,9 +17,9 @@ class DataBaseContext:
         data = (await self.storage.get_data(bot=self.bot, key=self.key)).get(column)
 
         if not data:
-            async with self.pool_db.acquire() as conn:
-                data = await conn.fetchval("SELECT $1 FROM data WHERE id = $2;", column, self.key.chat_id) or \
-                       await conn.fetchval("SELECT $1 FROM data WHERE id = 0;", column)
+            async with self.pool_db.acquire() as con:
+                data = await con.fetchval(f"SELECT {column} FROM data WHERE id = $1;", self.key.chat_id) or \
+                       await con.fetchval(f"SELECT {column} FROM data WHERE id = 0;")
 
             await self.storage.update_data(bot=self.bot, key=self.key, data={column: data or 'NULL'})
 
@@ -32,11 +32,11 @@ class DataBaseContext:
         if data:
             kwargs.update(data)
 
-        async with self.pool_db.acquire() as conn:
+        async with self.pool_db.acquire() as con:
             for column, data in kwargs.items():
-                await conn.execute(
-                    "INSERT INTO data (id, $1) VALUES ($2, $3) ON CONFLICT (id) DO UPDATE SET $1 = $3;",
-                    column, self.key.chat_id, data
+                await con.execute(
+                    f"INSERT INTO data(id, {column}) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET {column} = $2;",
+                    self.key.chat_id, data
                 )
 
         await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
@@ -45,14 +45,14 @@ class DataBaseContext:
         if data:
             kwargs.update(data)
 
-        async with self.pool_db.acquire() as conn:
+        async with self.pool_db.acquire() as con:
             for column, data in kwargs.items():
-                await conn.execute(f"UPDATE data SET $1 = $3 WHERE id = $2;", column, self.key.chat_id, data)
+                await con.execute(f"UPDATE data SET {column} = $2 WHERE id = $1;", self.key.chat_id, data)
 
         await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
 
     async def clear(self) -> None:
-        async with self.pool_db.acquire() as conn:
-            await conn.execute(f"DELETE FROM data WHERE id = $1;", self.key.chat_id)
+        async with self.pool_db.acquire() as con:
+            await con.execute("DELETE FROM data WHERE id = $1;", self.key.chat_id)
 
         await self.storage.set_data(bot=self.bot, key=self.key, data={})
