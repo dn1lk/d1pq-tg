@@ -51,4 +51,4 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     )
 
     from .process import start_timer
-    await timer.create(state, start_timer, name='game', message=message, bot=bot)
+    timer.create(state, start_timer, name='game', message=message, bot=bot)

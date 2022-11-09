@@ -39,4 +39,4 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
     await state.set_state(Games.CTS)
     await data_cts.set_data(state)
 
-    await timer.create(state, win_timeout, name='game', message=await message.answer(answer))
+    timer.create(state, win_timeout, name='game', message=await message.answer(answer))

@@ -38,7 +38,7 @@ class TurnHandler(MessageHandler):
 
             if self.event:
                 from .misc import timeout, timeout_done
-                await timer.create(
+                timer.create(
                     self.state,
                     timeout,
                     timeout_done,

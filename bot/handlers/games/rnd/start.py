@@ -30,7 +30,7 @@ async def private_handler(message: types.Message, state: FSMContext):
         )
     )
 
-    await timer.create(state, close_timeout, name='game', message=message)
+    timer.create(state, close_timeout, name='game', message=message)
 
 
 @router.message()

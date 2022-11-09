@@ -29,7 +29,7 @@ async def answer_handler(message: types.Message, state: FSMContext):
         )
 
         await data_cts.set_data(state)
-        await timer.create(state, win_timeout, name='game', message=message)
+        timer.create(state, win_timeout, name='game', message=message)
     else:
         await state.clear()
 

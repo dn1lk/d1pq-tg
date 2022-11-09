@@ -152,7 +152,7 @@ async def next_turn(
         timer[timer_name] = asyncio.create_task(bot.gen_turn(cards))
     else:
         from . import timeout, timeout_done
-        await timer.create(state, timeout, timeout_done, name='game', message=message)
+        timer.create(state, timeout, timeout_done, name='game', message=message)
 
 
 async def finish(state: FSMContext, data: UnoData) -> types.Message:
