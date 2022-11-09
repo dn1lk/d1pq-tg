@@ -146,7 +146,6 @@ class SevenHandler(MessageHandler):
                 await timer.cancel(timer.get_name(self.state, 'game'))
 
                 answer = data_uno.play_seven(self.event.from_user, seven_user)
-                await data_uno.set_data(self.state)
 
                 from .misc.process import proceed_turn
                 await proceed_turn(self.event, self.state, data_uno, answer)
