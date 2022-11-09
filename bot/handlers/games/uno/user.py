@@ -166,7 +166,7 @@ class SevenHandler(MessageHandler):
             for user_id in data_uno.users:
                 user = await data_uno.get_user(self.state, user_id)
 
-                if user.username in self.event.text:
+                if f'@{user.username}' == self.event.text.strip():
                     return user
 
 

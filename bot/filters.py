@@ -34,13 +34,13 @@ class LevenshteinFilter(filters.BaseFilter):
 
     async def __call__(self, obj: Union[types.Message, types.InlineQuery, types.Poll]) -> bool:
         match obj:
-            case types.Message:
+            case types.Message():
                 text = obj.text or obj.caption
                 if not text and obj.poll:
                     text = obj.poll.question
-            case types.InlineQuery:
+            case types.InlineQuery():
                 text = obj.query
-            case types.Poll:
+            case types.Poll():
                 text = obj.question
             case _:
                 return False
@@ -60,9 +60,9 @@ class AdminFilter(filters.BaseFilter):
 
     async def __call__(self, obj: Union[types.Message, types.CallbackQuery], bot: Bot, owner_id: int) -> bool:
         match obj:
-            case types.Message:
+            case types.Message():
                 chat_id = obj.chat.id
-            case types.CallbackQuery:
+            case types.CallbackQuery():
                 chat_id = obj.message.chat.id
             case _:
                 return False

@@ -1,5 +1,5 @@
 from enum import IntEnum, EnumMeta
-from random import choice, shuffle, randrange
+from random import choice, randrange, choices
 
 from aiogram import types, html
 from aiogram.fsm.context import FSMContext
@@ -46,15 +46,15 @@ class UnoDifficulty(IntEnum, metaclass=UnoSettingsMeta):
 
 
 class UnoMode(IntEnum, metaclass=UnoSettingsMeta):
-    fast = 0
-    with_points = 1
+    FAST = 0
+    WITH_POINTS = 1
 
     @property
     def word(self) -> str:
         match self:
-            case self.fast:
+            case self.FAST:
                 return _('fast')
-            case self.with_points:
+            case self.WITH_POINTS:
                 return _('with points')
 
     @classmethod
@@ -63,15 +63,15 @@ class UnoMode(IntEnum, metaclass=UnoSettingsMeta):
 
 
 class UnoAdd(IntEnum, metaclass=UnoSettingsMeta):
-    off = 0
-    on = 1
+    OFF = 0
+    ON = 1
 
     @property
     def word(self) -> str:
         match self:
-            case self.off:
+            case self.OFF:
                 return _("disabled")
-            case self.on:
+            case self.ON:
                 return _("enabled")
 
     @classmethod
@@ -81,9 +81,9 @@ class UnoAdd(IntEnum, metaclass=UnoSettingsMeta):
     @property
     def switcher(self) -> str:
         match self:
-            case self.off:
+            case self.OFF:
                 return _("Enable")
-            case self.on:
+            case self.ON:
                 return _("Disable")
 
     @staticmethod
@@ -290,41 +290,40 @@ class UnoData(GamesData):
                         )
                     )
 
-            case self.prev_user_id:
-                if self.current_state.passed:
-                    if card is self.users[user_id][-1] and \
-                            (card.emoji == self.current_card.emoji or card.color is self.current_card.color):
-                        accept = choice(
-                            (
-                                _("{user}, you're in luck!"),
-                                _("{user}, is that honest?"),
-                            )
+            case self.current_state.passed:
+                if card is self.users[user_id][-1] and \
+                        (card.emoji == self.current_card.emoji or card.color is self.current_card.color):
+                    accept = choice(
+                        (
+                            _("{user}, you're in luck!"),
+                            _("{user}, is that honest?"),
                         )
-                    else:
-                        decline = _("No, this card is wrong. Take another one!")
-
-                elif self.current_state.skipped:
-                    if card.emoji == self.current_card.emoji:
-                        accept = choice(
-                            (
-                                _("{user} is unskippable!"),
-                                _("{user}, you can't be skipped!"),
-                                _("Skips are not for you =).")
-                            )
-                        )
-                    else:
-                        decline = _("{user}, your turn is skipped =(.")
-
+                    )
                 else:
-                    if card.emoji == self.current_card.emoji:
-                        accept = choice(
-                            (
-                                _("{user} keeps throwing cards..."),
-                                _("{user}, will anyone stop you?"),
-                            )
+                    decline = _("No, this card is wrong. Take another one!")
+
+            case self.current_state.skipped:
+                if card.emoji == self.current_card.emoji:
+                    accept = choice(
+                        (
+                            _("{user} is unskippable!"),
+                            _("{user}, you can't be skipped!"),
+                            _("Skips are not for you =).")
                         )
-                    else:
-                        decline = _("{user}, you have already made your turn.")
+                    )
+                else:
+                    decline = _("{user}, your turn is skipped =(.")
+
+            case self.prev_user_id:
+                if card.emoji == self.current_card.emoji:
+                    accept = choice(
+                        (
+                            _("{user} keeps throwing cards..."),
+                            _("{user}, will anyone stop you?"),
+                        )
+                    )
+                else:
+                    decline = _("{user}, you have already made your turn.")
 
             case _ if self.settings.jump_in and card.file_unique_id == self.current_card.file_unique_id:
                 accept = choice(
@@ -402,7 +401,7 @@ class UnoData(GamesData):
         return f'{answer}\n{answer_draw} {answer_amount.format(amount=html.bold(self.current_state.drawn))}'
 
     def update_bluff(self) -> str:
-        prev_card = self.deck[-1]
+        prev_card = self.deck[-2]
 
         for card in self.users[self.current_user_id]:
             if card.color == prev_card.color:
@@ -472,9 +471,9 @@ class UnoData(GamesData):
 
     @staticmethod
     def pop_from_deck(deck, amount: int = 1):
-        shuffle(deck)
+        cards = choices(deck, k=amount)
 
-        for card in deck[:amount]:
+        for card in cards:
             deck.remove(card)
             yield card
 

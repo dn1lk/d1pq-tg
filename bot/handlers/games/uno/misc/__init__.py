@@ -20,7 +20,7 @@ async def timeout(message: types.Message, state: FSMContext):
         from ... import close_timeout
         await close_timeout(message, state)
 
-        data_uno.settings.mode = UnoMode.fast
+        data_uno.settings.mode = UnoMode.FAST
 
         from .process import finish
         return await finish(state, data_uno)
@@ -67,4 +67,5 @@ async def timeout_done(message: types.Message, state: FSMContext):
 
     if message.reply_markup and \
             message.reply_markup.inline_keyboard[0][0].callback_data == k.UnoKeyboard(action=k.UnoActions.BLUFF).pack():
-        await message.edit_reply_markup(k.show_cards(False))
+        del message.reply_markup.inline_keyboard[0]
+        await message.edit_reply_markup(message.reply_markup)

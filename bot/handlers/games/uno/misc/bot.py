@@ -143,9 +143,9 @@ class UnoBot:
                 m = len(self.data.users) * self.data.settings.difficulty
 
                 if self.message.entities[0].user.id == self.state.bot.id:
-                    timeout = range(0, 4)
+                    timeout = range(0, 6)
                 else:
-                    timeout = range(1, 8)
+                    timeout = range(2, 10)
 
                 await asyncio.sleep(choice(timeout) / m)
 

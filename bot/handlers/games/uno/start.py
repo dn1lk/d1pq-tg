@@ -9,7 +9,7 @@ from .. import Games
 from ... import get_username
 from ...settings.commands import CustomCommandFilter
 
-router = Router(name='game:start')
+router = Router(name='game:uno:start')
 router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'], magic=F.args.in_(('uno', 'уно'))))
 
 
@@ -44,8 +44,8 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
         answer.format(
             user=get_username(message.from_user),
             difficulty=html.bold(UnoDifficulty.NORMAL.word),
-            mode=html.bold(UnoMode.fast.word),
-            additives='\n'.join(f'{name}: {html.bold(UnoAdd.on.word)}.' for name in UnoAdd.get_names()),
+            mode=html.bold(UnoMode.FAST.word),
+            additives='\n'.join(f'{name}: {html.bold(UnoAdd.ON.word)}.' for name in UnoAdd.get_names()),
         ),
         reply_markup=k.setup(),
     )

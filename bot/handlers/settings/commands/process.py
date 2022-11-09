@@ -15,7 +15,7 @@ router = Router(name='settings:commands:process')
 
 
 async def process_filter(message: types.Message, bot: Bot, commands: dict[str, types.BotCommand]):
-    return await filters.Command(commands['en'])(message, bot)
+    return await filters.Command(*commands['en'])(message, bot)
 
 
 router.message.filter(Settings.command, process_filter, f.AdminFilter(is_admin=True))
@@ -65,4 +65,4 @@ async def decline_handler(
         messages: list | None,
 ):
     message = await message.answer(html.bold(_("Custom command not recognized.")))
-    await message.answer(NO_ARGS.format(command=command.command, args=choice(get_args(i18n, messages))).lower())
+    await message.answer(NO_ARGS.format(command=command.command, args=choice(get_args(i18n, messages)).lower()))
