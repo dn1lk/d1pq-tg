@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-09 03:23+0300\n"
+"POT-Creation-Date: 2022-11-09 20:08+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,23 +140,23 @@ msgstr ""
 msgid "In short, {query}"
 msgstr ""
 
-#: handlers/other.py:108
+#: handlers/other.py:107
 msgid "{user}, hello!"
 msgstr ""
 
-#: handlers/other.py:109
+#: handlers/other.py:108
 msgid "Hey, {user}."
 msgstr ""
 
-#: handlers/other.py:110
+#: handlers/other.py:109
 msgid "Nice to meet you, {user}."
 msgstr ""
 
-#: handlers/other.py:111
+#: handlers/other.py:110
 msgid "My appreciate, {user}."
 msgstr ""
 
-#: handlers/other.py:112
+#: handlers/other.py:111
 msgid "Yop, {user}"
 msgstr ""
 
@@ -520,43 +520,43 @@ msgstr ""
 msgid "Only {user} can verify the legitimacy of using this card."
 msgstr ""
 
-#: handlers/games/uno/user.py:155
+#: handlers/games/uno/user.py:154
 msgid "{user} is not playing with us."
 msgstr ""
 
-#: handlers/games/uno/user.py:188
+#: handlers/games/uno/user.py:187
 msgid "{user} changes the color to {color}!"
 msgstr ""
 
-#: handlers/games/uno/user.py:198
-msgid "When you'll get a black card, choose this color ;)"
+#: handlers/games/uno/user.py:199
+msgid "When you'll get a BLACK card, choose this color ;)"
 msgstr ""
 
-#: handlers/games/uno/user.py:209
+#: handlers/games/uno/user.py:210
 msgid "Next time be faster!"
 msgstr ""
 
-#: handlers/games/uno/user.py:215
+#: handlers/games/uno/user.py:216
 msgid "Good job!"
 msgstr ""
 
-#: handlers/games/uno/user.py:216
+#: handlers/games/uno/user.py:217
 msgid "And you don't want to lose =)"
 msgstr ""
 
-#: handlers/games/uno/user.py:217
+#: handlers/games/uno/user.py:218
 msgid "On reaction =)."
 msgstr ""
 
-#: handlers/games/uno/user.py:218
+#: handlers/games/uno/user.py:219
 msgid "Yep!"
 msgstr ""
 
-#: handlers/games/uno/user.py:219
+#: handlers/games/uno/user.py:220
 msgid "Like a pro."
 msgstr ""
 
-#: handlers/games/uno/user.py:224
+#: handlers/games/uno/user.py:225
 msgid "You are not in the game!"
 msgstr ""
 
@@ -739,195 +739,195 @@ msgstr ""
 msgid "Someday {user} will be able to make the right turn."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:299
+#: handlers/games/uno/misc/data.py:298
 msgid "{user}, you're in luck!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:300
+#: handlers/games/uno/misc/data.py:299
 msgid "{user}, is that honest?"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:304
+#: handlers/games/uno/misc/data.py:303
 msgid "No, this card is wrong. Take another one!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:310
+#: handlers/games/uno/misc/data.py:309
 msgid "{user} is unskippable!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:311
+#: handlers/games/uno/misc/data.py:310
 msgid "{user}, you can't be skipped!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:312
+#: handlers/games/uno/misc/data.py:311
 msgid "Skips are not for you =)."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:316
+#: handlers/games/uno/misc/data.py:315
 msgid "{user}, your turn is skipped =(."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:322
+#: handlers/games/uno/misc/data.py:321
 msgid "{user} keeps throwing cards..."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:323
+#: handlers/games/uno/misc/data.py:322
 msgid "{user}, will anyone stop you?"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:327
+#: handlers/games/uno/misc/data.py:326
 msgid "{user}, you have already made your turn."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:332
+#: handlers/games/uno/misc/data.py:331
 msgid "We've been interrupted!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:333
+#: handlers/games/uno/misc/data.py:332
 msgid "I bet {user} will win this game!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:334
+#: handlers/games/uno/misc/data.py:333
 msgid "Suddenly, {user}."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:341
+#: handlers/games/uno/misc/data.py:340
 msgid "Hold your horses, {user}. Now is not your turn."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:342
+#: handlers/games/uno/misc/data.py:341
 msgid "Hey, {user}. Your card doesn't belong this turn."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:343
+#: handlers/games/uno/misc/data.py:342
 msgid "No. No no no. No. Again, NO!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:344
+#: handlers/games/uno/misc/data.py:343
 msgid "Someone explain to {user} how to play."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:345
+#: handlers/games/uno/misc/data.py:344
 msgid "Can I just give {user} a card and we'll pretend like nothing happened?"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:346
+#: handlers/games/uno/misc/data.py:345
 msgid "I'm betting on {user}'s defeat."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:361
+#: handlers/games/uno/misc/data.py:360
 msgid "{user} has one card left!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:371
+#: handlers/games/uno/misc/data.py:370
 msgid "We have exchanged cards with next neighbors!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:388
+#: handlers/games/uno/misc/data.py:387
 msgid "How cruel!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:389
+#: handlers/games/uno/misc/data.py:388
 msgid "What a surprise."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:395
+#: handlers/games/uno/misc/data.py:394
 msgid "{user} is clearly taking revenge... +"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:396
+#: handlers/games/uno/misc/data.py:395
 msgid "{user} sends a fiery hello and"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:400
+#: handlers/games/uno/misc/data.py:399
 msgid "a card!"
 msgid_plural "{amount} cards!"
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/games/uno/misc/data.py:414
+#: handlers/games/uno/misc/data.py:413
 msgid "Is this card legal?"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:415
+#: handlers/games/uno/misc/data.py:414
 msgid "A wild card... one that can be thrown illegally!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:416
+#: handlers/games/uno/misc/data.py:415
 msgid "Will the next player dare to check such a turn..."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:432
+#: handlers/games/uno/misc/data.py:431
 msgid "And vice versa!"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:433
+#: handlers/games/uno/misc/data.py:432
 msgid "A bit of a mess..."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:437
+#: handlers/games/uno/misc/data.py:436
 msgid "{user} changes the queue."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:447
+#: handlers/games/uno/misc/data.py:446
 msgid "{user} loses a turn?"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:448
+#: handlers/games/uno/misc/data.py:447
 msgid "{user} risks missing a turn."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:449
+#: handlers/games/uno/misc/data.py:448
 msgid "{user} can forget about the next turn."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:484
+#: handlers/games/uno/misc/data.py:483
 msgid "I receive"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:487
+#: handlers/games/uno/misc/data.py:486
 msgid "{user} receives"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:491
+#: handlers/games/uno/misc/data.py:490
 msgid "a card."
 msgid_plural "{amount} cards."
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/games/uno/misc/data.py:497
+#: handlers/games/uno/misc/data.py:496
 msgid "I exchange"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:499
+#: handlers/games/uno/misc/data.py:498
 msgid "{user} exchanges"
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:508
+#: handlers/games/uno/misc/data.py:507
 msgid "cards with player {seven_user}."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:526
+#: handlers/games/uno/misc/data.py:525
 msgid "Yes, it was a bluff hehe."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:528
+#: handlers/games/uno/misc/data.py:527
 msgid "Bluff! I see suitable cards, not only wilds."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:534
+#: handlers/games/uno/misc/data.py:533
 msgid "Ah, no. There were no suitable cards =("
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:538
+#: handlers/games/uno/misc/data.py:537
 msgid "Nope. It is not a bluff."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:539
+#: handlers/games/uno/misc/data.py:538
 msgid "Shhh, this card was legal."
 msgstr ""
 
-#: handlers/games/uno/misc/data.py:540
+#: handlers/games/uno/misc/data.py:539
 msgid "This card is suitable."
 msgstr ""
 
@@ -1184,11 +1184,11 @@ msgid "{action} {data} recording"
 msgstr ""
 
 #: handlers/settings/record/process.py:13
-msgid "{item} recording is {status}."
+msgid "{data} recording is {status}."
 msgstr ""
 
 #: handlers/settings/record/process.py:41
-msgid "Recording was successfully deleted."
+msgid "Records was successfully deleted."
 msgstr ""
 
 #: handlers/settings/record/start.py:13
@@ -1203,12 +1203,6 @@ msgstr ""
 
 #: handlers/settings/record/start.py:21
 msgid "to execute /who command"
-msgstr ""
-
-#: handlers/settings/record/start.py:26
-msgid ""
-"▪\t{data} - {description}.\n"
-"\n"
 msgstr ""
 
 #: handlers/settings/record/misc/data.py:21

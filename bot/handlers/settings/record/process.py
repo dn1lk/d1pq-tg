@@ -10,10 +10,10 @@ router = Router(name="settings:record:process")
 
 
 async def update(query: types.CallbackQuery, callback_data: k.SettingsKeyboard):
-    answer = _("{item} recording is {status}.")
+    answer = _("{data} recording is {status}.")
     await query.message.edit_text(
         answer.format(
-            item=callback_data.action.word,
+            data=callback_data.action.word,
             status=html.bold(_("disabled") if callback_data.value else _("enabled"))
         )
     )
@@ -38,5 +38,5 @@ async def delete_handler(query: types.CallbackQuery, state: FSMContext, db: Data
     await db.clear()
     await state.clear()
 
-    await query.message.edit_text(html.bold(_("Recording was successfully deleted.")))
+    await query.message.edit_text(html.bold(_("Records was successfully deleted.")))
     await query.answer()
