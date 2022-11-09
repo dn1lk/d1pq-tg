@@ -112,7 +112,7 @@ class UnoBot:
                 answer = await self.data.play_bluff(self.state)
                 return await next_turn(self.message, self.state, self.data, answer)
 
-        answer = self.data.play_draw(self.data.current_state.passed)
+        answer = self.data.play_draw(self.state.bot.id)
         await next_turn(self.message, self.state, self.data, answer)
 
     async def gen_color(self):
