@@ -43,8 +43,8 @@ async def timeout(message: types.Message, state: FSMContext):
 
     await asyncio.sleep(2)
 
-    if data_uno.current_card.color is UnoColors.black:
-        data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.black})))
+    if data_uno.current_card.color is UnoColors.BLACK:
+        data_uno.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.BLACK})))
         await message.edit_text(_("Current color: {color}").format(color=data_uno.current_card.color.word))
 
         from .process import proceed_turn

@@ -99,7 +99,7 @@ def show_cards(bluff: bool):
 def choice_color():
     builder = InlineKeyboardBuilder()
 
-    for color in UnoColors.get_colors(exclude={UnoColors.black}):
+    for color in UnoColors.get_colors(exclude={UnoColors.BLACK}):
         builder.button(text=color.word, callback_data=UnoKeyboard(action=color))
 
     builder.adjust(1)

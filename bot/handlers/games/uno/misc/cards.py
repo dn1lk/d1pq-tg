@@ -21,21 +21,21 @@ class UnoColorsMeta(EnumMeta):
 
 
 class UnoColors(str, Enum, metaclass=UnoColorsMeta):
-    blue = "🔵"
-    green = "🟢"
-    red = "🔴"
-    yellow = "🟡"
+    BLUE = "🔵"
+    GREEN = "🟢"
+    RED = "🔴"
+    YELLOW = "🟡"
 
-    black = "⚫"
+    BLACK = "⚫"
 
     @property
     def word(self) -> str:
         colors = {
-            self.blue: _("Blue"),
-            self.green: _("Green"),
-            self.red: _("Red"),
-            self.yellow: _("Yellow"),
-            self.black: _("Black"),
+            self.BLUE: _("Blue"),
+            self.GREEN: _("Green"),
+            self.RED: _("Red"),
+            self.YELLOW: _("Yellow"),
+            self.BLACK: _("Black"),
         }
 
         return f'{self} {colors[self]}'
@@ -66,7 +66,7 @@ class UnoCard(BaseModel):
 
 async def get_deck(bot: Bot) -> list[UnoCard]:
     def get(stickers: list[types.Sticker]):
-        for enum, color in enumerate(UnoColors.get_colors(exclude={UnoColors.black})):
+        for enum, color in enumerate(UnoColors.get_colors(exclude={UnoColors.BLACK})):
             for cost, sticker in enumerate(stickers[enum:-3:4]):
                 yield UnoCard(
                     file_unique_id=sticker.file_unique_id,
@@ -81,7 +81,7 @@ async def get_deck(bot: Bot) -> list[UnoCard]:
                 file_unique_id=sticker.file_unique_id,
                 file_id=sticker.file_id,
                 emoji=sticker.emoji,
-                color=UnoColors.black,
+                color=UnoColors.BLACK,
                 cost=50,
             )
 

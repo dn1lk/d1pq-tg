@@ -84,7 +84,7 @@ class UnoBot:
     async def proceed_turn(self, answer: str = ""):
         answer = self.data.update_state() or answer
 
-        if self.data.current_card.color is UnoColors.black:
+        if self.data.current_card.color is UnoColors.BLACK:
             await self.gen_color()
 
         elif self.data.current_state.seven:
@@ -98,9 +98,9 @@ class UnoBot:
             m = self.data.settings.difficulty
             n = 0.5
 
-            if self.data.settings.difficulty is UnoDifficulty.normal:
+            if self.data.settings.difficulty is UnoDifficulty.NORMAL:
                 m /= len(self.data.users[self.data.prev_user_id]) or n
-            elif self.data.settings.difficulty is UnoDifficulty.hard:
+            elif self.data.settings.difficulty is UnoDifficulty.HARD:
                 m /= len(
                     [
                         card for card in self.data.users[self.data.prev_user_id] if
@@ -123,7 +123,7 @@ class UnoBot:
     async def gen_color(self):
         cards = self.data.users[self.state.bot.id]
 
-        if self.data.settings.difficulty is UnoDifficulty.hard:
+        if self.data.settings.difficulty is UnoDifficulty.HARD:
             colors = [card.color for card in cards]
             self.data.current_card.color = max(set(colors), key=colors.count)
         else:

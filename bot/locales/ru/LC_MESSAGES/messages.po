@@ -600,7 +600,7 @@ msgid "{user} changes the color to {color}!"
 msgstr "{user} меняет цвет на {color}!"
 
 #: handlers/games/uno/user.py:198
-msgid "When you'll get a black card, choose this color ;)"
+msgid "When you'll get a BLACK card, choose this color ;)"
 msgstr "Когда получишь чёрную карту, выберешь этот цвет ;)"
 
 #: handlers/games/uno/user.py:209

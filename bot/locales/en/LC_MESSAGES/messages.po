@@ -530,7 +530,7 @@ msgid "{user} changes the color to {color}!"
 msgstr ""
 
 #: handlers/games/uno/user.py:198
-msgid "When you'll get a black card, choose this color ;)"
+msgid "When you'll get a BLACK card, choose this color ;)"
 msgstr ""
 
 #: handlers/games/uno/user.py:209
@@ -1320,7 +1320,7 @@ msgstr ""
 msgid "I returned, {user}!"
 msgstr ""
 
-#~ msgid "Check black card"
+#~ msgid "Check BLACK card"
 #~ msgstr ""
 
 #~ msgid ""
@@ -1387,7 +1387,7 @@ msgstr ""
 #~ msgid "You already have a lot of cards in your hand. I will not give you more!"
 #~ msgstr ""
 
-#~ msgid "When you'll get a black card, choose this color ;)."
+#~ msgid "When you'll get a BLACK card, choose this color ;)."
 #~ msgstr ""
 
 #~ msgid "{user} gives {uno_user} 2 cards!"
@@ -1413,13 +1413,13 @@ msgstr ""
 #~ msgid "I take"
 #~ msgstr ""
 
-#~ msgid "I see cards with matched color, not only black."
+#~ msgid "I see cards with matched color, not only BLACK."
 #~ msgstr ""
 
 #~ msgid ""
 #~ "Oh no. I checked {user} cards and"
 #~ " don't see any cards with matched "
-#~ "color, only black."
+#~ "color, only BLACK."
 #~ msgstr ""
 
 #~ msgid "Nope. {user} don't has any cards of the matched color."

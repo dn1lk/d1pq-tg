@@ -26,18 +26,18 @@ class UnoSettingsMeta(EnumMeta):
 
 
 class UnoDifficulty(IntEnum, metaclass=UnoSettingsMeta):
-    easy = 5
-    normal = 3
-    hard = 1
+    EASY = 5
+    NORMAL = 3
+    HARD = 1
 
     @property
     def word(self) -> str:
         match self:
-            case self.easy:
+            case self.EASY:
                 return _('slowpoke')
-            case self.normal:
+            case self.NORMAL:
                 return _('common man')
-            case self.hard:
+            case self.HARD:
                 return _('genius')
 
     @classmethod
@@ -182,7 +182,7 @@ class UnoData(GamesData):
         current_index = randrange(len(users))
 
         current_card = deck[-1]
-        while current_card.color is UnoColors.black:
+        while current_card.color is UnoColors.BLACK:
             current_card = choice(deck)
 
         from ... import Games
@@ -265,7 +265,7 @@ class UnoData(GamesData):
                     else:
                         decline = _("{user}, calm down and take the cards!")
 
-                elif card.color is UnoColors.black:
+                elif card.color is UnoColors.BLACK:
                     accept = _("Black card by {user}!")
 
                 elif card.color is self.current_card.color:

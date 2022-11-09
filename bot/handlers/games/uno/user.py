@@ -53,7 +53,7 @@ class TurnHandler(MessageHandler):
             await self.event.reply(decline.format(user=get_username(self.from_user)))
 
     async def proceed_turn(self, data_uno: UnoData, answer: str):
-        if data_uno.current_card.color is UnoColors.black:
+        if data_uno.current_card.color is UnoColors.BLACK:
             await data_uno.set_data(self.state)
 
             answer_color = choice(
@@ -197,7 +197,7 @@ async def color_handler(
         from .misc.process import proceed_turn
         await proceed_turn(query.message, state, data_uno, answer)
     else:
-        await query.answer(_("When you'll get a black card, choose this color ;)"))
+        await query.answer(_("When you'll get a BLACK card, choose this color ;)"))
 
 
 @router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.UNO))

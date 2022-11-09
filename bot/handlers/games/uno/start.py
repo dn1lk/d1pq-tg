@@ -43,7 +43,7 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     message = await message.answer(
         answer.format(
             user=get_username(message.from_user),
-            difficulty=html.bold(UnoDifficulty.normal.word),
+            difficulty=html.bold(UnoDifficulty.NORMAL.word),
             mode=html.bold(UnoMode.fast.word),
             additives='\n'.join(f'{name}: {html.bold(UnoAdd.on.word)}.' for name in UnoAdd.get_names()),
         ),
