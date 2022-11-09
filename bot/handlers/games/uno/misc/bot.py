@@ -104,11 +104,11 @@ class UnoBot:
             cards = self.data.users[self.data.prev_user_id]
 
             if self.data.settings.difficulty is UnoDifficulty.HARD:
-                m *= len([card for card in cards if card.color is self.data.deck[-2].color])
+                m *= len([card for card in cards if card.color is self.data.deck[-2].color]) / 4
             else:
-                m *= len(cards)
+                m *= len(cards) / 6
 
-            if random() < 1 / m / 10:
+            if random() < 1 / m:
                 answer = await self.data.play_bluff(self.state)
                 return await next_turn(self.message, self.state, self.data, answer)
 
