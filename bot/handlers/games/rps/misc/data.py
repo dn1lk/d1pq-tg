@@ -1,9 +1,9 @@
-from enum import StrEnum
+from enum import Enum
 
 from aiogram.utils.i18n import gettext as _
 
 
-class RPSData(StrEnum):
+class RPSData(str, Enum):
     ROCK = "🪨"
     SCISSORS = "✂"
     PAPER = "📜"
