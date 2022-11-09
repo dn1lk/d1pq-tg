@@ -26,9 +26,9 @@ class UnoSettingsMeta(EnumMeta):
 
 
 class UnoDifficulty(IntEnum, metaclass=UnoSettingsMeta):
-    EASY = 1
+    EASY = 3
     NORMAL = 2
-    HARD = 3
+    HARD = 1
 
     @property
     def word(self) -> str:

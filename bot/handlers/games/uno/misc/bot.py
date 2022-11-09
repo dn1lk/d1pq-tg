@@ -1,12 +1,12 @@
 import asyncio
-from random import choice, random
+from random import choice, random, randint
 
 from aiogram import types, exceptions
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from .cards import UnoColors
+from .cards import UnoColors, UnoEmoji
 from .data import UnoData
 from ..settings import UnoDifficulty
 
@@ -30,8 +30,8 @@ class UnoBot:
 
     async def gen_turn(self, cards: tuple | None):
         async with ChatActionSender.choose_sticker(chat_id=self.message.chat.id):
-            m = len(self.data.users) * self.data.settings.difficulty
-            await asyncio.sleep(choice(range(1, 6)) / m)
+            m = self.data.settings.difficulty / len(self.data.users)
+            await asyncio.sleep(randint(1, 4) * m)
 
             if cards:
                 self.data.current_card, accept = choice(cards)
@@ -97,30 +97,22 @@ class UnoBot:
         await proceed_turn(self.message, self.state, self.data, answer)
 
     async def proceed_pass(self):
-        if self.data.current_state.bluffed:
+        from .process import next_turn
+
+        if self.data.current_card.emoji == UnoEmoji.DRAW_FOUR:
             m = self.data.settings.difficulty
-            n = 0.5
+            cards = self.data.users[self.data.prev_user_id]
 
-            if self.data.settings.difficulty is UnoDifficulty.NORMAL:
-                m /= len(self.data.users[self.data.prev_user_id]) or n
-            elif self.data.settings.difficulty is UnoDifficulty.HARD:
-                m /= len(
-                    [
-                        card for card in self.data.users[self.data.prev_user_id] if
-                        card.color is self.data.deck[-2].color
-                    ]
-                ) or n
+            if self.data.settings.difficulty is UnoDifficulty.HARD:
+                m *= len([card for card in cards if card.color is self.data.deck[-2].color])
+            else:
+                m *= len(cards)
 
-            if random() < 1 / m:
+            if random() < 1 / m / 10:
                 answer = await self.data.play_bluff(self.state)
-
-                from .process import next_turn
                 return await next_turn(self.message, self.state, self.data, answer)
 
-        self.data.current_state.passed = self.state.bot.id
         answer = self.data.play_draw(self.data.current_state.passed)
-
-        from .process import next_turn
         await next_turn(self.message, self.state, self.data, answer)
 
     async def gen_color(self):
@@ -147,14 +139,14 @@ class UnoBot:
     async def gen_uno(self):
         try:
             async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                m = len(self.data.users) * self.data.settings.difficulty
+                m = self.data.settings.difficulty / len(self.data.users)
 
                 if self.message.entities[0].user.id == self.state.bot.id:
-                    timeout = range(0, 6)
+                    timeout = 0, 4
                 else:
-                    timeout = range(2, 10)
+                    timeout = 2, 6
 
-                await asyncio.sleep(choice(timeout) / m)
+                await asyncio.sleep(randint(*timeout) * m)
 
                 user = await self.state.bot.me()
                 self.data: UnoData = await UnoData.get_data(self.state)

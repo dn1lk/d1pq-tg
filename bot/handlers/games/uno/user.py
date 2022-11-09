@@ -93,7 +93,6 @@ async def pass_handler(message: types.Message, state: FSMContext):
     if message.from_user.id == data_uno.current_user_id:
         await timer.cancel(timer.get_name(state, 'game'))
 
-        data_uno.current_state.passed = message.from_user.id
         answer = data_uno.play_draw(message.from_user)
 
         from .misc.process import next_turn
