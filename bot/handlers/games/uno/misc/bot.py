@@ -136,30 +136,31 @@ class UnoBot:
 
         await self.message.answer(self.data.play_seven(self.message.from_user, seven_user))
 
-    async def gen_uno(self):
+    @staticmethod
+    async def gen_uno(message: types.Message, state: FSMContext, data: UnoData):
         try:
-            async with ChatActionSender.typing(chat_id=self.message.chat.id):
-                m = self.data.settings.difficulty / len(self.data.users)
+            async with ChatActionSender.typing(chat_id=message.chat.id):
+                m = data.settings.difficulty / len(data.users)
 
-                if self.message.entities[0].user.id == self.state.bot.id:
+                if message.entities[0].user.id == state.bot.id:
                     timeout = 0, 4
                 else:
                     timeout = 2, 6
 
                 await asyncio.sleep(randint(*timeout) * m)
 
-                user = await self.state.bot.me()
-                self.data: UnoData = await UnoData.get_data(self.state)
+                user = await state.bot.me()
+                data: UnoData = await UnoData.get_data(state)
 
                 from .process import proceed_uno
-                await proceed_uno(self.message, self.state, self.data, user)
+                await proceed_uno(message, state, data, user)
 
         except exceptions.TelegramRetryAfter as retry:
             await asyncio.sleep(retry.retry_after)
             await retry.method
 
         finally:
-            await self.message.delete_reply_markup()
+            await message.delete_reply_markup()
 
     @staticmethod
     async def gen_poll(message: types.Message, state: FSMContext, user: types.User):

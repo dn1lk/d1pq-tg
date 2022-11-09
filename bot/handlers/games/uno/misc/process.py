@@ -100,15 +100,17 @@ async def next_turn(
         answer: str
 ) -> types.Message:
     data.current_index = data.next_index
-
     from .bot import UnoBot
-    bot = UnoBot(message, state, data)
 
     if len(data.users[message.from_user.id]) == 1:
         answer_uno = data.update_uno(message.from_user)
-        bot.message = await message.answer(answer_uno, reply_markup=k.say_uno())
-
-        timer[timer.get_name(state, 'game:uno')] = asyncio.create_task(bot.gen_uno())
+        timer[timer.get_name(state, 'game:uno')] = asyncio.create_task(
+            UnoBot.gen_uno(
+                message=await message.answer(answer_uno, reply_markup=k.say_uno()),
+                state=state,
+                data=data,
+            )
+        )
 
     elif not data.users[message.from_user.id]:
         if data.current_state.drawn:
@@ -135,11 +137,12 @@ async def next_turn(
             )
         ).format(user=get_username(await data.get_user(state)))
 
-    message = bot.message = await message.reply(
+    message = await message.reply(
         f'{answer}\n{answer_next}',
         reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.DRAW_FOUR and data.current_state.drawn),
     )
 
+    bot = UnoBot(message, state, data)
     cards = tuple(bot.get_cards())
 
     if cards or data.current_user_id == state.bot.id:
