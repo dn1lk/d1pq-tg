@@ -1,3 +1,4 @@
+I
 from datetime import datetime, timedelta
 from random import choice, random
 
@@ -96,7 +97,6 @@ async def gen_reply_handler(
 async def chance_filter(message: types.Message, bot: Bot, db: DataBaseContext) -> bool:
     if datetime.now(tz=message.date.tzinfo) - message.date < timedelta(minutes=5):
         chance: float = await db.get_data('chance')
-
         return random() < (chance / await bot.get_chat_member_count(message.chat.id))
 
 
