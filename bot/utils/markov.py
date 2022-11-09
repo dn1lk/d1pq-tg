@@ -5,15 +5,14 @@ from random import choice
 import markovify
 
 
-def set_data(text: str, messages: list | None) -> list:
+def set_data(text: str | None, messages: list | None) -> list:
     if messages == ['disabled']:
         return []
     elif not messages:
         messages = []
 
-    sentences = markovify.split_into_sentences(text)
-
-    if sentences:
+    if text:
+        sentences = markovify.split_into_sentences(text)
         messages = list(set(messages + sentences))
 
         if len(messages) > 5000:
