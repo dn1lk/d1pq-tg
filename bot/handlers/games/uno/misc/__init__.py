@@ -33,7 +33,7 @@ async def timeout(message: types.Message, state: FSMContext):
         options=[_("Yes"), _("No, keep playing")],
     )
 
-    timer.create(
+    task_poll = timer.create(
         state,
         coroutine_done=UnoBot.gen_poll,
         name='game:poll',
@@ -53,6 +53,8 @@ async def timeout(message: types.Message, state: FSMContext):
     else:
         from .process import next_turn
         await next_turn(message, state, data_uno, answer)
+
+    await task_poll
 
 
 async def timeout_done(message: types.Message, state: FSMContext):
