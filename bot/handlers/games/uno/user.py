@@ -11,7 +11,7 @@ from . import DRAW_CARD
 from .misc import UnoData, UnoColors, keyboards as k
 from .. import Games
 
-router = Router(name='game:uno:process')
+router = Router(name='game:uno:user')
 router.message.filter(Games.UNO)
 
 
