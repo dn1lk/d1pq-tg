@@ -29,7 +29,7 @@ async def edit_handler(event: ErrorEvent, bot: Bot):
 @router.errors()
 async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int):
     title = f'While event {event.update.event_type}:\n\n'
-    tracback = '\n'.join(traceback.format_exc().splitlines()[-9:])
+    tracback = '\n'.join(traceback.format_exc().splitlines())
 
     try:
         await bot.send_message(
