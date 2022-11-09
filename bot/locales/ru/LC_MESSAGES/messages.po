@@ -735,11 +735,11 @@ msgstr "с очками"
 
 #: handlers/games/uno/misc/data.py:73 handlers/settings/record/process.py:17
 msgid "disabled"
-msgstr "отключена"
+msgstr "отключено"
 
 #: handlers/games/uno/misc/data.py:75 handlers/settings/record/process.py:17
 msgid "enabled"
-msgstr "включена"
+msgstr "включено"
 
 #: handlers/games/uno/misc/data.py:85 handlers/settings/misc/keyboards.py:118
 msgid "Enable"
@@ -1276,11 +1276,11 @@ msgstr "Изменить политику данных"
 
 #: handlers/settings/misc/keyboards.py:113
 msgid "{action} {data} recording"
-msgstr "{action} запись {data}"
+msgstr "{action} записывание {data}"
 
 #: handlers/settings/record/process.py:13
 msgid "{data} recording is {status}."
-msgstr "Запись {data} {status}."
+msgstr "Записывание {data} {status}."
 
 #: handlers/settings/record/process.py:41
 msgid "Records was successfully deleted."
