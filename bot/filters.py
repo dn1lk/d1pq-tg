@@ -4,7 +4,7 @@ from aiogram import Bot, types, filters
 
 
 class LevenshteinFilter(filters.BaseFilter):
-    def __init__(self, lev: set[str], lev_ignore_case: bool = True):
+    def __init__(self, lev: set[str], ignore_case: bool = True):
         self.lev: set[str] = lev
         self.ignore_case: bool = lev_ignore_case
 
