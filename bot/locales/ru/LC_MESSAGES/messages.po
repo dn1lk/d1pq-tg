@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-09 21:44+0300\n"
+"POT-Creation-Date: 2022-11-09 22:48+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -572,7 +572,7 @@ msgstr ""
 "{user}, с кем ты хочешь обменяться картами?\n"
 "Отметь (@) этого пользователя в своём следующем сообщении."
 
-#: handlers/games/uno/user.py:105
+#: handlers/games/uno/user.py:104
 msgid ""
 "Of course, I don't mind, but now it's {user}'s turn.\n"
 "We'll have to wait =)."
@@ -580,47 +580,47 @@ msgstr ""
 "Я, конечно, не против, но сейчас очередь {user}.\n"
 "Придётся подождать =)."
 
-#: handlers/games/uno/user.py:128
+#: handlers/games/uno/user.py:127
 msgid "Only {user} can verify the legitimacy of using this card."
 msgstr "Только {user} может проверить легитимность использования этой карты."
 
-#: handlers/games/uno/user.py:154
+#: handlers/games/uno/user.py:153
 msgid "{user} is not playing with us."
 msgstr "{user} не играет с нами."
 
-#: handlers/games/uno/user.py:187
+#: handlers/games/uno/user.py:186
 msgid "{user} changes the color to {color}!"
 msgstr "{user} меняет цвет на {color}!"
 
-#: handlers/games/uno/user.py:199
+#: handlers/games/uno/user.py:198
 msgid "When you'll get a BLACK card, choose this color ;)"
 msgstr "Когда получишь чёрную карту, выберешь этот цвет ;)"
 
-#: handlers/games/uno/user.py:210
+#: handlers/games/uno/user.py:209
 msgid "Next time be faster!"
 msgstr "В следующий раз будь быстрее!"
 
-#: handlers/games/uno/user.py:216
+#: handlers/games/uno/user.py:215
 msgid "Good job!"
 msgstr "Хорошая работа!"
 
-#: handlers/games/uno/user.py:217
+#: handlers/games/uno/user.py:216
 msgid "And you don't want to lose =)"
 msgstr "А ты не хочешь проиграть =)"
 
-#: handlers/games/uno/user.py:218
+#: handlers/games/uno/user.py:217
 msgid "On reaction =)."
 msgstr "На реакции =)."
 
-#: handlers/games/uno/user.py:219
+#: handlers/games/uno/user.py:218
 msgid "Yep!"
 msgstr "Ага!"
 
-#: handlers/games/uno/user.py:220
+#: handlers/games/uno/user.py:219
 msgid "Like a pro."
 msgstr "Как профи."
 
-#: handlers/games/uno/user.py:225
+#: handlers/games/uno/user.py:224
 msgid "You are not in the game!"
 msgstr "Ты не в игре!"
 
@@ -689,7 +689,7 @@ msgstr "Бр-б. Аа. Да. Нет. ..."
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr "Ой-ой, эта карта сама выпала в этот чат..."
 
-#: handlers/games/uno/misc/bot.py:139
+#: handlers/games/uno/misc/bot.py:131
 msgid "I choice {color}."
 msgstr "Я выбираю {color} цвет."
 
