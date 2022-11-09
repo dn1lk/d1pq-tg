@@ -76,7 +76,7 @@ class UnoBot:
 
                     self.data: UnoData = await UnoData.get_data(self.state)
 
-                    answer = self.data.pick_card(self.message.from_user)
+                    answer = self.data.pick_card(self.state.bot.id)
                     await self.data.set_data(self.state)
 
                     await self.message.answer(answer)
