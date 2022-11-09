@@ -77,7 +77,9 @@ def gen(
             **kwargs,
         )
 
-        assert answer, "No answer with 'make_sentence_with_start'"
+        if not answer:
+            raise markov.text.ParamError("No answer with 'make_sentence_with_start'")
+
         answer = answer.replace(f'{beginning} ', '', 1)
     except:
         answer = model.make_sentence(tries=state_size * tries, **kwargs)
