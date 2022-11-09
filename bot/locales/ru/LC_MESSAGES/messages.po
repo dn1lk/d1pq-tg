@@ -1162,7 +1162,7 @@ msgstr "Мои настройки этого {chat}:"
 
 #: handlers/settings/accuracy.py:18
 msgid "OK. Current text generation accuracy: {accuracy}."
-msgstr "ОК. Текущий шанс генерации текста: {chance}%."
+msgstr "ОК. Текущий шанс генерации текста: {accuracy}."
 
 #: handlers/settings/accuracy.py:34
 msgid ""
