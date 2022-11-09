@@ -28,7 +28,7 @@ class TurnHandler(MessageHandler):
         accept, decline = data_uno.filter_card(self.from_user.id, card)
 
         if accept:
-            await timer.cancel(self.timer.get_name(self.state, 'game'))
+            await timer.cancel(timer.get_name(self.state, 'game'))
 
             data_uno.current_card = card
             data_uno.timer_amount = 3
@@ -143,7 +143,7 @@ class SevenHandler(MessageHandler):
             seven_user = await self.get_seven_user(data_uno)
 
             if seven_user:
-                await timer.cancel(self.timer.get_name(self.state, 'game'))
+                await timer.cancel(timer.get_name(self.state, 'game'))
 
                 answer = data_uno.play_seven(self.event.from_user, seven_user)
                 await data_uno.set_data(self.state)

@@ -44,8 +44,8 @@ class ChatHandler(MessageHandler):
         return self.data['db']
 
     async def handle(self):
-        task_name = self.timer.get_name(self.state, 'game')
-        await self.timer.cancel(task_name)
+        task_name = timer.get_name(self.state, 'game')
+        await timer.cancel(task_name)
 
         answer = _(
             "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
