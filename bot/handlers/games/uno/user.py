@@ -130,7 +130,7 @@ async def bluff_handler(query: types.CallbackQuery, state: FSMContext):
         await query.answer(answer.format(user=user.first_name))
 
 
-@router.message(F.entities.func(lambda entity: entity.type.in_(('mention', 'text_mention'))))
+@router.message(F.entities.func(lambda entities: entities[0].type.in_(('mention', 'text_mention'))))
 class SevenHandler(MessageHandler):
     @property
     def state(self) -> FSMContext:
