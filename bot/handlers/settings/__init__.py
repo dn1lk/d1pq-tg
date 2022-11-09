@@ -9,7 +9,7 @@ from .. import get_username
 
 
 class Settings(StatesGroup):
-    command = State()
+    COMMAND = State()
 
 
 UPDATE = __("\n\nUpdate:")

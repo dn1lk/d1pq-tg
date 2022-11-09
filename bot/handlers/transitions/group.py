@@ -41,7 +41,7 @@ async def my_join_handler(
         "- What can I do? Some things after which something happens...\n\n"
     )
 
-    commands = get_commands(commands, i18n.current_locale, slice(2))
+    commands = get_commands(commands[i18n.current_locale][2:])
     await bot.send_message(event.chat.id, answer.format(chat=html.bold(html.quote(event.chat.title))) + commands)
 
 

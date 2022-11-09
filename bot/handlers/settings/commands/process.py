@@ -18,7 +18,7 @@ async def process_filter(message: types.Message, bot: Bot, commands: dict[str, t
     return await filters.Command(*commands['en'])(message, bot)
 
 
-router.message.filter(Settings.command, process_filter, f.AdminFilter(is_admin=True))
+router.message.filter(Settings.COMMAND, process_filter, f.AdminFilter(is_admin=True))
 
 
 @router.message(MagicData(F.command.args.regexp(r'\w+')))

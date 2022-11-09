@@ -18,8 +18,8 @@ class DataBaseContext:
 
         if not data:
             async with self.pool_db.acquire() as conn:
-                data = await conn.fetchval(f"SELECT {column} FROM data WHERE id = $1;", self.key.chat_id) or \
-                       await conn.fetchval(f"SELECT {column} FROM data WHERE id = 0;")
+                data = await conn.fetchval("SELECT $1 FROM data WHERE id = $2;", column, self.key.chat_id) or \
+                       await conn.fetchval("SELECT $1 FROM data WHERE id = 0;", column)
 
             await self.storage.update_data(bot=self.bot, key=self.key, data={column: data or 'NULL'})
 
@@ -35,8 +35,8 @@ class DataBaseContext:
         async with self.pool_db.acquire() as conn:
             for column, data in kwargs.items():
                 await conn.execute(
-                    f"INSERT INTO data (id, {column}) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET {column} = $2;",
-                    self.key.chat_id, data
+                    "INSERT INTO data (id, $1) VALUES ($2, $3) ON CONFLICT (id) DO UPDATE SET $1 = $3;",
+                    column, self.key.chat_id, data
                 )
 
         await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
@@ -47,7 +47,7 @@ class DataBaseContext:
 
         async with self.pool_db.acquire() as conn:
             for column, data in kwargs.items():
-                await conn.execute(f"UPDATE data SET {column} = $2 WHERE id = $1;", self.key.chat_id, data)
+                await conn.execute(f"UPDATE data SET $1 = $3 WHERE id = $2;", column, self.key.chat_id, data)
 
         await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
 

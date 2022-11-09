@@ -22,7 +22,7 @@ async def start_handler(
         commands: dict[str, tuple[types.BotCommand]],
         messages: list | None,
 ):
-    await state.set_state(Settings.command)
+    await state.set_state(Settings.COMMAND)
 
     message = await query.message.edit_text(
         _(

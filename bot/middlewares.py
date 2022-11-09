@@ -94,7 +94,8 @@ class ThrottlingMiddleware(BaseMiddleware):
 
         return await handler(event, data)
 
-    async def timer(self, delay: int):
+    @staticmethod
+    async def timer(delay: int):
         await asyncio.sleep(delay)
 
 
