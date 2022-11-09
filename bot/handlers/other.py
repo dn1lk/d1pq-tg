@@ -72,7 +72,7 @@ async def get_gen_args(
     return await choice([gen_markov, gen_sticker, gen_balaboba])()
 
 
-@router.message(filters.MagicData(F.event.reply_to_message.from_user.id is F.bot.id))
+@router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
 @flags.throttling('gen')
 async def gen_reply_handler(
         message: types.Message,
