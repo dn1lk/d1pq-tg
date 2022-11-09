@@ -190,10 +190,12 @@ async def color_handler(
                 color=data_uno.current_card.color.word,
             )
         )
+
         await query.answer()
+        answer = data_uno.update_state()
 
         from .misc.process import proceed_turn
-        await proceed_turn(query.message, state, data_uno)
+        await proceed_turn(query.message, state, data_uno, answer)
     else:
         await query.answer(_("When you'll get a black card, choose this color ;)"))
 
