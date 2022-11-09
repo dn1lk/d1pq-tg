@@ -1,4 +1,3 @@
-I
 from datetime import datetime, timedelta
 from random import choice, random
 
