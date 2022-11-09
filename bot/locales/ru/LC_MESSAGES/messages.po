@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-09 22:48+0300\n"
+"POT-Creation-Date: 2022-11-09 23:01+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1070,57 +1070,57 @@ msgstr "Так-с, у меня закончились карты. Вынужде
 msgid "{user} puts his last card and leaves the game as the winner."
 msgstr "{user} кладёт свою последнюю карту и выходит из игры победителем."
 
-#: handlers/games/uno/misc/process.py:126
+#: handlers/games/uno/misc/process.py:128
 msgid "My turn."
 msgstr "Мой ход."
 
-#: handlers/games/uno/misc/process.py:130
+#: handlers/games/uno/misc/process.py:132
 msgid "{user}, your turn."
 msgstr "{user}, твоя очередь."
 
-#: handlers/games/uno/misc/process.py:131
+#: handlers/games/uno/misc/process.py:133
 msgid "{user}, your move."
 msgstr "{user}, твой ход."
 
-#: handlers/games/uno/misc/process.py:132
+#: handlers/games/uno/misc/process.py:134
 msgid "Now {user} is moving."
 msgstr "Сейчас ходит {user}."
 
-#: handlers/games/uno/misc/process.py:133
+#: handlers/games/uno/misc/process.py:135
 msgid "Player's turn {user}."
 msgstr "Очередь игрока {user}."
 
-#: handlers/games/uno/misc/process.py:134
+#: handlers/games/uno/misc/process.py:136
 msgid "I pass the turn to the player {user}."
 msgstr "Передаю очередь игроку {user}."
 
-#: handlers/games/uno/misc/process.py:167
+#: handlers/games/uno/misc/process.py:170
 msgid "WINNER"
 msgstr "ПОБЕДИТЕЛЬ"
 
-#: handlers/games/uno/misc/process.py:169
+#: handlers/games/uno/misc/process.py:172
 msgid "card played"
 msgid_plural "{amount} cards played"
 msgstr[0] "сыграна карта"
 msgstr[1] "сыграны {amount} карты"
 msgstr[2] "сыграно {amount} карт"
 
-#: handlers/games/uno/misc/process.py:175
+#: handlers/games/uno/misc/process.py:178
 msgid "point earned"
 msgid_plural "{points} points earned"
 msgstr[0] "заработан балл"
 msgstr[1] "заработано {points} балла"
 msgstr[2] "заработано {points} баллов"
 
-#: handlers/games/uno/misc/process.py:186
+#: handlers/games/uno/misc/process.py:189
 msgid "Game over."
 msgstr "Игра окончена."
 
-#: handlers/games/uno/misc/process.py:188
+#: handlers/games/uno/misc/process.py:191
 msgid "Round over."
 msgstr "Раунд окончен."
 
-#: handlers/games/uno/misc/process.py:189
+#: handlers/games/uno/misc/process.py:192
 msgid "New round starts in {delay}..."
 msgstr "Новый раунд начнётся через {delay}..."
 

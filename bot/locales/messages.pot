@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-09 22:48+0300\n"
+"POT-Creation-Date: 2022-11-09 23:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1000,55 +1000,55 @@ msgstr ""
 msgid "{user} puts his last card and leaves the game as the winner."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:126
+#: handlers/games/uno/misc/process.py:128
 msgid "My turn."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:130
+#: handlers/games/uno/misc/process.py:132
 msgid "{user}, your turn."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:131
+#: handlers/games/uno/misc/process.py:133
 msgid "{user}, your move."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:132
+#: handlers/games/uno/misc/process.py:134
 msgid "Now {user} is moving."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:133
+#: handlers/games/uno/misc/process.py:135
 msgid "Player's turn {user}."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:134
+#: handlers/games/uno/misc/process.py:136
 msgid "I pass the turn to the player {user}."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:167
+#: handlers/games/uno/misc/process.py:170
 msgid "WINNER"
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:169
+#: handlers/games/uno/misc/process.py:172
 msgid "card played"
 msgid_plural "{amount} cards played"
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/games/uno/misc/process.py:175
+#: handlers/games/uno/misc/process.py:178
 msgid "point earned"
 msgid_plural "{points} points earned"
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/games/uno/misc/process.py:186
+#: handlers/games/uno/misc/process.py:189
 msgid "Game over."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:188
+#: handlers/games/uno/misc/process.py:191
 msgid "Round over."
 msgstr ""
 
-#: handlers/games/uno/misc/process.py:189
+#: handlers/games/uno/misc/process.py:192
 msgid "New round starts in {delay}..."
 msgstr ""
 
