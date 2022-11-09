@@ -36,6 +36,9 @@ class UnoBot:
             if cards:
                 self.data.current_card, accept = choice(cards)
 
+                if self.data.current_user_id != self.state.bot.id:
+                    await self.message.delete()
+
                 try:
                     self.message = await self.state.bot.send_sticker(
                         self.state.key.chat_id,
@@ -123,9 +126,13 @@ class UnoBot:
     async def gen_color(self):
         cards = self.data.users[self.state.bot.id]
 
-        if self.data.settings.difficulty is UnoDifficulty.HARD:
+        if not cards:
+            self.data.current_card.color = choice(tuple(UnoColors.get_colors(exclude={UnoColors.BLACK})))
+
+        elif self.data.settings.difficulty is UnoDifficulty.HARD:
             colors = [card.color for card in cards]
             self.data.current_card.color = max(set(colors), key=colors.count)
+
         else:
             self.data.current_card.color = choice(cards).color
 

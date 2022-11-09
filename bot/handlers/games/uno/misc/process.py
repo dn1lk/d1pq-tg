@@ -19,12 +19,10 @@ async def start(
         stats: dict[int, UnoStats] = None
 ):
     data = await UnoData.start(state, user_ids, settings, stats or {})
+    data.update_state()
+
     message = await message.answer_sticker(data.current_card.file_id)
-
-    from .bot import UnoBot
-    bot = UnoBot(message, state, data)
-
-    await bot.proceed_turn(_("The first card is discarded."))
+    await proceed_turn(message, state, data, _("The first card is discarded."))
 
 
 async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, user: types.User):
@@ -124,26 +122,25 @@ async def next_turn(
 
     await data.set_data(state)
 
+    if data.current_user_id == state.bot.id:
+        answer_next = _("My turn.")
+    else:
+        answer_next = choice(
+            (
+                _("{user}, your turn."),
+                _("{user}, your move."),
+                _("Now {user} is moving."),
+                _("Player's turn {user}."),
+                _("I pass the turn to the player {user}."),
+            )
+        ).format(user=get_username(await data.get_user(state)))
+
+    message = bot.message = await message.reply(
+        f'{answer}\n{answer_next}',
+        reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.DRAW_FOUR and data.current_state.drawn),
+    )
+
     cards = tuple(bot.get_cards())
-
-    if not cards or data.current_user_id == state.bot.id:
-        if data.current_user_id == state.bot.id:
-            answer_next = _("My turn.")
-        else:
-            answer_next = choice(
-                (
-                    _("{user}, your turn."),
-                    _("{user}, your move."),
-                    _("Now {user} is moving."),
-                    _("Player's turn {user}."),
-                    _("I pass the turn to the player {user}."),
-                )
-            ).format(user=get_username(await data.get_user(state)))
-
-        message = await message.reply(
-            f'{answer}\n{answer_next}',
-            reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.DRAW_FOUR and data.current_state.drawn),
-        )
 
     if cards or data.current_user_id == state.bot.id:
         timer_name = timer.get_name(state, 'game')
@@ -189,6 +186,13 @@ async def finish(state: FSMContext, data: UnoData) -> types.Message:
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Game over.")) + answer)
     else:
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Round over.")) + answer)
+        message = await message.answer(_("New round starts in {delay}...").format(html.bold(3)))
+
+        for n in range(2, 0):
+            await asyncio.sleep(1)
+            await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
+
+        await message.delete()
         await start(message, state, list(data.stats), data.settings, data.stats)
 
     return message
