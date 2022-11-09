@@ -12,7 +12,6 @@ from .data import UnoData, UnoStats, UnoSettings
 
 
 async def start(
-        message: types.Message,
         state: FSMContext,
         user_ids: list[int],
         settings: UnoSettings,
@@ -21,7 +20,7 @@ async def start(
     data = await UnoData.start(state, user_ids, settings, stats or {})
     data.update_state()
 
-    message = await message.answer_sticker(data.current_card.file_id)
+    message = await state.bot.send_sticker(state.key.chat_id, data.current_card.file_id)
     await proceed_turn(message, state, data, _("The first card is discarded."))
 
 
@@ -193,9 +192,9 @@ async def finish(state: FSMContext, data: UnoData) -> types.Message:
 
         for n in reversed(range(3)):
             await asyncio.sleep(1)
-            await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
+            message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
 
         await message.delete()
-        await start(message, state, list(data.stats), data.settings, data.stats)
+        await start(state, list(data.stats), data.settings, data.stats)
 
     return message

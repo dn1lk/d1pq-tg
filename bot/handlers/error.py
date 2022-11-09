@@ -19,11 +19,11 @@ async def retry_after_handler(_, exception: TelegramRetryAfter):
 
 
 @router.errors(ExceptionMessageFilter('Bad Request: message is not modified'))
-async def edit_handler(event: ErrorEvent, bot: Bot):
+async def edit_handler(event: ErrorEvent, bot: Bot, owner_id: int):
     if event.update.callback_query:
         await event.update.callback_query.answer("↻ - please wait...")
     else:
-        await errors_handler(event, bot)
+        await errors_handler(event, bot, owner_id)
 
 
 @router.errors()

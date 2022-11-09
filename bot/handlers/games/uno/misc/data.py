@@ -470,11 +470,15 @@ class UnoData(GamesData):
                 return self.update_skip()
 
     @staticmethod
-    def pop_from_deck(deck, amount: int = 1):
+    def pop_from_deck(deck: list[UnoCard], amount: int = 1):
         cards = choices(deck, k=amount)
 
         for card in cards:
-            deck.remove(card)
+            try:
+                deck.remove(card)
+            except ValueError:
+                pass
+
             yield card
 
     def pick_card(self, user: types.User | int, amount: int = 1) -> str:

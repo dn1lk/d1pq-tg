@@ -55,7 +55,7 @@ async def start_handler(
         )
 
     from .misc.process import start
-    await start(message, state, user_ids, settings)
+    await start(state, user_ids, settings)
 
 
 @router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.JOIN))

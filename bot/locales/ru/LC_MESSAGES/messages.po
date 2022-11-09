@@ -979,7 +979,7 @@ msgstr "{user} дарит игроку {uno_user} 2 карты!"
 
 #: handlers/games/uno/misc/data.py:525
 msgid "Yes, it was a bluff hehe."
-msgstr "Да, это был блеф, хехе"
+msgstr "Да, это был блеф, хехе."
 
 #: handlers/games/uno/misc/data.py:527
 msgid "Bluff! I see suitable cards, not only wilds."
