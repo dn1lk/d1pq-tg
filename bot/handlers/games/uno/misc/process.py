@@ -188,9 +188,9 @@ async def finish(state: FSMContext, data: UnoData) -> types.Message:
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Game over.")) + answer)
     else:
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Round over.")) + answer)
-        message = await message.answer(_("New round starts in {delay}...").format(delay=html.bold(3)))
+        message = await message.answer(_("New round starts in {delay}...").format(delay=html.bold(10)))
 
-        for n in reversed(range(3)):
+        for n in reversed(range(10)):
             await asyncio.sleep(1)
             message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
 
