@@ -11,7 +11,7 @@ from bot.utils.database.context import DataBaseContext
 from . import get_username
 
 router = Router(name='message')
-router.message.filter(~F.from_user.is_bot, F.text, filters.StateFilter(None))
+router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
 
 
 def answer_check(answer: str) -> str:
