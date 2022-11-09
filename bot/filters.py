@@ -33,16 +33,17 @@ class LevenshteinFilter(filters.BaseFilter):
         return cur[-1]
 
     async def __call__(self, obj: Union[types.Message, types.InlineQuery, types.Poll]) -> bool:
-        if isinstance(obj, types.Message):
-            text = obj.text or obj.caption
-            if not text and obj.poll:
-                text = obj.poll.question
-        elif isinstance(obj, types.InlineQuery):
-            text = obj.query
-        elif isinstance(obj, types.Poll):
-            text = obj.question
-        else:
-            return False
+        match obj:
+            catch types.Message:
+                text = obj.text or obj.caption
+                if not text and obj.poll:
+                    text = obj.poll.question
+            catch types.InlineQuery:
+                text = obj.query
+            catch types.Poll:
+                text = obj.question
+            catch _:
+                return False
 
         if not text:
             return False
@@ -66,11 +67,8 @@ class AdminFilter(filters.BaseFilter):
             case _:
                 return False
 
-        if obj.from_user.id in (
-                chat_id,
-                owner_id,
-                *(member.user.id for member in await bot.get_chat_administrators(chat_id))
-        ):
+        if obj.from_user.id in (chat_id, owner_id) or
+                obj.from_user.id in (member.user.id for member in await bot.get_chat_administrators(chat_id)):
             return self.is_admin
 
         return not self.is_admin
