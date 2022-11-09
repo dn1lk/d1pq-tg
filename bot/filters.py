@@ -67,7 +67,7 @@ class AdminFilter(filters.BaseFilter):
             case _:
                 return False
 
-        if obj.from_user.id in (chat_id, owner_id) or
+        if obj.from_user.id in (chat_id, owner_id) or \
                 obj.from_user.id in (member.user.id for member in await bot.get_chat_administrators(chat_id)):
             return self.is_admin
 
