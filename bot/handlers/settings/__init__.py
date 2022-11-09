@@ -18,7 +18,7 @@ UPDATE_AGAIN = __("\n\nUpdate again:")
 router = Router(name='settings')
 
 
-@router.callback_query(f.AdminFilter(is_admin=False))
+@router.callback_query(k.SettingsKeyboard.filter(F.action), f.AdminFilter(is_admin=False))
 async def no_admin_handler(query: types.CallbackQuery):
     await query.answer(_("Only for administrators."))
 
