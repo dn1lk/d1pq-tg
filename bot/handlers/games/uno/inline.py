@@ -1,4 +1,7 @@
-from aiogram import Router, F, types
+import time
+from functools import lru_cache
+
+from aiogram import Router, Bot, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -10,12 +13,22 @@ router = Router(name='game:uno:inline')
 router.inline_query.filter(F.query.lower() == "uno")
 router.inline_query.middleware(UnoFSMContextMiddleware())
 
-command = '/play uno'
-thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
+COMMAND = '/play uno'
+
+
+@lru_cache(maxsize=2)
+async def get_file_url(bot: Bot, file_id: str, ttl_hash: int) -> str:
+    file = await bot.get_file(file_id)
+    return f'https://api.telegram.org/file/bot{bot.token}/{file.file_path}'
+
+
+def get_ttl_hash(seconds=3600):
+    return round(time.time() / seconds)
 
 
 @router.inline_query(F.query == 'uno')
-async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
+async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
+    sticker_set = await bot.get_sticker_set('uno_by_bp1lh_bot')
     data_uno = await UnoData.get_data(state)
     next_offset = None
 
@@ -42,7 +55,7 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
                 answer = [
                     types.InlineQueryResultCachedSticker(
                         id='draw',
-                        sticker_file_id='CAACAgIAAxUAAWNTyJCPqf4Upyd2mc0hDDM-9UD5AALgHwACheugSmbCtLV865YXKgQ',
+                        sticker_file_id=sticker_set.stickers[-3].file_id,
                         input_message_content=types.InputTextMessageContent(message_text=DRAW_CARD.value),
                     )
                 ]
@@ -56,10 +69,10 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
             answer = [
                 types.InlineQueryResultArticle(
                     id='no_cards',
-                    title=command,
-                    input_message_content=types.InputTextMessageContent(message_text=command),
+                    title=COMMAND,
+                    input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                     description=_("Join to the game."),
-                    thumb_url=thumb_url,
+                    thumb_url=await get_file_url(bot, sticker_set.thumb.file_id, get_ttl_hash()),
                 )
             ]
 
@@ -67,10 +80,10 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
         answer = [
             types.InlineQueryResultArticle(
                 id='no_game',
-                title=command,
-                input_message_content=types.InputTextMessageContent(message_text=command),
+                title=COMMAND,
+                input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                 description=_("Start a new game."),
-                thumb_url=thumb_url,
+                thumb_url=await get_file_url(bot, sticker_set.thumb.file_id, get_ttl_hash()),
             )
         ]
 
