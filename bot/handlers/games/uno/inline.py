@@ -1,3 +1,6 @@
+import time
+from functools import lru_cache
+
 from aiogram import Router, Bot, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
@@ -13,10 +16,19 @@ router.inline_query.middleware(UnoFSMContextMiddleware())
 COMMAND = '/play uno'
 
 
+@lru_cache(maxsize=2)
+async def get_file_url(bot: Bot, sticker_set: types.StickerSet, ttl_hash: int):
+    file = await bot.get_file(sticker_set.thumb.file_id)
+    return f'https://api.telegram.org/file/bot{bot.token}/{file.file_path}'
+
+
+def get_ttl_hash(seconds=3600):
+    return round(time.time() / seconds)
+
+
 @router.inline_query(F.query == 'uno')
 async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
     sticker_set = await bot.get_sticker_set('uno_by_bp1lh_bot')
-
     data_uno = await UnoData.get_data(state)
     next_offset = None
 
@@ -54,28 +66,24 @@ async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMCont
                 next_offset = str(offset + min(len(user_cards), size))
 
         else:
-            file_url = f'https://api.telegram.org/file/bot{bot.token}/{await bot.get_file(sticker_set.thumb.file_id)}'
-
             answer = [
                 types.InlineQueryResultArticle(
                     id='no_cards',
                     title=COMMAND,
                     input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                     description=_("Join to the game."),
-                    thumb_url=file_url,
+                    thumb_url=get_file_url(bot, sticker_set, get_ttl_hash()),
                 )
             ]
 
     else:
-        file_url = f'https://api.telegram.org/file/bot{bot.token}/{await bot.get_file(sticker_set.thumb.file_id)}'
-
         answer = [
             types.InlineQueryResultArticle(
                 id='no_game',
                 title=COMMAND,
                 input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                 description=_("Start a new game."),
-                thumb_url=file_url,
+                thumb_url=get_file_url(bot, sticker_set, get_ttl_hash()),
             )
         ]
 
