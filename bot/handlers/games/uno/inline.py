@@ -1,4 +1,4 @@
-from aiogram import Router, F, types
+from aiogram import Router, Bot, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -11,11 +11,12 @@ router.inline_query.filter(F.query.lower() == "uno")
 router.inline_query.middleware(UnoFSMContextMiddleware())
 
 COMMAND = '/play uno'
-THUMB_URL = 'AAQCABMJAAMLAAMj0V8HgDIsDia_Hmjs1Hg-KwQ'
 
 
 @router.inline_query(F.query == 'uno')
-async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
+async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
+    sticker_set = await bot.get_sticker_set('uno_by_bp1lh_bot')
+
     data_uno = await UnoData.get_data(state)
     next_offset = None
 
@@ -42,7 +43,7 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
                 answer = [
                     types.InlineQueryResultCachedSticker(
                         id='draw',
-                        sticker_file_id='CAACAgIAAxUAAWNTyJCPqf4Upyd2mc0hDDM-9UD5AALgHwACheugSmbCtLV865YXKgQ',
+                        sticker_file_id=sticker_set.stickers[-3].file_id,
                         input_message_content=types.InputTextMessageContent(message_text=DRAW_CARD.value),
                     )
                 ]
@@ -53,24 +54,28 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
                 next_offset = str(offset + min(len(user_cards), size))
 
         else:
+            file_url = f'https://api.telegram.org/file/bot{bot.token}/{await bot.get_file(sticker_set.thumb.file_id)}'
+
             answer = [
                 types.InlineQueryResultArticle(
                     id='no_cards',
                     title=COMMAND,
                     input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                     description=_("Join to the game."),
-                    thumb_url=THUMB_URL,
+                    thumb_url=file_url,
                 )
             ]
 
     else:
+        file_url = f'https://api.telegram.org/file/bot{bot.token}/{await bot.get_file(sticker_set.thumb.file_id)}'
+
         answer = [
             types.InlineQueryResultArticle(
                 id='no_game',
                 title=COMMAND,
                 input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                 description=_("Start a new game."),
-                thumb_url=THUMB_URL,
+                thumb_url=file_url,
             )
         ]
 
