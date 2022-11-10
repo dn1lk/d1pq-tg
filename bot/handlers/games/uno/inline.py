@@ -10,8 +10,8 @@ router = Router(name='game:uno:inline')
 router.inline_query.filter(F.query.lower() == "uno")
 router.inline_query.middleware(UnoFSMContextMiddleware())
 
-command = '/play uno'
-thumb_url = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
+COMMAND = '/play uno'
+THUMB_URL = 'AAQCABMJAAMLAAMj0V8HgDIsDia_Hmjs1Hg-KwQ'
 
 
 @router.inline_query(F.query == 'uno')
@@ -56,10 +56,10 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
             answer = [
                 types.InlineQueryResultArticle(
                     id='no_cards',
-                    title=command,
-                    input_message_content=types.InputTextMessageContent(message_text=command),
+                    title=COMMAND,
+                    input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                     description=_("Join to the game."),
-                    thumb_url=thumb_url,
+                    thumb_url=THUMB_URL,
                 )
             ]
 
@@ -67,10 +67,10 @@ async def show_cards_handler(inline: types.InlineQuery, state: FSMContext):
         answer = [
             types.InlineQueryResultArticle(
                 id='no_game',
-                title=command,
-                input_message_content=types.InputTextMessageContent(message_text=command),
+                title=COMMAND,
+                input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                 description=_("Start a new game."),
-                thumb_url=thumb_url,
+                thumb_url=THUMB_URL,
             )
         ]
 
