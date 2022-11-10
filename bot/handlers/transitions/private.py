@@ -17,4 +17,4 @@ async def my_return_handler(event: types.ChatMemberUpdated, bot: Bot):
         _("I returned, {user}!"),
     )
 
-    await bot.send_message(event.chat.id, choice(answer).format(chat_title=get_username(event.from_user)))
+    await bot.send_message(event.chat.id, choice(answer).format(user=get_username(event.from_user)))
