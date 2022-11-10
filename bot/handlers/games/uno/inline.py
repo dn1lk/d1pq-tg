@@ -17,8 +17,8 @@ COMMAND = '/play uno'
 
 
 @lru_cache(maxsize=2)
-async def get_file_url(bot: Bot, sticker_set: types.StickerSet, ttl_hash: int):
-    file = await bot.get_file(sticker_set.thumb.file_id)
+async def get_file_url(bot: Bot, file_id: str, ttl_hash: int):
+    file = await bot.get_file(file_id)
     return f'https://api.telegram.org/file/bot{bot.token}/{file.file_path}'
 
 
@@ -72,7 +72,7 @@ async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMCont
                     title=COMMAND,
                     input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                     description=_("Join to the game."),
-                    thumb_url=get_file_url(bot, sticker_set, get_ttl_hash()),
+                    thumb_url=get_file_url(bot, sticker_set.thumb.file_id, get_ttl_hash()),
                 )
             ]
 
@@ -83,7 +83,7 @@ async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMCont
                 title=COMMAND,
                 input_message_content=types.InputTextMessageContent(message_text=COMMAND),
                 description=_("Start a new game."),
-                thumb_url=get_file_url(bot, sticker_set, get_ttl_hash()),
+                thumb_url=get_file_url(bot, sticker_set.thumb.file_id, get_ttl_hash()),
             )
         ]
 
