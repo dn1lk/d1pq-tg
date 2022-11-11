@@ -91,7 +91,7 @@ async def proceed_turn(
 
         from .bot import UnoBot
         timer.create(
-            'game:uno',
+            timer.get_name(state, 'game:uno'),
             delay=0,
             coro=UnoBot.gen_uno(
                 message=await message.answer(answer_uno, reply_markup=k.say_uno()),
