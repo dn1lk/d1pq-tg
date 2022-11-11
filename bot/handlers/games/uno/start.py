@@ -1,4 +1,4 @@
-from aiogram import Router, Bot, F, types, html
+from aiogram import Router, Bot, F, types, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -29,6 +29,7 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
 
 
 @router.message()
+@flags.timer('game')
 async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     answer = _(
         "<b>Let's play UNO?</b>\n\n"
@@ -51,4 +52,4 @@ async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
     )
 
     from .process import start_timer
-    timer.create(state, start_timer, name='game', message=message, bot=bot)
+    return timer.dict(start_timer(message, bot, state))

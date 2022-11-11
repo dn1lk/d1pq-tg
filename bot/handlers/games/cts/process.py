@@ -1,6 +1,6 @@
 from random import choice
 
-from aiogram import Router, types
+from aiogram import Router, types, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -13,10 +13,8 @@ router.message.filter(Games.CTS)
 
 
 @router.message(CTSData.filter())
-async def answer_handler(message: types.Message, state: FSMContext):
-    await timer.cancel(timer.get_name(state, name='game'))
-    data_cts = await CTSData.get_data(state)
-
+@flags.timer('game')
+async def answer_handler(message: types.Message, state: FSMContext, data_cts: CTSData):
     if data_cts.bot_var:
         message = await message.reply(
             choice(
@@ -29,17 +27,19 @@ async def answer_handler(message: types.Message, state: FSMContext):
         )
 
         await data_cts.set_data(state)
-        timer.create(state, win_timeout, name='game', message=message)
+        return timer.dict(win_timeout(message, state))
     else:
         await state.clear()
 
-        await message.reply(choice(
+        answer = choice(
             (
                 _("Okay, I have nothing to write on {letter}... Victory is yours."),
                 _("Can't find the right something on {letter}... My defeat."),
                 _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
             )
-        ).format(letter=f'"{message.text[-1]}"'))
+        )
+
+        await message.reply(answer.format(letter=f'"{message.text[-1]}"'))
 
 
 @router.message()

@@ -80,7 +80,7 @@ def gen(
             raise markovify.text.ParamError("No answer with 'make_sentence_with_start'")
 
         answer = answer.replace(f'{beginning} ', '', 1)
-    except Exception:
+    except (ValueError, markovify.text.ParamError):
         answer = model.make_sentence(tries=state_size * tries, **kwargs)
 
     return answer or get_none(locale).make_sentence()

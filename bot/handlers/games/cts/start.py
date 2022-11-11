@@ -1,6 +1,6 @@
 from random import random, choice
 
-from aiogram import Router, types, F, html
+from aiogram import Router, types, F, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, I18n
 
@@ -14,10 +14,8 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 
 @router.message()
+@flags.timer('game')
 async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
-    task_name = timer.get_name(state, 'game')
-    await timer.cancel(task_name)
-
     message = await message.answer(
         _(
             "Oh, the game of cities. Well, let's try!\n\n"
@@ -39,4 +37,4 @@ async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
     await state.set_state(Games.CTS)
     await data_cts.set_data(state)
 
-    timer.create(state, win_timeout, name='game', message=await message.answer(answer))
+    return timer.dict(win_timeout(await message.answer(answer), state))

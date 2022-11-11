@@ -12,6 +12,16 @@ router.chat_member.filter(Games.UNO)
 router.message.filter(Games.UNO)
 
 
+async def kick_user(db: DataBaseContext, state: FSMContext, user: types.User, members: list | None):
+    data_uno = await UnoData.get_data(state)
+
+    if user.id in data_uno.users:
+        from .misc.process import kick_for_kick
+        await kick_for_kick(state, data_uno, user)
+
+    await remove_member(db, members, user.id)
+
+
 @router.chat_member()
 @flags.data('members')
 async def leave_handler(
@@ -20,13 +30,7 @@ async def leave_handler(
         state: FSMContext,
         members: list | None = None,
 ):
-    data_uno = await UnoData.get_data(state)
-
-    if event.new_chat_member.user.id in data_uno.users:
-        from .misc.process import kick_for_kick
-        await kick_for_kick(state, data_uno, event.new_chat_member.user)
-
-    await remove_member(db, members, event.new_chat_member.user.id)
+    await kick_user(db, state, event.new_chat_member.user, members)
 
 
 @router.message(F.left_chat_member, my_admin_filter)
@@ -37,10 +41,4 @@ async def leave_message_handler(
         db: DataBaseContext,
         members: list | None = None,
 ):
-    data_uno = await UnoData.get_data(state)
-
-    if message.left_chat_member.id in data_uno.users:
-        from .misc.process import kick_for_kick
-        await kick_for_kick(state, data_uno, message.left_chat_member)
-
-    await remove_member(db, members, message.left_chat_member.id)
+    await kick_user(db, state, message.left_chat_member, members)

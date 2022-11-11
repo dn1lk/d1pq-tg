@@ -28,7 +28,8 @@ class TurnHandler(MessageHandler):
         accept, decline = data_uno.filter_card(self.from_user.id, card)
 
         if accept:
-            await timer.cancel(timer.get_name(self.state, 'game'))
+            task_name = timer.get_name(self.state, 'game')
+            await timer.cancel(task_name)
 
             data_uno.current_card = card
             data_uno.timer_amount = 3
@@ -37,13 +38,11 @@ class TurnHandler(MessageHandler):
             self.event = await self.proceed_turn(data_uno, accept)
 
             if self.event:
-                from .misc import timeout, timeout_done
+                from .misc import timeout_proceed, timeout_finally
                 timer.create(
-                    self.state,
-                    timeout,
-                    timeout_done,
-                    name='game',
-                    message=self.event,
+                    task_name,
+                    coro=timeout_proceed(self.event, self.state),
+                    coro_done=timeout_finally(self.event, self.state),
                 )
 
         elif decline:
@@ -146,8 +145,8 @@ class SevenHandler(MessageHandler):
 
                 answer = data_uno.play_seven(self.event.from_user, seven_user)
 
-                from .misc.process import proceed_turn
-                await proceed_turn(self.event, self.state, data_uno, answer)
+                from .misc.process import next_turn
+                await next_turn(self.event, self.state, data_uno, answer)
 
             else:
                 await self.event.answer(_("{user} is not playing with us.").format(
@@ -189,11 +188,12 @@ async def color_handler(
             )
         )
 
-        await query.answer()
-        answer = data_uno.update_state() or ""
+        answer = data_uno.update_state()
 
         from .misc.process import proceed_turn
-        await proceed_turn(query.message, state, data_uno, answer)
+        await proceed_turn(query.message, state, data_uno, answer or "")
+
+        await query.answer()
     else:
         await query.answer(_("When you'll get a BLACK card, choose this color ;)"))
 

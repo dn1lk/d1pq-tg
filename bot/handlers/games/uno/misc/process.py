@@ -24,26 +24,6 @@ async def start(
     await proceed_turn(message, state, data, _("The first card is discarded."))
 
 
-async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, user: types.User):
-    uno_user = message.entities[0].user
-
-    if user.id == uno_user.id:
-        return
-
-    data.pick_card(uno_user, 2)
-    await data.set_data(state)
-
-    answer = choice(
-        (
-            _("{user} gifts player {uno_user} 2 cards."),
-            _("{user} gives player {uno_user} 2 cards."),
-            _("{user} presents player {uno_user} with 2 cards."),
-        )
-    )
-
-    await message.edit_text(answer.format(user=get_username(user), uno_user=get_username(uno_user)))
-
-
 async def kick_for_kick(state: FSMContext, data: UnoData, user: types.User):
     await data.remove_user(state, user.id)
     await data.set_data(state)
@@ -80,31 +60,40 @@ async def kick_for_cards(message: types.Message, state: FSMContext, data: UnoDat
     await message.answer(answer)
 
 
+async def proceed_uno(message: types.Message, state: FSMContext, data: UnoData, user: types.User):
+    uno_user = message.entities[0].user
+
+    if user.id == uno_user.id:
+        return
+
+    data.pick_card(uno_user, 2)
+    await data.set_data(state)
+
+    answer = choice(
+        (
+            _("{user} gifts player {uno_user} 2 cards."),
+            _("{user} gives player {uno_user} 2 cards."),
+            _("{user} presents player {uno_user} with 2 cards."),
+        )
+    )
+
+    await message.edit_text(answer.format(user=get_username(user), uno_user=get_username(uno_user)))
+
+
 async def proceed_turn(
         message: types.Message,
         state: FSMContext,
-        data_uno: UnoData,
-        answer: str = ""
-) -> types.Message:
-    user = await data_uno.get_user(state)
-    answer = answer.format(user=get_username(user))
-
-    return await next_turn(message, state, data_uno, answer)
-
-
-async def next_turn(
-        message: types.Message,
-        state: FSMContext,
         data: UnoData,
-        answer: str
-) -> types.Message:
-    data.current_index = data.next_index
-    from .bot import UnoBot
-
+        answer: str = ""
+):
     if len(data.users[message.from_user.id]) == 1:
         answer_uno = data.update_uno(message.from_user)
-        timer[timer.get_name(state, 'game:uno')] = asyncio.create_task(
-            UnoBot.gen_uno(
+
+        from .bot import UnoBot
+        timer.create(
+            'game:uno',
+            delay=0,
+            coro=UnoBot.gen_uno(
                 message=await message.answer(answer_uno, reply_markup=k.say_uno()),
                 state=state,
                 data=data,
@@ -112,15 +101,25 @@ async def next_turn(
         )
 
     elif not data.users[message.from_user.id]:
-        if data.current_state.drawn:
-            user = state.bot.id if data.current_user_id == state.bot.id else await data.get_user(state)
-            data.play_draw(user)
-
         await kick_for_cards(message, state, data)
 
         if data.settings.mode or len(data.users) == 1:
+            if data.current_state.drawn:
+                data.play_draw(data.next_user_id)
+
             return await finish(state, data)
 
+    user = await data.get_user(state)
+    await next_turn(message, state, data, answer.format(user=get_username(user)))
+
+
+async def next_turn(
+        message: types.Message,
+        state: FSMContext,
+        data: UnoData,
+        answer: str
+):
+    data.current_index = data.next_index
     await data.set_data(state)
 
     if data.current_user_id == state.bot.id:
@@ -141,17 +140,29 @@ async def next_turn(
         reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.DRAW_FOUR and data.current_state.drawn),
     )
 
+    update_timer(message, state, data)
+
+
+def update_timer(
+        message: types.Message,
+        state: FSMContext,
+        data: UnoData,
+):
+    task_name = timer.get_name(state, 'game')
+    from . import timeout_proceed, timeout_finally
+
+    from .bot import UnoBot
     bot = UnoBot(message, state, data)
     cards = tuple(bot.get_cards())
 
     if cards or data.current_user_id == state.bot.id:
-        timer_name = timer.get_name(state, 'game')
-        await timer.cancel(timer_name)
-
-        timer[timer_name] = asyncio.create_task(bot.gen_turn(cards))
+        delay = 0
+        task = bot.gen_turn(cards)
     else:
-        from . import timeout, timeout_done
-        timer.create(state, timeout, timeout_done, name='game', message=message)
+        delay = 60 * data.timer_amount
+        task = timeout_proceed(message, state)
+
+    timer.create(task_name, delay, task, timeout_finally(message, state))
 
 
 async def finish(state: FSMContext, data: UnoData) -> types.Message:

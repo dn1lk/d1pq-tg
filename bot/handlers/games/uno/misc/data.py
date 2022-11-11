@@ -235,6 +235,9 @@ class UnoData(GamesData):
             await state.storage.set_data(state.bot, key, {})
 
         await remove_state()
+
+        self.current_index = self.prev_index if self.current_index != 0 else len(self.users) - 1
+
         del self.users[user_id]
 
         self.stats.setdefault(user_id, UnoStats()).points += sum(

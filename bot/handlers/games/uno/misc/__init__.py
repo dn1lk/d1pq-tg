@@ -12,7 +12,7 @@ from .data import UnoData
 from ..settings import UnoMode
 
 
-async def timeout(message: types.Message, state: FSMContext):
+async def timeout_proceed(message: types.Message, state: FSMContext):
     data_uno: UnoData = await UnoData.get_data(state)
     data_uno.timer_amount -= 1
 
@@ -57,7 +57,7 @@ async def timeout(message: types.Message, state: FSMContext):
     await task_poll
 
 
-async def timeout_done(message: types.Message, state: FSMContext):
+async def timeout_finally(message: types.Message, state: FSMContext):
     task_name = timer.get_name(state, 'game')
 
     await timer.cancel(f"{task_name}:uno")

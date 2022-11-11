@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional, Union
 
 from aiogram.methods import SendMessage, SendVoice, SendSticker
 from aiogram.types import (
@@ -28,12 +27,10 @@ class CustomMessage(Message):
     def answer(
             self,
             text: str,
-            parse_mode: Optional[str] = UNSET,
-            disable_web_page_preview: Optional[bool] = None,
-            disable_notification: Optional[bool] = None,
-            reply_markup: Optional[
-                Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply]
-            ] = None,
+            parse_mode: str = UNSET,
+            disable_web_page_preview: bool = None,
+            disable_notification: bool = None,
+            reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
     ) -> SendMessage:
         return SendMessage(
             chat_id=self.chat.id,
@@ -47,11 +44,9 @@ class CustomMessage(Message):
 
     def answer_sticker(
             self,
-            sticker: Union[InputFile, str],
-            disable_notification: Optional[bool] = None,
-            reply_markup: Optional[
-                Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply]
-            ] = None,
+            sticker: InputFile | str,
+            disable_notification: bool = None,
+            reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
     ) -> SendSticker:
         return SendSticker(
             chat_id=self.chat.id,
@@ -63,14 +58,12 @@ class CustomMessage(Message):
 
     def answer_voice(
             self,
-            voice: Union[InputFile, str],
-            caption: Optional[str] = None,
-            parse_mode: Optional[str] = UNSET,
-            duration: Optional[int] = None,
-            disable_notification: Optional[bool] = None,
-            reply_markup: Optional[
-                Union[InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply]
-            ] = None,
+            voice: InputFile | str,
+            caption: str = None,
+            parse_mode: str = UNSET,
+            duration: int = None,
+            disable_notification: bool = None,
+            reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
     ) -> SendVoice:
         return SendVoice(
             chat_id=self.chat.id,

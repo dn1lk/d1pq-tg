@@ -1,5 +1,3 @@
-from typing import Union
-
 from aiogram import Bot, types, filters
 
 
@@ -32,7 +30,7 @@ class LevenshteinFilter(filters.BaseFilter):
 
         return cur[-1]
 
-    async def __call__(self, obj: Union[types.Message, types.InlineQuery, types.Poll]) -> bool:
+    async def __call__(self, obj: types.Message | types.InlineQuery | types.Poll) -> bool:
         match obj:
             case types.Message():
                 text = obj.text or obj.caption
@@ -58,7 +56,7 @@ class AdminFilter(filters.BaseFilter):
     def __init__(self, is_admin: bool = True) -> None:
         self.is_admin: bool = is_admin
 
-    async def __call__(self, obj: Union[types.Message, types.CallbackQuery], bot: Bot, owner_id: int) -> bool:
+    async def __call__(self, obj: types.Message | types.CallbackQuery, bot: Bot, owner_id: int) -> bool:
         match obj:
             case types.Message():
                 chat_id = obj.chat.id

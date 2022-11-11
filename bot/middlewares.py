@@ -1,6 +1,6 @@
 import asyncio
 from dataclasses import dataclass
-from typing import Dict, Any, Awaitable, Callable, Union, Optional
+from typing import Awaitable, Callable, Any
 
 from aiogram import Bot, Dispatcher, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
@@ -14,27 +14,30 @@ class DataMiddleware(BaseMiddleware):
     async def __call__(
             self,
             handler: Callable[
-                [types.Message | types.CallbackQuery | types.ChatMemberUpdated, Dict[str, Any]],
+                [types.Message | types.CallbackQuery | types.ChatMemberUpdated, dict[str, Any]],
                 Awaitable[Any]
             ],
             event: types.Message | types.CallbackQuery | types.ChatMemberUpdated,
-            data: Dict[str, Any]
-    ) -> Any:
+            data: dict[str, Any]
+    ):
         db: DataBaseContext = data['db']
-        flag_data: Optional[Union[str, set]] = get_flag(data, 'data')
+        flag_data: str | tuple | None = get_flag(data, 'data')
 
         if flag_data:
-            if isinstance(flag_data, str):
-                flag_data = {flag_data}
+            async def get_data(column: str):
+                value = await db.get_data(column)
 
-            for key in flag_data:
-                value = await db.get_data(key)
-
-                if key == 'chance':
+                if column == 'chance':
                     bot: Bot = data['bot']
                     value = round(value / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
 
-                data[key] = value
+                data[column] = value
+
+            if isinstance(flag_data, str):
+                await get_data(flag_data)
+            else:
+                for key in flag_data:
+                    await get_data(key)
 
         if get_flag(data, 'throttling') == 'gen':
             messages = await db.get_data('messages')
@@ -46,7 +49,7 @@ class DataMiddleware(BaseMiddleware):
         result = await handler(event, data)
 
         if data['event_chat'].type != 'private':
-            members: Optional[list] = data.get('members', await db.get_data('members'))
+            members: list | None = data.get('members', await db.get_data('members'))
 
             if members and data['event_from_user'].id not in members:
                 await db.update_data(members=[*members, data['event_from_user'].id])
@@ -61,26 +64,19 @@ class ThrottlingMiddleware(BaseMiddleware):
     }
 
     def __setitem__(self, name: str, task: asyncio.Task):
-        def del_task(t: asyncio.Task):
-            if t is self[name]:
-                del self.tasks[name]
-
         self.tasks[name] = task
         task.set_name(name)
-        task.add_done_callback(del_task)
+        task.add_done_callback(lambda _: self.tasks.pop(name))
 
     def __getitem__(self, name):
         return self.tasks.get(name)
 
-    def __delitem__(self, name):
-        self.tasks[name].cancel()
-
     async def __call__(
             self,
-            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            handler: Callable[[types.TelegramObject, dict[str, Any]], Awaitable[Any]],
             event: types.TelegramObject,
-            data: Dict[str, Any],
-    ) -> Any:
+            data: dict[str, Any],
+    ):
         throttling = get_flag(data, 'throttling')
 
         if throttling:
@@ -102,10 +98,10 @@ class ThrottlingMiddleware(BaseMiddleware):
 class UnhandledMiddleware(BaseMiddleware):
     async def __call__(
             self,
-            handler: Callable[[types.Message, Dict[str, Any]], Awaitable[Any]],
+            handler: Callable[[types.Message, dict[str, Any]], Awaitable[Any]],
             event: types.Message,
-            data: Dict[str, Any]
-    ) -> Any:
+            data: dict[str, Any]
+    ):
         result = await handler(event, data)
 
         from aiogram.dispatcher.event.bases import UNHANDLED
@@ -133,9 +129,9 @@ class UnhandledMiddleware(BaseMiddleware):
 
 @dataclass
 class Middleware:
-    inner: Optional[BaseMiddleware] = None
-    outer: Optional[BaseMiddleware] = None
-    observers: Optional[Union[str, set]] = 'update'
+    inner: BaseMiddleware = None
+    outer: BaseMiddleware = None
+    observers: str | tuple = 'update'
 
 
 def setup(dp: Dispatcher):
@@ -144,25 +140,30 @@ def setup(dp: Dispatcher):
     from handlers.settings.commands import CustomCommandsMiddleware
     from locales.middleware import I18nContextMiddleware
     from utils.database.middleware import DataBaseContextMiddleware
+    from utils.timer.middleware import TimerMiddleware
 
     middlewares = (
         Middleware(outer=DataBaseContextMiddleware()),
-        Middleware(outer=CustomCommandsMiddleware(), observers={'message', 'callback_query'}),
+        Middleware(outer=CustomCommandsMiddleware(), observers=('message', 'callback_query')),
         Middleware(inner=ThrottlingMiddleware(), observers='message'),
-        Middleware(inner=ChatActionMiddleware()),
-        Middleware(inner=DataMiddleware(), observers={'message', 'callback_query', 'chat_member'}),
+        Middleware(inner=ChatActionMiddleware(), observers=('message', 'callback_query')),
+        Middleware(inner=DataMiddleware(), observers=('message', 'callback_query', 'chat_member')),
         Middleware(inner=I18nContextMiddleware(i18n=config.i18n)),
+        Middleware(inner=TimerMiddleware(), observers=('message', 'callback_query', 'chat_member')),
         Middleware(outer=UnhandledMiddleware(), observers='message'),
     )
 
+    def register_middleware(obs: str):
+        register = dp.observers[obs]
+
+        if middleware.inner:
+            register.middleware(middleware.inner)
+        else:
+            register.outer_middleware(middleware.outer)
+
     for middleware in middlewares:
         if isinstance(middleware.observers, str):
-            middleware.observers = {middleware.observers}
-
-        for observer in middleware.observers:
-            register = dp.observers[observer]
-
-            if middleware.inner:
-                register.middleware(middleware.inner)
-            else:
-                register.outer_middleware(middleware.outer)
+            register_middleware(middleware.observers)
+        else:
+            for observer in middleware.observers:
+                register_middleware(observer)

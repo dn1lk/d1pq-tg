@@ -1,7 +1,7 @@
 import asyncio
 from random import choice
 
-from aiogram import Router, types, F, html
+from aiogram import Router, types, F, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.handlers import MessageHandler
 from aiogram.utils.chat_action import ChatActionSender
@@ -18,10 +18,8 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 
 @router.message(F.chat.type == 'private')
+@flags.timer('game')
 async def private_handler(message: types.Message, state: FSMContext):
-    task_name = timer.get_name(state, 'game')
-    await timer.cancel(task_name)
-
     await state.set_state(Games.RND)
     message = await message.answer(
         _(
@@ -30,10 +28,11 @@ async def private_handler(message: types.Message, state: FSMContext):
         )
     )
 
-    timer.create(state, close_timeout, name='game', message=message)
+    return timer.dict(close_timeout(message, state))
 
 
 @router.message()
+@flags.timer(('game', 0))
 class ChatHandler(MessageHandler):
     @property
     def state(self) -> FSMContext:
@@ -44,9 +43,6 @@ class ChatHandler(MessageHandler):
         return self.data['db']
 
     async def handle(self):
-        task_name = timer.get_name(self.state, 'game')
-        await timer.cancel(task_name)
-
         answer = _(
             "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay attention!\n\n"
             "Enter any number between 1 and 10 and I'll choose "
@@ -63,9 +59,9 @@ class ChatHandler(MessageHandler):
 
             self.event = await self.event.answer(_("LET THE BATTLE BEGIN!"))
 
-        timer[task_name] = asyncio.create_task(self.finish())
+        return timer.dict(self.wait(), self.finish())
 
-    async def finish(self):
+    async def wait(self):
         async def get_stickers():
             for sticker_set in await self.db.get_data('stickers'):
                 yield await self.bot.get_sticker_set(sticker_set)
@@ -73,30 +69,29 @@ class ChatHandler(MessageHandler):
         def filter_sticker(sticker: types.Sticker):
             return sticker.emoji in ('⏳', '🙈')
 
-        try:
-            async with ChatActionSender.choose_sticker(chat_id=self.chat.id, interval=20):
-                await asyncio.sleep(60)
+        async with ChatActionSender.choose_sticker(chat_id=self.chat.id, interval=20):
+            await asyncio.sleep(60)
 
-                stickers = sum([stickers.stickers async for stickers in get_stickers()], [])
-                await self.bot.send_sticker(self.chat.id, choice(list(filter(filter_sticker, stickers))).file_id)
-        finally:
-            user_vars: dict[str, list[int]] = await self.state.get_data() or {}
+            stickers = sum([stickers.stickers async for stickers in get_stickers()], [])
+            await self.bot.send_sticker(self.chat.id, choice(list(filter(filter_sticker, stickers))).file_id)
 
-            bot_var = str(choice(range(1, 11)))
-            answer = _("So, my variant is {bot_var}.\n").format(bot_var=html.bold(bot_var))
-
-            winners = user_vars.get(bot_var)
-
-            if winners:
-                async def get_member():
-                    for user_id in winners:
-                        yield await self.bot.get_chat_member(self.chat.id, user_id)
-
-                winners = ', '.join([get_username(winner.user) async for winner in get_member()])
-                answer += _('The title of winner goes to: {winners}. Congrats!').format(winners=winners)
-            else:
-                answer += _("No one guessed right. Heh.")
-
-            await self.event.reply(answer)
-
+    async def finish(self):
+        user_vars: dict[str, list[int]] = await self.state.get_data() or {}
         await self.state.clear()
+
+        bot_var = str(choice(range(1, 11)))
+        answer = _("So, my variant is {bot_var}.\n").format(bot_var=html.bold(bot_var))
+
+        winners = user_vars.get(bot_var)
+
+        if winners:
+            async def get_member():
+                for user_id in winners:
+                    yield await self.bot.get_chat_member(self.chat.id, user_id)
+
+            winners = ', '.join([get_username(winner.user) async for winner in get_member()])
+            answer += _('The title of winner goes to: {winners}. Congrats!').format(winners=winners)
+        else:
+            answer += _("No one guessed right. Heh.")
+
+        await self.event.reply(answer)
