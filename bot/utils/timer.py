@@ -1,5 +1,8 @@
 import asyncio
+from typing import Coroutine
 
+from aiogram import types
+from aiogram.dispatcher.event.handler import CallbackType
 from aiogram.fsm.context import FSMContext
 
 
@@ -15,15 +18,34 @@ class Timer:
         task.set_name(name)
         task.add_done_callback(del_task)
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str):
         return self.tasks.get(name)
 
-    def __delitem__(self, name):
+    def __delitem__(self, name: str):
         self.tasks[name].cancel()
+
+    def __call__(self, name: str = 'default', delay: int = 60):
+        def wrapper(func: CallbackType):
+            async def wrapped(event: types.TelegramObject, state: FSMContext, kwargs: dict[str, ...]):
+                task_name = self.get_name(state, name)
+                await self.cancel(task_name)
+
+                coroutines = await func(event, state=state, **kwargs)
+                await self.create(state, name=name, delay=delay, **coroutines)
+            return wrapped
+        return wrapper
 
     @staticmethod
     def get_name(state, name: str):
         return f'{state.key.chat_id}:{name}'
+
+    @staticmethod
+    def coroutine(coroutine: Coroutine) -> dict[str, Coroutine]:
+        return {'coroutine': coroutine}
+
+    @staticmethod
+    def coroutine_done(coroutine_done: Coroutine) -> dict[str, Coroutine]:
+        return {'coroutine_done': coroutine_done}
 
     def create(
             self,
