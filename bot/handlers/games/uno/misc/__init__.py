@@ -34,11 +34,8 @@ async def timeout_proceed(message: types.Message, state: FSMContext):
     )
 
     task_poll = timer.create(
-        state,
-        coroutine_done=UnoBot.gen_poll,
-        name='game:poll',
-        message=poll_message,
-        user=message.entities[-1].user,
+        timer.get_name('game:poll'),
+        coro_done=UnoBot.gen_poll(poll_message, state, message.entities[-1].user),
     )
 
     await asyncio.sleep(2)
