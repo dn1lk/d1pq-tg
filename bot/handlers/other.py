@@ -17,7 +17,7 @@ router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
 def answer_check(answer: str) -> str:
     answer = answer.strip().capitalize()
 
-    if answer[-1] not in '!?:.()>':
+    if answer[-1] not in '.!?:(':
         answer += '.'
 
     return answer
