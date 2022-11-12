@@ -140,10 +140,10 @@ async def next_turn(
         reply_markup=k.show_cards(data.current_card.emoji == UnoEmoji.DRAW_FOUR and data.current_state.drawn),
     )
 
-    update_timer(message, state, data)
+    await update_timer(message, state, data)
 
 
-def update_timer(
+async def update_timer(
         message: types.Message,
         state: FSMContext,
         data: UnoData,
@@ -156,6 +156,8 @@ def update_timer(
     cards = tuple(bot.get_cards())
 
     if cards or data.current_user_id == state.bot.id:
+        await timer.cancel(task_name)
+
         delay = 0
         task = bot.gen_turn(cards)
     else:
