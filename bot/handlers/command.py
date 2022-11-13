@@ -2,7 +2,6 @@ from random import choices, choice, random
 from re import split
 
 from aiogram import Router, Bot, F, types, filters, flags, html
-from aiogram.filters import MagicData
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.utils import markov, balaboba
@@ -80,7 +79,7 @@ async def who_private_handler(message: types.Message):
     await message.answer(_("This command only works in <b>chats</b>, alas =("))
 
 
-@router.message(CustomCommandFilter('who', 'кто', magic=F.args), MagicData(F.members))
+@router.message(CustomCommandFilter('who', 'кто', magic=F.args))
 @flags.data('members')
 async def who_chat_handler(
         message: types.Message,
@@ -101,18 +100,13 @@ async def who_chat_handler(
                 _("Wait! It's")
             )
         ) + f" {get_username(member.user)} {html.bold(html.quote(command.args))}"
-    else:
+    elif members:
         answer = (_("Oh, I don't know you guys... Give me a time."))
-
-    await message.answer(answer)
-
-
-@router.message(CustomCommandFilter('who', 'кто', magic=F.args))
-async def who_chat_no_members_handler(message: types.Message):
-    answer = _(
-        "<b>This command requires permission to record chat participants.</b>\n\n"
-        "/settings - give permission."
-    )
+    else:
+        answer = _(
+            "<b>This command requires permission to record chat participants.</b>\n\n"
+            "/settings - give permission."
+        )
 
     await message.answer(answer)
 
