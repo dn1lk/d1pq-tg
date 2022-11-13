@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-13 09:02+0300\n"
+"POT-Creation-Date: 2022-11-13 16:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,32 +111,36 @@ msgstr ""
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/command.py:153
+#: handlers/command.py:161
+msgid "<b>And what do you want to play?</b>"
+msgstr ""
+
+#: handlers/command.py:164
 msgid ""
-"<b>And what do you want to play?</b>\n"
+"\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/command.py:171
+#: handlers/command.py:186
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/command.py:176
+#: handlers/command.py:191
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/command.py:190
+#: handlers/command.py:205
 msgid "So what's the question?"
 msgstr ""
 
-#: handlers/command.py:213
+#: handlers/command.py:228
 msgid "history"
 msgstr ""
 
-#: handlers/command.py:218
+#: handlers/command.py:233
 msgid "In short, {query}"
 msgstr ""
 
