@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-10 18:06+0300\n"
+"POT-Creation-Date: 2022-11-13 09:02+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: handlers/__init__.py:6
+#: handlers/__init__.py:4
 msgid ""
 "\n"
 "\n"
@@ -31,11 +31,11 @@ msgstr ""
 "Напиши запрос вместе с командой одним сообщением.\n"
 "Например: <code>/{command} {args}</code>"
 
-#: handlers/__init__.py:14
+#: handlers/__init__.py:12
 msgid "User"
 msgstr "Пользователь"
 
-#: handlers/command.py:17
+#: handlers/command.py:16
 msgid ""
 "I am a text generator bot and in some cases a great conversationalist.\n"
 "\n"
@@ -47,7 +47,7 @@ msgstr ""
 "Если мне написать сообщение или команду, что-то может произойти.\n"
 "\n"
 
-#: handlers/command.py:38
+#: handlers/command.py:37
 msgid ""
 "List of my main commands - I only accept them together with the required "
 "request, in one message:\n"
@@ -57,47 +57,47 @@ msgstr ""
 "запросом, одним сообщением:\n"
 "\n"
 
-#: handlers/command.py:55
+#: handlers/command.py:54
 msgid "I choose {choice}."
 msgstr "Я выбираю {choice}."
 
-#: handlers/command.py:67
+#: handlers/command.py:66
 msgid "What to choose?"
 msgstr "Что выбрать?"
 
-#: handlers/command.py:73
+#: handlers/command.py:72
 msgid " or "
 msgstr " или "
 
-#: handlers/command.py:80
+#: handlers/command.py:79
 msgid "This command only works in <b>chats</b>, alas =("
 msgstr "Эта команда работает только в <b>чатах</b>, увы =("
 
-#: handlers/command.py:97
+#: handlers/command.py:96
 msgid "Hmmm, I think"
 msgstr "Хммм, я думаю, что"
 
-#: handlers/command.py:98
+#: handlers/command.py:97
 msgid "I guess"
 msgstr "Я предполагаю, что"
 
-#: handlers/command.py:99
+#: handlers/command.py:98
 msgid "Oh, I admit"
 msgstr "Ох, я догадываюсь, что"
 
-#: handlers/command.py:100
+#: handlers/command.py:99
 msgid "Maybe it's"
 msgstr "Может быть это"
 
-#: handlers/command.py:101
+#: handlers/command.py:100
 msgid "Wait! It's"
 msgstr "Подожди! Это"
 
-#: handlers/command.py:105
+#: handlers/command.py:104
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr "Ох, я не знаю вас ребят... Дайте мне время."
 
-#: handlers/command.py:112
+#: handlers/command.py:106
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
@@ -107,27 +107,27 @@ msgstr ""
 "\n"
 "/settings - дать разрешение."
 
-#: handlers/command.py:129
+#: handlers/command.py:123
 msgid "Who???"
 msgstr "Кто???"
 
-#: handlers/command.py:147
+#: handlers/command.py:141
 msgid "Ha! Invalid request, try again."
 msgstr "Ха! А вот и нет, попробуй ещё."
 
-#: handlers/command.py:148
+#: handlers/command.py:142
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr "Удача явно тебе НЕ благоволит. Ты не угадал игру!"
 
-#: handlers/command.py:149
+#: handlers/command.py:143
 msgid "The game is not recognized. I'll give it another try!"
 msgstr "Игра не распознана. Даю ещё попытку!"
 
-#: handlers/command.py:150
+#: handlers/command.py:144
 msgid "And here it is not. This game has a different name ;)."
 msgstr "А вот и нет. У этой игры другая команда ;)."
 
-#: handlers/command.py:159
+#: handlers/command.py:153
 msgid ""
 "<b>And what do you want to play?</b>\n"
 "\n"
@@ -137,7 +137,7 @@ msgstr ""
 "\n"
 "Попробуй угадать игру, написав нужный запрос сразу после команды."
 
-#: handlers/command.py:177
+#: handlers/command.py:171
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
@@ -145,39 +145,39 @@ msgstr ""
 "Хм, {args}?\n"
 "Ох, мне нужно подумать..."
 
-#: handlers/command.py:182
+#: handlers/command.py:176
 msgid "Let's do it sooner!"
 msgstr "Давай покороче!"
 
-#: handlers/command.py:196
+#: handlers/command.py:190
 msgid "So what's the question?"
 msgstr "Так какой вопросик?"
 
-#: handlers/command.py:219
+#: handlers/command.py:213
 msgid "history"
 msgstr "история"
 
-#: handlers/command.py:224
+#: handlers/command.py:218
 msgid "In short, {query}"
 msgstr "Короче, {query}"
 
-#: handlers/other.py:107
+#: handlers/other.py:106
 msgid "{user}, hello!"
 msgstr "{user}, привет!"
 
-#: handlers/other.py:108
+#: handlers/other.py:107
 msgid "Hey, {user}."
 msgstr "Привет, {user}."
 
-#: handlers/other.py:109
+#: handlers/other.py:108
 msgid "Nice to meet you, {user}."
 msgstr "Рад встрече, {user}"
 
-#: handlers/other.py:110
+#: handlers/other.py:109
 msgid "My appreciate, {user}."
 msgstr "Моё почтение, {user}"
 
-#: handlers/other.py:111
+#: handlers/other.py:110
 msgid "Yop, {user}"
 msgstr "Йеп, {user}!"
 
@@ -209,31 +209,31 @@ msgstr "Я думал мы играли..."
 msgid "It's too slow, I won't play with you!"
 msgstr "Я не буду играть с тобой!"
 
-#: handlers/games/cts/process.py:24
+#: handlers/games/cts/process.py:22
 msgid "Hmm."
 msgstr "Хмм."
 
-#: handlers/games/cts/process.py:25
+#: handlers/games/cts/process.py:23
 msgid "And you're smarter than you look."
 msgstr "А ты умнее, чем кажешься."
 
-#: handlers/games/cts/process.py:26
+#: handlers/games/cts/process.py:24
 msgid "Right!"
 msgstr "Верно!"
 
-#: handlers/games/cts/process.py:28
+#: handlers/games/cts/process.py:26
 msgid " My word: {bot_var}."
 msgstr " Моё слово: {bot_var}."
 
-#: handlers/games/cts/process.py:38
+#: handlers/games/cts/process.py:36
 msgid "Okay, I have nothing to write on {letter}... Victory is yours."
 msgstr "Ладно, мне нечего написать на {letter}... Победа за тобой."
 
-#: handlers/games/cts/process.py:39
+#: handlers/games/cts/process.py:37
 msgid "Can't find the right something on {letter}... My defeat."
 msgstr "Не могу найти нужное название на {letter}... Моё поражение."
 
-#: handlers/games/cts/process.py:40
+#: handlers/games/cts/process.py:38
 msgid ""
 "VICTORY... yours. I can't remember that name... You know, it also starts "
 "with {letter}..."
@@ -301,7 +301,7 @@ msgstr ""
 "\n"
 "<b>Угадано слов</b>: {words}."
 
-#: handlers/games/cts/start.py:22
+#: handlers/games/cts/start.py:20
 msgid ""
 "Oh, the game of cities. Well, let's try!\n"
 "\n"
@@ -315,63 +315,63 @@ msgstr ""
 "на последнюю букву названия предыдущего населённого пункта.\n"
 "На раздумья - 60 секунд."
 
-#: handlers/games/cts/start.py:33
+#: handlers/games/cts/start.py:31
 msgid "I start! My word: {bot_var}."
 msgstr "Я начинаю! Моё слово: {bot_var}."
 
-#: handlers/games/cts/start.py:37
+#: handlers/games/cts/start.py:35
 msgid "You start! Your word?"
 msgstr "Ты начинаешь! Твоё слово?"
 
-#: handlers/games/rnd/process.py:21
+#: handlers/games/rnd/process.py:20
 msgid "Ok, so... My choice is {bot_var}.\n"
 msgstr "Итак... Мой выбор {bot_var}.\n"
 
-#: handlers/games/rnd/process.py:22
+#: handlers/games/rnd/process.py:21
 msgid "Our numbers matched!"
 msgstr "Наши числа совпали!"
 
-#: handlers/games/rnd/process.py:22
+#: handlers/games/rnd/process.py:21
 msgid "Our numbers don't match =(."
 msgstr "Наши числа не совпали =(."
 
-#: handlers/games/rnd/process.py:32
+#: handlers/games/rnd/process.py:31
 msgid "You have already made your choice."
 msgstr "Ты уже выбрал свой вариант."
 
-#: handlers/games/rnd/process.py:33
+#: handlers/games/rnd/process.py:32
 msgid "Cunning, but you already used your try."
 msgstr "Хитро, но ты уже использовал свою попытку."
 
-#: handlers/games/rnd/process.py:34
+#: handlers/games/rnd/process.py:33
 msgid "So let's write it down ... Seen in a scam."
 msgstr "Так и запишем... Замечен в жульничестве."
 
-#: handlers/games/rnd/process.py:41
+#: handlers/games/rnd/process.py:40
 msgid "Your choice has been accepted."
 msgstr "Твой вариант принят."
 
-#: handlers/games/rnd/process.py:42
+#: handlers/games/rnd/process.py:41
 msgid "Do you really think that I will choose THIS number? Well, let's see ;)."
 msgstr "Ты действительно думаешь, что я выберу ЭТО число? Ну посмотрим ;)."
 
-#: handlers/games/rnd/process.py:43
+#: handlers/games/rnd/process.py:42
 msgid "So let's write..."
 msgstr "Так и запишем..."
 
-#: handlers/games/rnd/process.py:54
+#: handlers/games/rnd/process.py:53
 msgid "So you won’t guess for sure, choose a emoji from 1 to 10!"
 msgstr "Так ты точно не угадаешь, выбери число от 1 до 10!"
 
-#: handlers/games/rnd/process.py:55
+#: handlers/games/rnd/process.py:54
 msgid "Somebody can't read. It was clearly written, from 1 to 10!"
 msgstr "Кто-то не умеет читать. Было чётко написано, от 1 до 10!"
 
-#: handlers/games/rnd/process.py:56
+#: handlers/games/rnd/process.py:55
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr "От 1 до 10, что сложного то?!"
 
-#: handlers/games/rnd/start.py:27
+#: handlers/games/rnd/start.py:25
 msgid ""
 "Hmm, you are trying your luck... Well, ender any number between 1 and 10 "
 "and I'll choose my own and we find out if our thoughts are the same ;)."
@@ -379,7 +379,7 @@ msgstr ""
 "Мм, ты испытываешь свою удачу... Хорошо, введи любое число от 1 до 10 - а"
 " я выберу своё и мы узнаем, совпадают ли наши мысли ;)."
 
-#: handlers/games/rnd/start.py:50
+#: handlers/games/rnd/start.py:46
 msgid ""
 "Mm, {user} is trying his luck... Well, EVERYONE, EVERYONE, EVERYONE, pay "
 "attention!\n"
@@ -392,19 +392,19 @@ msgstr ""
 "Введите любое число от 1 до 10 - а я через 60 секунд выберу своё и мы "
 "узнаем, кто из вас окажется прав."
 
-#: handlers/games/rnd/start.py:64
+#: handlers/games/rnd/start.py:60
 msgid "LET THE BATTLE BEGIN!"
 msgstr "ДА НАЧНЁТСЯ ЖЕ БИТВА!"
 
-#: handlers/games/rnd/start.py:86
+#: handlers/games/rnd/start.py:83
 msgid "So, my variant is {bot_var}.\n"
 msgstr "Итак, моё число - {bot_var}.\n"
 
-#: handlers/games/rnd/start.py:96
+#: handlers/games/rnd/start.py:93
 msgid "The title of winner goes to: {winners}. Congrats!"
 msgstr "Звание победителя достаётся: {winners}. Поздравим же!"
 
-#: handlers/games/rnd/start.py:98
+#: handlers/games/rnd/start.py:95
 msgid "No one guessed right. Heh."
 msgstr "Никто не угадал. Хе."
 
@@ -452,11 +452,11 @@ msgstr "бумага"
 msgid "Take a card."
 msgstr "Беру карту."
 
-#: handlers/games/uno/inline.py:61
+#: handlers/games/uno/inline.py:62
 msgid "Join to the game."
 msgstr "Присоединиться к игре."
 
-#: handlers/games/uno/inline.py:72
+#: handlers/games/uno/inline.py:73
 msgid "Start a new game."
 msgstr "Начать новую игру."
 
@@ -524,7 +524,7 @@ msgstr "Уже 10 человек играют в игру."
 msgid "{user} join to current game."
 msgstr "{user} присоединяется к текущей игре."
 
-#: handlers/games/uno/start.py:33
+#: handlers/games/uno/start.py:34
 msgid ""
 "<b>Let's play UNO?</b>\n"
 "\n"
@@ -548,7 +548,7 @@ msgstr ""
 "<b>Уже в игре:</b>\n"
 "{user}"
 
-#: handlers/games/uno/user.py:61
+#: handlers/games/uno/user.py:60
 msgid ""
 "Finally, we will change the color.\n"
 "What will {user} choose?"
@@ -556,7 +556,7 @@ msgstr ""
 "Наконец мы поменяем цвет.\n"
 "Что выберет {user}?"
 
-#: handlers/games/uno/user.py:62
+#: handlers/games/uno/user.py:61
 msgid ""
 "New color, new light.\n"
 "by {user}."
@@ -564,7 +564,7 @@ msgstr ""
 "Новый цвет, новый свет.\n"
 "by {user}."
 
-#: handlers/games/uno/user.py:76
+#: handlers/games/uno/user.py:75
 msgid ""
 "{user}, with whom will you exchange cards?\n"
 "Mention (@) this player in your next message."
@@ -572,7 +572,7 @@ msgstr ""
 "{user}, с кем ты хочешь обменяться картами?\n"
 "Отметь (@) этого пользователя в своём следующем сообщении."
 
-#: handlers/games/uno/user.py:104
+#: handlers/games/uno/user.py:103
 msgid ""
 "Of course, I don't mind, but now it's {user}'s turn.\n"
 "We'll have to wait =)."
@@ -580,15 +580,15 @@ msgstr ""
 "Я, конечно, не против, но сейчас очередь {user}.\n"
 "Придётся подождать =)."
 
-#: handlers/games/uno/user.py:127
+#: handlers/games/uno/user.py:126
 msgid "Only {user} can verify the legitimacy of using this card."
 msgstr "Только {user} может проверить легитимность использования этой карты."
 
-#: handlers/games/uno/user.py:153
+#: handlers/games/uno/user.py:152
 msgid "{user} is not playing with us."
 msgstr "{user} не играет с нами."
 
-#: handlers/games/uno/user.py:186
+#: handlers/games/uno/user.py:185
 msgid "{user} changes the color to {color}!"
 msgstr "{user} меняет цвет на {color}!"
 
@@ -641,7 +641,7 @@ msgstr "Да"
 msgid "No, keep playing"
 msgstr "Нет, продолжить игру"
 
-#: handlers/games/uno/misc/__init__.py:48
+#: handlers/games/uno/misc/__init__.py:45
 msgid "Current color: {color}"
 msgstr "Текущий цвет: {color}"
 
@@ -761,243 +761,243 @@ msgstr "7-0"
 msgid "Jump-in"
 msgstr "Подкидной"
 
-#: handlers/games/uno/misc/data.py:253
+#: handlers/games/uno/misc/data.py:256
 msgid "What a joke, this card is not from your hand, {user}."
 msgstr "Что за шутка, эта карта не из твоей колоды, {user}."
 
-#: handlers/games/uno/misc/data.py:261
+#: handlers/games/uno/misc/data.py:264
 msgid "{user} doesn't want to take cards."
 msgstr "{user}, не хочет брать карты."
 
-#: handlers/games/uno/misc/data.py:262
+#: handlers/games/uno/misc/data.py:265
 msgid "What a heat, +cards to the queue!"
 msgstr "Какой накал, +карты в очередь!"
 
-#: handlers/games/uno/misc/data.py:266
+#: handlers/games/uno/misc/data.py:269
 msgid "{user}, calm down and take the cards!"
 msgstr "{user}, смирись и возьми карту!"
 
-#: handlers/games/uno/misc/data.py:269
+#: handlers/games/uno/misc/data.py:272
 msgid "Black card by {user}!"
 msgstr "Чёрная карта by {user}!"
 
-#: handlers/games/uno/misc/data.py:274
+#: handlers/games/uno/misc/data.py:277
 msgid "So... {user}."
 msgstr "Так-с... {user}."
 
-#: handlers/games/uno/misc/data.py:275
+#: handlers/games/uno/misc/data.py:278
 msgid "Wow, you got {color}!"
 msgstr "Вау, у тебя был {color} цвет!"
 
-#: handlers/games/uno/misc/data.py:282
+#: handlers/games/uno/misc/data.py:285
 msgid "{user} changes color!"
 msgstr "{user} меняет цвет!"
 
-#: handlers/games/uno/misc/data.py:287
+#: handlers/games/uno/misc/data.py:290
 msgid "{user}, attempt not counted, get a card! =)."
 msgstr "{user}, попытка не засчитана, бери карту! =)."
 
-#: handlers/games/uno/misc/data.py:288
+#: handlers/games/uno/misc/data.py:291
 msgid "Just. Skip. Turn."
 msgstr "Просто. Пропусти. Ход."
 
-#: handlers/games/uno/misc/data.py:289
+#: handlers/games/uno/misc/data.py:292
 msgid "Someday {user} will be able to make the right turn."
 msgstr "В один прекрасный день {user} сделает правильный ход."
 
-#: handlers/games/uno/misc/data.py:298
+#: handlers/games/uno/misc/data.py:301
 msgid "{user}, you're in luck!"
 msgstr "{user}, а тебе везёт!"
 
-#: handlers/games/uno/misc/data.py:299
+#: handlers/games/uno/misc/data.py:302
 msgid "{user}, is that honest?"
 msgstr "{user}, а это по правилам?"
 
-#: handlers/games/uno/misc/data.py:303
+#: handlers/games/uno/misc/data.py:306
 msgid "No, this card is wrong. Take another one!"
 msgstr "Нет, это карта неправильная. Бери ещё одну!"
 
-#: handlers/games/uno/misc/data.py:309
+#: handlers/games/uno/misc/data.py:312
 msgid "{user} is unskippable!"
 msgstr "{user} невозможно пропустить!"
 
-#: handlers/games/uno/misc/data.py:310
+#: handlers/games/uno/misc/data.py:313
 msgid "{user}, you can't be skipped!"
 msgstr "{user}, тебя нельзя пропустить!"
 
-#: handlers/games/uno/misc/data.py:311
+#: handlers/games/uno/misc/data.py:314
 msgid "Skips are not for you =)."
 msgstr "Пропуски не для тебя =)."
 
-#: handlers/games/uno/misc/data.py:315
+#: handlers/games/uno/misc/data.py:318
 msgid "{user}, your turn is skipped =(."
 msgstr "{user}, твой ход пропущен =(."
 
-#: handlers/games/uno/misc/data.py:321
+#: handlers/games/uno/misc/data.py:324
 msgid "{user} keeps throwing cards..."
 msgstr "{user} продолжает накидывать карты..."
 
-#: handlers/games/uno/misc/data.py:322
+#: handlers/games/uno/misc/data.py:325
 msgid "{user}, will anyone stop you?"
 msgstr "{user}, кто-нибудь остановит тебя?"
 
-#: handlers/games/uno/misc/data.py:326
+#: handlers/games/uno/misc/data.py:329
 msgid "{user}, you have already made your turn."
 msgstr "{user}, твой ход уже был сделан."
 
-#: handlers/games/uno/misc/data.py:331
+#: handlers/games/uno/misc/data.py:334
 msgid "We've been interrupted!"
 msgstr "В игру врывается {user}!"
 
-#: handlers/games/uno/misc/data.py:332
+#: handlers/games/uno/misc/data.py:335
 msgid "I bet {user} will win this game!"
 msgstr "Держу пари, {user} выиграет эту игру!"
 
-#: handlers/games/uno/misc/data.py:333
+#: handlers/games/uno/misc/data.py:336
 msgid "Suddenly, {user}."
 msgstr "Внезапно, {user}."
 
-#: handlers/games/uno/misc/data.py:340
+#: handlers/games/uno/misc/data.py:343
 msgid "Hold your horses, {user}. Now is not your turn."
 msgstr "Попридержи коней, {user}. Сейчас не твой ход."
 
-#: handlers/games/uno/misc/data.py:341
+#: handlers/games/uno/misc/data.py:344
 msgid "Hey, {user}. Your card doesn't belong this turn."
 msgstr "Хей, {user}. Твоей карте не место на этом ходу."
 
-#: handlers/games/uno/misc/data.py:342
+#: handlers/games/uno/misc/data.py:345
 msgid "No. No no no. No. Again, NO!"
 msgstr "Нет. Нет, нет, нет. Нет. Ещё раз, НЕТ!"
 
-#: handlers/games/uno/misc/data.py:343
+#: handlers/games/uno/misc/data.py:346
 msgid "Someone explain to {user} how to play."
 msgstr "{user}, спроси ты у кого-нибудь, как играть."
 
-#: handlers/games/uno/misc/data.py:344
+#: handlers/games/uno/misc/data.py:347
 msgid "Can I just give {user} a card and we'll pretend like nothing happened?"
 msgstr ""
 "Давай я просто дам игроку {user} карту и мы сделаем вид, что ничего не "
 "было?"
 
-#: handlers/games/uno/misc/data.py:345
+#: handlers/games/uno/misc/data.py:348
 msgid "I'm betting on {user}'s defeat."
 msgstr "Делаю ставку на поражение игрока {user}."
 
-#: handlers/games/uno/misc/data.py:360
+#: handlers/games/uno/misc/data.py:363
 msgid "{user} has one card left!"
 msgstr "У игрока {user} осталась одна карта!"
 
-#: handlers/games/uno/misc/data.py:370
+#: handlers/games/uno/misc/data.py:373
 msgid "We have exchanged cards with next neighbors!"
 msgstr "Мы обменялись картами с следующими соседями!"
 
-#: handlers/games/uno/misc/data.py:387
+#: handlers/games/uno/misc/data.py:390
 msgid "How cruel!"
 msgstr "Как жестоко!"
 
-#: handlers/games/uno/misc/data.py:388
+#: handlers/games/uno/misc/data.py:391
 msgid "What a surprise."
 msgstr "Вот это сюрприз."
 
-#: handlers/games/uno/misc/data.py:394
+#: handlers/games/uno/misc/data.py:397
 msgid "{user} is clearly taking revenge... +"
 msgstr "{user} определённо осуществляет месть... +"
 
-#: handlers/games/uno/misc/data.py:395
+#: handlers/games/uno/misc/data.py:398
 msgid "{user} sends a fiery hello and"
 msgstr "{user} шлёт пламенный привет и"
 
-#: handlers/games/uno/misc/data.py:399
+#: handlers/games/uno/misc/data.py:402
 msgid "a card!"
 msgid_plural "{amount} cards!"
 msgstr[0] "карту!"
 msgstr[1] "{amount} карты!"
 msgstr[2] "{amount} карт!"
 
-#: handlers/games/uno/misc/data.py:413
+#: handlers/games/uno/misc/data.py:416
 msgid "Is this card legal?"
 msgstr "А эта дикая карта легальна?"
 
-#: handlers/games/uno/misc/data.py:414
+#: handlers/games/uno/misc/data.py:417
 msgid "A wild card... one that can be thrown illegally!"
 msgstr "Дикая карта... такая может быть нелегальна!"
 
-#: handlers/games/uno/misc/data.py:415
+#: handlers/games/uno/misc/data.py:418
 msgid "Will the next player dare to check such a turn..."
 msgstr "Осмелится ли следующий игрок проверить карту..."
 
-#: handlers/games/uno/misc/data.py:431
+#: handlers/games/uno/misc/data.py:434
 msgid "And vice versa!"
 msgstr "И всё наоборот!"
 
-#: handlers/games/uno/misc/data.py:432
+#: handlers/games/uno/misc/data.py:435
 msgid "A bit of a mess..."
 msgstr "Немного беспорядка..."
 
-#: handlers/games/uno/misc/data.py:436
+#: handlers/games/uno/misc/data.py:439
 msgid "{user} changes the queue."
 msgstr "{user} меняет очередь."
 
-#: handlers/games/uno/misc/data.py:446
+#: handlers/games/uno/misc/data.py:449
 msgid "{user} loses a turn?"
 msgstr "{user} лишается хода?"
 
-#: handlers/games/uno/misc/data.py:447
+#: handlers/games/uno/misc/data.py:450
 msgid "{user} risks missing a turn."
 msgstr "{user} рискует пропустить ход."
 
-#: handlers/games/uno/misc/data.py:448
+#: handlers/games/uno/misc/data.py:451
 msgid "{user} can forget about the next turn."
 msgstr "{user} может забыть о следующем ходе."
 
-#: handlers/games/uno/misc/data.py:487
+#: handlers/games/uno/misc/data.py:490
 msgid "I receive"
 msgstr "Я получаю"
 
-#: handlers/games/uno/misc/data.py:490
+#: handlers/games/uno/misc/data.py:493
 msgid "{user} receives"
 msgstr "{user} получает"
 
-#: handlers/games/uno/misc/data.py:494
+#: handlers/games/uno/misc/data.py:497
 msgid "a card."
 msgid_plural "{amount} cards."
 msgstr[0] "карту."
 msgstr[1] "{amount} карты."
 msgstr[2] "{amount} карт."
 
-#: handlers/games/uno/misc/data.py:500
+#: handlers/games/uno/misc/data.py:503
 msgid "I exchange"
 msgstr "Я меняюсь"
 
-#: handlers/games/uno/misc/data.py:502
+#: handlers/games/uno/misc/data.py:505
 msgid "{user} exchanges"
 msgstr "{user} меняет цвет!"
 
-#: handlers/games/uno/misc/data.py:511
+#: handlers/games/uno/misc/data.py:514
 msgid "cards with player {seven_user}."
 msgstr "{user} дарит игроку {uno_user} 2 карты!"
 
-#: handlers/games/uno/misc/data.py:529
+#: handlers/games/uno/misc/data.py:532
 msgid "Yes, it was a bluff hehe."
 msgstr "Да, это был блеф, хехе."
 
-#: handlers/games/uno/misc/data.py:531
+#: handlers/games/uno/misc/data.py:534
 msgid "Bluff! I see suitable cards, not only wilds."
 msgstr "Блеф! Я вижу подходящие карты, не только дикую."
 
-#: handlers/games/uno/misc/data.py:537
+#: handlers/games/uno/misc/data.py:540
 msgid "Ah, no. There were no suitable cards =("
 msgstr "Ох, нет. Тут не было подходящих карт =("
 
-#: handlers/games/uno/misc/data.py:541
+#: handlers/games/uno/misc/data.py:544
 msgid "Nope. It is not a bluff."
 msgstr "Неа. Это не блеф."
 
-#: handlers/games/uno/misc/data.py:542
+#: handlers/games/uno/misc/data.py:545
 msgid "Shhh, this card was legal."
 msgstr "Шшш, эта карта была легальна."
 
-#: handlers/games/uno/misc/data.py:543
+#: handlers/games/uno/misc/data.py:546
 msgid "This card is suitable."
 msgstr "Эта карта подходит."
 
@@ -1042,85 +1042,85 @@ msgstr "Показать карты"
 msgid "The first card is discarded."
 msgstr "Первая карта сброшена."
 
-#: handlers/games/uno/misc/process.py:38
-msgid "{user} gifts player {uno_user} 2 cards."
-msgstr "{user} дарит игроку {uno_user} 2 карты!"
-
-#: handlers/games/uno/misc/process.py:39
-msgid "{user} gives player {uno_user} 2 cards."
-msgstr "{user} даёт игроку {uno_user} 2 карты!"
-
-#: handlers/games/uno/misc/process.py:40
-msgid "{user} presents player {uno_user} with 2 cards."
-msgstr "{user} преподносит игроку {uno_user} 2 карты!"
-
-#: handlers/games/uno/misc/process.py:51
+#: handlers/games/uno/misc/process.py:31
 msgid "{user} is kicked from the game for kick out of this chat."
 msgstr "{user} исключается из игры за исключение из чата."
 
-#: handlers/games/uno/misc/process.py:62
+#: handlers/games/uno/misc/process.py:42
 msgid "{user} is kicked from the game."
 msgstr "{user} исключается из игры."
 
-#: handlers/games/uno/misc/process.py:74
+#: handlers/games/uno/misc/process.py:54
 msgid "Well, I have run out of my hand. I have to remain only an observer =(."
 msgstr "Так-с, у меня закончились карты. Вынужден остаться лишь наблюдателем =(."
 
-#: handlers/games/uno/misc/process.py:76
+#: handlers/games/uno/misc/process.py:56
 msgid "{user} puts his last card and leaves the game as the winner."
 msgstr "{user} кладёт свою последнюю карту и выходит из игры победителем."
 
-#: handlers/games/uno/misc/process.py:127
+#: handlers/games/uno/misc/process.py:74
+msgid "{user} gifts player {uno_user} 2 cards."
+msgstr "{user} дарит игроку {uno_user} 2 карты!"
+
+#: handlers/games/uno/misc/process.py:75
+msgid "{user} gives player {uno_user} 2 cards."
+msgstr "{user} даёт игроку {uno_user} 2 карты!"
+
+#: handlers/games/uno/misc/process.py:76
+msgid "{user} presents player {uno_user} with 2 cards."
+msgstr "{user} преподносит игроку {uno_user} 2 карты!"
+
+#: handlers/games/uno/misc/process.py:126
 msgid "My turn."
 msgstr "Мой ход."
 
-#: handlers/games/uno/misc/process.py:131
+#: handlers/games/uno/misc/process.py:130
 msgid "{user}, your turn."
 msgstr "{user}, твоя очередь."
 
-#: handlers/games/uno/misc/process.py:132
+#: handlers/games/uno/misc/process.py:131
 msgid "{user}, your move."
 msgstr "{user}, твой ход."
 
-#: handlers/games/uno/misc/process.py:133
+#: handlers/games/uno/misc/process.py:132
 msgid "Now {user} is moving."
 msgstr "Сейчас ходит {user}."
 
-#: handlers/games/uno/misc/process.py:134
+#: handlers/games/uno/misc/process.py:133
 msgid "Player's turn {user}."
 msgstr "Очередь игрока {user}."
 
-#: handlers/games/uno/misc/process.py:135
+#: handlers/games/uno/misc/process.py:134
 msgid "I pass the turn to the player {user}."
 msgstr "Передаю очередь игроку {user}."
 
-#: handlers/games/uno/misc/process.py:169
+#: handlers/games/uno/misc/process.py:182
 msgid "WINNER"
 msgstr "ПОБЕДИТЕЛЬ"
 
-#: handlers/games/uno/misc/process.py:171
+#: handlers/games/uno/misc/process.py:184
 msgid "card played"
 msgid_plural "{amount} cards played"
 msgstr[0] "сыграна карта"
 msgstr[1] "сыграны {amount} карты"
 msgstr[2] "сыграно {amount} карт"
 
-#: handlers/games/uno/misc/process.py:177
+#: handlers/games/uno/misc/process.py:190
 msgid "point earned"
 msgid_plural "{points} points earned"
 msgstr[0] "заработан балл"
 msgstr[1] "заработано {points} балла"
 msgstr[2] "заработано {points} баллов"
 
-#: handlers/games/uno/misc/process.py:188
+#: handlers/games/uno/misc/process.py:201
 msgid "Game over."
 msgstr "Игра окончена."
 
-#: handlers/games/uno/misc/process.py:190
+#: handlers/games/uno/misc/process.py:203
 msgid "Round over."
 msgstr "Раунд окончен."
 
-#: handlers/games/uno/misc/process.py:191
+#: handlers/games/uno/misc/process.py:204
 msgid "New round starts in {delay}..."
 msgstr "Новый раунд начнётся через {delay}..."
 
@@ -1276,11 +1276,11 @@ msgstr "Изменить политику данных"
 
 #: handlers/settings/misc/keyboards.py:113
 msgid "{action} {data} recording"
-msgstr "{action} записывание {data}"
+msgstr "{action} запись {data}"
 
 #: handlers/settings/record/process.py:13
 msgid "{data} recording is {status}."
-msgstr "Записывание {data} {status}."
+msgstr "Запись {data} {status}."
 
 #: handlers/settings/record/process.py:41
 msgid "Records was successfully deleted."
