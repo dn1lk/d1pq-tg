@@ -31,4 +31,4 @@ class RecordData(Enum):
             case self.MESSAGES:
                 return int(item != ['disabled'])
             case self.MEMBERS:
-                return int(item)
+                return int(item is not None)
