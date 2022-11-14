@@ -8,10 +8,14 @@ class Timer:
     tasks: dict[str, asyncio.Task] = {}
 
     def __setitem__(self, name: str, task: asyncio.Task):
+        def del_task(t: asyncio.Task):
+            if t is self.tasks[name]:
+                del self.tasks[name]
+
         self.tasks[name] = task
 
         task.set_name(name)
-        task.add_done_callback(lambda _: self.tasks.pop(name, None))
+        task.add_done_callback(del_task)
 
     def __getitem__(self, name: str):
         return self.tasks.get(name)
