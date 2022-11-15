@@ -1,6 +1,6 @@
 from functools import lru_cache
 from os import listdir
-from random import choice
+from random import choice, choices, shuffle
 
 import markovify
 
@@ -66,21 +66,15 @@ def gen(
         else:
             model = markovify.combine(models=(model_messages, model), weights=(100, 0.01))
 
-    try:
-        beginning = choice(text.split())
+    if text:
+        for t in text.lower().split():
+            init_states = [key for key, value in model.chain.model.items() if t in (v.lower() for v in value)]
+            shuffle(init_states)
 
-        answer: str | None = model.make_sentence_with_start(
-            beginning=beginning,
-            strict=False,
-            tries=state_size * tries,
-            **kwargs,
-        )
+            for init_state in init_states:
+                answer = model.make_sentence(init_state=init_state, tries=state_size * tries, **kwargs)
 
-        if not answer:
-            raise markovify.text.ParamError("No answer with 'make_sentence_with_start'")
+                if answer:
+                    return answer
 
-        answer = answer.replace(f'{beginning} ', '', 1)
-    except (ValueError, markovify.text.ParamError):
-        answer = model.make_sentence(tries=state_size * tries, **kwargs)
-
-    return answer or get_none(locale).make_sentence()
+    return model.make_sentence(tries=state_size * tries, **kwargs) or get_none(locale).make_sentence()
