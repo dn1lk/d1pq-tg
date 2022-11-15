@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from random import choice, random
+from random import choice, random, choices
 
 from aiogram import Router, Bot, F, types, filters, flags
 from aiogram.utils.chat_action import ChatActionSender
@@ -68,7 +68,7 @@ async def get_gen_args(
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=1):
             return {'sticker': await sticker.gen(message, bot, db)}
 
-    return await choice([gen_markov, gen_sticker, gen_balaboba])()
+    return await choices((gen_markov, gen_sticker, gen_balaboba), weights=(0.6, 0.3, 0.1), k=1)[0]()
 
 
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
