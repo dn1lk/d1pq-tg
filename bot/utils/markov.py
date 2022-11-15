@@ -1,6 +1,6 @@
 from functools import lru_cache
 from os import listdir
-from random import choice, choices, shuffle
+from random import choice, shuffle
 
 import markovify
 
@@ -51,7 +51,7 @@ def get_none(locale: str) -> markovify.Text:
 def gen(
         locale: str,
         messages: list[str] | None = None,
-        text: str = None,
+        text: str = '',
         state_size: int = 2,
         tries: int = 500,
         **kwargs,
@@ -66,15 +66,14 @@ def gen(
         else:
             model = markovify.combine(models=(model_messages, model), weights=(100, 0.01))
 
-    if text:
-        for t in text.lower().split():
-            init_states = [key for key, value in model.chain.model.items() if t in (v.lower() for v in value)]
-            shuffle(init_states)
+    for t in text.lower().split():
+        init_states = [key for key, value in model.chain.model.items() if t in (v.lower() for v in value)]
+        shuffle(init_states)
 
-            for init_state in init_states:
-                answer = model.make_sentence(init_state=init_state, tries=state_size * tries, **kwargs)
+        for init_state in init_states:
+            answer = model.make_sentence(init_state=init_state, tries=state_size * tries, **kwargs)
 
-                if answer:
-                    return answer
+            if answer:
+                return answer
 
     return model.make_sentence(tries=state_size * tries, **kwargs) or get_none(locale).make_sentence()
