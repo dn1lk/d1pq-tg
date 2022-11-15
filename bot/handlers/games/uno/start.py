@@ -30,7 +30,7 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
 
 @router.message()
 @flags.timer('game')
-async def uno_handler(message: types.Message, bot: Bot, state: FSMContext):
+async def start_handler(message: types.Message, bot: Bot, state: FSMContext):
     answer = _(
         "<b>Let's play UNO?</b>\n\n"
         "One minute to make a decision!\n"

@@ -10,7 +10,7 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 
 @router.message()
-async def start_handler(message: types.Message):
+async def rps_handler(message: types.Message):
     await message.answer(
         _("Eh, classic. {user}, your turn.").format(user=get_username(message.from_user)),
         reply_markup=k.show_vars()

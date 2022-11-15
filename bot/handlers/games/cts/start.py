@@ -15,7 +15,7 @@ router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'],
 
 @router.message()
 @flags.timer('game')
-async def cts_handler(message: types.Message, state: FSMContext, i18n: I18n):
+async def start_handler(message: types.Message, state: FSMContext, i18n: I18n):
     message = await message.answer(
         _(
             "Oh, the game of cities. Well, let's try!\n\n"
