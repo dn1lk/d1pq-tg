@@ -30,15 +30,6 @@ async def settings_handler(message: types.Message, bot: Bot):
     await message.answer(**await get_setup_answer(message, bot))
 
 
-@router.message(CustomCommandFilter('help', 'помощь'))
-async def help_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
-    """get a list of main commands, получить список основных команд"""
-
-    answer = _("List of my main commands - I only accept them together with the required request, in one message:\n\n")
-    commands = get_commands(commands[i18n.current_locale][2:])
-    await message.answer(answer + commands)
-
-
 async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
     return {
         'command': command.command,
@@ -55,6 +46,7 @@ async def choose_handler(message: types.Message, command: filters.CommandObject)
 
 
 @router.message(CustomCommandFilter('choose', 'выбери'))
+@router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('choose', 'выбери'))))
 @flags.throttling('gen')
 @flags.chat_action("typing")
 async def choose_no_args_handler(
@@ -112,6 +104,7 @@ async def who_chat_handler(
 
 
 @router.message(CustomCommandFilter('who', 'кто'))
+@router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('who', 'кто'))))
 @flags.throttling('gen')
 @flags.chat_action("typing")
 async def who_chat_no_args_handler(
@@ -148,6 +141,7 @@ async def game_handler(message: types.Message):
 
 
 @router.message(CustomCommandFilter('play', 'поиграем'))
+@router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('play', 'поиграем'))))
 async def game_no_args_handler(message: types.Message, command: filters.CommandObject):
     def get_bot_args(r: Router):
         for f in r.message._handler.filters:
@@ -194,6 +188,7 @@ async def question_handler(
 
 
 @router.message(CustomCommandFilter('question', 'вопросик'))
+@router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('question', 'вопросик'))))
 @flags.throttling('gen')
 @flags.chat_action("typing")
 async def question_no_args_handler(
@@ -251,6 +246,7 @@ async def future_handler(
 
 
 @router.message(CustomCommandFilter('future', 'погадай'))
+@router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('future', 'погадай'))))
 @flags.throttling('gen')
 @flags.chat_action("typing")
 async def future_no_args_handler(
@@ -269,3 +265,13 @@ async def future_no_args_handler(
         )
     )
 '''
+
+
+@router.message(CustomCommandFilter('help', 'помощь'))
+async def help_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
+    """get a list of main commands, получить список основных команд"""
+
+    answer = _("List of my main commands - I only accept them together with the required request, in one message:\n\n")
+    commands = get_commands(commands[i18n.current_locale][2:])
+    await message.answer(answer + commands)
+
