@@ -20,7 +20,7 @@ async def start_handler(
         i18n: I18n,
         custom_commands: dict,
         commands: dict[str, tuple[types.BotCommand]],
-        messages: list | None,
+        messages: list[str] = None,
 ):
     await state.set_state(Settings.COMMAND)
 

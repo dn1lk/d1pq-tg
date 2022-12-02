@@ -31,7 +31,8 @@ class DataMiddleware(BaseMiddleware):
                     bot: Bot = data['bot']
                     value = round(value / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
 
-                data[column] = value
+                if value:
+                    data[column] = value
 
             if isinstance(flag_data, str):
                 await get_data(flag_data)
@@ -46,15 +47,7 @@ class DataMiddleware(BaseMiddleware):
             if new_messages != messages:
                 await db.set_data(messages=new_messages)
 
-        result = await handler(event, data)
-
-        if data['event_chat'].type != 'private':
-            members: list | None = data.get('members', await db.get_data('members'))
-
-            if members and data['event_from_user'].id not in members:
-                await db.update_data(members=[*members, data['event_from_user'].id])
-
-        return result
+        return await handler(event, data)
 
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -123,6 +116,12 @@ class UnhandledMiddleware(BaseMiddleware):
                 if event.sticker.set_name not in stickers:
                     stickers.append(event.sticker.set_name)
                     await db.set_data(stickers=stickers[-3:])
+
+            if data['event_chat'].type != 'private':
+                members: list | None = data.get('members', await db.get_data('members'))
+
+                if members and data['event_from_user'].id not in members:
+                    await db.update_data(members=[*members, data['event_from_user'].id])
 
         return result
 

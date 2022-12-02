@@ -77,7 +77,7 @@ async def who_chat_handler(
         message: types.Message,
         bot: Bot,
         command: filters.CommandObject,
-        members: list[int] | None,
+        members: list[int] = None,
 ):
     """find the desired participant, найти участника чата по описанию"""
 

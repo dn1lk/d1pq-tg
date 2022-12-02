@@ -69,7 +69,7 @@ async def join_action_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
         db: DataBaseContext,
-        members: list | None,
+        members: list[int] = None,
 ):
     if members:
         await db.set_data(members=members + [event.new_chat_member.user.id])
@@ -83,10 +83,10 @@ async def join_action_handler(
 async def join_message_handler(
         message: types.Message,
         db: DataBaseContext,
-        members: list | None,
+        members: list[int] = None,
 ):
     if members:
-        await db.set_data(members=members + message.new_chat_members)
+        await db.set_data(members=members + [member.id for member in message.new_chat_members])
 
     answer = choice([join_answer(user) for user in message.new_chat_members])
     await message.answer(answer.format(user=', '.join([get_username(user) for user in message.new_chat_members])))
@@ -123,7 +123,7 @@ async def leave_action_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
         db: DataBaseContext,
-        members: list | None,
+        members: list[int] = None,
 ):
     await remove_member(db, members, event.new_chat_member.user.id)
 
@@ -136,7 +136,7 @@ async def leave_action_handler(
 async def leave_message_handler(
         message: types.Message,
         db: DataBaseContext,
-        members: list | None,
+        members: list[int] = None,
 ):
     await remove_member(db, members, message.left_chat_member.id)
 
