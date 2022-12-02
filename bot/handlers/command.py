@@ -77,11 +77,11 @@ async def who_chat_handler(
         message: types.Message,
         bot: Bot,
         command: filters.CommandObject,
-        members: list[int],
+        members: list[int] | None,
 ):
     """find the desired participant, найти участника чата по описанию"""
 
-    if len(members) > 1:
+    if members and len(members) > 1:
         member = await bot.get_chat_member(message.chat.id, choice(members))
         answer = choice(
             (
