@@ -72,7 +72,7 @@ async def join_action_handler(
         members: list | None,
 ):
     if members:
-        await db.set_data(members=[*members, event.new_chat_member.user.id])
+        await db.set_data(members=members + [event.new_chat_member.user.id])
 
     answer = join_answer(event.new_chat_member.user)
     await bot.send_message(event.chat.id, answer.format(user=get_username(event.new_chat_member.user)))
@@ -86,7 +86,7 @@ async def join_message_handler(
         members: list | None,
 ):
     if members:
-        await db.set_data(members=members.extend(member for member in message.new_chat_members))
+        await db.set_data(members=members + message.new_chat_members)
 
     answer = choice([join_answer(user) for user in message.new_chat_members])
     await message.answer(answer.format(user=', '.join([get_username(user) for user in message.new_chat_members])))
