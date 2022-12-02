@@ -28,7 +28,7 @@ async def leave_handler(
         event: types.ChatMemberUpdated,
         db: DataBaseContext,
         state: FSMContext,
-        members: list | None = None,
+        members: list | None,
 ):
     await kick_user(db, state, event.new_chat_member.user, members)
 
@@ -39,6 +39,6 @@ async def leave_message_handler(
         message: types.Message,
         state: FSMContext,
         db: DataBaseContext,
-        members: list | None = None,
+        members: list | None,
 ):
     await kick_user(db, state, message.left_chat_member, members)
