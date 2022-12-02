@@ -68,7 +68,7 @@ async def get_gen_args(
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, interval=1):
             return {'sticker': await sticker.gen(message, bot, db)}
 
-    return await choices((gen_markov, gen_sticker, gen_balaboba), cum_weights=(3, 5, 6), k=1)[0]()
+    return await choices((gen_markov, gen_sticker, gen_balaboba), weights=(4, 2, 1), k=1)[0]()
 
 
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))

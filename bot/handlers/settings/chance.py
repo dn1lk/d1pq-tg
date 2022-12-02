@@ -16,12 +16,12 @@ async def update_handler(
         bot: Bot,
         db: DataBaseContext,
 ):
-    if 10 < callback_data.value < 90:
+    if 5 < callback_data.value < 90:
         answer = _("Text generation chance successfully updated: {chance}%.")
     else:
         answer = _("Text generation chance has reached the limit: {chance}%, ")
 
-        if callback_data.value <= 10:
+        if callback_data.value <= 5:
             answer += _("below is impossible.")
         else:
             answer += _("higher is impossible.")

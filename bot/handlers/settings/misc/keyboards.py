@@ -80,7 +80,7 @@ def chance(markov_chance: int | float):
     for i in 6, 10:
         math = round(markov_chance / i, 2)
 
-        if markov_chance > 10:
+        if markov_chance > 5:
             builder.button(
                 text=f'-{math}',
                 callback_data=SettingsKeyboard(action=SettingsAction.CHANCE, value=markov_chance - math)
