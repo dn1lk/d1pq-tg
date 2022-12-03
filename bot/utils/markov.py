@@ -66,14 +66,15 @@ def gen(
         else:
             model = markovify.combine(models=(model_messages, model), weights=(100, 0.01))
 
-    for t in text.lower().split():
-        init_states = [key for key, value in model.chain.model.items() if t in (v.lower() for v in value)]
-        shuffle(init_states)
+    if text:
+        for t in text.lower().split():
+            init_states = [key for key, value in model.chain.model.items() if t in (v.lower() for v in value)]
+            shuffle(init_states)
 
-        for init_state in init_states:
-            answer = model.make_sentence(init_state=init_state, tries=state_size * tries, **kwargs)
+            for init_state in init_states:
+                answer = model.make_sentence(init_state=init_state, tries=state_size * tries, **kwargs)
 
-            if answer:
-                return answer
+                if answer:
+                    return answer
 
     return model.make_sentence(tries=state_size * tries, **kwargs) or get_none(locale).make_sentence()
