@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-13 16:50+0300\n"
+"POT-Creation-Date: 2022-12-05 22:11+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -30,119 +30,121 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: handlers/command.py:16
-msgid ""
-"I am a text generator bot and in some cases a great conversationalist.\n"
-"\n"
-"If you write me a message or a command, something might happen.\n"
-"\n"
-msgstr ""
-
-#: handlers/command.py:37
-msgid ""
-"List of my main commands - I only accept them together with the required "
-"request, in one message:\n"
-"\n"
-msgstr ""
-
-#: handlers/command.py:54
+#: handlers/command.py:34
 msgid "I choose {choice}."
 msgstr ""
 
-#: handlers/command.py:66
+#: handlers/command.py:47
 msgid "What to choose?"
 msgstr ""
 
-#: handlers/command.py:72
+#: handlers/command.py:53
 msgid " or "
 msgstr ""
 
-#: handlers/command.py:79
+#: handlers/command.py:60
 msgid "This command only works in <b>chats</b>, alas =("
 msgstr ""
 
-#: handlers/command.py:96
+#: handlers/command.py:77
 msgid "Hmmm, I think"
 msgstr ""
 
-#: handlers/command.py:97
+#: handlers/command.py:78
 msgid "I guess"
 msgstr ""
 
-#: handlers/command.py:98
+#: handlers/command.py:79
 msgid "Oh, I admit"
 msgstr ""
 
-#: handlers/command.py:99
+#: handlers/command.py:80
 msgid "Maybe it's"
 msgstr ""
 
-#: handlers/command.py:100
+#: handlers/command.py:81
 msgid "Wait! It's"
 msgstr ""
 
-#: handlers/command.py:104
+#: handlers/command.py:85
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr ""
 
-#: handlers/command.py:106
+#: handlers/command.py:87
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
 "/settings - give permission."
 msgstr ""
 
-#: handlers/command.py:123
+#: handlers/command.py:105
 msgid "Who???"
 msgstr ""
 
-#: handlers/command.py:141
+#: handlers/command.py:123
 msgid "Ha! Invalid request, try again."
 msgstr ""
 
-#: handlers/command.py:142
+#: handlers/command.py:124
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr ""
 
-#: handlers/command.py:143
+#: handlers/command.py:125
 msgid "The game is not recognized. I'll give it another try!"
 msgstr ""
 
-#: handlers/command.py:144
+#: handlers/command.py:126
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/command.py:161
+#: handlers/command.py:144
 msgid "<b>And what do you want to play?</b>"
 msgstr ""
 
-#: handlers/command.py:164
+#: handlers/command.py:147
 msgid ""
 "\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/command.py:186
+#: handlers/command.py:169
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/command.py:191
+#: handlers/command.py:174
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/command.py:205
+#: handlers/command.py:189
 msgid "So what's the question?"
 msgstr ""
 
-#: handlers/command.py:228
+#: handlers/command.py:212
 msgid "history"
 msgstr ""
 
-#: handlers/command.py:233
+#: handlers/command.py:217
 msgid "In short, {query}"
+msgstr ""
+
+#: handlers/command.py:261
+msgid ""
+"Hello, {user}!\n"
+"I'm a text-generating bot based on current chat, and in some cases a "
+"great conversationalist.\n"
+"\n"
+"If you write me a message or a command, something might happen.\n"
+"\n"
+msgstr ""
+
+#: handlers/command.py:275
+msgid ""
+"List of my main commands - I only accept them together with the required "
+"request, in one message:\n"
+"\n"
 msgstr ""
 
 #: handlers/other.py:106
@@ -290,6 +292,19 @@ msgstr ""
 
 #: handlers/games/cts/start.py:35
 msgid "You start! Your word?"
+msgstr ""
+
+#: handlers/games/mfa/start.py:17
+msgid ""
+"<b>Let's play MAFIA?</b>\n"
+"\n"
+"One minute to make a decision!\n"
+"Mode: {mode}.\n"
+"\n"
+"{additives}\n"
+"\n"
+"<b>Already in the game:</b>\n"
+"{user}"
 msgstr ""
 
 #: handlers/games/rnd/process.py:20
@@ -1317,4 +1332,13 @@ msgstr ""
 #: handlers/transitions/private.py:17
 msgid "I returned, {user}!"
 msgstr ""
+
+#~ msgid ""
+#~ "I am a text generator bot and "
+#~ "in some cases a great conversationalist."
+#~ "\n"
+#~ "\n"
+#~ "If you write me a message or a command, something might happen.\n"
+#~ "\n"
+#~ msgstr ""
 
