@@ -11,23 +11,21 @@ from .settings.commands import CustomCommandFilter
 router = Router(name="commands")
 
 
-@router.message(CustomCommandFilter('start', 'начать'))
-async def start_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
-    answer = _(
-        "I am a text generator bot and in some cases a great conversationalist.\n\n"
-        "If you write me a message or a command, something might happen.\n\n"
-    )
-
-    commands = get_commands(commands[i18n.current_locale][:2])
-    await message.answer(answer + commands)
-
-
 @router.message(CustomCommandFilter('settings', 'настройки'))
 async def settings_handler(message: types.Message, bot: Bot):
     """set up the bot, настроить бота"""
 
     from .settings import get_setup_answer
     await message.answer(**await get_setup_answer(message, bot))
+
+
+@router.message(CustomCommandFilter('help', 'помощь'), magic=~F.args)
+async def help_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
+    """get a list of main commands, получить список основных команд"""
+
+    answer = _("List of my main commands - I only accept them together with the required request, in one message:\n\n")
+    commands = get_commands(commands[i18n.current_locale][2:])
+    await message.answer(answer + commands)
 
 
 async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
@@ -267,11 +265,13 @@ async def future_no_args_handler(
 '''
 
 
-@router.message(CustomCommandFilter('help', 'помощь'))
-async def help_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
-    """get a list of main commands, получить список основных команд"""
+@router.message(CustomCommandFilter('start', 'начать'))
+async def start_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
+    answer = _(
+        "Hello, {user}!\n"
+        "I'm a text-generating bot based on current chat, and in some cases a great conversationalist.\n\n"
+        "If you write me a message or a command, something might happen.\n\n"
+    ).format(user=get_username(message.from_user))
 
-    answer = _("List of my main commands - I only accept them together with the required request, in one message:\n\n")
-    commands = get_commands(commands[i18n.current_locale][2:])
+    commands = get_commands(commands[i18n.current_locale][:2])
     await message.answer(answer + commands)
-
