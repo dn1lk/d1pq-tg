@@ -9,7 +9,7 @@ class Bot(BaseSettings):
     owner: int
 
     class Config:
-        env_prefix = 'BOT_'
+        env_prefix = 'BOT_M'
 
 
 class Heroku(BaseSettings):
