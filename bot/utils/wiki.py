@@ -11,7 +11,7 @@ class Wikipedia:
     session = ClientSession()
 
     async def gen(self, locale: str, title: str):
-        async with self.session.get(f'https://{locale}.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&redirects=1&titles={title}') as resp:
+        async with self.session.get(f'https://{locale}.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exsentences=5&redirects=1&titles={title}') as resp:
             answer = await resp.json()
 
         try:
