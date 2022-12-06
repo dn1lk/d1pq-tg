@@ -1,4 +1,4 @@
-from aiohttp import ClientSession, ClientResponse
+from aiohttp import ClientSession
 
 
 class Yalm:
@@ -11,13 +11,13 @@ class Yalm:
     def _get_session():
         return ClientSession('https://yandex.ru')
 
-    async def _fetch(self, method: str, endpoint: str, json: dict = None) -> dict:
+    async def _fetch(self, method: str, endpoint: str, content_type: str, json: dict = None) -> dict:
         if self.session.closed:
             self.session = self._get_session()
 
         async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
             if resp.ok:
-                return await resp.json(content_type='application/json')
+                return await resp.json(content_type=content_type)
 
     @classmethod
     async def setup(cls) -> "Yalm":
@@ -28,7 +28,7 @@ class Yalm:
         }
 
         for locale, intro in locales.items():
-            resp = await yalm._fetch('GET', intro)
+            resp = await yalm._fetch('GET', intro, 'application/json')
             yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
 
         return yalm
@@ -40,6 +40,7 @@ class Yalm:
         resp = await self._fetch(
             'POST',
             'text3',
+            'text/html',
             json={
                 "query": query,
                 "intro": intro if locale == "ru" else self.intros['en'][self.intros['ru'].index(intro)],
