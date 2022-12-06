@@ -17,7 +17,7 @@ class Yalm:
 
         async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
             if resp.ok:
-                return await resp.json(content_type='text/html')
+                return await resp.json(content_type='application/json')
 
     @classmethod
     async def setup(cls) -> "Yalm":
