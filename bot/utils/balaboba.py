@@ -40,7 +40,7 @@ class Yalm:
                 return answer["query"] + answer["text"]
             else:
                 return answer["text"]
-        except (ClientResponseError, KeyError):
+        except KeyError:
             from .markov import get_none
             return get_none(locale).make_sentence()
 
