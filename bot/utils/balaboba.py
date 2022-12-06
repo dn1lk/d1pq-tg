@@ -2,7 +2,7 @@ from aiohttp import ClientSession
 
 
 class Yalm:
-    session = ClientSession(base_url='https://yandex.ru', raise_for_status=True)
+    session = ClientSession(base_url='https://yandex.ru', raise_for_status=True, trust_env=True)
     intros: dict[str, tuple] = {}
 
     async def _fetch(self, method: str, endpoint: str, json: dict = None) -> dict:
@@ -16,12 +16,6 @@ class Yalm:
             'ru': 'intros',
             'en': 'intros_eng',
         }
-
-        print(await yalm.gen('ru', 'Привет'))
-
-        for locale, intro in locales.items():
-            resp = await yalm._fetch('GET', intro)
-            yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
 
         for locale, intro in locales.items():
             resp = await yalm._fetch('GET', intro)
