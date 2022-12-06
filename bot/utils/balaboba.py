@@ -17,6 +17,8 @@ class Yalm:
             'en': 'intros_eng',
         }
 
+        print(await yalm.gen('ru', 'Привет'))
+
         for locale, intro in locales.items():
             resp = await yalm._fetch('GET', intro)
             yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
