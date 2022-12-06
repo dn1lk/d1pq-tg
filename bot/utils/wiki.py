@@ -20,6 +20,7 @@ class Wikipedia:
                 messages=list(answer['query']['pages'].values())[0]['extract'],
                 text=title,
                 test_output=False,
+                max_words=50,
             )
         except KeyError:
             return _("I don't know answer =(")

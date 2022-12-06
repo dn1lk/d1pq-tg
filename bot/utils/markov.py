@@ -59,7 +59,7 @@ def gen(
     model = get_base(locale, choice(books), state_size=state_size)
 
     if messages:
-        model_messages = markovify.Text(messages, state_size=state_size)
+        model_messages = markovify.Text(messages, state_size=state_size, well_formed=False)
 
         if len(messages) > 50 * state_size:
             model = model_messages
