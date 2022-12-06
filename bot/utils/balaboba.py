@@ -21,6 +21,10 @@ class Yalm:
             resp = await yalm._fetch('GET', intro)
             yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
 
+        for locale, intro in locales.items():
+            resp = await yalm._fetch('GET', intro)
+            yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
+
         return yalm
 
     async def close(self):
