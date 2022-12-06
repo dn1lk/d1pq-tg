@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-12-06 21:05+0300\n"
+"POT-Creation-Date: 2022-12-06 22:01+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -137,23 +137,23 @@ msgstr ""
 "Хм, {args}?\n"
 "Ох, мне нужно подумать..."
 
-#: handlers/command.py:182
+#: handlers/command.py:183
 msgid "Let's do it sooner!"
 msgstr "Давай покороче!"
 
-#: handlers/command.py:197
+#: handlers/command.py:198
 msgid "So what's the question?"
 msgstr "Так какой вопросик?"
 
-#: handlers/command.py:214
+#: handlers/command.py:215
 msgid "history"
 msgstr "история"
 
-#: handlers/command.py:216
+#: handlers/command.py:217
 msgid "In short, {query}"
 msgstr "Короче, {query}"
 
-#: handlers/command.py:260
+#: handlers/command.py:261
 msgid ""
 "Hello, {user}!\n"
 "I'm a text-generating bot based on current chat, and in some cases a "
@@ -1431,11 +1431,11 @@ msgstr "{user}, я вышел из твоего гнева?"
 msgid "I returned, {user}!"
 msgstr "Я вернулся, {user}!"
 
-#: utils/wiki.py:14
-msgid "In short, — "
-msgstr "Короче, — "
+#: utils/wiki.py:18
+msgid "In short, "
+msgstr "Короче, "
 
-#: utils/wiki.py:16
+#: utils/wiki.py:25
 msgid "I don't know answer =("
 msgstr "Я не знаю ответ =("
 
