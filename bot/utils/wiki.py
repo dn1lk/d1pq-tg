@@ -21,6 +21,7 @@ class Wikipedia:
                 text=title,
                 test_output=False,
                 max_words=50,
+                min_words=5,
             )
         except KeyError:
             return _("I don't know answer =(")
