@@ -1,4 +1,4 @@
-from aiohttp import ClientSession, ClientResponse
+from aiohttp import ClientSession
 
 
 class Yalm:
@@ -10,7 +10,7 @@ class Yalm:
     async def _get_resp(self, method: str, endpoint: str, json: dict = None):
         async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
             if resp.ok:
-                return await resp.json(content_type='application/json')
+                return await resp.json(content_type='text/html')
 
     @classmethod
     async def setup(cls) -> "Yalm":
@@ -30,11 +30,14 @@ class Yalm:
         await self.session.close()
 
     async def gen(self, locale: str, query: str, intro: int | None = 0) -> str:
-        resp = await self._get_resp('POST', 'text3', json={
-                    "query": query,
-                    "intro": intro if locale == "ru" else self.intros['en'][self.intros['ru'].index(intro)],
-                    "filter": 1
-                }
+        resp = await self._get_resp(
+            'POST',
+            'text3',
+            json={
+                "query": query,
+                "intro": intro if locale == "ru" else self.intros['en'][self.intros['ru'].index(intro)],
+                "filter": 1
+            }
         )
 
         if not resp:
