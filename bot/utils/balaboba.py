@@ -1,4 +1,4 @@
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientResponse
 
 
 class Yalm:
@@ -7,10 +7,15 @@ class Yalm:
     def __init__(self, session: ClientSession):
         self.session = session
 
-    async def _get_resp(self, method: str, endpoint: str, json: dict = None):
+    async def _fetch(self, method: str, endpoint: str, json: dict | None) -> ClientResponse:
         async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
-            if resp.ok:
-                return await resp.json(content_type='text/html')
+            return resp
+
+    async def _get_resp(self, method: str, endpoint: str, json: dict = None) -> dict:
+        resp = await self._fetch(method, endpoint, json)
+
+        if resp.ok:
+            return await resp.json(content_type='text/html')
 
     @classmethod
     async def setup(cls) -> "Yalm":
