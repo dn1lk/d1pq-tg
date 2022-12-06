@@ -55,7 +55,6 @@ async def main():
         finally:
             await bot.session.close()
             await dp['pool_db'].close()
-            await dp['yalm'].close()
 
 
 if __name__ == "__main__":
