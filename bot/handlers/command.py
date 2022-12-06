@@ -177,7 +177,8 @@ async def question_handler(
     message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=html.bold(args)))
 
     if len(command.args) < 20:
-        answer = await wiki.gen(i18n.current_locale, args)
+        from .other import answer_check
+        answer = answer_check(await wiki.gen(i18n.current_locale, args))
     else:
         answer = _("Let's do it sooner!")
 
