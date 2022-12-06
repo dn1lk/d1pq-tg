@@ -4,29 +4,31 @@ from aiohttp import ClientSession, ClientResponse
 class Yalm:
     intros: dict[str, tuple] = {}
 
-    def __init__(self, session: ClientSession):
-        self.session = session
+    def __init__(self):
+        self.session = self._get_session()
 
-    async def _fetch(self, method: str, endpoint: str, json: dict | None) -> ClientResponse:
+    @staticmethod
+    def _get_session():
+        return ClientSession('https://yandex.ru')
+
+    async def _fetch(self, method: str, endpoint: str, json: dict = None) -> dict:
+        if self.session.closed:
+            self.session = self._get_session()
+
         async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
-            return resp
-
-    async def _get_resp(self, method: str, endpoint: str, json: dict = None) -> dict:
-        resp = await self._fetch(method, endpoint, json)
-
-        if resp.ok:
-            return await resp.json(content_type='text/html')
+            if resp.ok:
+                return await resp.json(content_type='text/html')
 
     @classmethod
     async def setup(cls) -> "Yalm":
-        yalm = cls(session=ClientSession('https://yandex.ru'))
+        yalm = cls()
         locales = {
             'ru': 'intros',
             'en': 'intros_eng',
         }
 
         for locale, intro in locales.items():
-            resp = await yalm._get_resp('GET', intro)
+            resp = await yalm._fetch('GET', intro)
             yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
 
         return yalm
@@ -35,7 +37,7 @@ class Yalm:
         await self.session.close()
 
     async def gen(self, locale: str, query: str, intro: int | None = 0) -> str:
-        resp = await self._get_resp(
+        resp = await self._fetch(
             'POST',
             'text3',
             json={
