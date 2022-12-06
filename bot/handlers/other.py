@@ -6,7 +6,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters as f
-from bot.utils import balaboba, markov, tts, sticker
+from bot.utils import balaboba, markov, sticker, tts
 from bot.utils.database.context import DataBaseContext
 from . import get_username
 
@@ -44,7 +44,7 @@ async def get_gen_args(
                 )
             }
 
-    async def gen_voice() -> dict:  # now working :(
+    async def gen_voice() -> dict:  # not working :(
         async with ChatActionSender.record_voice(chat_id=message.chat.id):
             answer = await gen_markov()
             voice = await tts.gen(answer=answer['text'], locale=i18n.current_locale)

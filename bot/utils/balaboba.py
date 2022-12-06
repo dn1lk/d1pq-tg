@@ -2,12 +2,14 @@ from aiohttp import ClientSession, ClientResponseError
 
 
 class Yalm:
-    session = ClientSession()
     intros: dict[str, tuple] = {}
+
+    def __init__(self, session: ClientSession):
+        self.session = session
 
     @classmethod
     async def setup(cls) -> "Yalm":
-        yalm = cls()
+        yalm = cls(session=ClientSession())
         locales = {
             'ru': 'intros',
             'en': 'intros_eng',

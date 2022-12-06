@@ -17,12 +17,6 @@ def date_check(date, message_id) -> int:
         return message_id
 
 
-def setup():
-    Message.answer = CustomMessage.answer
-    Message.answer_sticker = CustomMessage.answer_sticker
-    Message.answer_voice = CustomMessage.answer_voice
-
-
 class CustomMessage(Message):
     def answer(
             self,
@@ -75,3 +69,9 @@ class CustomMessage(Message):
             reply_to_message_id=date_check(self.date, self.message_id),
             reply_markup=reply_markup,
         )
+
+
+def setup():
+    Message.answer = CustomMessage.answer
+    Message.answer_sticker = CustomMessage.answer_sticker
+    Message.answer_voice = CustomMessage.answer_voice
