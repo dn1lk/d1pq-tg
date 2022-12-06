@@ -17,7 +17,7 @@ class Wikipedia:
         try:
             return _("In short, ") + markov.gen(
                 locale,
-                messages=split(r'\.+', list(answer['query']['pages'].values())[0]['extract']),
+                messages=list(answer['query']['pages'].values())[0]['extract'],
                 text=title,
                 test_output=False,
             )
