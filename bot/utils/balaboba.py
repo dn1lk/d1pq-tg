@@ -1,4 +1,4 @@
-from aiohttp import ClientSession, ClientResponseError
+from aiohttp import ClientSession, ClientResponse
 
 
 class Yalm:
@@ -7,17 +7,22 @@ class Yalm:
     def __init__(self, session: ClientSession):
         self.session = session
 
+    async def _get_resp(self, method: str, endpoint: str, json: dict = None):
+        async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
+            if resp.ok:
+                return await resp.json(content_type='text/html')
+
     @classmethod
     async def setup(cls) -> "Yalm":
-        yalm = cls(session=ClientSession())
+        yalm = cls(session=ClientSession('https://yandex.ru'))
         locales = {
             'ru': 'intros',
             'en': 'intros_eng',
         }
 
         for locale, intro in locales.items():
-            response = await yalm._get_response(method="GET", endpoint=intro)
-            yalm.intros[locale] = tuple(intro[0] for intro in response["intros"])
+            resp = await yalm._get_resp('GET', intro)
+            yalm.intros[locale] = tuple(intro[0] for intro in resp["intros"])
 
         return yalm
 
@@ -25,35 +30,18 @@ class Yalm:
         await self.session.close()
 
     async def gen(self, locale: str, query: str, intro: int | None = 0) -> str:
-        try:
-            answer = await self._get_response(
-                method="POST",
-                endpoint="text3",
-                json={
+        resp = await self._get_resp('POST', 'text3', json={
                     "query": query,
                     "intro": intro if locale == "ru" else self.intros['en'][self.intros['ru'].index(intro)],
                     "filter": 1
                 }
-            )
+        )
 
-            if intro in (3, 6, 8, 11) or len(answer["query"]) < 10 and len(answer["text"]) < 20:
-                return answer["query"] + answer["text"]
-            else:
-                return answer["text"]
-        except KeyError:
+        if not resp:
             from .markov import get_none
             return get_none(locale).make_sentence()
 
-    async def _get_response(self, method: str, endpoint: str, json: dict | None = None):
-        if self.session.closed:
-            self.session = ClientSession()
-
-        return await self._fetch(method=method, endpoint=endpoint, json=json)
-
-    async def _fetch(self, method: str, endpoint: str, json: dict):
-        async with self.session.request(
-                method,
-                f'https://yandex.ru/lab/api/yalm/{endpoint}',
-                json=json,
-        ) as response:
-            return await response.json(content_type='text/html')
+        if intro in (3, 6, 8, 11) or len(resp["query"]) < 10 and len(resp["text"]) < 20:
+            return resp["query"] + resp["text"]
+        else:
+            return resp["text"]
