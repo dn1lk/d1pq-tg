@@ -19,7 +19,7 @@ async def settings_handler(message: types.Message, bot: Bot):
     await message.answer(**await get_setup_answer(message, bot))
 
 
-@router.message(CustomCommandFilter('help', 'помощь'), magic=~F.args)
+@router.message(CustomCommandFilter('help', 'помощь', magic=~F.args))
 async def help_handler(message: types.Message, commands: dict[str, tuple[types.BotCommand]], i18n: I18n):
     """get a list of main commands, получить список основных команд"""
 
