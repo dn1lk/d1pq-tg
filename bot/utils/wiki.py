@@ -11,6 +11,7 @@ class Wikipedia:
             answer = await resp.json()
 
         try:
-            return _("In short, — ") + list(answer['query']['pages'].values())[0]['extract'].split(' — ')[1]
+            return _("In short, — ") + \
+                   list(answer['query']['pages'].values())[0]['extract'].split(' — ')[1].split('. ')[0]
         except KeyError:
             return _("I don't know answer =(")
