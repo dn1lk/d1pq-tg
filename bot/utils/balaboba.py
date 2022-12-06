@@ -9,13 +9,15 @@ class Yalm:
 
     @staticmethod
     def _get_session():
-        return ClientSession('https://yandex.ru')
+        return ClientSession(raise_for_status=True)
 
     async def _fetch(self, method: str, endpoint: str, json: dict = None) -> dict:
         if self.session.closed:
             self.session = self._get_session()
 
-        async with self.session.request(method=method, url=f'/lab/api/yalm/{endpoint}', json=json) as resp:
+        async with self.session.request(method=method,
+                                        url=f'https://yandex.ru/lab/api/yalm/{endpoint}',
+                                        json=json) as resp:
             return await resp.json()
 
     @classmethod
