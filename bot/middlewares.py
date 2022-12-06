@@ -47,7 +47,15 @@ class DataMiddleware(BaseMiddleware):
             if new_messages != messages:
                 await db.set_data(messages=new_messages)
 
-        return await handler(event, data)
+        result = await handler(event, data)
+
+        if data['event_chat'].type != 'private':
+            members: list | None = data.get('members', await db.get_data('members'))
+
+            if members and data['event_from_user'].id not in members:
+                await db.update_data(members=[*members, data['event_from_user'].id])
+
+        return result
 
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -66,8 +74,8 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def __call__(
             self,
-            handler: Callable[[types.TelegramObject, dict[str, Any]], Awaitable[Any]],
-            event: types.TelegramObject,
+            handler: Callable[[types.Message, dict[str, Any]], Awaitable[Any]],
+            event: types.Message,
             data: dict[str, Any],
     ):
         throttling = get_flag(data, 'throttling')
@@ -98,7 +106,6 @@ class UnhandledMiddleware(BaseMiddleware):
         result = await handler(event, data)
 
         from aiogram.dispatcher.event.bases import UNHANDLED
-
         if result is UNHANDLED:
             db: DataBaseContext = data['db']
 
@@ -116,12 +123,6 @@ class UnhandledMiddleware(BaseMiddleware):
                 if event.sticker.set_name not in stickers:
                     stickers.append(event.sticker.set_name)
                     await db.set_data(stickers=stickers[-3:])
-
-            if data['event_chat'].type != 'private':
-                members: list | None = data.get('members', await db.get_data('members'))
-
-                if members and data['event_from_user'].id not in members:
-                    await db.update_data(members=[*members, data['event_from_user'].id])
 
         return result
 

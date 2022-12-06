@@ -20,8 +20,10 @@ class LevenshteinFilter(filters.BaseFilter):
             return rows - 1
 
         cur = range(cols)
+
         for row in range(1, rows):
             prev, cur = cur, [row] + [0] * (cols - 1)
+
             for col in range(1, cols):
                 deletion = prev[col] + 1
                 insertion = cur[col - 1] + 1
