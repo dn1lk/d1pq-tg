@@ -56,4 +56,4 @@ class Yalm:
                 f'https://yandex.ru/lab/api/yalm/{endpoint}',
                 json=json,
         ) as response:
-            return await response.json()
+            return await response.json(content_type='text/html')
