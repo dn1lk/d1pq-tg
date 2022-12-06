@@ -4,7 +4,7 @@ from re import split
 from aiogram import Router, Bot, F, types, filters, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.utils import markov
+from bot.utils import markov, wiki
 from . import NO_ARGS, get_username, get_commands
 from .settings.commands import CustomCommandFilter
 
@@ -164,11 +164,10 @@ async def game_no_args_handler(message: types.Message, command: filters.CommandO
     await message.answer(answer)
 
 
-'''@router.message(CustomCommandFilter('question', 'вопросик', magic=F.args))
+@router.message(CustomCommandFilter('question', 'вопросик', magic=F.args))
 @flags.chat_action("typing")
 async def question_handler(
         message: types.Message,
-        yalm: balaboba.Yalm,
         command: filters.CommandObject,
         i18n: I18n,
 ):
@@ -178,32 +177,27 @@ async def question_handler(
     message = await message.answer(_("Hm, {args}?\nOk, I need to think...").format(args=html.bold(args)))
 
     if len(command.args) < 20:
-        answer = await yalm.gen(i18n.current_locale, ' '.join(set(choices(args.split(), k=3))), 8)
+        answer = await wiki.gen(i18n.current_locale, args)
     else:
         answer = _("Let's do it sooner!")
 
-    await message.answer(answer)'''
+    await message.answer(answer)
 
 
-'''@router.message(CustomCommandFilter('question', 'вопросик'))
+@router.message(CustomCommandFilter('question', 'вопросик'))
 @router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('question', 'вопросик'))))
 @flags.throttling('gen')
 @flags.chat_action("typing")
 async def question_no_args_handler(
         message: types.Message,
-        command: filters.CommandObject,
         i18n: I18n,
+        command: filters.CommandObject,
         messages: list[str],
 ):
     message = await message.answer(html.bold(_("So what's the question?")))
-    await message.answer(
-        NO_ARGS.format(
-            **await get_command_args(
-                command,
-                i18n,
-                messages=messages)
-        )
-    )'''
+
+    from .settings.commands import get_args
+    await message.answer(NO_ARGS.format(command=command.command, args=choice(get_args(i18n, messages))))
 
 
 @router.message(CustomCommandFilter('history', 'короче'))

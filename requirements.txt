@@ -1,8 +1,7 @@
-aiogram>=3.0.0b5
+aiogram>=3.0.0b6
 asyncpg>=0.26.0
 markovify>=0.9.4
 aiohttp>=3.8.3
 pydantic>=1.10.2
 babel>=2.10.3
-google-cloud-texttospeech>=2.11.1
 redis>=4.3.3
