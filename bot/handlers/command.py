@@ -4,7 +4,7 @@ from re import split
 from aiogram import Router, Bot, F, types, filters, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.utils import markov, balaboba
+from bot.utils import markov
 from . import NO_ARGS, get_username, get_commands
 from .settings.commands import CustomCommandFilter
 
@@ -164,7 +164,7 @@ async def game_no_args_handler(message: types.Message, command: filters.CommandO
     await message.answer(answer)
 
 
-@router.message(CustomCommandFilter('question', 'вопросик', magic=F.args))
+'''@router.message(CustomCommandFilter('question', 'вопросик', magic=F.args))
 @flags.chat_action("typing")
 async def question_handler(
         message: types.Message,
@@ -182,10 +182,10 @@ async def question_handler(
     else:
         answer = _("Let's do it sooner!")
 
-    await message.answer(answer)
+    await message.answer(answer)'''
 
 
-@router.message(CustomCommandFilter('question', 'вопросик'))
+'''@router.message(CustomCommandFilter('question', 'вопросик'))
 @router.message(CustomCommandFilter('help', 'помощь', magic=F.args.in_(('question', 'вопросик'))))
 @flags.throttling('gen')
 @flags.chat_action("typing")
@@ -203,7 +203,7 @@ async def question_no_args_handler(
                 i18n,
                 messages=messages)
         )
-    )
+    )'''
 
 
 @router.message(CustomCommandFilter('history', 'короче'))
@@ -211,7 +211,6 @@ async def question_no_args_handler(
 @flags.chat_action("typing")
 async def history_handler(
         message: types.Message,
-        yalm: balaboba.Yalm,
         command: filters.CommandObject,
         i18n: I18n,
         messages: list[str],
@@ -220,11 +219,8 @@ async def history_handler(
 
     query = html.quote(command.args) if command.args else choice(messages or [_("history")])
 
-    if random() > 0.5:
-        answer = await yalm.gen(i18n.current_locale, query, 6)
-    else:
-        query = _("In short, {query}").format(query=query)
-        answer = markov.gen(i18n.current_locale, messages, query, state_size=2, tries=150000, min_words=50)
+    query = _("In short, {query}").format(query=query)
+    answer = markov.gen(i18n.current_locale, messages, query, state_size=2, tries=150000, min_words=50)
 
     await message.answer(answer)
 

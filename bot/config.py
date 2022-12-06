@@ -21,14 +21,9 @@ class Heroku(BaseSettings):
     redis_url: str
 
 
-class Google(BaseSettings):
-    google_client: str
-
-
 BASE_DIR = Path(__file__).parent
 
 bot = Bot()
 heroku = Heroku()
-google = Google()
 
 i18n = I18n(path=BASE_DIR / 'locales', domain='messages')
