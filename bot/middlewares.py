@@ -41,11 +41,7 @@ class DataMiddleware(BaseMiddleware):
                     await get_data(key)
 
         if get_flag(data, 'throttling') == 'gen':
-            messages = await db.get_data('messages')
-            new_messages = data['messages'] = markov.set_data(event.text, messages)
-
-            if new_messages != messages:
-                await db.set_data(messages=new_messages)
+            data['messages'] = await db.get_data('messages')
 
         result = await handler(event, data)
 
@@ -110,12 +106,11 @@ class UnhandledMiddleware(BaseMiddleware):
             db: DataBaseContext = data['db']
 
             if event.text:
-                messages = markov.set_data(
-                    event.text,
-                    data.get('messages', await db.get_data('messages')),
-                )
-                if messages:
-                    await db.set_data(messages=messages)
+                messages = await db.get_data('messages')
+                new_messages = data['messages'] = markov.set_data(event.text, messages)
+
+                if new_messages != messages:
+                    await db.set_data(messages=new_messages)
 
             elif event.sticker and event.sticker.set_name != 'uno_by_bp1lh_bot':
                 stickers: list[str] = await db.get_data('stickers')
