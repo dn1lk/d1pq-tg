@@ -7,7 +7,7 @@ import markovify
 
 def set_data(text: str | None, messages: list | None) -> list:
     if messages == ['disabled']:
-        return []
+        return messages
     elif not messages:
         messages = []
 
