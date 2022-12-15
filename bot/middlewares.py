@@ -101,23 +101,21 @@ class UnhandledMiddleware(BaseMiddleware):
     ):
         result = await handler(event, data)
 
-        from aiogram.dispatcher.event.bases import UNHANDLED
-        if result is UNHANDLED or 'messages' in data:
-            db: DataBaseContext = data['db']
+        db: DataBaseContext = data['db']
 
-            if event.text:
-                messages = data.get('messages', await db.get_data('messages'))
-                new_messages = markov.set_data(event.text, messages)
+        if event.text:
+            messages = data.get('messages', await db.get_data('messages'))
+            new_messages = markov.set_data(event.text, messages)
 
-                if new_messages != messages:
-                    await db.set_data(messages=new_messages)
+            if new_messages != messages:
+                await db.set_data(messages=new_messages)
 
-            elif event.sticker and event.sticker.set_name != 'uno_by_bp1lh_bot':
-                stickers: list[str] = await db.get_data('stickers')
+        elif event.sticker and event.sticker.set_name != 'uno_by_bp1lh_bot':
+            stickers: list[str] = await db.get_data('stickers')
 
-                if event.sticker.set_name not in stickers:
-                    stickers.append(event.sticker.set_name)
-                    await db.set_data(stickers=stickers[-3:])
+            if event.sticker.set_name not in stickers:
+                stickers.append(event.sticker.set_name)
+                await db.set_data(stickers=stickers[-3:])
 
         return result
 
