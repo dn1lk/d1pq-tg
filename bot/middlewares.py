@@ -106,7 +106,7 @@ class UnhandledMiddleware(BaseMiddleware):
             db: DataBaseContext = data['db']
 
             if event.text:
-                messages = await db.get_data('messages')
+                messages = data.get('messages', await db.get_data('messages'))
                 new_messages = data['messages'] = markov.set_data(event.text, messages)
 
                 if new_messages != messages:
