@@ -41,7 +41,8 @@ class DataMiddleware(BaseMiddleware):
                     await get_data(key)
 
         if get_flag(data, 'throttling') == 'gen':
-            data['messages'] = await db.get_data('messages')
+            messages = data['messages'] = await db.get_data('messages')
+            await UnhandledMiddleware.update_data(event, db, messages)
 
         result = await handler(event, data)
 
@@ -101,10 +102,16 @@ class UnhandledMiddleware(BaseMiddleware):
     ):
         result = await handler(event, data)
 
-        db: DataBaseContext = data['db']
+        from aiogram.dispatcher.event.bases import UNHANDLED
+        if result is UNHANDLED:
+            await self.update_data(event, data['db'])
 
+        return result
+
+    @staticmethod
+    async def update_data(event: types.Message, db: DataBaseContext, messages: list[str] = None):
         if event.text:
-            messages = data.get('messages', await db.get_data('messages'))
+            messages = messages or await db.get_data('messages')
             new_messages = markov.set_data(event.text, messages)
 
             if new_messages != messages:
@@ -116,8 +123,6 @@ class UnhandledMiddleware(BaseMiddleware):
             if event.sticker.set_name not in stickers:
                 stickers.append(event.sticker.set_name)
                 await db.set_data(stickers=stickers[-3:])
-
-        return result
 
 
 @dataclass
