@@ -91,7 +91,6 @@ async def hello_handler(message: types.Message):
     )
 
 
-@router.message(F.chat.type == 'private')
 @router.message(chance_filter)
 @router.message(f.LevenshteinFilter(lev={'delete', 'делите'}))
 @flags.throttling('gen')
