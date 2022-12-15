@@ -102,7 +102,7 @@ class UnhandledMiddleware(BaseMiddleware):
         result = await handler(event, data)
 
         from aiogram.dispatcher.event.bases import UNHANDLED
-        if result is UNHANDLED or get_flag(data, 'throttling') == 'gen':
+        if result is UNHANDLED or 'messages' in data:
             db: DataBaseContext = data['db']
 
             if event.text:
