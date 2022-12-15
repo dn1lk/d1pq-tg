@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-12-06 22:01+0300\n"
+"POT-Creation-Date: 2022-12-15 21:35+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1297,11 +1297,11 @@ msgstr "Изменить политику данных"
 
 #: handlers/settings/misc/keyboards.py:113
 msgid "{action} {data} recording"
-msgstr "{action} запись {data}"
+msgstr "{action} сохранение {data}"
 
 #: handlers/settings/record/process.py:13
 msgid "{data} recording is {status}."
-msgstr "Запись {data} {status}."
+msgstr "Сохранение {data} {status}."
 
 #: handlers/settings/record/process.py:41
 msgid "Records was successfully deleted."
@@ -1431,7 +1431,7 @@ msgstr "{user}, я вышел из твоего гнева?"
 msgid "I returned, {user}!"
 msgstr "Я вернулся, {user}!"
 
-#: utils/wiki.py:18
+#: utils/wiki.py:16
 msgid "In short, "
 msgstr "Короче, "
 
