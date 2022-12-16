@@ -283,7 +283,7 @@ msgid ""
 "<b>Remaining attempts</b>: {fail_amount}"
 msgstr ""
 "\n"
-"<b>Осталось попыток</b>: {failed}"
+"<b>Осталось попыток</b>: {fail_amount}"
 
 #: handlers/games/cts/process.py:73
 msgid "You have no attempts left."
@@ -868,7 +868,7 @@ msgstr "{user}, твой ход уже был сделан."
 
 #: handlers/games/uno/misc/data.py:334
 msgid "We've been interrupted!"
-msgstr "В игру врывается {user}!"
+msgstr "Мы подверглись вторжению!"
 
 #: handlers/games/uno/misc/data.py:335
 msgid "I bet {user} will win this game!"
@@ -996,7 +996,7 @@ msgstr "{user} меняет цвет!"
 
 #: handlers/games/uno/misc/data.py:514
 msgid "cards with player {seven_user}."
-msgstr "{user} дарит игроку {uno_user} 2 карты!"
+msgstr "карты с игроком {seven_user}."
 
 #: handlers/games/uno/misc/data.py:532
 msgid "Yes, it was a bluff hehe."
@@ -1040,7 +1040,7 @@ msgstr "сложность"
 
 #: handlers/games/uno/misc/keyboards.py:44
 msgid "mode"
-msgstr "мод"
+msgstr "режим"
 
 #: handlers/games/uno/misc/keyboards.py:46
 #: handlers/settings/misc/keyboards.py:37
@@ -1175,7 +1175,7 @@ msgstr "диалога"
 
 #: handlers/settings/__init__.py:31
 msgid "chat - only for {admins}"
-msgstr "чат - только для {admins}"
+msgstr "чата - только для {admins}"
 
 #: handlers/settings/__init__.py:31
 msgid "admins"
