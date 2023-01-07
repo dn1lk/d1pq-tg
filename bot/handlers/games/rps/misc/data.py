@@ -9,18 +9,16 @@ class RPSData(str, Enum):
     PAPER = "📜"
 
     @property
-    def word(self) -> str | None:
+    def word(self) -> str:
         match self:
             case self.ROCK:
                 item = _("rock")
             case self.SCISSORS:
                 item = _("scissors")
-            case self.PAPER:
-                item = _("paper")
             case _:
-                return
+                item = _("paper")
 
-        return f'{self} {item}'
+        return f'{self} {item.capitalize()}'
 
     @property
     def resolve(self):
@@ -29,5 +27,5 @@ class RPSData(str, Enum):
                 return self.SCISSORS
             case self.SCISSORS:
                 return self.PAPER
-            case self.PAPER:
+            case _:
                 return self.ROCK

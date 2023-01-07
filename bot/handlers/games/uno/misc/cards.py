@@ -30,15 +30,19 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
 
     @property
     def word(self) -> str:
-        colors = {
-            self.BLUE: _("Blue"),
-            self.GREEN: _("Green"),
-            self.RED: _("Red"),
-            self.YELLOW: _("Yellow"),
-            self.BLACK: _("Black"),
-        }
+        match self:
+            case self.BLUE:
+                color = _("Blue")
+            case self.GREEN:
+                color = _("Green")
+            case self.RED:
+                color = _("Red")
+            case self.YELLOW:
+                color = _("Yellow")
+            case _:
+                color = _("Black")
 
-        return f'{self} {colors[self]}'
+        return f'{self} {color}'
 
 
 class UnoEmoji(str, Enum):

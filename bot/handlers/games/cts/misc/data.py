@@ -26,10 +26,8 @@ class CTSData(GamesData):
             for city in game_vars:
                 if city[0].lower() == user_var[-1].lower() and city not in self.cities:
                     yield city
-
             yield None
 
         self.bot_var = choice(tuple(gen_city()))
-
         if self.bot_var:
             self.cities.append(self.bot_var)

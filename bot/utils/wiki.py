@@ -6,17 +6,24 @@ from . import markov
 
 class Wikipedia:
     session = ClientSession()
+    url = 'https://{locale}.wikipedia.org/w/api.php?' \
+          'format=json&' \
+          'action=query&' \
+          'prop=extracts&' \
+          'explaintext&' \
+          'exsentences=5&' \
+          'redirects=1&' \
+          'titles={titles}'
 
-    async def gen(self, locale: str, title: str):
-        async with self.session.get(
-                f'https://{locale}.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exsentences=5&redirects=1&titles={title}') as resp:
+    async def gen(self, locale: str, titles: str):
+        async with self.session.get(self.url.format(locale=locale, titles=titles)) as resp:
             answer = await resp.json()
 
         try:
             return _("In short, ") + markov.gen(
                 locale,
                 messages=list(answer['query']['pages'].values())[0]['extract'],
-                text=title,
+                text=titles,
                 test_output=False,
                 max_words=50,
                 min_words=5,

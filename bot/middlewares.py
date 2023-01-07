@@ -112,10 +112,11 @@ class UnhandledMiddleware(BaseMiddleware):
     async def update_data(event: types.Message, db: DataBaseContext, messages: list[str] = None):
         if event.text:
             messages = messages or await db.get_data('messages')
-            new_messages = markov.set_data(event.text, messages)
+            old_len = len(messages)
 
-            if new_messages != messages:
-                await db.set_data(messages=new_messages)
+            markov.set_data(event.text, messages)
+            if old_len != len(messages):
+                await db.set_data(messages=messages)
 
         elif event.sticker and event.sticker.set_name != 'uno_by_bp1lh_bot':
             stickers: list[str] = await db.get_data('stickers')

@@ -21,10 +21,10 @@ class RecordData(Enum):
                 return _("Messages")
             case self.MEMBERS:
                 return _("Members")
-            case self.DELETE:
+            case _:
                 return _('Delete all records')
 
-    async def switch(self, dp: DataBaseContext) -> int | None:
+    async def switch(self, dp: DataBaseContext) -> int:
         item = await dp.get_data(self.name.lower())
 
         match self:

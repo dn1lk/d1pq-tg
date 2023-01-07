@@ -33,7 +33,7 @@ class SettingsAction(Enum):
             case self.RECORD:
                 return _('Change record policy')
 
-            case self.BACK:
+            case _:
                 return _("Back")
 
 

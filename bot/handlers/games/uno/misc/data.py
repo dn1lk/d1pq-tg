@@ -37,7 +37,7 @@ class UnoDifficulty(IntEnum, metaclass=UnoSettingsMeta):
                 return _('slowpoke')
             case self.NORMAL:
                 return _('common man')
-            case self.HARD:
+            case _:
                 return _('genius')
 
     @classmethod
@@ -51,11 +51,9 @@ class UnoMode(IntEnum, metaclass=UnoSettingsMeta):
 
     @property
     def word(self) -> str:
-        match self:
-            case self.FAST:
-                return _('fast')
-            case self.WITH_POINTS:
-                return _('with points')
+        if self is self.FAST:
+            return _('fast')
+        return _('with points')
 
     @classmethod
     def extract(cls, message: types.Message) -> "UnoMode":
@@ -68,11 +66,9 @@ class UnoAdd(IntEnum, metaclass=UnoSettingsMeta):
 
     @property
     def word(self) -> str:
-        match self:
-            case self.OFF:
-                return _("disabled")
-            case self.ON:
-                return _("enabled")
+        if self is self.OFF:
+            return _("disabled")
+        return _("enabled")
 
     @classmethod
     def extract(cls, message: types.Message, n: int) -> "UnoAdd":
@@ -80,11 +76,9 @@ class UnoAdd(IntEnum, metaclass=UnoSettingsMeta):
 
     @property
     def switcher(self) -> str:
-        match self:
-            case self.OFF:
-                return _("Enable")
-            case self.ON:
-                return _("Disable")
+        if self is self.OFF:
+            return _("Enable")
+        return _("Disable")
 
     @staticmethod
     def get_names():
@@ -360,18 +354,14 @@ class UnoData(GamesData):
 
     @staticmethod
     def update_uno(user: types.User) -> str:
-        answer = _("{user} has one card left!").format(user=get_username(user))
-
-        return answer
+        return _("{user} has one card left!").format(user=get_username(user))
 
     def update_null(self) -> str:
         cards = list(self.users.values())
         cards.append(cards.pop(0))
 
         self.users = dict(zip(self.users.keys(), cards))
-
-        answer = _("We have exchanged cards with next neighbors!")
-        return answer
+        return _("We have exchanged cards with next neighbors!")
 
     def update_seven(self) -> str | None:
         if len(self.users) == 2:
@@ -436,9 +426,7 @@ class UnoData(GamesData):
             )
         )
 
-        answer_reverse = _("{user} changes the queue.")
-
-        return f'{answer} {html.bold(answer_reverse)}'
+        return f'{answer} {html.bold(_("{user} changes the queue."))}'
 
     def update_skip(self) -> str:
         self.current_index = self.next_index
@@ -493,10 +481,7 @@ class UnoData(GamesData):
             answer_pick = _("{user} receives").format(user=get_username(user))
 
         self.users[user_id].extend(self.pop_from_deck(self.deck, amount))
-
-        answer_amount = ___("a card.", "{amount} cards.", amount).format(amount=amount)
-
-        return f'{answer_pick} {answer_amount}'
+        return f'{answer_pick} {___("a card.", "{amount} cards.", amount).format(amount=amount)}'
 
     def play_seven(self, user: types.User | int, seven_user: types.User):
         if isinstance(user, int):
@@ -511,10 +496,8 @@ class UnoData(GamesData):
             }
         )
 
-        answer_to = _("cards with player {seven_user}.").format(seven_user=get_username(seven_user))
         self.current_state.seven = 0
-
-        return f'{answer} {answer_to}'
+        return f'{answer} {_("cards with player {seven_user}.").format(seven_user=get_username(seven_user))}'
 
     def play_draw(self, user: types.User | int) -> str:
         if not self.current_state.drawn:
@@ -552,8 +535,7 @@ class UnoData(GamesData):
         else:
             user = await self.get_user(state, self.current_state.bluffed)
 
-        answer_pick = self.play_draw(user)
-        return f'{answer} {answer_pick}'
+        return f'{answer} {self.play_draw(user)}'
 
     async def finish(self, state: FSMContext):
         while self.users:

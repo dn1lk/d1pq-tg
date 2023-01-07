@@ -13,7 +13,7 @@ def get_args(i18n: I18n, messages: list | None) -> list[str]:
     if messages and len(messages) > 1:
         args = messages
     else:
-        args = sum(markov.get_base(choice(i18n.available_locales), choice(markov.books)).parsed_sentences, [])
+        args = sum(markov.get_base(choice(i18n.available_locales), choice(markov.BOOKS)).parsed_sentences, [])
 
     return findall(r'\w+', str(args))
 

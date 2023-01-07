@@ -38,7 +38,7 @@ async def get_gen_args(
                 'text': markov.gen(
                     locale=i18n.current_locale,
                     messages=messages,
-                    text=message.text,
+                    text=message.text or '',
                     state_size=accuracy,
                 )
             }
@@ -63,11 +63,14 @@ async def gen_reply_handler(
 
     if 'text' in answer:
         answer['text'] = answer_check(answer['text'])
-        await message.reply(**answer)
+        message = await message.reply(**answer)
     elif 'sticker' in answer:
-        await message.reply_sticker(**answer)
+        message = await message.reply_sticker(**answer)
     elif 'voice' in answer:
-        await message.reply_voice(**answer)
+        message = await message.reply_voice(**answer)
+
+    if random() < 0.3:
+        await gen_answer_handler(message, bot, db, i18n, messages)
 
 
 async def chance_filter(message: types.Message, bot: Bot, db: DataBaseContext) -> bool:
@@ -105,8 +108,11 @@ async def gen_answer_handler(
 
     if 'text' in answer:
         answer['text'] = answer_check(answer['text'])
-        await message.answer(**answer)
+        message = await message.answer(**answer)
     elif 'sticker' in answer:
-        await message.answer_sticker(**answer)
+        message = await message.answer_sticker(**answer)
     elif 'voice' in answer:
-        await message.answer_voice(**answer)
+        message = await message.answer_voice(**answer)
+
+    if random() < 0.3:
+        await gen_answer_handler(message, bot, db, i18n, messages)

@@ -1,8 +1,13 @@
 from functools import lru_cache
 from os import listdir
-from random import choice, shuffle
+from random import choice, shuffle, randrange
 
 import markovify
+
+from bot import config
+
+LOCALE_DIR = config.BASE_DIR / 'locales'
+BOOKS = listdir(LOCALE_DIR / 'en' / 'books')
 
 
 def set_data(text: str | None, messages: list | None) -> list:
@@ -12,8 +17,7 @@ def set_data(text: str | None, messages: list | None) -> list:
         messages = []
 
     if text:
-        sentences = markovify.split_into_sentences(text)
-        messages = list(set(messages + sentences))
+        messages += markovify.split_into_sentences(text)
 
         if len(messages) > 5000:
             messages = messages[1000:]
@@ -21,15 +25,10 @@ def set_data(text: str | None, messages: list | None) -> list:
     return messages
 
 
-books = listdir('bot/locales/en/books')
-
-
 @lru_cache(maxsize=4)
 def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
-    from bot import config
-
     with open(
-            config.BASE_DIR / 'locales' / locale / 'books' / book,
+            LOCALE_DIR / locale / 'books' / book,
             mode='r',
             encoding='UTF-8'
     ) as f:
@@ -38,10 +37,8 @@ def get_base(locale: str, book: str, state_size: int = 1) -> markovify.Text:
 
 @lru_cache(maxsize=2)
 def get_none(locale: str) -> markovify.Text:
-    from bot import config
-
     with open(
-            config.BASE_DIR / 'locales' / locale / 'none.txt',
+            LOCALE_DIR / locale / 'none.txt',
             mode='r',
             encoding='UTF-8'
     ) as f:
@@ -56,25 +53,41 @@ def gen(
         tries: int = 500,
         **kwargs,
 ) -> str:
-    model = get_base(locale, choice(books), state_size=state_size)
+    max_words = kwargs.pop("max_words", randrange(2, state_size * 2))
 
     if messages:
-        model_messages = markovify.Text(messages, state_size=state_size, well_formed=False)
+        model = markovify.Text(messages, state_size=state_size, well_formed=False)
 
-        if len(messages) > 50 * state_size:
-            model = model_messages
-        else:
-            model = markovify.combine(models=(model_messages, model), weights=(100, 0.01))
+        if len(messages) < 50 * state_size:
+            base_model = get_base(locale, choice(BOOKS), state_size=state_size)
+            model = markovify.combine((base_model, model),
+                                      weights=(0.01, 1))
+    else:
+        model = get_base(locale, choice(BOOKS), state_size=state_size)
 
-    if text:
-        for t in text.lower().split():
-            init_states = [key for key, value in model.chain.model.items() if t in (v.lower() for v in value)]
-            shuffle(init_states)
+    def get_states(run: list):
+        items = ([markovify.chain.BEGIN] * state_size) + run + [markovify.chain.END]
 
-            for init_state in init_states:
-                answer = model.make_sentence(init_state=init_state, tries=state_size * tries, **kwargs)
+        for i in range(1, len(run) + 1):
+            yield items[i: i + model.state_size]
+
+    def make_sentence(init_state: tuple = None):
+        return model.make_sentence(init_state=init_state,
+                                   tries=state_size * tries,
+                                   max_words=max_words,
+                                   **kwargs)
+
+    shuffle(model.parsed_sentences)
+    for sentence in model.parsed_sentences:
+        if any(word in sentence for word in text.split()):
+            states = list(get_states(model.parsed_sentences[model.parsed_sentences.index(sentence) + 1]))
+
+            for state in states:
+                answer = make_sentence(tuple(state))
 
                 if answer:
                     return answer
 
-    return model.make_sentence(tries=state_size * tries, **kwargs) or get_none(locale).make_sentence()
+            max_words += 1
+
+    return make_sentence() or get_none(locale).make_sentence()

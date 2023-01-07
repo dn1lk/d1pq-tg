@@ -29,7 +29,6 @@ async def start_handler(message: types.Message, state: FSMContext, i18n: I18n):
         bot_var = choice(get_cities(i18n.current_locale))
         data_cts = CTSData(bot_var=bot_var, cities=[bot_var])
         answer = _("I start! My word: {bot_var}.").format(bot_var=html.bold(bot_var))
-
     else:
         data_cts = CTSData()
         answer = _("You start! Your word?")
