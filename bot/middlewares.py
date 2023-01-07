@@ -112,7 +112,7 @@ class UnhandledMiddleware(BaseMiddleware):
     async def update_data(event: types.Message, db: DataBaseContext, messages: list[str] = None):
         if event.text:
             messages = messages or await db.get_data('messages')
-            old_len = len(messages)
+            old_len = len(messages or '')
 
             markov.set_data(event.text, messages)
             if old_len != len(messages):
