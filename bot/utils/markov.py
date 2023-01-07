@@ -77,8 +77,10 @@ def gen(
                                    max_words=max_words,
                                    **kwargs)
 
-    shuffle(model.parsed_sentences)
-    for sentence in model.parsed_sentences:
+    sentences = model.parsed_sentences.copy()
+    shuffle(sentences)
+
+    for sentence in sentences:
         if any(word in sentence for word in text.split()):
             states = list(get_states(model.parsed_sentences[model.parsed_sentences.index(sentence) + 1]))
 
