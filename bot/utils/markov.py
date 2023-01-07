@@ -13,8 +13,6 @@ BOOKS = listdir(LOCALE_DIR / 'en' / 'books')
 def set_data(text: str | None, messages: list | None) -> list:
     if messages == ['disabled']:
         return messages
-    elif not messages:
-        messages = []
 
     if text:
         messages += markovify.split_into_sentences(text)
