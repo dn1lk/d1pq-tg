@@ -82,7 +82,8 @@ def gen(
 
     for sentence in sentences:
         if any(word in sentence for word in text.split()):
-            for state in get_states(model.parsed_sentences[model.parsed_sentences.index(sentence) + 1]):
+            index = (model.parsed_sentences.index(sentence) + 1) % len(model.parsed_sentences)
+            for state in get_states(model.parsed_sentences[index]):
                 answer = make_sentence(tuple(state))
 
                 if answer:
