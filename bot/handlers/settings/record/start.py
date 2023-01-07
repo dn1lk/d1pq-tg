@@ -23,7 +23,7 @@ async def start_handler(query: types.CallbackQuery, db: DataBaseContext):
         )
 
     for key, value in datas.items():
-        answer += f"▪ {html.bold(key.word)} - {value}.\n\n"
+        answer += f'▪ {html.bold(key.word)} - {value}.\n\n'
 
     await query.message.edit_text(answer, reply_markup=k.record({key: await key.switch(db) for key in datas.keys()}))
     await query.answer()

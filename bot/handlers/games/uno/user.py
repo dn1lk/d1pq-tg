@@ -60,12 +60,9 @@ class TurnHandler(MessageHandler):
                     _("Finally, we will change the color.\nWhat will {user} choose?"),
                     _("New color, new light.\nby {user}."),
                 )
-            )
+            ).format(user=get_username(self.from_user))
 
-            return await self.event.answer(
-                answer_color.format(user=get_username(self.from_user)),
-                reply_markup=k.choice_color(),
-            )
+            return await self.event.answer(answer_color, reply_markup=k.choice_color())
 
         answer = data_uno.update_state() or answer
 
@@ -75,11 +72,9 @@ class TurnHandler(MessageHandler):
             answer_seven = _(
                 "{user}, with whom will you exchange cards?\n"
                 "Mention (@) this player in your next message."
-            )
+            ).format(user=get_username(self.from_user))
 
-            return await self.event.answer(
-                answer_seven.format(user=get_username(self.from_user)),
-            )
+            return await self.event.answer(answer_seven)
 
         from .misc.process import proceed_turn
         await proceed_turn(self.event, self.state, data_uno, answer)

@@ -89,7 +89,7 @@ async def join_message_handler(
         await db.set_data(members=members + [member.id for member in message.new_chat_members])
 
     answer = choice([join_answer(user) for user in message.new_chat_members])
-    await message.answer(answer.format(user=', '.join([get_username(user) for user in message.new_chat_members])))
+    await message.answer(answer.format(user=', '.join(get_username(user) for user in message.new_chat_members)))
 
 
 async def remove_member(db: DataBaseContext, members: list[int] | None, user_id: int):

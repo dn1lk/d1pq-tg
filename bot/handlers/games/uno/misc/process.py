@@ -181,21 +181,21 @@ async def finish(state: FSMContext, data: UnoData) -> types.Message:
                 if enum == 1:
                     enum = _("WINNER")
 
-                answer_cards = ___(
+                answer_one = ___(
                     "card played",
                     "{amount} cards played",
                     winner_data.cards_played,
                 ).format(amount=winner_data.cards_played)
 
-                answer_points = ___(
+                answer_two = ___(
                     "point earned",
                     "{points} points earned",
                     winner_data.points,
                 ).format(points=winner_data.points)
 
-                yield f'{enum}: {get_username(user)} - {answer_cards}, {answer_points}.'
+                yield f'{enum}: {get_username(user)} - {answer_one}, {answer_two}.'
 
-    answer = '\n\n' + '\n'.join([winner async for winner in get_answer_winners()])
+    answer = '\n\n' + '\n'.join(winner async for winner in get_answer_winners())
 
     if not data.settings.mode or max(winner_data.points for winner_data in data.stats.values()) >= 500:
         message = await state.bot.send_message(state.key.chat_id, html.bold(_("Game over.")) + answer)

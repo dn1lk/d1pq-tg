@@ -372,26 +372,26 @@ class UnoData(GamesData):
     def update_draw(self) -> str:
         if self.current_card.emoji == UnoEmoji.DRAW_FOUR:
             self.current_state.drawn += 4
-            answer = self.update_bluff()
+            answer_one = self.update_bluff()
         else:
             self.current_state.drawn += 2
-            answer = choice(
+            answer_one = choice(
                 (
                     _("How cruel!"),
                     _("What a surprise."),
                 )
             )
 
-        answer_draw = choice(
+        answer_two = choice(
             (
                 _("{user} is clearly taking revenge... +"),
                 _("{user} sends a fiery hello and"),
             )
         )
 
-        answer_amount = ___("a card!", "{amount} cards!", self.current_state.drawn)
+        answer_three = ___("a card!", "{amount} cards!", self.current_state.drawn)
 
-        return f'{answer}\n{answer_draw} {answer_amount.format(amount=html.bold(self.current_state.drawn))}'
+        return f'{answer_one}\n{answer_two} {answer_three.format(amount=html.bold(self.current_state.drawn))}'
 
     def update_bluff(self) -> str:
         prev_card = self.deck[-2]
@@ -426,7 +426,8 @@ class UnoData(GamesData):
             )
         )
 
-        return f'{answer} {html.bold(_("{user} changes the queue."))}'
+        answer_two = html.bold(_("{user} changes the queue."))
+        return f'{answer} {answer_two}'
 
     def update_skip(self) -> str:
         self.current_index = self.next_index
@@ -475,19 +476,23 @@ class UnoData(GamesData):
     def pick_card(self, user: types.User | int, amount: int = 1) -> str:
         if isinstance(user, int):
             user_id = user
-            answer_pick = _("I receive")
+            answer_one = _("I receive")
         else:
             user_id = user.id
-            answer_pick = _("{user} receives").format(user=get_username(user))
+            answer_one = _("{user} receives").format(user=get_username(user))
+
+        answer_two = ___("a card.", "{amount} cards.", amount)
 
         self.users[user_id].extend(self.pop_from_deck(self.deck, amount))
-        return f'{answer_pick} {___("a card.", "{amount} cards.", amount).format(amount=amount)}'
+        return f'{answer_one} {answer_two.format(amount=amount)}'
 
     def play_seven(self, user: types.User | int, seven_user: types.User):
         if isinstance(user, int):
-            answer = _("I exchange")
+            answer_one = _("I exchange")
         else:
-            answer = _("{user} exchanges").format(user=get_username(user))
+            answer_one = _("{user} exchanges").format(user=get_username(user))
+
+        answer_two = _("cards with player {seven_user}.")
 
         self.users.update(
             {
@@ -497,7 +502,7 @@ class UnoData(GamesData):
         )
 
         self.current_state.seven = 0
-        return f'{answer} {_("cards with player {seven_user}.").format(seven_user=get_username(seven_user))}'
+        return f'{answer_one} {answer_two.format(seven_user=get_username(seven_user))}'
 
     def play_draw(self, user: types.User | int) -> str:
         if not self.current_state.drawn:
@@ -506,7 +511,6 @@ class UnoData(GamesData):
 
         answer = self.pick_card(user, self.current_state.drawn)
         self.current_state.drawn = self.current_state.bluffed = 0
-
         return answer
 
     async def play_bluff(self, state: FSMContext):

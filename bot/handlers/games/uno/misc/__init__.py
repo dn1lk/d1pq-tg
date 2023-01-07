@@ -57,8 +57,8 @@ async def timeout_proceed(message: types.Message, state: FSMContext):
 async def timeout_finally(message: types.Message, state: FSMContext):
     task_name = timer.get_name(state, 'game')
 
-    await timer.cancel(f"{task_name}:uno")
-    await timer.cancel(f"{task_name}:poll")
+    await timer.cancel(f'{task_name}:uno')
+    await timer.cancel(f'{task_name}:poll')
 
     from . import keyboards as k
 

@@ -69,7 +69,7 @@ async def gen_reply_handler(
     elif 'voice' in answer:
         message = await message.reply_voice(**answer)
 
-    if random() < 0.3:
+    if random() < 0.2:
         await gen_answer_handler(message, bot, db, i18n, messages)
 
 
