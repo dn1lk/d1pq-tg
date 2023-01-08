@@ -79,7 +79,7 @@ def gen(
     shuffle(sentences)
 
     for sentence in sentences:
-        if any(word in sentence for word in text):
+        if text & set(sentence):
             index = (model.parsed_sentences.index(sentence) + 1) % len(model.parsed_sentences)
             for state in get_states(model.parsed_sentences[index]):
                 answer = make_sentence(tuple(state))
