@@ -78,15 +78,16 @@ def gen(
     sentences = model.parsed_sentences.copy()
     shuffle(sentences)
 
-    for sentence in sentences:
-        if text & set(sentence):
-            index = (model.parsed_sentences.index(sentence) + 1) % len(model.parsed_sentences)
-            for state in get_states(model.parsed_sentences[index]):
-                answer = make_sentence(tuple(state))
+    if text:
+        for sentence in sentences:
+            if text & set(sentence):
+                index = (model.parsed_sentences.index(sentence) + 1) % len(model.parsed_sentences)
+                for state in get_states(model.parsed_sentences[index]):
+                    answer = make_sentence(tuple(state))
 
-                if answer:
-                    return answer
+                    if answer:
+                        return answer
 
-            max_words += 1
+                max_words += 1
 
     return make_sentence() or get_none(locale).make_sentence()

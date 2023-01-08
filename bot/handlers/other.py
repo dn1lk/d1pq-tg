@@ -42,7 +42,7 @@ async def get_gen_args(
                 'text': markov.gen(
                     locale=i18n.current_locale,
                     messages=messages,
-                    text=set(message.text.split()),
+                    text=set(message.text.split()) if message.text else set(),
                     state_size=accuracy,
                 )
             }
