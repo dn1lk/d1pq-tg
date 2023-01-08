@@ -1,6 +1,6 @@
-import re
 from datetime import datetime, timedelta
 from random import choice, random, choices
+from re import sub
 
 from aiogram import Router, Bot, F, types, filters, flags
 from aiogram.utils.chat_action import ChatActionSender
@@ -19,7 +19,7 @@ def answer_check(answer: str) -> str:
     def cap(match):
         return match.group().capitalize()
 
-    answer = re.sub(r'((?<=[.?!]\s)(\w+)|(^\w+))', cap, answer)
+    answer = sub(r'((?<=[.?!]\s)(\w+)|(^\w+))', cap, answer)
 
     if answer[-1] not in '.!?:(':
         answer += '.'
