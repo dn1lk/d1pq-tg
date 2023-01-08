@@ -50,29 +50,6 @@ async def get_gen_args(
     return await choices((gen_markov, gen_sticker), weights=(6, 2), k=1)[0]()
 
 
-@router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
-@flags.throttling('gen')
-async def gen_reply_handler(
-        message: types.Message,
-        bot: Bot,
-        db: DataBaseContext,
-        i18n: I18n,
-        messages: list[str],
-):
-    answer = await get_gen_args(message, bot, db, i18n, messages)
-
-    if 'text' in answer:
-        answer['text'] = answer_check(answer['text'])
-        message = await message.reply(**answer)
-    elif 'sticker' in answer:
-        message = await message.reply_sticker(**answer)
-    elif 'voice' in answer:
-        message = await message.reply_voice(**answer)
-
-    if random() < 0.2:
-        await gen_answer_handler(message, bot, db, i18n, messages)
-
-
 async def chance_filter(message: types.Message, bot: Bot, db: DataBaseContext) -> bool:
     if datetime.now(tz=message.date.tzinfo) - message.date < timedelta(minutes=5):
         chance: float = await db.get_data('chance')
@@ -115,4 +92,27 @@ async def gen_answer_handler(
         message = await message.answer_voice(**answer)
 
     if random() < 0.3:
+        await gen_answer_handler(message, bot, db, i18n, messages)
+
+
+@router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
+@flags.throttling('gen')
+async def gen_reply_handler(
+        message: types.Message,
+        bot: Bot,
+        db: DataBaseContext,
+        i18n: I18n,
+        messages: list[str],
+):
+    answer = await get_gen_args(message, bot, db, i18n, messages)
+
+    if 'text' in answer:
+        answer['text'] = answer_check(answer['text'])
+        message = await message.reply(**answer)
+    elif 'sticker' in answer:
+        message = await message.reply_sticker(**answer)
+    elif 'voice' in answer:
+        message = await message.reply_voice(**answer)
+
+    if random() < 0.2:
         await gen_answer_handler(message, bot, db, i18n, messages)
