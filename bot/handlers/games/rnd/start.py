@@ -89,7 +89,7 @@ class ChatHandler(MessageHandler):
                 for user_id in winners:
                     yield await self.bot.get_chat_member(self.chat.id, user_id)
 
-            winners = ', '.join(get_username(winner.user) async for winner in get_member())
+            winners = ', '.join([get_username(winner.user) async for winner in get_member()])
             answer += _('The title of winner goes to: {winners}. Congrats!').format(winners=winners)
         else:
             answer += _("No one guessed right. Heh.")
