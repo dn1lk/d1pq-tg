@@ -25,7 +25,7 @@ class Wikipedia:
                 messages=list(answer['query']['pages'].values())[0]['extract'],
                 text=set(titles.split()),
                 test_output=False,
-                max_words=50,
+                max_words=25,
                 min_words=5,
             )
         except KeyError:
