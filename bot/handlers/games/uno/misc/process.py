@@ -149,7 +149,6 @@ async def update_timer(
         data: UnoData,
 ):
     task_name = timer.get_name(state, 'game')
-    await timer.cancel(task_name)
 
     from .bot import UnoBot
     bot = UnoBot(message, state, data)
@@ -157,6 +156,8 @@ async def update_timer(
 
     from . import timeout_proceed, timeout_finally
     if cards or data.current_user_id == state.bot.id:
+        await timer.cancel(task_name)
+
         delay = 0
         task = bot.gen_turn(cards)
     else:

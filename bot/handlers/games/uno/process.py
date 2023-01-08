@@ -1,6 +1,6 @@
 from random import choice, random
 
-from aiogram import Bot, Router, F, types
+from aiogram import Bot, Router, F, types, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -29,6 +29,7 @@ async def start_filter(query: types.CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(k.UnoKeyboard.filter(F.action == k.UnoActions.START), start_filter)
+@flags.timer('game')
 async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,
