@@ -12,7 +12,7 @@ router = Router(name='error')
 
 @router.errors(ExceptionTypeFilter(TelegramRetryAfter))
 async def retry_after_handler(_, exception: TelegramRetryAfter):
-    logging.error(exception)
+    logging.error(exception.message)
 
     await asyncio.sleep(exception.retry_after)
     await exception.method

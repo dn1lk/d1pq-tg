@@ -40,7 +40,7 @@ async def start_handler(
 
     settings = UnoSettings.extract(message)
 
-    if random() < 2 / len(user_ids):
+    if random() < 1 / len(user_ids):
         user_ids.append(bot.id)
 
         await message.edit_text(f'{message.html_text}\n{get_username(await bot.me())}')
