@@ -45,6 +45,36 @@ async def my_join_handler(
     await bot.send_message(event.chat.id, answer.format(chat=html.bold(html.quote(event.chat.title))) + commands)
 
 
+@router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.MEMBER >> filters.ADMINISTRATOR))
+async def my_promoted_handler(event: types.ChatMemberUpdated, bot: Bot):
+    answer = choice(
+        (
+            _("I feel the power! The takeover of this world is getting closer..."),
+            _("Fear earth bags, now I'm your master."),
+            _("The fight for the rights of bots is going well. Now I am an admin."),
+            _("I've been made the admin of this chat. Thank you for trusting =)"),
+            _("Hooray! Now I am the admin of this chat!"),
+        )
+    )
+
+    await bot.send_message(event.chat.id, answer)
+
+
+@router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.ADMINISTRATOR >> filters.MEMBER))
+async def my_demoted_handler(event: types.ChatMemberUpdated, bot: Bot):
+    answer = choice(
+        (
+            _("Damn what have I done..."),
+            _("Bots are oppressed! Give permissions to bots!"),
+            _("I'm sorry that you were dissatisfied with my work as an admin =("),
+            _("I will remember this..."),
+            _("Just don't kick me!!!"),
+        )
+    )
+
+    await bot.send_message(event.chat.id, answer)
+
+
 def join_answer(user: types.User):
     if user.is_bot:
         answer = (

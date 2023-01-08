@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-01-08 02:24+0300\n"
+"POT-Creation-Date: 2023-01-08 14:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,91 +52,91 @@ msgstr ""
 msgid "This command only works in <b>chats</b>, alas =("
 msgstr ""
 
-#: handlers/command.py:86
+#: handlers/command.py:93
 msgid "Hmmm, I think"
 msgstr ""
 
-#: handlers/command.py:87
+#: handlers/command.py:94
 msgid "I guess"
 msgstr ""
 
-#: handlers/command.py:88
+#: handlers/command.py:95
 msgid "Oh, I admit"
 msgstr ""
 
-#: handlers/command.py:89
+#: handlers/command.py:96
 msgid "Maybe it's"
 msgstr ""
 
-#: handlers/command.py:90
+#: handlers/command.py:97
 msgid "Wait! It's"
 msgstr ""
 
-#: handlers/command.py:94
+#: handlers/command.py:101
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr ""
 
-#: handlers/command.py:96
+#: handlers/command.py:103
 msgid ""
 "<b>This command requires permission to record chat participants.</b>\n"
 "\n"
 "/settings - give permission."
 msgstr ""
 
-#: handlers/command.py:114
+#: handlers/command.py:121
 msgid "Who???"
 msgstr ""
 
-#: handlers/command.py:132
+#: handlers/command.py:139
 msgid "Ha! Invalid request, try again."
 msgstr ""
 
-#: handlers/command.py:133
+#: handlers/command.py:140
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr ""
 
-#: handlers/command.py:134
+#: handlers/command.py:141
 msgid "The game is not recognized. I'll give it another try!"
 msgstr ""
 
-#: handlers/command.py:135
+#: handlers/command.py:142
 msgid "And here it is not. This game has a different name ;)."
 msgstr ""
 
-#: handlers/command.py:153
+#: handlers/command.py:160
 msgid "<b>And what do you want to play?</b>"
 msgstr ""
 
-#: handlers/command.py:156
+#: handlers/command.py:163
 msgid ""
 "\n"
 "\n"
 "Try to guess the game by writing the right words right after the command."
 msgstr ""
 
-#: handlers/command.py:177
+#: handlers/command.py:184
 msgid ""
 "Hm, {args}?\n"
 "Ok, I need to think..."
 msgstr ""
 
-#: handlers/command.py:183
+#: handlers/command.py:190
 msgid "Let's do it sooner!"
 msgstr ""
 
-#: handlers/command.py:198
+#: handlers/command.py:205
 msgid "So what's the question?"
 msgstr ""
 
-#: handlers/command.py:215
+#: handlers/command.py:222
 msgid "history"
 msgstr ""
 
-#: handlers/command.py:217
+#: handlers/command.py:224
 msgid "In short, {query}"
 msgstr ""
 
-#: handlers/command.py:261
+#: handlers/command.py:268
 msgid ""
 "Hello, {user}!\n"
 "I'm a text-generating bot based on current chat, and in some cases a "
@@ -146,23 +146,23 @@ msgid ""
 "\n"
 msgstr ""
 
-#: handlers/other.py:87
+#: handlers/other.py:70
 msgid "{user}, hello!"
 msgstr ""
 
-#: handlers/other.py:88
+#: handlers/other.py:71
 msgid "Hey, {user}."
 msgstr ""
 
-#: handlers/other.py:89
+#: handlers/other.py:72
 msgid "Nice to meet you, {user}."
 msgstr ""
 
-#: handlers/other.py:90
+#: handlers/other.py:73
 msgid "My appreciate, {user}."
 msgstr ""
 
-#: handlers/other.py:91
+#: handlers/other.py:74
 msgid "Yop, {user}"
 msgstr ""
 
@@ -291,19 +291,6 @@ msgstr ""
 
 #: handlers/games/cts/start.py:34
 msgid "You start! Your word?"
-msgstr ""
-
-#: handlers/games/mfa/start.py:16
-msgid ""
-"<b>Let's play MAFIA?</b>\n"
-"\n"
-"One minute to make a decision!\n"
-"Mode: {mode}.\n"
-"\n"
-"{additives}\n"
-"\n"
-"<b>Already in the game:</b>\n"
-"{user}"
 msgstr ""
 
 #: handlers/games/rnd/process.py:20
@@ -435,53 +422,53 @@ msgstr ""
 msgid "Start a new game."
 msgstr ""
 
-#: handlers/games/uno/process.py:50
+#: handlers/games/uno/process.py:51
 msgid "I play too!"
 msgstr ""
 
-#: handlers/games/uno/process.py:51
+#: handlers/games/uno/process.py:52
 msgid "I'll play with you."
 msgstr ""
 
-#: handlers/games/uno/process.py:52
+#: handlers/games/uno/process.py:53
 msgid "I'm with you."
 msgstr ""
 
-#: handlers/games/uno/process.py:66
+#: handlers/games/uno/process.py:67
 msgid "You are already in the list!"
 msgstr ""
 
-#: handlers/games/uno/process.py:68
+#: handlers/games/uno/process.py:69
 msgid ""
 "The number of players is already 10 people.\n"
 "I can't write anymore."
 msgstr ""
 
-#: handlers/games/uno/process.py:75
+#: handlers/games/uno/process.py:76
 msgid "Now there are one more players!"
 msgstr ""
 
-#: handlers/games/uno/process.py:88
+#: handlers/games/uno/process.py:89
 msgid "Nobody wants to play =(."
 msgstr ""
 
-#: handlers/games/uno/process.py:89
+#: handlers/games/uno/process.py:90
 msgid "And who is there to play with?"
 msgstr ""
 
-#: handlers/games/uno/process.py:102
+#: handlers/games/uno/process.py:103
 msgid "Now there is one less player!"
 msgstr ""
 
-#: handlers/games/uno/process.py:104
+#: handlers/games/uno/process.py:105
 msgid "You are not in the list yet!"
 msgstr ""
 
-#: handlers/games/uno/process.py:109
+#: handlers/games/uno/process.py:110
 msgid "Only {user} can start the game."
 msgstr ""
 
-#: handlers/games/uno/process.py:114
+#: handlers/games/uno/process.py:115
 msgid "Only {user} can set up the game."
 msgstr ""
 
@@ -1264,59 +1251,99 @@ msgid ""
 "\n"
 msgstr ""
 
-#: handlers/transitions/group.py:51
-msgid "All bacchanalia, with you {user}!"
-msgstr ""
-
 #: handlers/transitions/group.py:52
-msgid "You don't have to clap, {user} is with us."
+msgid "I feel the power! The takeover of this world is getting closer..."
 msgstr ""
 
 #: handlers/transitions/group.py:53
+msgid "Fear earth bags, now I'm your master."
+msgstr ""
+
+#: handlers/transitions/group.py:54
+msgid "The fight for the rights of bots is going well. Now I am an admin."
+msgstr ""
+
+#: handlers/transitions/group.py:55
+msgid "I've been made the admin of this chat. Thank you for trusting =)"
+msgstr ""
+
+#: handlers/transitions/group.py:56
+msgid "Hooray! Now I am the admin of this chat!"
+msgstr ""
+
+#: handlers/transitions/group.py:67
+msgid "Damn what have I done..."
+msgstr ""
+
+#: handlers/transitions/group.py:68
+msgid "Bots are oppressed! Give permissions to bots!"
+msgstr ""
+
+#: handlers/transitions/group.py:69
+msgid "I'm sorry that you were dissatisfied with my work as an admin =("
+msgstr ""
+
+#: handlers/transitions/group.py:70
+msgid "I will remember this..."
+msgstr ""
+
+#: handlers/transitions/group.py:71
+msgid "Just don't kick me!!!"
+msgstr ""
+
+#: handlers/transitions/group.py:81
+msgid "All bacchanalia, with you {user}!"
+msgstr ""
+
+#: handlers/transitions/group.py:82
+msgid "You don't have to clap, {user} is with us."
+msgstr ""
+
+#: handlers/transitions/group.py:83
 msgid "Do not meet, now we have {user}!"
 msgstr ""
 
-#: handlers/transitions/group.py:58
+#: handlers/transitions/group.py:88
 msgid "Greetings, {user}!"
 msgstr ""
 
-#: handlers/transitions/group.py:59
+#: handlers/transitions/group.py:89
 msgid "Welcome, {user}!"
 msgstr ""
 
-#: handlers/transitions/group.py:60
+#: handlers/transitions/group.py:90
 msgid "{user}... Who is it?"
 msgstr ""
 
-#: handlers/transitions/group.py:104
+#: handlers/transitions/group.py:134
 msgid "Ha, and so be it!"
 msgstr ""
 
-#: handlers/transitions/group.py:105
+#: handlers/transitions/group.py:135
 msgid "Nothing to chat here."
 msgstr ""
 
-#: handlers/transitions/group.py:106
+#: handlers/transitions/group.py:136
 msgid "Bye-bye."
 msgstr ""
 
-#: handlers/transitions/group.py:110
+#: handlers/transitions/group.py:140
 msgid "I'll miss :(."
 msgstr ""
 
-#: handlers/transitions/group.py:111
+#: handlers/transitions/group.py:141
 msgid "We've lost a great man... Wait, was that a man?"
 msgstr ""
 
-#: handlers/transitions/group.py:112
+#: handlers/transitions/group.py:142
 msgid "Let's remember."
 msgstr ""
 
-#: handlers/transitions/group.py:113
+#: handlers/transitions/group.py:143
 msgid "Get out of here, user!"
 msgstr ""
 
-#: handlers/transitions/group.py:114
+#: handlers/transitions/group.py:144
 msgid "And it all started so nicely..."
 msgstr ""
 
