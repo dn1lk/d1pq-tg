@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timedelta
 from random import choice, random, choices
 
@@ -15,7 +16,10 @@ router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
 
 
 def answer_check(answer: str) -> str:
-    answer = (answer[0].upper() + answer[1:]).strip()
+    def cap(match):
+        return match.group().capitalize()
+
+    answer = re.sub(r'((?<=[.?!]\s)(\w+)|(^\w+))', cap, answer)
 
     if answer[-1] not in '.!?:(':
         answer += '.'
