@@ -23,7 +23,7 @@ class Wikipedia:
             return _("In short, ") + markov.gen(
                 locale,
                 messages=list(answer['query']['pages'].values())[0]['extract'],
-                text=titles,
+                text=set(titles.split()),
                 test_output=False,
                 max_words=50,
                 min_words=5,

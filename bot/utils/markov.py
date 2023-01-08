@@ -46,7 +46,7 @@ def get_none(locale: str) -> markovify.Text:
 def gen(
         locale: str,
         messages: list[str] | None = None,
-        text: str = '',
+        text: set = None,
         state_size: int = 2,
         tries: int = 500,
         **kwargs,
@@ -79,7 +79,7 @@ def gen(
     shuffle(sentences)
 
     for sentence in sentences:
-        if any(word in sentence for word in text.split()):
+        if any(word in sentence for word in text):
             index = (model.parsed_sentences.index(sentence) + 1) % len(model.parsed_sentences)
             for state in get_states(model.parsed_sentences[index]):
                 answer = make_sentence(tuple(state))

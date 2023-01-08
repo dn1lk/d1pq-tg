@@ -31,7 +31,7 @@ async def help_handler(message: types.Message, commands: dict[str, tuple[types.B
 async def get_command_args(command: filters.CommandObject, i18n: I18n, **kwargs) -> dict:
     return {
         'command': command.command,
-        'args': markov.gen(locale=i18n.current_locale, text=command.command, max_words=5, **kwargs).lower()
+        'args': markov.gen(locale=i18n.current_locale, text={command.command}, max_words=5, **kwargs).lower()
     }
 
 
@@ -215,7 +215,7 @@ async def history_handler(
     query = html.quote(command.args) if command.args else choice(messages or [_("history")])
 
     query = _("In short, {query}").format(query=query)
-    answer = markov.gen(i18n.current_locale, messages, query, state_size=2, tries=150000, min_words=50)
+    answer = markov.gen(i18n.current_locale, messages, set(query.split()), state_size=2, tries=150000, min_words=50)
 
     await message.answer(answer)
 
