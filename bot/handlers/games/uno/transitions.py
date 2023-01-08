@@ -1,4 +1,4 @@
-from aiogram import Router, F, types, flags
+from aiogram import Router, F, types, flags, filters
 from aiogram.fsm.context import FSMContext
 
 from bot.utils.database.context import DataBaseContext
@@ -22,9 +22,9 @@ async def kick_user(db: DataBaseContext, state: FSMContext, user: types.User, me
     await remove_member(db, members, user.id)
 
 
-@router.chat_member()
+@router.chat_member(filters.ChatMemberUpdatedFilter(filters.LEAVE_TRANSITION))
 @flags.data('members')
-async def leave_handler(
+async def leave_action_handler(
         event: types.ChatMemberUpdated,
         db: DataBaseContext,
         state: FSMContext,
