@@ -80,6 +80,13 @@ async def who_chat_handler(
     """find the desired participant, найти участника чата по описанию"""
 
     if members and len(members) > 1:
+        args = command.args
+
+        if args[-1] in '?:-,':
+            args = args[:-1] + '.'
+        elif args[-1] not in '.!':
+            args += '.'
+
         member = await bot.get_chat_member(message.chat.id, choice(members))
         answer = choice(
             (
@@ -89,7 +96,7 @@ async def who_chat_handler(
                 _("Maybe it's"),
                 _("Wait! It's")
             )
-        ) + f'{get_username(member.user)} {html.bold(html.quote(command.args))}'
+        ) + f' {get_username(member.user)} {html.bold(html.quote(args))}'
     elif members:
         answer = (_("Oh, I don't know you guys... Give me a time."))
     else:

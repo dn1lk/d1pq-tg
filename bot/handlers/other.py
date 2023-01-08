@@ -21,7 +21,9 @@ def answer_check(answer: str) -> str:
 
     answer = sub(r'((?<=[.?!]\s)(\w+)|(^\w+))', cap, answer)
 
-    if answer[-1] not in '.!?:(':
+    if answer[-1] in ':-,':
+        answer = answer[:-1] + '.'
+    elif answer[-1] not in '.!?()':
         answer += '.'
 
     return answer
