@@ -51,7 +51,7 @@ class LevenshteinFilter(filters.BaseFilter):
         if self.ignore_case:
             text = text.lower()
 
-        return any(self.lev_distance(lev, text) <= len(lev) / 3 for lev in self.lev)
+        return any(self.lev_distance(lev, word) <= len(lev) / 3 for lev in self.lev for word in text.split())
 
 
 class AdminFilter(filters.BaseFilter):
