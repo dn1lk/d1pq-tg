@@ -18,7 +18,6 @@ class Heroku(BaseSettings):
     port: int = 8080
 
     database_url: str
-    redis_url: str
 
 
 BASE_DIR = Path(__file__).parent
