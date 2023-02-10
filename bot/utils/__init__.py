@@ -1,10 +1,9 @@
 from aiogram import Dispatcher
 
-from .wiki import Wikipedia
 
-wiki = Wikipedia()
+async def setup(dp: Dispatcher, database_url: str):
+    from . import database, wiki
+    dp['db'] = sql = await database.SQLContext.setup(database_url)
 
-
-async def setup(dp: Dispatcher):
-    from . import database
-    dp['pool_db'] = await database.setup()
+    dp.shutdown.register(sql.close)
+    dp.shutdown.register(wiki.close)

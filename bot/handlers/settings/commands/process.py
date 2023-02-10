@@ -1,27 +1,23 @@
 from random import choice
 
-from aiogram import Router, Bot, F, types, flags, filters, html
-from aiogram.filters import MagicData
+from aiogram import Router, Bot, F, types, flags, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters as f
-from bot.utils.database.context import DataBaseContext
-from . import get_args
+from bot import filters
 from .. import Settings
-from ... import NO_ARGS
 
 router = Router(name='settings:commands:process')
 
 
-async def process_filter(message: types.Message, bot: Bot, commands: dict[str, types.BotCommand]):
-    return await filters.Command(*commands['en'])(message, bot)
+async def process_filter(message: types.Message, bot: Bot, ui_commands: dict[str, types.BotCommand]):
+    return await filters.Command(*ui_commands['en'])(message, bot)
 
 
-router.message.filter(Settings.COMMAND, process_filter, f.AdminFilter(is_admin=True))
+router.message.filter(Settings.COMMAND, process_filter, filters.AdminFilter(is_admin=True))
 
 
-@router.message(MagicData(F.command.args.regexp(r'\w+')))
+@router.message(filters.MagicData(F.command.args.regexp(r'\w+')))
 async def setup_handler(
         message: types.Message,
         db: DataBaseContext,
@@ -49,7 +45,6 @@ async def setup_handler(
                 command=command.command,
                 custom_command=command.args,
             )
-
     else:
         answer = _("No, I can record only one custom command. You'll have to choose!")
 

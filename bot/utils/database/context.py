@@ -1,58 +1,66 @@
-from typing import Any, Optional
+from asyncpg import Pool, Record, Connection, create_pool
 
-from aiogram import Bot
-from aiogram.fsm.storage.base import BaseStorage, StorageKey
-from asyncpg import Pool
+from .column import Column, ArrayColumn
 
 
-class DataBaseContext:
-    def __init__(self, bot: Bot, key: StorageKey, storage: BaseStorage, pool_db: Pool):
-        self.bot = bot
-        self.key = key
-        self.storage = storage
+class SQLContext:
+    def __init__(self, pool: Pool, defaults: Record):
+        self.__pool = pool
+        self.__defaults = defaults
 
-        self.pool_db = pool_db
+        self.id = Column(pool, defaults, 'id')
+        self.locale = Column(pool, defaults, 'locale')
+        self.messages = ArrayColumn(pool, defaults, 'messages')
+        self.stickers = ArrayColumn(pool, defaults, 'stickers')
+        self.members = ArrayColumn(pool, defaults, 'members')
+        self.commands = Column(pool, defaults, 'commands')
+        self.chance = Column(pool, defaults, 'chance')
+        self.accuracy = Column(pool, defaults, 'accuracy')
 
-    async def get_data(self, column: str) -> Any:
-        data = (await self.storage.get_data(bot=self.bot, key=self.key)).get(column)
+    def __getitem__(self, item: str) -> Column:
+        column = self.__getattribute__(item)
 
-        if not data:
-            async with self.pool_db.acquire() as con:
-                data = await con.fetchval(f"SELECT {column} FROM data WHERE id = $1;", self.key.chat_id) or \
-                       await con.fetchval(f"SELECT {column} FROM data WHERE id = 0;")
+        if isinstance(column, Column):
+            return column
+        raise TypeError('Incorrect column')
 
-            await self.storage.update_data(bot=self.bot, key=self.key, data={column: data or 'NULL'})
+    async def clear(self, chat_id: int):
+        async with self.__pool.acquire() as connection:
+            await connection.execute("delete from data where id = $1;", chat_id)
 
-        elif data == 'NULL':
-            data = None
+    @classmethod
+    async def setup(cls, database_url: str) -> "SQLContext":
+        async def init_connection(conn: Connection):
+            from json import dumps, loads
+            await conn.set_type_codec(
+                typename='json',
+                encoder=dumps,
+                decoder=loads,
+                schema='pg_catalog'
+            )
 
-        return data
+        pool = await create_pool(database_url, max_size=20, init=init_connection)
 
-    async def set_data(self, data: Optional[dict] = None, **kwargs: Any) -> None:
-        if data:
-            kwargs.update(data)
+        async with pool.acquire() as connection:
+            await connection.execute(
+                """
+                create table if not exists data(
+                    id          bigint      primary key not null,
+                    locale      name,
+                    messages    text[],
+                    stickers    name[]      default '{TextAnimated}',
+                    members     bigint[],
+                    commands    json,
+                    chance      float       default 0.1,
+                    accuracy    smallint    default 2
+                );
+                """,
+            )
 
-        async with self.pool_db.acquire() as con:
-            for column, data in kwargs.items():
-                await con.execute(
-                    f"INSERT INTO data(id, {column}) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET {column} = $2;",
-                    self.key.chat_id, data
-                )
+            await connection.execute("insert into data (id) values (0) on conflict (id) do nothing;")
+            defaults = await connection.fetchrow(f"select * from data where id = 0;")
 
-        await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
+        return SQLContext(pool, defaults)
 
-    async def update_data(self, data: Optional[dict] = None, **kwargs: Any) -> None:
-        if data:
-            kwargs.update(data)
-
-        async with self.pool_db.acquire() as con:
-            for column, data in kwargs.items():
-                await con.execute(f"UPDATE data SET {column} = $2 WHERE id = $1;", self.key.chat_id, data)
-
-        await self.storage.update_data(bot=self.bot, key=self.key, data=kwargs)
-
-    async def clear(self) -> None:
-        async with self.pool_db.acquire() as con:
-            await con.execute("DELETE FROM data WHERE id = $1;", self.key.chat_id)
-
-        await self.storage.set_data(bot=self.bot, key=self.key, data={})
+    async def close(self):
+        await self.__pool.close()

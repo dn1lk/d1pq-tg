@@ -1,3 +1,1 @@
-from .core import Timer
-
-timer = Timer()
+from task import TimerTask

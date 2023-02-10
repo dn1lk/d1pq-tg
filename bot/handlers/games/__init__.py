@@ -1,3 +1,4 @@
+from enum import Enum
 from random import choice
 
 from aiogram import Router, types
@@ -7,16 +8,29 @@ from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 from pydantic import BaseModel
 
 
-class Games(StatesGroup):
-    UNO = State()
+class Games(Enum):
+    CTS = 'cts', 'грд'
+    RND = 'rnd', 'рнд'
+    RPS = 'rps', 'кнб'
+    UNO = 'uno', 'уно'
+
+
+class GamesStates(StatesGroup):
     CTS = State()
     RND = State()
+    UNO = State()
 
 
 class GamesData(BaseModel):
+    games = {}
+
+    @staticmethod
+    async def get_key(state: FSMContext):
+        return f'{state.key.chat_id}:{await state.get_state()}'
+
     @classmethod
     async def get_data(cls, state: FSMContext) -> "GamesData":
-        data = await state.get_data()
+        data = cls.games.get(await cls.get_key(state)) or await state.get_data()
 
         if data:
             return cls(**data)

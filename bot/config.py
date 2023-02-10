@@ -4,6 +4,9 @@ from aiogram.utils.i18n import I18n
 from pydantic import BaseSettings, SecretStr
 
 
+BASE_PATH = Path.cwd()
+
+
 class Bot(BaseSettings):
     token: SecretStr
     owner: int
@@ -12,7 +15,7 @@ class Bot(BaseSettings):
         env_prefix = 'BOT_M_'
 
 
-class Heroku(BaseSettings):
+class Provider(BaseSettings):
     domain_url: str | None = None
     host: str = '0.0.0.0'
     port: int = 8080
@@ -20,9 +23,7 @@ class Heroku(BaseSettings):
     database_url: str
 
 
-BASE_DIR = Path(__file__).parent
-
 bot = Bot()
-heroku = Heroku()
+provider = Provider()
 
-i18n = I18n(path=BASE_DIR / 'locales', domain='messages')
+i18n = I18n(path=BASE_PATH / 'bot' / 'locales', domain='messages')

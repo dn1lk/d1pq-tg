@@ -1,15 +1,15 @@
 from aiogram import Router, F, types, flags, filters
 from aiogram.fsm.context import FSMContext
 
-from bot.utils.database.context import DataBaseContext
+from bot.utils.database import SQLContext
 from .misc import UnoData
 from .. import Games
-from ...transitions.group import my_admin_filter, remove_member
+from ...transitions.group import my_not_admin_filter, remove_member
 
 router = Router(name='game:uno:transition')
 
 router.chat_member.filter(Games.UNO)
-router.message.filter(Games.UNO)
+router.message.filter(Games.UNO, my_not_admin_filter)
 
 
 async def kick_user(db: DataBaseContext, state: FSMContext, user: types.User, members: list | None):
@@ -33,7 +33,7 @@ async def leave_action_handler(
     await kick_user(db, state, event.new_chat_member.user, members)
 
 
-@router.message(F.left_chat_member, my_admin_filter)
+@router.message(F.left_chat_member)
 @flags.data('members')
 async def leave_message_handler(
         message: types.Message,

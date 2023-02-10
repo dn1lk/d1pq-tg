@@ -2,12 +2,10 @@ from aiogram import Router
 
 
 def setup(router: Router):
-    from .main import router as start_rt
-    from .update import router as process_rt
+    from .main import router as main_rt
 
     sub_routers = (
-        process_rt,
-        start_rt,
+        main_rt,
     )
 
     for sub_router in sub_routers:

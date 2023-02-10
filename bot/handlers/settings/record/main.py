@@ -1,15 +1,15 @@
 from aiogram import Router, F, types, html
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.database.context import DataBaseContext
-from .misc.data import RecordData
-from ..misc import keyboards as k
+from . import keyboard as k
+from .data import RecordData
+from ....utils import database
 
 router = Router(name="settings:record:start")
 
 
 @router.callback_query(k.SettingsKeyboard.filter(F.action == k.SettingsAction.RECORD))
-async def start_handler(query: types.CallbackQuery, db: DataBaseContext):
+async def start_handler(query: types.CallbackQuery, db: database.SQLContext):
     answer = html.bold(_("I am recording some information about this chat.\n\n"))
     datas = {
         RecordData.MESSAGES: _("for more accurate and relevant message generation"),

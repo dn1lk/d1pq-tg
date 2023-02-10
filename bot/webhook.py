@@ -1,31 +1,30 @@
 import asyncio
 import logging
 
-from aiogram import Dispatcher, Bot, types
+from aiogram import Bot, Dispatcher
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 from aiohttp import web
 
-import config
 
+async def setup(dp: Dispatcher, bot: Bot, domain_url: str, host: str, port: int):
+    user = await bot.me()
 
-async def setup(dp: Dispatcher, bot: Bot):
-    user: types.User = await bot.me()
     webhook_logger = logging.getLogger("aiogram.webhook")
     webhook_logger.info("Setup webhook for bot @%s id=%d - %r", user.username, bot.id, user.full_name)
 
-    await bot.set_webhook(url=f'{config.heroku.domain_url}/webhook/{bot.token}',
-                          allowed_updates=dp.resolve_used_update_types())
+    path = f'/webhook/{bot.token}'
+    await bot.set_webhook(url=f'{domain_url}{path}', allowed_updates=dp.resolve_used_update_types())
 
     aiohttp_logger = logging.getLogger("aiohttp.access")
     aiohttp_logger.setLevel(logging.CRITICAL)
 
     app = web.Application()
-    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=f'/webhook/{bot.token}')
+    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=path)
 
     runner = web.AppRunner(app)
     await runner.setup()
 
-    site = web.TCPSite(runner, host=config.heroku.host, port=int(config.heroku.port))
+    site = web.TCPSite(runner, host=host, port=port)
     await site.start()
 
     await asyncio.Event().wait()

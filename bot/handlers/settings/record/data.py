@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.database.context import DataBaseContext
+from ....utils import database
 
 
 class RecordData(Enum):
@@ -24,8 +24,8 @@ class RecordData(Enum):
             case _:
                 return _('Delete all records')
 
-    async def switch(self, dp: DataBaseContext) -> int:
-        item = await dp.get_data(self.name.lower())
+    async def switch(self, dp: database.SQLContext, chat_id: int) -> int:
+        item = await dp[self.name.lower()].get(chat_id)
 
         match self:
             case self.MESSAGES:

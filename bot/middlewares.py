@@ -1,166 +1,100 @@
 import asyncio
-from dataclasses import dataclass
+from random import random, choice
 from typing import Awaitable, Callable, Any
 
-from aiogram import Bot, Dispatcher, BaseMiddleware, types
+from aiogram import Dispatcher, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
-from aiogram.utils.chat_action import ChatActionMiddleware
-
-from utils import markov
-from utils.database.context import DataBaseContext
-
-
-class DataMiddleware(BaseMiddleware):
-    async def __call__(
-            self,
-            handler: Callable[
-                [types.Message | types.CallbackQuery | types.ChatMemberUpdated, dict[str, Any]],
-                Awaitable[Any]
-            ],
-            event: types.Message | types.CallbackQuery | types.ChatMemberUpdated,
-            data: dict[str, Any]
-    ):
-        db: DataBaseContext = data['db']
-        flag_data: str | tuple | None = get_flag(data, 'data')
-
-        if flag_data:
-            async def get_data(column: str):
-                value = await db.get_data(column)
-
-                if column == 'chance':
-                    bot: Bot = data['bot']
-                    value = round(value / await bot.get_chat_member_count(data['event_chat'].id) * 100, 2)
-
-                if value:
-                    data[column] = value
-
-            if isinstance(flag_data, str):
-                await get_data(flag_data)
-            else:
-                for key in flag_data:
-                    await get_data(key)
-
-        if get_flag(data, 'throttling') == 'gen':
-            messages = data['messages'] = await db.get_data('messages')
-            await UnhandledMiddleware.update_data(event, db, messages)
-
-        result = await handler(event, data)
-
-        if data['event_chat'].type != 'private':
-            members: list | None = data.get('members', await db.get_data('members'))
-
-            if members and data['event_from_user'].id not in members:
-                await db.update_data(members=[*members, data['event_from_user'].id])
-
-        return result
+from aiogram.fsm.storage.base import StorageKey
+from aiogram.utils.i18n import I18n, gettext as _
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    tasks = {}
-    timeouts = {
+    __tasks: set[asyncio.Task] = set()
+    __timeouts = {
         'gen': 3,
     }
 
-    def __setitem__(self, name: str, task: asyncio.Task):
-        self.tasks[name] = task
-        task.set_name(name)
-        task.add_done_callback(lambda _: self.tasks.pop(name))
+    def __init__(self, i18n: I18n):
+        self.i18n = i18n
 
-    def __getitem__(self, name):
-        return self.tasks.get(name)
+    def __setitem__(self, key: StorageKey, task: asyncio.Task):
+        self.__tasks.add(task)
+        task.set_name(key)
+        task.add_done_callback(self.__tasks.discard)
 
     async def __call__(
-            self,
-            handler: Callable[[types.Message, dict[str, Any]], Awaitable[Any]],
-            event: types.Message,
-            data: dict[str, Any],
+        self,
+        handler: Callable[[types.TelegramObject, dict[str, Any]], Awaitable[Any]],
+        event: types.TelegramObject,
+        data: dict[str, Any],
     ):
         throttling = get_flag(data, 'throttling')
 
         if throttling:
-            chat_id: int = data.get('event_chat', data['event_from_user']).id
-            task_name = f'{chat_id}:{throttling}'
+            key = self.get_key(data, throttling)
 
-            if task_name in self.tasks:
+            if any(task.get_name() == key for task in self.__tasks):
+                if isinstance(event, types.Message | types.CallbackQuery) and random() < 0.1:
+                    await self.answer(event, data)
                 return
 
-            self[task_name] = asyncio.create_task(self.timer(self.timeouts[throttling]))
-
+            self[key] = asyncio.create_task(asyncio.sleep(self.__timeouts[throttling]))
         return await handler(event, data)
 
     @staticmethod
-    async def timer(delay: int):
-        await asyncio.sleep(delay)
+    def get_key(data: dict[str, Any], throttling: str) -> StorageKey:
+        chat_id: int = data.get('event_chat', data['event_from_user']).id
+        bot_id: int = data['bot'].id
+
+        return StorageKey(
+            user_id=chat_id,
+            chat_id=chat_id,
+            bot_id=bot_id,
+            destiny=throttling,
+        )
+
+    async def answer(self, event: types.Message | types.CallbackQuery, data: dict):
+        from locales.middleware import I18nContextMiddleware
+        locale = await I18nContextMiddleware(self.i18n).get_locale(event, data)
+
+        with self.i18n.context(), self.i18n.use_locale(locale):
+            answer = choice(
+                (
+                    _("Stop spamming!"),
+                    _("How much information..."),
+                    _("Ahhh...")
+                )
+            )
+
+            await event.answer(answer)
 
 
-class UnhandledMiddleware(BaseMiddleware):
-    async def __call__(
-            self,
-            handler: Callable[[types.Message, dict[str, Any]], Awaitable[Any]],
-            event: types.Message,
-            data: dict[str, Any]
-    ):
-        result = await handler(event, data)
-
-        from aiogram.dispatcher.event.bases import UNHANDLED
-        if result is UNHANDLED:
-            await self.update_data(event, data['db'])
-
-        return result
-
-    @staticmethod
-    async def update_data(event: types.Message, db: DataBaseContext, messages: list[str] = None):
-        if event.text:
-            messages: list[str] = messages or await db.get_data('messages') or []
-
-            if len(messages) != len(markov.set_data(event.text, messages)):
-                await db.set_data(messages=messages)
-
-        elif event.sticker and event.sticker.set_name != 'uno_by_bp1lh_bot':
-            stickers: list[str] = await db.get_data('stickers')
-
-            if event.sticker.set_name not in stickers:
-                stickers.append(event.sticker.set_name)
-                await db.set_data(stickers=stickers[-3:])
-
-
-@dataclass
-class Middleware:
-    inner: BaseMiddleware = None
-    outer: BaseMiddleware = None
-    observers: str | tuple = 'update'
-
-
-def setup(dp: Dispatcher):
-    from bot import config
-
+def setup(dp: Dispatcher, i18n: I18n):
     from handlers.settings.commands import CustomCommandsMiddleware
-    from locales.middleware import I18nContextMiddleware
-    from utils.database.middleware import DataBaseContextMiddleware
-    from utils.timer.middleware import TimerMiddleware
+    from utils.database.middleware import SQLUpdateMiddleware
 
-    middlewares = (
-        Middleware(outer=DataBaseContextMiddleware()),
-        Middleware(outer=CustomCommandsMiddleware(), observers=('message', 'callback_query')),
-        Middleware(inner=ThrottlingMiddleware(), observers='message'),
-        Middleware(inner=ChatActionMiddleware(), observers=('message', 'callback_query')),
-        Middleware(inner=DataMiddleware(), observers=('message', 'callback_query', 'chat_member')),
-        Middleware(inner=I18nContextMiddleware(i18n=config.i18n)),
-        Middleware(inner=TimerMiddleware(), observers=('message', 'callback_query', 'chat_member')),
-        Middleware(outer=UnhandledMiddleware(), observers='message'),
+    outer_middlewares = (
+        (ThrottlingMiddleware(i18n=i18n), dp.message, dp.callback_query),
+        (CustomCommandsMiddleware(), dp.message, dp.callback_query),
+        (SQLUpdateMiddleware(), dp.message),
     )
 
-    def register_middleware(obs: str):
-        register = dp.observers[obs]
+    for middleware, *observers in outer_middlewares:
+        for observer in observers:
+            observer.outer_middleware(middleware)
 
-        if middleware.inner:
-            register.middleware(middleware.inner)
-        else:
-            register.outer_middleware(middleware.outer)
+    from aiogram.utils.chat_action import ChatActionMiddleware
+    from locales.middleware import I18nContextMiddleware
+    from utils.database.middleware import SQLGetMiddleware
+    from utils.timer.middleware import TimerMiddleware
 
-    for middleware in middlewares:
-        if isinstance(middleware.observers, str):
-            register_middleware(middleware.observers)
-        else:
-            for observer in middleware.observers:
-                register_middleware(observer)
+    inner_middlewares = (
+        (I18nContextMiddleware(i18n=i18n), dp.update),
+        (ChatActionMiddleware(), dp.message),
+        (SQLGetMiddleware(), dp.message, dp.callback_query, dp.inline_query),
+        (TimerMiddleware(), dp.message, dp.callback_query, dp.chat_member),
+    )
+
+    for middleware, *observers in inner_middlewares:
+        for observer in observers:
+            observer.middleware(middleware)
