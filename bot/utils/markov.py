@@ -1,12 +1,11 @@
 import os
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
 from random import choice, shuffle, randrange
 
 import markovify
 
 from . import database
-
 
 LOCALE_DIR = Path.cwd() / 'bot' / 'locales'
 BOOKS = os.listdir(f'{LOCALE_DIR}/en/books')
@@ -48,7 +47,7 @@ def get_none(locale: str) -> markovify.Text:
 
 def gen(
         locale: str,
-        text: set,
+        text: str,
         messages: list[str],
         state_size: int = 2,
         **kwargs,
@@ -77,6 +76,8 @@ def gen(
     shuffle(sentences)
 
     if text:
+        text = set(text.split())
+
         for sentence in sentences:
             if text & set(sentence):
                 index = (model.parsed_sentences.index(sentence) + 1) % len(model.parsed_sentences)

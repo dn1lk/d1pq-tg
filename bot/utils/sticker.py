@@ -24,5 +24,7 @@ async def gen(bot: Bot, text: str, sticker_set_names: list[str]) -> str:
         for sticker_set_name in sticker_set_names:
             yield await bot.get_sticker_set(sticker_set_name)
 
-    stickers = sum([sticker_set.stickers async for sticker_set in get_sticker_sets()])
-    return choice([sticker for sticker in stickers if sticker.emoji in text] or stickers).file_id
+    stickers = sum([sticker_set.stickers async for sticker_set in get_sticker_sets()], [])
+    stickers_filtered = [sticker for sticker in stickers if sticker.emoji in text]
+
+    return choice(stickers_filtered or stickers).file_id

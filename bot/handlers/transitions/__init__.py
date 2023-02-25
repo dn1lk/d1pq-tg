@@ -1,18 +1,10 @@
 from aiogram import Router
 
 
-def setup(router: Router):
-    from .group import router as chat_rt
-    from .other import router as other_rt
-    from .private import router as private_rt
-
-    routers = (
-        chat_rt,
-        private_rt,
-        other_rt,
+def setup(parent_router: Router):
+    from . import group, other, private
+    parent_router.include_routers(
+        group.router,
+        private.router,
+        other.router,
     )
-
-    for included_router in routers:
-        router.include_router(included_router)
-
-    return router
