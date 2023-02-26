@@ -22,7 +22,8 @@ class SQLContext:
 
         if isinstance(column, Column):
             return column
-        raise TypeError('Incorrect column')
+
+        raise TypeError(f'SQLContext: unexpected column: {item}')
 
     async def clear(self, chat_id: int):
         async with self.__pool.acquire() as connection:
@@ -51,7 +52,7 @@ class SQLContext:
                     stickers    name[]      default '{TextAnimated}',
                     members     bigint[],
                     commands    json,
-                    chance      float       default 0.1,
+                    chance      smallint    default 10,
                     accuracy    smallint    default 2
                 );
                 """,

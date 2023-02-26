@@ -1,1 +1,3 @@
-from task import TimerTask
+from .tasks import Tasks
+
+tasks = Tasks()

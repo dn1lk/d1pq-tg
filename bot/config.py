@@ -4,9 +4,6 @@ from aiogram.utils.i18n import I18n
 from pydantic import BaseSettings, SecretStr
 
 
-BASE_PATH = Path.cwd()
-
-
 class Bot(BaseSettings):
     token: SecretStr
     owner: int
@@ -26,4 +23,4 @@ class Provider(BaseSettings):
 bot = Bot()
 provider = Provider()
 
-i18n = I18n(path=BASE_PATH / 'bot' / 'locales', domain='messages')
+i18n = I18n(path=Path.cwd() / 'bot' / 'locales', domain='messages')
