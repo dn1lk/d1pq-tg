@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.strategy import FSMStrategy
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(levelname)s - %(name)s - %(message)s"
 )
 
@@ -35,7 +35,7 @@ async def main():
 
     try:
         import ui_commands
-        dp['ui_commands'] = await ui_commands.setup(bot, config.i18n)
+        await ui_commands.setup(bot, config.i18n)
 
         await bot.send_message(owner_id, 'Bot starting...')
 
@@ -55,6 +55,7 @@ async def main():
 
 if __name__ == "__main__":
     from bot import types
+
     types.setup()
 
     try:

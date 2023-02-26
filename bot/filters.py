@@ -2,21 +2,13 @@ from aiogram import Bot, types
 from aiogram.filters import *
 
 
-class LevenshteinFilter(BaseFilter):
+class Levenshtein(BaseFilter):
     def __init__(self, *lev, ignore_case: bool = True):
         self.lev: tuple = lev
         self.ignore_case: bool = ignore_case
 
-    async def __call__(self, obj: types.Message | types.InlineQuery | types.Poll) -> bool:
-        match obj:
-            case types.Message():
-                text = obj.text or obj.caption or (obj.poll.question if obj.poll else None)
-            case types.InlineQuery():
-                text = obj.query
-            case types.Poll():
-                text = obj.question
-            case _:
-                raise TypeError('LevenshteinFilter: incorrect event type')
+    async def __call__(self, event: types.Message) -> bool:
+        text = event.text or event.caption or (event.poll.question if event.poll else None)
 
         if text is None:
             return False
@@ -28,7 +20,7 @@ class LevenshteinFilter(BaseFilter):
         return any(ratio(i, t) > 0.7 for i in self.lev for t in text.split())
 
 
-class AdminFilter(BaseFilter):
+class IsAdmin(BaseFilter):
     def __init__(self, is_admin: bool = True):
         self.is_admin: bool = is_admin
 

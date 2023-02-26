@@ -1,16 +1,19 @@
 from datetime import datetime, timedelta
 from random import choice, random
 
-from aiogram import Bot, Router, F, types, flags
+from aiogram import Bot, Router, F, types, enums, flags
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from . import answer_check
-from .. import filters
-from ..utils import markov, sticker, database
+from bot import filters
+from bot.utils import markov, sticker, database
+from bot.utils.database.middleware import SQLUpdateMiddleware
+from . import resolve_text
 
-router = Router(name='message')
+router = Router(name='other')
 router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
+
+SQLUpdateMiddleware().setup(router)
 
 
 async def get_gen_args(
@@ -37,10 +40,10 @@ async def get_gen_args(
 
 async def chance_filter(message: types.Message, db: database.SQLContext) -> bool:
     if datetime.now(tz=message.date.tzinfo) - message.date < timedelta(minutes=5):
-        return random() < await db.chance.get(message.chat.id)
+        return random() < await db.chance.get(message.chat.id) / 100
 
 
-@router.message(chance_filter, filters.LevenshteinFilter('hello', 'hey', 'здравствуйте', 'привет'))
+@router.message(chance_filter, filters.Levenshtein('hello', 'hey', 'здравствуйте', 'привет'))
 async def hello_handler(message: types.Message):
     await message.answer(
         choice(
@@ -51,13 +54,13 @@ async def hello_handler(message: types.Message):
                 _("My appreciate, {user}."),
                 _("Yop, {user}"),
             )
-        ).format(user=message.from_user)
+        ).format(user=message.from_user.mention_html())
     )
 
 
-@router.message(F.chat.type == 'private')
+@router.message(F.chat.type == enums.ChatType.PRIVATE)
 @router.message(chance_filter)
-@router.message(filters.LevenshteinFilter('delete', 'делите'))
+@router.message(filters.Levenshtein('delete', 'делите'))
 @flags.throttling('gen')
 async def gen_answer_handler(
         message: types.Message,
@@ -68,7 +71,7 @@ async def gen_answer_handler(
     answer = await get_gen_args(message, bot, db, i18n)
 
     if 'text' in answer:
-        answer['text'] = answer_check(answer['text'])
+        answer['text'] = resolve_text(answer['text'])
         message = await message.answer(**answer)
     elif 'sticker' in answer:
         message = await message.answer_sticker(**answer)
@@ -90,7 +93,7 @@ async def gen_reply_handler(
     answer = await get_gen_args(message, bot, db, i18n)
 
     if 'text' in answer:
-        answer['text'] = answer_check(answer['text'])
+        answer['text'] = resolve_text(answer['text'])
         message = await message.reply(**answer)
     elif 'sticker' in answer:
         message = await message.reply_sticker(**answer)
