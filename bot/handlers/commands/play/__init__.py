@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.utils.i18n import lazy_gettext as __
 
 from .misc.actions import PlayActions
-# from .misc.data import PlayData
+from .misc.data import PlayData
 from .misc.states import PlayStates
 
 WINNER = (
@@ -20,11 +20,11 @@ CLOSE = (
 
 
 def setup(parent_router: Router):
-    from . import rnd, rps, other
+    from . import cts, rnd, rps, other
 
     rps.setup(parent_router)
     # uno.setup(parent_router)
     rnd.setup(parent_router)
-    # cts.setup(parent_router)
+    cts.setup(parent_router)
 
     parent_router.include_router(other.router)

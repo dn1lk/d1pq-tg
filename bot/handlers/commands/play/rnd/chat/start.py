@@ -1,9 +1,8 @@
 import asyncio
-from random import choice
+from random import choice, randint
 
 from aiogram import Router, F, html, flags
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.base import StorageKey
 from aiogram.handlers import MessageHandler
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
@@ -11,17 +10,17 @@ from aiogram.utils.i18n import gettext as _
 from bot import filters
 from bot.handlers.commands import CommandTypes
 from bot.handlers.commands.play import PlayActions, PlayStates
-from bot.utils import database, timer
+from bot.utils import SQLContext, TimerTasks
 
 router = Router(name='play:rnd:chat:start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.RND)))
 
 
 @router.message()
-@flags.timer('play')
+@flags.timer(name='play')
 class StartHandler(MessageHandler):
     @property
-    def db(self) -> database.SQLContext:
+    def db(self) -> SQLContext:
         return self.data['db']
 
     @property
@@ -29,8 +28,8 @@ class StartHandler(MessageHandler):
         return self.data['state']
 
     @property
-    def timer_key(self) -> StorageKey:
-        return self.data['timer_key']
+    def timer(self) -> TimerTasks:
+        return self.data['timer']
 
     async def handle(self):
         answer = _(
@@ -47,20 +46,20 @@ class StartHandler(MessageHandler):
 
             await self.state.set_state(PlayStates.RND)
 
-            data = {'bot_number': str(choice(range(1, 11)))}
-            await self.state.set_data(data)
+            data_rnd = {'bot_number': str(randint(1, 11))}
+            await self.state.set_data(data_rnd)
 
             self.event = await self.event.answer(_("LET THE BATTLE BEGIN!"))
 
-        timer.tasks[self.timer_key] = self.task(data)
+        self.timer[self.state.key] = self.task(data_rnd)
 
-    async def task(self, data: dict[str, str | set[int]]):
+    async def task(self, data_rnd: dict[str, str | set[int]]):
         try:
-            await self.wait(data)
+            await self.wait(data_rnd)
         finally:
             await self.state.clear()
 
-    async def wait(self, data: dict[str, str | set[int]]):
+    async def wait(self, data_rnd: dict[str, str | set[int]]):
         async def get_stickers():
             for sticker_set_name in await self.db.stickers.get(self.chat.id):
                 sticker_set = await self.bot.get_sticker_set(sticker_set_name)
@@ -72,20 +71,20 @@ class StartHandler(MessageHandler):
         async with ChatActionSender.choose_sticker(chat_id=self.chat.id, interval=10):
             for i in 10, 20, 30:
                 await asyncio.sleep(i)
-                data_new = await self.state.get_data()
+                data_rnd_new = await self.state.get_data()
 
-                if data_new == data:
-                    if 'users_guessed' not in data_new:
+                if data_rnd_new == data_rnd:
+                    if 'users_guessed' not in data_rnd_new:
                         return await self.skip()
 
                     break
 
-                data = data_new
+                data_rnd = data_rnd_new
 
             stickers = [sticker async for sticker in get_stickers()]
             await self.bot.send_sticker(self.chat.id, choice(stickers).file_id)
 
-            await self.finish(data)
+            await self.finish(data_rnd)
 
     async def skip(self):
         answer = _(
@@ -95,10 +94,10 @@ class StartHandler(MessageHandler):
 
         await self.event.reply(answer)
 
-    async def finish(self, data: dict[str, str | set[int]]):
+    async def finish(self, data_rnd: dict[str, str | set[int]]):
         answer = _(
             "Nobody guessed right =(.\n"
             "My number was {bot_number}."
-        ).format(bot_number=html.bold(data['bot_number']))
+        ).format(bot_number=html.bold(data_rnd['bot_number']))
 
         await self.event.reply(answer)

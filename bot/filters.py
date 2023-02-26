@@ -16,8 +16,10 @@ class Levenshtein(BaseFilter):
         if self.ignore_case:
             text = text.lower()
 
+        text = text.split()
+
         from Levenshtein import ratio
-        return any(ratio(i, t) > 0.7 for i in self.lev for t in text.split())
+        return any(ratio(i, t) > 0.7 for i in self.lev for t in text)
 
 
 class IsAdmin(BaseFilter):

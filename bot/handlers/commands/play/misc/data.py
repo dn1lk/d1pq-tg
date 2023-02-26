@@ -1,16 +1,14 @@
-class PlayData(BaseModel):
-    games = {}
+from dataclasses import dataclass, asdict
 
-    @staticmethod
-    async def get_key(state: FSMContext):
-        return f'{state.key.chat_id}:{await state.get_state()}'
+from aiogram.fsm.context import FSMContext
+
+
+@dataclass
+class PlayData:
+    async def set_data(self, state: FSMContext):
+        await state.set_data(asdict(self))
 
     @classmethod
-    async def get_data(cls, state: FSMContext) -> "GamesData":
-        data = cls.games.get(await cls.get_key(state)) or await state.get_data()
-
-        if data:
-            return cls(**data)
-
-    async def set_data(self, state: FSMContext):
-        await state.set_data(self.dict())
+    async def get_data(cls, state: FSMContext) -> "PlayData":
+        data = await state.get_data()
+        return cls(**data)

@@ -1,80 +1,91 @@
 from random import choice
 
-from aiogram import Router, types, flags
+from aiogram import Router, types, flags, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import timer
-from .misc.data import CTSData
-from .. import WINNER, Games, win_timeout
+from bot.utils import TimerTasks
+from . import CTSData, task
+from .. import PlayStates
 
-router = Router(name='game:cts:process')
-router.message.filter(Games.CTS)
+router = Router(name='play:cts:process')
+router.message.filter(PlayStates.CTS)
+
+
+async def finish(message: types.Message, state: FSMContext, data_cts: CTSData, answer_one: str):
+    await state.clear()
+
+    answer_two = _("<b>Cities guessed</b>: {cities}.").format(cities=len(data_cts.used_cities))
+    await message.reply(f"{answer_one}\n{answer_two}")
 
 
 @router.message(CTSData.filter())
-@flags.timer('game')
-async def answer_handler(message: types.Message, state: FSMContext, data_cts: CTSData):
-    if data_cts.bot_var:
-        message = await message.reply(
-            choice(
-                (
-                    _("Hmm."),
-                    _("And you're smarter than you look."),
-                    _("Right!"),
-                )
-            ) + _(" My word: {bot_var}.").format(bot_var=data_cts.bot_var)
+@flags.timer(name='play')
+async def answer_handler(message: types.Message, state: FSMContext, data_cts: CTSData, timer: TimerTasks):
+    if data_cts.bot_city:
+        answer_one = choice(
+            (
+                _("Hmm."),
+                _("And you're smarter than you look."),
+                _("Right!"),
+            )
         )
 
-        await data_cts.set_data(state)
-        return timer.dict(win_timeout(message, state))
-    else:
-        await state.clear()
+        answer_two = _("My word: {bot_city}.").format(bot_city=data_cts.bot_city)
+        message = await message.reply(f"{answer_one} {answer_two}")
 
+        await data_cts.set_data(state)
+        timer[state.key] = task(message, state)
+    else:
         answer = choice(
             (
                 _("Okay, I have nothing to write on {letter}... Victory is yours."),
                 _("Can't find the right something on {letter}... My defeat."),
                 _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
             )
-        )
+        ).format(letter=html.bold(f'"{message.text[-1]}"'))
 
-        await message.reply(answer.format(letter=f'"{message.text[-1]}"'))
+        await finish(message, state, data_cts, answer)
 
 
 @router.message()
-async def mistake_handler(message: types.Message, state: FSMContext):
+@flags.timer(name='play', cancelled=False)
+async def mistake_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
     data_cts = await CTSData.get_data(state)
     data_cts.fail_amount -= 1
 
     if data_cts.fail_amount:
         await data_cts.set_data(state)
 
-        if message.text in data_cts.cities:
-            answer = (
-                _("We have already used this name. Choose another!"),
-                _("I remember exactly that we already used this. Let's try something else."),
-                _("But no, you can’t fool me - this name was already in the game. Be original!")
+        if message.text in data_cts.used_cities:
+            answer_one = choice(
+                (
+                    _("We have already used this name. Choose another!"),
+                    _("I remember exactly that we already used this. Let's try something else."),
+                    _("But no, you can’t fool me - this name was already in the game. Be original!")
+                )
             )
         else:
-            answer = (
-                _("I do not understand something or your word is WRONG!"),
-                _("And here it is not. Think better, user!"),
-                _("My algorithms do not deceive me - you are mistaken!"),
+            answer_one = choice(
+                (
+                    _("I do not understand something or your word is WRONG!"),
+                    _("And here it is not. Think better, user!"),
+                    _("My algorithms do not deceive me - you are mistaken!"),
+                )
             )
 
-        end = _("\n<b>Remaining attempts</b>: {fail_amount}").format(fail_amount=data_cts.fail_amount)
+        answer_two = _("<b>Remaining attempts</b>: {fail_amount}").format(fail_amount=data_cts.fail_amount)
+        await message.reply(f"{answer_one}\n{answer_two}")
 
     else:
-        await timer.cancel(timer.get_name(state, name='game'))
-        await state.clear()
+        del timer[state.key]
 
-        answer = (
-            _("You have no attempts left."),
-            _("Looks like all attempts have been spent."),
-            _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
+        answer = choice(
+            (
+                _("You have no attempts left."),
+                _("Looks like all attempts have been spent."),
+                _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
+            )
         )
 
-        end = str(choice(WINNER)) + _("\n<b>Words guessed</b>: {words}.").format(words=len(data_cts.cities))
-
-    await message.reply(f'{choice(answer)} {end}')
+        await finish(message, state, data_cts, answer)

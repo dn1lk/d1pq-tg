@@ -1,14 +1,12 @@
 from aiogram import Router
 
+from .misc.data import CTSData
+from .misc.timer import task
 
-def setup(router: Router):
-    from .start import router as start_rt
-    from .process import router as process_rt
 
-    sub_routers = (
-        process_rt,
-        start_rt,
+def setup(parent_router: Router):
+    from . import process, start
+    parent_router.include_routers(
+        process.router,
+        start.router
     )
-
-    for sub_router in sub_routers:
-        router.include_router(sub_router)

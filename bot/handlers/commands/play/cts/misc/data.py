@@ -1,18 +1,17 @@
+from dataclasses import dataclass, field
 from functools import lru_cache
+from pathlib import Path
 from random import choice
 
-from ... import GamesData
+from ... import PlayData
+
+LOCALE_DIR = Path.cwd() / 'bot' / 'locales'
 
 
-@lru_cache(maxsize=2)
-def get_cities(locale: str) -> list:
-    with open(config.BASE_DIR / 'locales' / locale / 'cities.txt', 'r', encoding='utf8') as r:
-        return r.read().splitlines()
-
-
-class CTSData(GamesData):
-    bot_var: str = None
-    cities: list[str] = []
+@dataclass
+class CTSData(PlayData):
+    bot_city: str = None
+    used_cities: set[str] = field(default_factory=set)
     fail_amount: int = 5
 
     @classmethod
@@ -20,13 +19,22 @@ class CTSData(GamesData):
         from .filter import CTSFilter
         return CTSFilter()
 
-    def gen_var(self, user_var: str, game_vars: list[str]) -> None:
-        def gen_city():
-            for city in game_vars:
-                if city[0].lower() == user_var[-1].lower() and city not in self.cities:
-                    yield city
-            yield None
+    @classmethod
+    @lru_cache(maxsize=2)
+    def get_cities(cls, locale: str) -> list[str]:
+        with open(LOCALE_DIR / locale / 'cities.txt', 'r', encoding='utf8') as r:
+            return r.read().splitlines()
 
-        self.bot_var = choice(tuple(gen_city()))
-        if self.bot_var:
-            self.cities.append(self.bot_var)
+    def gen_city(self, cities: list[str], user_city: str = None) -> None:
+        if user_city:
+            bot_cities = [
+                city for city in cities
+                if city[0].lower() == user_city[-1].lower() and city not in self.used_cities
+            ]
+        else:
+            bot_cities = cities
+
+        self.bot_city = choice(bot_cities)
+
+        if self.bot_city:
+            self.used_cities.add(self.bot_city)

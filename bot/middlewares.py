@@ -25,7 +25,7 @@ class ThrottlingMiddleware(BaseMiddleware):
     __tasks: set[asyncio.Task] = set()
     __timeouts = {
         'gen': 3,
-        'rps': 3,
+        'rps': 1,
     }
 
     def __init__(self, i18n: I18n):

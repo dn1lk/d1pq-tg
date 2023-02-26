@@ -2,9 +2,9 @@ from typing import Callable, Any, Awaitable
 
 from aiogram import Router, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
+from aiogram.fsm.context import FSMContext
 
-from bot.middlewares import get_key
-from . import tasks
+from . import TimerTasks
 
 
 class TimerMiddleware(BaseMiddleware):
@@ -14,13 +14,16 @@ class TimerMiddleware(BaseMiddleware):
             event: types.TelegramObject,
             data: dict[str, Any],
     ):
-        timer: str | None = get_flag(data, 'timer')
+        flag_timer: dict[str, str | bool] | None = get_flag(data, 'timer')
 
-        if timer:
-            data['timer_key'] = key = get_key(data, timer)
+        if flag_timer:
+            state: FSMContext = data['state']
+            timer = data['timer'] = TimerTasks(flag_timer['name'])
 
-            async with tasks.lock(key):
-                return await handler(event, data)
+            if flag_timer.get('cancelled', True):
+                async with timer.lock(state.key):
+                    return await handler(event, data)
+
         return await handler(event, data)
 
     def setup(self, router: Router):

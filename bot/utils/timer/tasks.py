@@ -1,26 +1,30 @@
 import asyncio
 from collections import defaultdict
 from contextlib import asynccontextmanager
-from typing import Coroutine
+from typing import Coroutine, AsyncGenerator
 
 from aiogram.fsm.storage.base import StorageKey
 
 
-class Tasks:
-    __tasks: set[asyncio.Task] = set()
-    __locks: dict[StorageKey, asyncio.Lock] = defaultdict(asyncio.Lock)
+class TimerTasks:
+    _tasks: set[asyncio.Task] = set()
+    _locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
+
+    def __init__(self, destiny: str):
+        self.destiny = destiny
 
     def __setitem__(self, key: StorageKey, coro: Coroutine):
+        key = self.get_key(key)
         task = asyncio.create_task(coro)
 
-        self.__tasks.add(task)
+        self._tasks.add(task)
         task.set_name(key)
-        task.add_done_callback(self.__tasks.discard)
+        task.add_done_callback(self._tasks.discard)
 
     def __getitem__(self, key: StorageKey):
-        key = str(key)
+        key = self.get_key(key)
 
-        for task in self.__tasks:
+        for task in self._tasks:
             if task.get_name() == key:
                 yield task
 
@@ -28,9 +32,11 @@ class Tasks:
         for task in self[key]:
             task.cancel()
 
-    @asynccontextmanager
-    async def lock(self, key: StorageKey):
-        del self[key]
+    def get_key(self, key: StorageKey) -> str:
+        return f'{key.bot_id}:{key.chat_id}:{key.user_id}:{self.destiny}'
 
-        async with self.__locks[key]:
+    @asynccontextmanager
+    async def lock(self, key: StorageKey) -> AsyncGenerator[None, None]:
+        del self[key]
+        async with self._locks[self.get_key(key)]:
             yield

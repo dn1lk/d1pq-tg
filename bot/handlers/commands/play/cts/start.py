@@ -1,39 +1,44 @@
-from random import random, choice
+from random import random
 
 from aiogram import Router, types, F, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, I18n
 
-from bot.utils.timer import timer
-from .misc.data import CTSData, get_cities
-from .. import Games, win_timeout
-from ...settings.commands import CustomCommandFilter
+from bot import filters
+from bot.handlers.commands import CommandTypes
+from bot.utils import TimerTasks
+from . import CTSData, task
+from .. import PlayActions, PlayStates
 
-router = Router(name='game:cts:start')
-router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'], magic=F.args.in_(('cts', 'грд'))))
+router = Router(name='play:cts:start')
+router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.CTS)))
 
 
 @router.message()
-@flags.timer('game')
-async def start_handler(message: types.Message, state: FSMContext, i18n: I18n):
-    message = await message.answer(
-        _(
-            "Oh, the game of cities. Well, let's try!\n\n"
-            "The rules are as follows: you need to answer the name of the settlement, "
-            "starting with the last letter of the name of the previous settlement.\n"
-            "You have 60 seconds to think."
-        )
+@flags.timer(name='play')
+async def start_handler(message: types.Message, state: FSMContext, i18n: I18n, timer: TimerTasks):
+    answer = _(
+        "Oh, Geography. Well, let's try!\n"
+        "\n"
+        "You need to answer city that begin with the letter or "
+        "letters that the previous city ended."
     )
 
-    if random() > 0.5:
-        bot_var = choice(get_cities(i18n.current_locale))
-        data_cts = CTSData(bot_var=bot_var, cities=[bot_var])
-        answer = _("I start! My word: {bot_var}.").format(bot_var=html.bold(bot_var))
-    else:
-        data_cts = CTSData()
-        answer = _("You start! Your word?")
+    message = await message.answer(answer)
 
-    await state.set_state(Games.CTS)
+    data_cts = CTSData()
+
+    if random() > 0.5:
+        cities = data_cts.get_cities(i18n.current_locale)
+        data_cts.gen_city(cities)
+
+        answer = _("I start! My city: {bot_city}.").format(bot_city=html.bold(data_cts.bot_city))
+    else:
+        answer = _("You start! Your city?")
+
+    await state.set_state(PlayStates.CTS)
     await data_cts.set_data(state)
 
-    return timer.dict(win_timeout(await message.answer(answer), state))
+    message = await message.answer(answer)
+
+    timer[state.key] = task(message, state)
