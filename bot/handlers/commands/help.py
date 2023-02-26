@@ -51,7 +51,7 @@ async def command_transform_middleware(
     return await handler(event, data)
 
 
-@router.message()
+@router.message(filters.MagicData(F.command.args.in_(CommandTypes.PLAY)))
 async def play_handler(message: types.Message, command: filters.CommandObject):
     message = await message.answer(html.bold(_("And what do you want to play?")))
 
@@ -124,6 +124,25 @@ async def history_handler(
     message = await message.answer(html.bold(_("Would you like to read a story?")))
     await message.answer(get_answer(command,
                                     get_args_from_markov(i18n, messages, CommandTypes.STORY)))
+
+
+@router.message(filters.MagicData(F.command.args))
+@flags.throttling('gen')
+@flags.sql('messages')
+@flags.chat_action("typing")
+async def history_handler(
+        message: types.Message,
+        command: filters.CommandObject,
+):
+    answer = choice(
+        (
+            _("What is {args}?"),
+            _("I don't know what is {args}."),
+            _("{args}? I think this is some kind of mistake.")
+        )
+    ).format(args=html.bold(command.args))
+
+    await message.answer(answer)
 
 
 @router.message()

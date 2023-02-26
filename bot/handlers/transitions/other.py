@@ -1,8 +1,10 @@
+import asyncio
+
 from aiogram import Router, F, types
 from aiogram.utils.i18n import gettext as _
 
-from ... import filters
-from ...utils import database
+from bot import filters
+from bot.utils import database
 
 router = Router(name='transitions:other')
 
@@ -24,4 +26,5 @@ async def my_migrated_from_message_handler(message: types.Message, db: database.
 
 @router.message(F.migrate_from_chat_id)
 async def my_migrated_to_message_handler(message: types.Message):
+    await asyncio.sleep(1)
     await message.answer(_("Ouch, it's just a migrated group..."))
