@@ -4,7 +4,7 @@ from aiogram import Router, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
 from aiogram.fsm.context import FSMContext
 
-from . import TimerTasks
+from .tasks import TimerTasks
 
 
 class TimerMiddleware(BaseMiddleware):

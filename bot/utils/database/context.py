@@ -1,21 +1,24 @@
+from dataclasses import dataclass
+
 from asyncpg import Pool, Record, Connection, create_pool
 
 from .column import Column, ArrayColumn
 
 
+@dataclass
 class SQLContext:
-    def __init__(self, pool: Pool, defaults: Record):
-        self.__pool = pool
-        self.__defaults = defaults
+    _pool: Pool
+    _defaults: Record
 
-        self.id = Column(pool, defaults, 'id')
-        self.locale = Column(pool, defaults, 'locale')
-        self.messages = ArrayColumn(pool, defaults, 'messages')
-        self.stickers = ArrayColumn(pool, defaults, 'stickers')
-        self.members = ArrayColumn(pool, defaults, 'members')
-        self.commands = Column(pool, defaults, 'commands')
-        self.chance = Column(pool, defaults, 'chance')
-        self.accuracy = Column(pool, defaults, 'accuracy')
+    def __post_init__(self):
+        self.id = Column(self._pool, self._defaults, 'id')
+        self.locale = Column(self._pool, self._defaults, 'locale')
+        self.messages = ArrayColumn(self._pool, self._defaults, 'messages')
+        self.stickers = ArrayColumn(self._pool, self._defaults, 'stickers')
+        self.members = ArrayColumn(self._pool, self._defaults, 'members')
+        self.commands = Column(self._pool, self._defaults, 'commands')
+        self.chance = Column(self._pool, self._defaults, 'chance')
+        self.accuracy = Column(self._pool, self._defaults, 'accuracy')
 
     def __getitem__(self, item: str) -> Column:
         column = self.__getattribute__(item)
@@ -26,7 +29,7 @@ class SQLContext:
         raise TypeError(f'SQLContext: unexpected column: {item}')
 
     async def clear(self, chat_id: int):
-        async with self.__pool.acquire() as connection:
+        async with self._pool.acquire() as connection:
             await connection.execute("delete from data where id = $1;", chat_id)
 
     @classmethod
@@ -64,4 +67,4 @@ class SQLContext:
         return SQLContext(pool, defaults)
 
     async def close(self):
-        await self.__pool.close()
+        await self._pool.close()

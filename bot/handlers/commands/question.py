@@ -2,7 +2,7 @@ from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters
-from bot.utils import wiki
+from bot.utils import Wikipedia
 from . import CommandTypes
 from .. import resolve_text
 
@@ -14,6 +14,7 @@ router.message.filter(filters.Command(*CommandTypes.QUESTION))
 @flags.chat_action("typing")
 async def with_args_handler(
         message: types.Message,
+        wiki: Wikipedia,
         i18n: I18n,
         command: filters.CommandObject,
 ):

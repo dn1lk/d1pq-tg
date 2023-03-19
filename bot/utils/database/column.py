@@ -1,12 +1,16 @@
+from dataclasses import dataclass
+
 from asyncpg import Pool, Record
 
 
+@dataclass
 class Column:
-    def __init__(self, pool: Pool, defaults: Record, name: str):
-        self._pool = pool
-        self._default = defaults[name]
+    _pool: Pool
+    _default: Record
+    _name: str
 
-        self._name = name
+    def __post_init__(self):
+        self._default = self._default[self._name]
 
     def __str__(self) -> str:
         return self._name
