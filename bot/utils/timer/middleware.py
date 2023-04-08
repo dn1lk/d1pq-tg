@@ -18,7 +18,7 @@ class TimerMiddleware(BaseMiddleware):
 
         if flag_timer:
             state: FSMContext = data['state']
-            timer = data['timer'] = TimerTasks(flag_timer['name'])
+            data['timer'] = timer = TimerTasks(flag_timer['name'])
 
             if flag_timer.get('cancelled', True):
                 async with timer.lock(state.key):
