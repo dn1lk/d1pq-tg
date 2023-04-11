@@ -2,6 +2,7 @@ from typing import Callable, Any, Awaitable
 
 from aiogram import Router, BaseMiddleware, types
 
+from bot.handlers.commands.misc.types import PREFIX
 from bot.utils import database
 
 
@@ -12,7 +13,7 @@ class CustomCommandsMiddleware(BaseMiddleware):
             event: types.Message,
             data: dict[str, Any]
     ):
-        if event.text.startswith('/'):
+        if event.text and event.text.startswith(PREFIX):
             db: database.SQLContext = data['db']
             chat_id: int = data.get('event_chat', data['event_from_user']).id
 

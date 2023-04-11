@@ -8,7 +8,6 @@ from .misc.states import SettingsStates
 
 UPDATE = __("\n\nUpdate:")
 
-
 router = Router(name='settings')
 
 

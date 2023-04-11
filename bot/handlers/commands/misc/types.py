@@ -2,6 +2,8 @@ from enum import Enum
 
 from aiogram.utils.i18n import gettext as _
 
+PREFIX = '/'
+
 
 class CommandTypes(tuple, Enum):
     SETTINGS = 'settings', 'настройки'
@@ -17,7 +19,7 @@ class CommandTypes(tuple, Enum):
     START = 'start', 'начать'
 
     def __str__(self):
-        return f"/{self[0]} - {self.description}"
+        return f"{PREFIX}{self[0]} - {self.description}"
 
     @property
     def description(self):

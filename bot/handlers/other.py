@@ -6,6 +6,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters
+from bot.middlewares.throttling import ThrottlingEnums
 from bot.utils import markov, sticker, database
 from bot.utils.database.middleware import SQLUpdateMiddleware
 from . import resolve_text
@@ -61,7 +62,7 @@ async def hello_handler(message: types.Message):
 @router.message(F.chat.type == enums.ChatType.PRIVATE)
 @router.message(chance_filter)
 @router.message(filters.Levenshtein('delete', 'делите'))
-@flags.throttling('gen')
+@flags.throttling(ThrottlingEnums.GEN)
 async def gen_answer_handler(
         message: types.Message,
         bot: Bot,
@@ -83,7 +84,7 @@ async def gen_answer_handler(
 
 
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
-@flags.throttling('gen')
+@flags.throttling(ThrottlingEnums.GEN)
 async def gen_reply_handler(
         message: types.Message,
         bot: Bot,

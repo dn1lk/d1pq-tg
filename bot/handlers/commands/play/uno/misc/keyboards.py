@@ -1,33 +1,22 @@
-from enum import Enum, auto
+from enum import Enum
 
 from aiogram import types
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from .cards import UnoColors
-from .data import UnoAdd
+from .data.deck.colors import UnoColors
+from .data.settings.additions import UnoAdd, UnoAddState
+from ...misc.actions import PlayActions
 
 
-class UnoActions(Enum):
-    def _generate_next_value_(name, *args):
-        return name.lower()
+class UnoSetup(str, Enum):
+    JOIN = 'join'
+    LEAVE = 'leave'
+    SETTINGS = 'settings'
+    START = 'start'
 
-    JOIN = auto()
-    LEAVE = auto()
-    SETTINGS = auto()
-    START = auto()
-
-    DIFFICULTY = auto()
-    MODE = auto()
-    BACK = auto()
-
-    BLUFF = auto()
-    COLOR = auto()
-    UNO = auto()
-
-    @property
-    def word(self) -> str:
+    def __str__(self):
         match self:
             case self.JOIN:
                 return _("Yes")
@@ -38,57 +27,83 @@ class UnoActions(Enum):
             case self.START:
                 return _("LET'S PLAY!")
 
+        raise TypeError(f'UnoSetup: unexpected action: {self}')
+
+
+class UnoSettings(str, Enum):
+    DIFFICULTY = 'difficulty'
+    MODE = 'mode'
+
+    def __str__(self):
+        match self:
             case self.DIFFICULTY:
                 return _("difficulty")
             case self.MODE:
                 return _("mode")
+
+        raise TypeError(f'UnoSettings: unexpected setting: {self}')
+
+
+class UnoActions(str, Enum):
+    BLUFF = 'bluff'
+    COLOR = 'color'
+    UNO = 'uno'
+
+    BACK = 'back'
+
+    def __str__(self):
+        match self:
             case self.BACK:
                 return _("Back")
 
-            case self.BLUFF:
-                return _("Bluff!")
+        raise TypeError(f'UnoActions: unexpected action: {self}')
 
 
-class UnoKeyboard(CallbackData, prefix='uno'):
-    action: UnoActions | UnoAdd | UnoColors
-    value: int | str = None
+class UnoData(CallbackData, prefix=PlayActions.UNO[0]):
+    action: UnoActions | UnoSetup | UnoSettings | UnoAdd
+    value: UnoAddState | UnoColors = None
 
 
-def setup():
+def setup_keyboard():
     builder = InlineKeyboardBuilder()
 
-    for action in tuple(UnoActions)[:4]:
-        builder.button(text=action.word, callback_data=UnoKeyboard(action=action))
+    for action in UnoSetup:
+        builder.button(text=str(action), callback_data=UnoData(action=action))
 
     builder.adjust(2, 1)
     return builder.as_markup()
 
 
-def settings(message: types.Message):
+def settings_keyboard(message: types.Message):
     builder = InlineKeyboardBuilder()
-    change = _("Change")
 
-    for action in tuple(UnoActions)[4:6]:
-        builder.button(text=f'{change} {action.word}', callback_data=UnoKeyboard(action=action))
-
-    for enum, name in enumerate(UnoAdd.get_names()):
-        add = UnoAdd.extract(message, enum)
+    for action in UnoSettings:
         builder.button(
-            text=f'{add.switcher} {name.lower()}',
-            callback_data=UnoKeyboard(action=add, value=enum)
+            text=_("Change {settings}".format(settings=str(action))),
+            callback_data=UnoData(action=action)
         )
 
-    builder.button(text=UnoActions.BACK.word, callback_data=UnoKeyboard(action=UnoActions.BACK))
+    for add in UnoAdd:
+        add_state = add.extract(message)
+        builder.button(
+            text=f'{add_state.button} {str(add).lower()}',
+            callback_data=UnoData(action=add, value=add_state)
+        )
+
+    builder.button(
+        text=str(UnoActions.BACK),
+        callback_data=UnoData(action=UnoActions.BACK)
+    )
 
     builder.adjust(1)
     return builder.as_markup()
 
 
-def show_cards(bluff: bool):
+def show_cards(is_draw_four: bool):
     builder = InlineKeyboardBuilder()
 
-    if bluff:
-        builder.button(text=UnoActions.BLUFF.word, callback_data=UnoKeyboard(action=UnoActions.BLUFF))
+    if is_draw_four:
+        builder.button(text=_("Bluff!"), callback_data=UnoData(action=UnoActions.BLUFF))
 
     builder.button(text=_("Show cards"), switch_inline_query_current_chat="uno")
 
@@ -99,8 +114,8 @@ def show_cards(bluff: bool):
 def choice_color():
     builder = InlineKeyboardBuilder()
 
-    for color in UnoColors.get_colors(exclude={UnoColors.BLACK}):
-        builder.button(text=color.word, callback_data=UnoKeyboard(action=color))
+    for color in UnoColors.exclude(UnoColors.BLACK):
+        builder.button(text=color, callback_data=UnoData(action=UnoActions.COLOR, value=color))
 
     builder.adjust(1)
     return builder.as_markup()
@@ -109,7 +124,7 @@ def choice_color():
 def say_uno():
     builder = InlineKeyboardBuilder()
 
-    from .bot import UNO
-    builder.button(text=UNO, callback_data=UnoKeyboard(action=UnoActions.UNO))
+    from .actions.bot import UNO
+    builder.button(text=UNO, callback_data=UnoData(action=UnoActions.UNO))
 
     return builder.as_markup()

@@ -35,8 +35,9 @@ class IsAdmin(BaseFilter):
             case _:
                 raise TypeError('AdminFilter: incorrect event type')
 
-        if obj.from_user.id in (chat_id, owner_id):
-            return self.is_admin
-        if any(obj.from_user.id == member.user.id for member in await bot.get_chat_administrators(chat_id)):
+        if (
+                obj.from_user.id in (chat_id, owner_id)
+                or any(obj.from_user.id == member.user.id for member in await bot.get_chat_administrators(chat_id))
+        ):
             return self.is_admin
         return not self.is_admin

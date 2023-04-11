@@ -30,7 +30,8 @@ class TimerTasks:
 
     def __delitem__(self, key: StorageKey):
         for task in self[key]:
-            task.cancel()
+            if task is not asyncio.current_task():
+                task.cancel()
 
     def get_key(self, key: StorageKey) -> str:
         return f'{key.bot_id}:{key.chat_id}:{key.user_id}:{self.destiny}'

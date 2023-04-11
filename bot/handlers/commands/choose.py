@@ -5,6 +5,7 @@ from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters
+from bot.middlewares.throttling import ThrottlingEnums
 from . import CommandTypes
 from .. import resolve_text
 
@@ -29,7 +30,7 @@ async def with_args_handler(message: types.Message, command: filters.CommandObje
 
 
 @router.message()
-@flags.throttling('gen')
+@flags.throttling(ThrottlingEnums.GEN)
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def without_args_handler(

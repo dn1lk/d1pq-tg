@@ -4,9 +4,10 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from .actions import SettingsActions
 from ..record.misc.actions import RecordActions
+from ...misc.types import CommandTypes
 
 
-class SettingsData(CallbackData, prefix='set'):
+class SettingsData(CallbackData, prefix=CommandTypes.SETTINGS[0]):
     action: RecordActions | SettingsActions
     value: int | str = None
 

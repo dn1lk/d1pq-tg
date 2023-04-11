@@ -2,35 +2,41 @@ from aiogram import Router, Bot, F, types, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils.timer import timer
-from .misc import UnoData, keyboards as k
-from .settings import UnoDifficulty, UnoMode, UnoAdd
-from .. import Games
-from ... import get_username
-from ...settings.commands import CustomCommandFilter
+from bot import filters
+from bot.handlers.commands import CommandTypes
+from bot.utils import TimerTasks
+from .misc import errors, keyboards
+from .misc.data import UnoData
+from .misc.data.settings.additions import UnoAdd, UnoAddState
+from .misc.data.settings.difficulties import UnoDifficulty
+from .misc.data.settings.modes import UnoMode
+from .. import PlayActions, PlayStates
 
-router = Router(name='game:uno:start')
-router.message.filter(CustomCommandFilter(commands=['play', 'поиграем'], magic=F.args.in_(('uno', 'уно'))))
+router = Router(name='play:uno:start')
+router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.UNO)))
 
 
-@router.message(Games.UNO)
+@router.message(PlayStates.UNO)
+@flags.timer(name='play', cancelled=False)
 async def uno_join_handler(message: types.Message, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
-    if message.from_user.id in data_uno.users:
-        await message.reply(_("You already in the game."))
-    elif len(data_uno.users) == 10:
-        await message.reply(_("Already 10 people are playing in the game."))
-    else:
-        data_uno.users[message.from_user.id] = await data_uno.add_user(state, message.from_user.id, data_uno.deck)
+    try:
+        await data_uno.players.add_player(state, message.from_user.id, list(data_uno.deck[7]))
         await data_uno.set_data(state)
 
-        await message.answer(_("{user} join to current game.").format(user=get_username(message.from_user)))
+        await message.answer(_("{user} join to current game.").format(user=message.from_user.mention_html()))
+
+    except errors.UnoExistedPlayer:
+        await message.reply(_("You already in the game."))
+
+    except errors.UnoMaxPlayers:
+        await message.reply(_("Already 10 people are playing in the game."))
 
 
 @router.message()
-@flags.timer('game')
-async def start_handler(message: types.Message, bot: Bot, state: FSMContext):
+@flags.timer(name='play')
+async def start_handler(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks):
     answer = _(
         "<b>Let's play UNO?</b>\n\n"
         "One minute to make a decision!\n"
@@ -43,13 +49,13 @@ async def start_handler(message: types.Message, bot: Bot, state: FSMContext):
 
     message = await message.answer(
         answer.format(
-            user=get_username(message.from_user),
-            difficulty=html.bold(UnoDifficulty.NORMAL.word),
-            mode=html.bold(UnoMode.FAST.word),
-            additives='\n'.join(f'{name}: {html.bold(UnoAdd.ON.word)}.' for name in UnoAdd.get_names()),
+            difficulty=html.bold(UnoDifficulty.NORMAL),
+            mode=html.bold(UnoMode.FAST),
+            additives='\n'.join(f'{add}: {html.bold(UnoAddState.ON)}' for add in UnoAdd),
+            user=message.from_user.mention_html(),
         ),
-        reply_markup=k.setup(),
+        reply_markup=keyboards.setup_keyboard(),
     )
 
     from .process import start_timer
-    return timer.dict(start_timer(message, bot, state))
+    timer[state.key] = start_timer(message, bot, state, timer)

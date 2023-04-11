@@ -7,6 +7,7 @@ from aiogram.utils.i18n import I18n, gettext as _
 from bot import filters
 from bot.handlers.commands import CommandTypes
 from .. import SettingsActions, SettingsStates, keyboards
+from ...misc.types import PREFIX
 
 router = Router(name='commands:start')
 router.callback_query.filter(keyboards.SettingsData.filter(F.action == SettingsActions.COMMAND))
@@ -27,7 +28,7 @@ async def start_handler(
     from bot.handlers.commands.help import get_answer
 
     command = filters.CommandObject(
-        prefix='/',
+        prefix=PREFIX,
         command=choice(list(CommandTypes))[0]
     )
 

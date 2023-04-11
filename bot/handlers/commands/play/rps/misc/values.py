@@ -8,8 +8,7 @@ class RPSValues(str, Enum):
     SCISSORS = "✂"
     PAPER = "📜"
 
-    @property
-    def word(self) -> str:
+    def __str__(self) -> str:
         match self:
             case self.ROCK:
                 item = _("rock")

@@ -6,6 +6,7 @@ from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters
 from bot.handlers.commands import CommandTypes
+from bot.middlewares.throttling import ThrottlingEnums
 from bot.utils import database
 from .. import SettingsStates
 
@@ -50,7 +51,7 @@ async def accept_handler(
 
 
 @router.message()
-@flags.throttling('gen')
+@flags.throttling(ThrottlingEnums.GEN)
 @flags.sql('messages')
 async def decline_handler(
         message: types.Message,

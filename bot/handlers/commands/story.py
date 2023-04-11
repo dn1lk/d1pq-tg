@@ -4,6 +4,7 @@ from aiogram import Router, types, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot import filters
+from bot.middlewares.throttling import ThrottlingEnums
 from bot.utils import markov
 from . import CommandTypes
 from .. import resolve_text
@@ -13,7 +14,7 @@ router.message.filter(filters.Command(*CommandTypes.STORY))
 
 
 @router.message()
-@flags.throttling('gen')
+@flags.throttling(ThrottlingEnums.GEN)
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def history_handler(

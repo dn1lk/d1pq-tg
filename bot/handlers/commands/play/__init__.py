@@ -20,10 +20,10 @@ CLOSE = (
 
 
 def setup(parent_router: Router):
-    from . import cts, rnd, rps, other
+    from . import cts, rnd, rps, uno, other
 
     rps.setup(parent_router)
-    # uno.setup(parent_router)
+    uno.setup(parent_router)
     rnd.setup(parent_router)
     cts.setup(parent_router)
 
