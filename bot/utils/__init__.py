@@ -1,10 +1,17 @@
+import logging
+
 from aiogram import Dispatcher
 
+from .database import SQLContext
+from .timer import TimerTasks
 from .wiki import Wikipedia
 
-wiki = Wikipedia()
 
+async def setup(dp: Dispatcher, database_url: str):
+    logging.debug('Setting up utils...')
 
-async def setup(dp: Dispatcher):
-    from . import database
-    dp['pool_db'] = await database.setup()
+    dp['db'] = sql = await SQLContext.setup(database_url)
+    dp['wiki'] = wiki = Wikipedia()
+
+    dp.shutdown.register(sql.close)
+    dp.shutdown.register(wiki.close)

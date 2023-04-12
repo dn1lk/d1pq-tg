@@ -1,0 +1,38 @@
+import asyncio
+from random import choice, randint
+
+from aiogram import Router, F, types, flags
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.i18n import gettext as _
+
+from bot import filters
+from bot.handlers.commands import CommandTypes
+from bot.handlers.commands.play import PlayActions, PlayStates, CLOSE
+from bot.utils import TimerTasks
+
+router = Router(name='start')
+router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.RND)))
+
+
+async def task(message: types.Message, state: FSMContext):
+    try:
+        await asyncio.sleep(randint(40, 120))
+        await message.reply(str(choice(CLOSE)))
+    finally:
+        await state.clear()
+
+
+@router.message()
+@flags.timer(name='play')
+async def start_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
+    await state.set_state(PlayStates.RND.group)
+
+    answer = _(
+        "Hmm, you're trying your luck!\n"
+        "I guessed a number from one to ten.\n"
+        "\n"
+        "Guess what number?"
+    )
+
+    message = await message.answer(answer)
+    timer[state.key] = task(message, state)

@@ -1,17 +1,20 @@
-from typing import Dict, Any
+from typing import Any
 
 from aiogram import types
 from aiogram.utils.i18n import SimpleI18nMiddleware
 
 
 class I18nContextMiddleware(SimpleI18nMiddleware):
-    async def get_locale(self, event: types.TelegramObject, data: Dict[str, Any]) -> str:
-        from bot.utils.database.context import DataBaseContext
+    async def get_locale(self, event: types.TelegramObject, data: dict[str, Any]) -> str:
+        from bot.utils import database
+        db: database.SQLContext = data['db']
 
-        db: DataBaseContext = data['db']
-        locale = await db.get_data('locale')
+        try:
+            chat_id: int = data.get('event_chat', data['event_from_user']).id
+            locale = await db.locale.get(chat_id)
+        except KeyError:
+            return self.i18n.default_locale
 
         if not locale:
-            locale = await super().get_locale(event=event, data=data)
-
+            return await super().get_locale(event=event, data=data)
         return locale

@@ -2,16 +2,17 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.fsm.strategy import FSMStrategy
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s - %(name)s - %(message)s")
-logging.info("Start bot")
+    level=logging.DEBUG,
+    format="%(levelname)s - %(name)s - %(message)s"
+)
 
 
 async def main():
+    logging.info("Start bot")
+
     import config
 
     bot = Bot(token=config.bot.token.get_secret_value(), parse_mode="HTML")
@@ -20,44 +21,44 @@ async def main():
         fsm_strategy=FSMStrategy.CHAT
     )
 
-    dp['owner_id'] = config.bot.owner
+    dp['owner_id'] = owner_id = config.bot.owner
 
     import utils
 
-    await utils.setup(dp)
+    await utils.setup(dp, config.provider.database_url)
 
     import middlewares
     import handlers
 
-    middlewares.setup(dp)
+    middlewares.setup(dp, config.i18n)
     handlers.setup(dp)
 
     try:
-        from ui_commands import set_bot_commands
-        dp['commands'] = await set_bot_commands(bot, dp)
+        import ui_commands
+        await ui_commands.setup(bot, config.i18n)
 
-        await bot.send_message(dp['owner_id'], 'Bot starting...')
+        await bot.send_message(owner_id, 'Bot starting...')
 
-        if config.heroku.domain_url:
+        if config.provider.domain_url:
             import webhook
-            await webhook.setup(dp, bot)
+            await webhook.setup(dp, bot,
+                                config.provider.domain_url, config.provider.host, config.provider.port)
         else:
             await bot.delete_webhook()
             await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         try:
-            await bot.send_message(dp['owner_id'], 'Bot stopping...')
+            await bot.send_message(owner_id, 'Bot stopping...')
         finally:
             await bot.session.close()
-            await dp['pool_db'].close()
 
 
 if __name__ == "__main__":
-    import send_message
+    from bot import types
 
-    send_message.setup()
+    types.setup()
 
     try:
         asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
+    finally:
         logging.error("Bot stopped")

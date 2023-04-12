@@ -1,33 +1,31 @@
-from typing import Callable, Dict, Any, Awaitable
+from typing import Callable, Any, Awaitable
 
-from aiogram import BaseMiddleware, types
+from aiogram import Router, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
+from aiogram.fsm.context import FSMContext
 
-from . import timer
+from .tasks import TimerTasks
 
 
 class TimerMiddleware(BaseMiddleware):
     async def __call__(
             self,
-            handler: Callable[[types.TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            handler: Callable[[types.TelegramObject, dict[str, Any]], Awaitable[Any]],
             event: types.TelegramObject,
-            data: Dict[str, Any],
-    ) -> Any:
-        flag_data = get_flag(data, 'timer')
+            data: dict[str, Any],
+    ):
+        flag_timer: dict[str, str | bool] | None = get_flag(data, 'timer')
 
-        if flag_data:
-            if isinstance(flag_data, tuple):
-                name, delay = flag_data
-            else:
-                name, delay = flag_data, 60
+        if flag_timer:
+            state: FSMContext = data['state']
+            data['timer'] = timer = TimerTasks(flag_timer['name'])
 
-            task_name = timer.get_name(data['state'], name)
-            await timer.cancel(task_name)
+            if flag_timer.get('cancelled', True):
+                async with timer.lock(state.key):
+                    return await handler(event, data)
 
-            coroutines = await handler(event, data)
-
-            if coroutines:
-                timer.create(task_name, delay, **coroutines)
-
-            return coroutines
         return await handler(event, data)
+
+    def setup(self, router: Router):
+        for observer in router.message, router.callback_query, router.chat_member:
+            observer.middleware(self)

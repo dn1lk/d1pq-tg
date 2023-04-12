@@ -1,53 +1,34 @@
-from aiogram import Bot, Dispatcher, Router
-from aiogram.types import (
-    BotCommand,
-    BotCommandScopeDefault,
-    BotCommandScopeAllChatAdministrators,
-    BotCommandScopeAllPrivateChats,
-)
+import logging
 
-import config
+from aiogram import Bot, types
+from aiogram.utils.i18n import I18n
+
+from handlers.commands import CommandTypes
 
 
-def get_bot_commands(router: Router, locale: str):
-    for handler in router.message.handlers:
-        if "commands" in handler.flags and handler.callback.__doc__:
-            for command in handler.flags["commands"]:
-                yield BotCommand(
-                    command=command.commands[0],
-                    description=handler.callback.__doc__.split(', ')[config.i18n.available_locales.index(locale)]
-                )
+async def setup(bot: Bot, i18n: I18n):
+    logging.debug('Setting up ui_commands...')
 
-    for sub_router in router.sub_routers:
-        yield from get_bot_commands(sub_router, locale)
-
-
-async def set_bot_commands(bot: Bot, dp: Dispatcher) -> dict[str, tuple]:
-    commands_dict = {}
-
-    for locale in config.i18n.available_locales:
-        commands_dict[locale] = tuple(get_bot_commands(dp, locale))
-
-        data = (
-            (
-                [command for command in commands_dict[locale] if command.command != 'settings'],
-                BotCommandScopeDefault()
-            ),
-            (
-                commands_dict[locale],
-                BotCommandScopeAllChatAdministrators(),
-            ),
-            (
-                [command for command in commands_dict[locale] if command.command != 'who'],
-                BotCommandScopeAllPrivateChats()
-            ),
+    async def set_my_commands(*exclude_commands, scope: types.BotCommandScope = None):
+        await bot.set_my_commands(
+            commands=[command for command in my_commands if command not in exclude_commands],
+            scope=scope,
+            language_code=locale
         )
 
-        for commands, scope in data:
-            await bot.set_my_commands(
-                commands=commands,
-                language_code=None if locale == 'en' else locale,
-                scope=scope,
-            )
+    for locale in i18n.available_locales:
+        with i18n.context(), i18n.use_locale(locale):
+            my_commands = [
+                types.BotCommand(command=command[0], description=command.description)
+                for command in CommandTypes
+                if command.description
+            ]
 
-    return commands_dict
+        if locale == 'en':
+            locale = None
+
+        await set_my_commands(CommandTypes.WHO,
+                              scope=types.BotCommandScopeAllPrivateChats())
+        await set_my_commands(scope=types.BotCommandScopeAllChatAdministrators())
+        await set_my_commands(CommandTypes.SETTINGS,
+                              scope=types.BotCommandScopeAllGroupChats())

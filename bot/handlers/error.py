@@ -2,28 +2,21 @@ import asyncio
 import logging
 import traceback
 
-from aiogram import Router, Bot, html
+from aiogram import Bot, Router, html
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
-from aiogram.filters import ExceptionTypeFilter, ExceptionMessageFilter
 from aiogram.types.error_event import ErrorEvent
+
+from bot import filters
 
 router = Router(name='error')
 
 
-@router.errors(ExceptionTypeFilter(TelegramRetryAfter))
+@router.errors(filters.ExceptionTypeFilter(TelegramRetryAfter))
 async def retry_after_handler(_, exception: TelegramRetryAfter):
     logging.error(exception.message)
 
     await asyncio.sleep(exception.retry_after)
     await exception.method
-
-
-@router.errors(ExceptionMessageFilter('Bad Request: message is not modified'))
-async def edit_handler(event: ErrorEvent, bot: Bot, owner_id: int):
-    if event.update.callback_query:
-        await event.update.callback_query.answer("↻ - please wait...")
-    else:
-        await errors_handler(event, bot, owner_id)
 
 
 @router.errors()
