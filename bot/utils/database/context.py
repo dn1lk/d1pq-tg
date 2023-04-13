@@ -11,14 +11,11 @@ class SQLContext:
     _defaults: Record
 
     def __post_init__(self):
-        self.id = Column(self._pool, self._defaults, 'id')
-        self.locale = Column(self._pool, self._defaults, 'locale')
-        self.messages = ArrayColumn(self._pool, self._defaults, 'messages')
-        self.stickers = ArrayColumn(self._pool, self._defaults, 'stickers')
-        self.members = ArrayColumn(self._pool, self._defaults, 'members')
-        self.commands = Column(self._pool, self._defaults, 'commands')
-        self.chance = Column(self._pool, self._defaults, 'chance')
-        self.accuracy = Column(self._pool, self._defaults, 'accuracy')
+        for column in ('id', 'locale', 'commands', 'chance', 'accuracy'):
+            setattr(self, column, Column(self._pool, self._defaults[column], column))
+
+        for column_array in ('messages', 'stickers', 'members'):
+            setattr(self, column_array, ArrayColumn(self._pool, self._defaults[column], column_array))
 
     def __getitem__(self, item: str) -> Column:
         column = self.__getattribute__(item)
@@ -64,7 +61,7 @@ class SQLContext:
             await connection.execute("insert into data (id) values (0) on conflict (id) do nothing;")
             defaults = await connection.fetchrow(f"select * from data where id = 0;")
 
-        return SQLContext(pool, defaults)
+        return SQLContext(_pool=pool, _defaults=defaults)
 
     async def close(self):
         await self._pool.close()

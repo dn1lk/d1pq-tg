@@ -12,7 +12,7 @@ from .. import errors
 
 @dataclass
 class UnoPlayer:
-    _player_id: int
+    player_id: int
 
     cards: list[UnoCard]
     cards_played: int = 0
@@ -21,7 +21,7 @@ class UnoPlayer:
     is_me: bool = False
 
     def __eq__(self, user_id: int) -> bool:
-        return self._player_id == user_id
+        return self.player_id == user_id
 
     def get_card(self, sticker: types.Sticker) -> UnoCard:
         for card in self.cards:
@@ -42,14 +42,14 @@ class UnoPlayer:
         return sum(card for card in self.cards)
 
     async def get_user(self, bot: Bot, chat_id: int) -> types.User:
-        if self._player_id == bot.id:
+        if self.player_id == bot.id:
             return await bot.me()
 
-        member = await bot.get_chat_member(chat_id, self._player_id)
+        member = await bot.get_chat_member(chat_id, self.player_id)
         return member.user
 
-    @classmethod
-    def get_key(cls, bot_id: int, player_id: int):
+    @staticmethod
+    def get_key(bot_id: int, player_id: int):
         return StorageKey(
             bot_id=bot_id,
             chat_id=player_id,
@@ -60,7 +60,7 @@ class UnoPlayer:
     @classmethod
     async def setup(cls, state: FSMContext, user_id: int, cards: list[UnoCard]) -> "UnoPlayer":
         player = cls(user_id, cards, is_me=user_id == state.key.bot_id)
-        key = player.get_key(state.key.bot_id, user_id)
+        key = cls.get_key(state.key.bot_id, user_id)
 
         storage = state.storage
         await storage.set_state(state.bot, key, PlayStates.UNO)
@@ -69,7 +69,7 @@ class UnoPlayer:
         return player
 
     async def clear(self, state: FSMContext):
-        key = self.get_key(state.key.bot_id, self._player_id)
+        key = self.get_key(state.key.bot_id, self.player_id)
 
         storage = state.storage
         await storage.set_state(state.bot, key)
@@ -81,7 +81,7 @@ class UnoPlayers:
     _players_in: list[UnoPlayer]
     _current_index: int = None
 
-    players_finished: list[UnoPlayer] = field(default_factory=set)
+    players_finished: list[UnoPlayer] = field(default_factory=list)
 
     def __post_init__(self):
         if self._current_index is None:

@@ -81,4 +81,4 @@ class UnoDeck:
         cards_in.extend(cards_in[-2:])
         cards_in.extend(cards_in[4:])
 
-        return cls(cards_in)
+        return cls(cards_in=cards_in)

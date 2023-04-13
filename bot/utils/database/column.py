@@ -3,14 +3,11 @@ from dataclasses import dataclass
 from asyncpg import Pool, Record
 
 
-@dataclass
+@dataclass(slots=True, frozen=True)
 class Column:
     _pool: Pool
     _default: Record
     _name: str
-
-    def __post_init__(self):
-        self._default = self._default[self._name]
 
     def __str__(self) -> str:
         return self._name

@@ -44,9 +44,41 @@ async def finish(
     timer_poll = TimerTasks('uno_poll')
     del timer_poll[state.key]
 
-    await data_uno.clear(state)
+    if (
+            data_uno.settings.mode is UnoMode.FAST
+            or max(winner.points for winner in data_uno.players) >= 500
+    ):
+        await data_uno.clear(state)
 
-    async def get_answer_winners():
+        answer = await _get_results_answer(state, data_uno)
+        await state.bot.send_message(
+            state.key.chat_id,
+            f'{html.bold(_("Game over."))}\n\n{answer}'
+        )
+    else:
+        data_uno.restart()
+
+        answer = await _get_results_answer(state, data_uno)
+        message = await state.bot.send_message(
+            state.key.chat_id,
+            f'{html.bold(_("Round over."))}\n\n{answer}'
+        )
+
+        message = await message.answer(_("New round starts in {delay}...").format(delay=html.bold(10)))
+
+        for n in range(9, 0, -1):
+            await asyncio.sleep(1)
+            message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
+
+        await message.delete()
+        await restart(state, timer, data_uno)
+
+
+async def _get_results_answer(
+        state: FSMContext,
+        data_uno: UnoData
+) -> str:
+    async def get_results():
         winners = sorted(data_uno.players.players_finished, key=lambda p: p.points, reverse=True)
 
         for enum, winner_player in enumerate(winners, start=1):
@@ -72,29 +104,4 @@ async def finish(
                 winner_user = await winner_player.get_user(state.bot, state.key.chat_id)
                 yield f'{enum}: {winner_user.mention_html()} - {answer_one}, {answer_two}.'
 
-    answer = '\n'.join([winner async for winner in get_answer_winners()])
-
-    if (
-            data_uno.settings.mode is UnoMode.FAST
-            or max(winner.points for winner in data_uno.players) >= 500
-    ):
-        await state.bot.send_message(
-            state.key.chat_id,
-            f'{html.bold(_("Game over."))}\n\n{answer}'
-        )
-    else:
-        message = await state.bot.send_message(
-            state.key.chat_id,
-            f'{html.bold(_("Round over."))}\n\n{answer}'
-        )
-
-        message = await message.answer(_("New round starts in {delay}...").format(delay=html.bold(10)))
-
-        for n in range(9, 0, -1):
-            await asyncio.sleep(1)
-            message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
-
-        await message.delete()
-
-        data_uno.restart()
-        await restart(state, timer, data_uno)
+    return '\n'.join([winner async for winner in get_results()])

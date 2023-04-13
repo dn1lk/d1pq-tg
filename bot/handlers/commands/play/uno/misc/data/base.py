@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from random import choice
 
 from aiogram import html
@@ -29,13 +29,12 @@ class UnoActions:
     seven: UnoPlayer = None
 
 
-@dataclass
 class UnoData(PlayData):
     deck: UnoDeck
     players: UnoPlayers
     settings: UnoSettings
 
-    actions: UnoActions = field(default_factory=UnoActions)
+    actions: UnoActions = UnoActions()
     timer_amount: int = 3
 
     @classmethod
@@ -279,7 +278,7 @@ class UnoData(PlayData):
         deck = await UnoDeck.setup(state.bot)
         players = await UnoPlayers.setup(state, deck, *user_ids)
 
-        return cls(deck, players, settings)
+        return cls(deck=deck, players=players, settings=settings)
 
     def restart(self):
         self.players.restart(self.deck)

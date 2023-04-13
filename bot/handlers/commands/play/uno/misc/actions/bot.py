@@ -17,7 +17,7 @@ from ..data.settings.difficulties import UnoDifficulty
 UNO = "UNO!"
 
 
-@dataclass
+@dataclass(slots=True)
 class UnoBot:
     message: types.Message
     state: FSMContext
@@ -57,27 +57,27 @@ class UnoBot:
                 await asyncio.sleep(retry.retry_after)
                 self.message = await retry.method
 
-        answer = choice(
-            (
-                answer,
-
-                _("My move is made."),
-                _("Expected? But I don't care."),
-                _("BA-DUM-TSS!"),
-                _(
-                    "On a scale of 10, rate the quality of this move.\n"
-                    "Where 0 is very good, 10 is excellent."
-                ),
-                _("I still have cards in my hand."),
-                _("Curious, but I know all the hands in the game... I dealt them."),
-                _("Maybe I can even win this game!"),
-                _("Oh, I don't envy the next player..."),
-                _("Br-b. Ah. Yes. No. ..."),
-                _("Oh-oh, this card fell into this chat by itself..."),
-            )
-        )
-
         try:
+            answer = choice(
+                (
+                    answer,
+
+                    _("My move is made."),
+                    _("Expected? But I don't care."),
+                    _("BA-DUM-TSS!"),
+                    _(
+                        "On a scale of 10, rate the quality of this move.\n"
+                        "Where 0 is very good, 10 is excellent."
+                    ),
+                    _("I still have cards in my hand."),
+                    _("Curious, but I know all the hands in the game... I dealt them."),
+                    _("Maybe I can even win this game!"),
+                    _("Oh, I don't envy the next player..."),
+                    _("Br-b. Ah. Yes. No. ..."),
+                    _("Oh-oh, this card fell into this chat by itself..."),
+                )
+            )
+
             from .turn import proceed_turn
             await proceed_turn(self.message, self.state, self.timer, self.data_uno, card, answer)
 
@@ -92,7 +92,6 @@ class UnoBot:
             )
 
             await self.data_uno.set_data(self.state)
-
             await self.message.answer(answer)
 
     async def _proceed_pass(self):
@@ -125,15 +124,16 @@ class UnoBot:
         last_card = self.data_uno.deck.last_card
 
         if not player.cards:
-            color = last_card.color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
+            color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
 
         elif self.data_uno.settings.difficulty is UnoDifficulty.HARD:
             colors = [card.color for card in player.cards]
-            color = last_card.color = max(set(colors), key=colors.count)
+            color = max(set(colors), key=colors.count)
 
         else:
-            color = last_card.color = choice(player.cards).color
+            color = choice(player.cards).color
 
+        self.data_uno.deck.last_cards[-1] = last_card.replace_color(color)
         return _("I choice {color}.").format(color=color)
 
     async def do_seven(self) -> str:

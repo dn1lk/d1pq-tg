@@ -13,7 +13,7 @@ from .data.deck.colors import UnoColors
 from .data.players import UnoPlayer
 
 
-@dataclass
+@dataclass(slots=True)
 class UnoFilter:
     _is_accepted: bool = False
     answer: str = None

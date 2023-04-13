@@ -12,7 +12,7 @@ class UnoColorsMeta(EnumMeta):
             yield color
 
 
-class UnoColors(str, Enum, metaclass=UnoColorsMeta):
+class UnoColors(Enum, metaclass=UnoColorsMeta):
     BLUE = '🔵'
     GREEN = '🟢'
     RED = '🔴'
