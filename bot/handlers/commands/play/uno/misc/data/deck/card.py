@@ -1,10 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from .colors import UnoColors
 from .emoji import UnoEmoji
 
 
-@dataclass
+@dataclass(frozen=True)
 class UnoCard:
     file_unique_id: str
     file_id: str
@@ -13,8 +13,11 @@ class UnoCard:
     color: UnoColors
     cost: int
 
-    def __add__(self, card: "UnoCard") -> int:
-        return self.cost + card.cost
+    def __iadd__(self, card: "UnoCard"):
+        self.cost += card.cost
 
     def __eq__(self, card) -> bool:
         return self.file_unique_id == card.file_unique_id
+
+    def replace_color(self, color: UnoColors) -> "UnoCard":
+        return replace(self, color=color)

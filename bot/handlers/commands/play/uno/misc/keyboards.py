@@ -115,7 +115,7 @@ def choice_color():
     builder = InlineKeyboardBuilder()
 
     for color in UnoColors.exclude(UnoColors.BLACK):
-        builder.button(text=color, callback_data=UnoData(action=UnoActions.COLOR, value=color))
+        builder.button(text=str(color), callback_data=UnoData(action=UnoActions.COLOR, value=color))
 
     builder.adjust(1)
     return builder.as_markup()

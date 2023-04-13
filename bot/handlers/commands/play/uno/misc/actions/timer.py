@@ -42,8 +42,10 @@ async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks)
         last_card = data_uno.deck.last_card
 
         if last_card.color is UnoColors.BLACK:
-            last_card.color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
-            answer = _("Current color: {color}").format(color=last_card.color)
+            color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
+            data_uno.deck.last_cards[-1] = last_card.replace_color(color)
+
+            answer = _("Current color: {color}").format(color=color)
 
         else:
             answer = f'{_("Time is over.")} {await data_uno.pick_card(state)}'
@@ -52,7 +54,10 @@ async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks)
         await next_turn(message, state, timer, data_uno, answer)
 
 
-async def _finally(message: types.Message):
+async def _finally(message: types.Message, state: FSMContext):
+    timer_uno = TimerTasks('say_uno')
+    del timer_uno[state.key]
+
     if message.reply_markup and len(message.reply_markup.inline_keyboard) == 2:
         del message.reply_markup.inline_keyboard[0]
         await message.edit_reply_markup(reply_markup=message.reply_markup)
@@ -68,4 +73,4 @@ async def task(
         await asyncio.sleep(60 * data_uno.timer_amount)
         await _timeout(message, state, timer)
     finally:
-        await _finally(message)
+        await _finally(message, state)

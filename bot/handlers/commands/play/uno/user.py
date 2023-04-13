@@ -9,12 +9,14 @@ from bot.utils import TimerTasks
 from . import DRAW_CARD
 from .misc import keyboards
 from .misc.actions import proceed_turn, next_turn, proceed_uno
+from .misc.actions.turn import update_timer
 from .misc.data import UnoData
-from .misc.data.deck import UnoCard
+from .misc.data.deck import UnoCard, UnoEmoji
 from .. import PlayStates
 
 router = Router(name='play:uno:user')
 router.message.filter(PlayStates.UNO)
+router.callback_query.filter(PlayStates.UNO)
 
 
 @router.message(F.sticker.set_name == 'uno_by_d1pq_bot', UnoData.filter().__call__)
@@ -144,21 +146,32 @@ async def color_handler(
     user = query.from_user
 
     if user.id == data_uno.players.current_player:
+        # Cancel all current play tasks
         del timer[state.key]
 
-        last_card = data_uno.deck.last_card
-        last_card.color = callback_data.value
+        # Update card color
+        color = callback_data.value
+        data_uno.deck.last_cards[-1] = data_uno.deck.last_card.replace_color(color)
 
-        await query.message.edit_text(
-            _("{user} changes the color to {color}!").format(
-                user=user.mention_html(),
-                color=last_card.color,
-            )
+        answer_one = _("{user} changes the color to {color}!").format(
+            user=user.mention_html(),
+            color=color,
         )
 
-        answer = data_uno.update_action()
-        await next_turn(query.message, state, timer, data_uno, answer or "")
+        if data_uno.deck.last_card.emoji is UnoEmoji.DRAW_FOUR:
+            data_uno.update_action()
+            is_draw_four = True
+        else:
+            is_draw_four = False
 
+        answer_two = await data_uno.do_next(state)
+
+        message = await query.message.edit_text(
+            f'{answer_one}\n{answer_two}',
+            reply_markup=keyboards.show_cards(is_draw_four)
+        )
+
+        await update_timer(message, state, timer, data_uno)
         await query.answer()
     else:
         await query.answer(_("When you'll get a BLACK card, choose this color ;)"))

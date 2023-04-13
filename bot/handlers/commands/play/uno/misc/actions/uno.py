@@ -16,13 +16,10 @@ async def update_uno(
         data_uno: UnoData,
         user: types.User
 ):
-    from .bot import UnoBot
-
-    bot_uno = UnoBot(message, state, timer, data_uno)
-    timer_uno = TimerTasks('say_uno')
-
     if data_uno.players[user.id].is_me:
-        answer_uno = choice(
+        a, b = 0, 4
+
+        answer = choice(
             (
                 _("I have only one card!"),
                 _("I am left with one card."),
@@ -31,9 +28,10 @@ async def update_uno(
             )
         )
 
-        timer_uno[state.key] = bot_uno.gen_uno(0, 4)
     else:
-        answer_uno = choice(
+        a, b = 2, 6
+
+        answer = choice(
             (
                 _("{user} is left with one card!"),
                 _("{user} is on the verge of victory!"),
@@ -42,9 +40,14 @@ async def update_uno(
             )
         ).format(user=user.mention_html())
 
-        timer_uno[state.key] = bot_uno.gen_uno(2, 6)
+    message = await message.answer(answer, reply_markup=keyboards.say_uno())
 
-    await message.answer(answer_uno, reply_markup=keyboards.say_uno())
+    from .bot import UnoBot
+
+    bot_uno = UnoBot(message, state, timer, data_uno)
+    timer_uno = TimerTasks('say_uno')
+
+    timer_uno[state.key] = bot_uno.gen_uno(a, b)
 
 
 async def proceed_uno(message: types.Message, state: FSMContext, data_uno: UnoData, user: types.User):

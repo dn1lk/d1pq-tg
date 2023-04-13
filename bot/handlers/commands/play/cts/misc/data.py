@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from random import choice
@@ -8,10 +7,9 @@ from ... import PlayData
 LOCALE_DIR = Path.cwd() / 'bot' / 'locales'
 
 
-@dataclass
 class CTSData(PlayData):
     bot_city: str = None
-    used_cities: set[str] = field(default_factory=set)
+    used_cities: set[str] = set()
     fail_amount: int = 5
 
     @classmethod
