@@ -4,7 +4,7 @@ from aiogram import Router, types, flags, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 from . import CTSData, task
 from .. import PlayStates
 

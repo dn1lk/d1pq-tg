@@ -2,8 +2,8 @@ from typing import Callable, Any, Awaitable
 
 from aiogram import Router, BaseMiddleware, types
 
+from bot.core.utils import database
 from bot.handlers.commands.misc.types import PREFIX
-from bot.utils import database
 
 
 class CustomCommandsMiddleware(BaseMiddleware):

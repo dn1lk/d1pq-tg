@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
 from . import CommandTypes
 
 router = Router(name='start')

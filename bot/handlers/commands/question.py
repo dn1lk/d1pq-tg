@@ -1,9 +1,9 @@
 from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters
-from bot.middlewares.throttling import ThrottlingEnums
-from bot.utils import Wikipedia
+from bot.core import filters
+from bot.core.middlewares.throttling import ThrottlingEnums
+from bot.core.utils import Wikipedia
 from . import CommandTypes
 from .. import resolve_text
 

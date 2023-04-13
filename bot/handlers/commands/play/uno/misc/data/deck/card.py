@@ -13,11 +13,14 @@ class UnoCard:
     color: UnoColors
     cost: int
 
-    def __iadd__(self, card: "UnoCard"):
-        self.cost += card.cost
+    def __add__(self, card: "UnoCard") -> int:
+        return self.cost + card.cost
+
+    def __radd__(self, card: "UnoCard") -> int:
+        return self.__add__(card)
 
     def __eq__(self, card) -> bool:
         return self.file_unique_id == card.file_unique_id
 
-    def replace_color(self, color: UnoColors) -> "UnoCard":
-        return replace(self, color=color)
+    def replace(self, **kwargs) -> "UnoCard":
+        return replace(self, **kwargs)

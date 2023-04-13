@@ -3,8 +3,8 @@ import asyncio
 from aiogram import Router, F, types
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
-from bot.utils import database
+from bot.core import filters
+from bot.core.utils import database
 
 router = Router(name='transitions:other')
 

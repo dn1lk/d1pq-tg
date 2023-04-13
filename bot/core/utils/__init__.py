@@ -4,7 +4,7 @@ from aiogram import Dispatcher
 
 from .database import SQLContext
 from .timer import TimerTasks
-from .wiki import Wikipedia
+from .wikipedia import Wikipedia
 
 
 async def setup(dp: Dispatcher, database_url: str):

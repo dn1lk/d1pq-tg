@@ -7,10 +7,10 @@ from aiogram.handlers import MessageHandler
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
+from bot.core.utils import SQLContext, TimerTasks
 from bot.handlers.commands import CommandTypes
 from bot.handlers.commands.play import PlayActions, PlayStates
-from bot.utils import SQLContext, TimerTasks
 
 router = Router(name='play:rnd:chat:start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.RND)))

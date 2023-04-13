@@ -5,10 +5,10 @@ from aiogram import Router, F, types, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
+from bot.core.utils import TimerTasks
 from bot.handlers.commands import CommandTypes
 from bot.handlers.commands.play import PlayActions, PlayStates, CLOSE
-from bot.utils import TimerTasks
 
 router = Router(name='start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.RND)))

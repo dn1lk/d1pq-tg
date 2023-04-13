@@ -23,24 +23,19 @@ async def main():
 
     dp['owner_id'] = owner_id = config.bot.owner
 
-    import utils
-
     await utils.setup(dp, config.provider.database_url)
 
-    import middlewares
     import handlers
 
     middlewares.setup(dp, config.i18n)
     handlers.setup(dp)
 
     try:
-        import ui_commands
         await ui_commands.setup(bot, config.i18n)
 
         await bot.send_message(owner_id, 'Bot starting...')
 
         if config.provider.domain_url:
-            import webhook
             await webhook.setup(dp, bot,
                                 config.provider.domain_url, config.provider.host, config.provider.port)
         else:
@@ -54,7 +49,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    from bot import types
+    from bot.core import types, ui_commands, webhook, utils, middlewares
 
     types.setup()
 

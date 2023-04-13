@@ -6,7 +6,7 @@ from aiogram.utils.i18n import SimpleI18nMiddleware
 
 class I18nContextMiddleware(SimpleI18nMiddleware):
     async def get_locale(self, event: types.TelegramObject, data: dict[str, Any]) -> str:
-        from bot.utils import database
+        from bot.core.utils import database
         db: database.SQLContext = data['db']
 
         try:

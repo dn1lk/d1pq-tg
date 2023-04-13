@@ -12,7 +12,7 @@ from .. import errors
 
 @dataclass
 class UnoPlayer:
-    player_id: int
+    _player_id: int
 
     cards: list[UnoCard]
     cards_played: int = 0
@@ -21,7 +21,7 @@ class UnoPlayer:
     is_me: bool = False
 
     def __eq__(self, user_id: int) -> bool:
-        return self.player_id == user_id
+        return self._player_id == user_id
 
     def get_card(self, sticker: types.Sticker) -> UnoCard:
         for card in self.cards:
@@ -37,15 +37,11 @@ class UnoPlayer:
         self.cards.remove(card)
         self.cards_played += 1
 
-    @property
-    def card_values(self) -> int:
-        return sum(card for card in self.cards)
-
     async def get_user(self, bot: Bot, chat_id: int) -> types.User:
-        if self.player_id == bot.id:
+        if self.is_me:
             return await bot.me()
 
-        member = await bot.get_chat_member(chat_id, self.player_id)
+        member = await bot.get_chat_member(chat_id, self._player_id)
         return member.user
 
     @staticmethod
@@ -69,7 +65,7 @@ class UnoPlayer:
         return player
 
     async def clear(self, state: FSMContext):
-        key = self.get_key(state.key.bot_id, self.player_id)
+        key = self.get_key(state.key.bot_id, self._player_id)
 
         storage = state.storage
         await storage.set_state(state.bot, key)
@@ -129,7 +125,7 @@ class UnoPlayers:
         deck.cards_in.extend(player.cards)
         self._players_in.remove(player)
 
-        player.points += sum(player.card_values for player in self._players_in)
+        player.points += sum(sum(player.cards) for player in self._players_in)
         self.players_finished.append(player)
 
     def __rshift__(self, number: int) -> UnoPlayer:

@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 from .bot import UnoBot
 from .. import errors, keyboards
 from ..data import UnoData

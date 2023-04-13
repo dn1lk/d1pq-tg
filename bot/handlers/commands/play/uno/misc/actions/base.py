@@ -4,7 +4,7 @@ from aiogram import html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 from ..data import UnoData
 from ..data.settings import UnoSettings
 from ..data.settings.modes import UnoMode

@@ -4,7 +4,7 @@ from aiogram import Router, F, types, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters
+from bot.core import filters
 from bot.handlers.commands import CommandTypes
 from .. import SettingsActions, SettingsStates, keyboards
 from ...misc.types import PREFIX

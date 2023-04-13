@@ -5,7 +5,7 @@ from aiogram import Bot, Router, F, types, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 from .misc import keyboards
 from .misc.data.settings import UnoSettings
 

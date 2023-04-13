@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.handlers import MessageHandler
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 from . import DRAW_CARD
 from .misc import keyboards
 from .misc.actions import proceed_turn, next_turn, proceed_uno
@@ -97,8 +97,9 @@ class SevenHandler(MessageHandler):
 
     async def handle(self):
         data_uno = await UnoData.get_data(self.state)
+        player = data_uno.players.current_player
 
-        if self.from_user.id == data_uno.actions.seven:
+        if self.from_user.id == player:
             chosen_user = await self.get_seven_user(data_uno)
 
             if chosen_user:
@@ -108,12 +109,11 @@ class SevenHandler(MessageHandler):
                 await next_turn(self.event, self.state, self.timer, data_uno, answer)
 
             else:
-
                 answer = _("{user} is not playing with us.").format(user=chosen_user.mention_html())
                 await self.event.answer(answer)
 
         else:
-            user = await data_uno.actions.seven.get_user(self.state.bot, self.state.key.chat_id)
+            user = await player.get_user(self.state.bot, self.state.key.chat_id)
             answer = _("Only {user} can choose with whom to exchange cards.")
 
             await self.event.answer(answer.format(user=html.quote(user.first_name)))
@@ -151,7 +151,7 @@ async def color_handler(
 
         # Update card color
         color = callback_data.value
-        data_uno.deck.last_cards[-1] = data_uno.deck.last_card.replace_color(color)
+        data_uno.deck.last_cards[-1] = data_uno.deck.last_card.replace(color=color)
 
         answer_one = _("{user} changes the color to {color}!").format(
             user=user.mention_html(),
@@ -186,12 +186,13 @@ async def uno_handler(query: types.CallbackQuery, state: FSMContext):
         tasks = set(timer_uno[state.key])
 
         if not tasks:
-            return query.answer(_("Next time be faster!"))
+            await query.answer(_("Next time be faster!"))
+            return
 
         for task in tasks:
             task.cancel()
 
-        if query.from_user.id != data_uno.actions.uno:
+        if query.from_user.id != data_uno.players << 1:
             await proceed_uno(query.message, state, data_uno, query.from_user)
 
         answer = (

@@ -3,7 +3,7 @@ from random import choice
 from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import gettext as _
 
-from bot.middlewares.throttling import ThrottlingEnums
+from bot.core.middlewares.throttling import ThrottlingEnums
 from . import RPSValues, keyboards
 
 router = Router(name='play:rps:process')
