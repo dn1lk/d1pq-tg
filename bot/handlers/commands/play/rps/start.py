@@ -1,7 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
 from . import keyboards
 from .. import PlayActions
 from ... import CommandTypes

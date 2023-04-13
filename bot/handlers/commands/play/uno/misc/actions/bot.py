@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 from ..data import UnoData
 from ..data.deck import UnoCard
 from ..data.deck.colors import UnoColors
@@ -120,7 +120,7 @@ class UnoBot:
         await next_turn(self.message, self.state, self.timer, self.data_uno, answer)
 
     async def do_color(self) -> str:
-        player = self.data_uno.actions.color
+        player = self.data_uno.players.current_player
         last_card = self.data_uno.deck.last_card
 
         if not player.cards:
@@ -133,7 +133,7 @@ class UnoBot:
         else:
             color = choice(player.cards).color
 
-        self.data_uno.deck.last_cards[-1] = last_card.replace_color(color)
+        self.data_uno.deck.last_cards[-1] = last_card.replace(color=color)
         return _("I choice {color}.").format(color=color)
 
     async def do_seven(self) -> str:

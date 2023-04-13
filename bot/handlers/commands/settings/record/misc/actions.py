@@ -2,7 +2,7 @@ from enum import Enum
 
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import database
+from bot.core.utils import database
 
 
 class RecordActions(str, Enum):

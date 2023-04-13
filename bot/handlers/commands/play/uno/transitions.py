@@ -1,8 +1,9 @@
 from aiogram import Router, F, flags, filters, types
 from aiogram.fsm.context import FSMContext
 
+from bot.core.utils import TimerTasks
+from bot.core.utils import database
 from bot.handlers.transitions.group import my_is_not_admin_filter, remove_member
-from bot.utils import database, TimerTasks
 from .misc.data import UnoData
 from .. import PlayStates
 

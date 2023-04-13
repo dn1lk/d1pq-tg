@@ -1,6 +1,10 @@
 from aiogram import Bot, types
 from aiogram.filters import *
 
+from bot.handlers.commands.settings.commands.misc.filter import CustomCommand
+
+Command = CustomCommand
+
 
 class Levenshtein(BaseFilter):
     def __init__(self, *lev, ignore_case: bool = True):

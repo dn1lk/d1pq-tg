@@ -1,12 +1,10 @@
-from enum import Enum
-
 from aiogram import types
 from aiogram.utils.i18n import gettext as _
 
-from .base import BaseUnoSettings
+from .base import UnoSettingsEnum
 
 
-class UnoDifficulty(int, Enum, BaseUnoSettings):
+class UnoDifficulty(int, UnoSettingsEnum):
     EASY = 3
     NORMAL = 2
     HARD = 1

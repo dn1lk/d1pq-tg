@@ -7,7 +7,7 @@ import markovify
 
 from . import database
 
-LOCALE_DIR = Path.cwd() / 'bot' / 'locales'
+LOCALE_DIR = Path.cwd() / 'bot' / 'core' / 'locales'
 BOOKS = os.listdir(f'{LOCALE_DIR}/en/books')
 
 

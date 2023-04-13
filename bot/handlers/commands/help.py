@@ -5,9 +5,9 @@ from aiogram import Router, F, types, flags, html
 from aiogram.dispatcher.flags import get_flag
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters
-from bot.middlewares.throttling import ThrottlingEnums
-from bot.utils import markov
+from bot.core import filters
+from bot.core.middlewares.throttling import ThrottlingEnums
+from bot.core.utils import markov
 from . import CommandTypes
 
 router = Router(name='help')

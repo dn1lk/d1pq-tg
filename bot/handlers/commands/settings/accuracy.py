@@ -1,7 +1,7 @@
 from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import gettext as _
 
-from bot.utils import database
+from bot.core.utils import database
 from . import SettingsActions, keyboards
 
 router = Router(name="accuracy")

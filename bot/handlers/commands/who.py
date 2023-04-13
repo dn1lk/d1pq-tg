@@ -3,8 +3,8 @@ from random import choice
 from aiogram import Bot, Router, F, types, enums, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters
-from bot.middlewares.throttling import ThrottlingEnums
+from bot.core import filters
+from bot.core.middlewares.throttling import ThrottlingEnums
 from . import CommandTypes
 from .. import resolve_text
 

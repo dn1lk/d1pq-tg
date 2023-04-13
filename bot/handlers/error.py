@@ -6,7 +6,7 @@ from aiogram import Bot, Router, html
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 from aiogram.types.error_event import ErrorEvent
 
-from bot import filters
+from bot.core import filters
 
 router = Router(name='error')
 

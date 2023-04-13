@@ -3,8 +3,8 @@ from random import choice
 from aiogram import Bot, Router, F, types, enums, flags
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
-from bot.utils import database
+from bot.core import filters
+from bot.core.utils import database
 
 router = Router(name='transitions:group')
 router.my_chat_member.filter(F.chat.type != enums.ChatType.PRIVATE)

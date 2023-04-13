@@ -23,4 +23,4 @@ class Provider(BaseSettings):
 bot = Bot()
 provider = Provider()
 
-i18n = I18n(path=Path.cwd() / 'bot' / 'locales', domain='messages')
+i18n = I18n(path=Path.cwd() / 'bot' / 'core' / 'locales', domain='messages')

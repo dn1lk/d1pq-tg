@@ -5,8 +5,8 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
+from bot.core.utils import TimerTasks
 from bot.handlers.commands.play import CLOSE
-from bot.utils import TimerTasks
 from .bot import UnoBot
 from ..data import UnoData
 from ..data.deck.colors import UnoColors
@@ -43,7 +43,7 @@ async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks)
 
         if last_card.color is UnoColors.BLACK:
             color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
-            data_uno.deck.last_cards[-1] = last_card.replace_color(color)
+            data_uno.deck.last_cards[-1] = last_card.replace(color=color)
 
             answer = _("Current color: {color}").format(color=color)
 

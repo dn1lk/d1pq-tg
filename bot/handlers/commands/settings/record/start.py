@@ -1,8 +1,8 @@
 from aiogram import Router, F, types, enums, html
 from aiogram.utils.i18n import gettext as _
 
+from bot.core.utils import database
 from bot.handlers.commands.settings.record.misc.actions import RecordActions
-from bot.utils import database
 from .. import SettingsActions, keyboards
 
 router = Router(name="record:start")

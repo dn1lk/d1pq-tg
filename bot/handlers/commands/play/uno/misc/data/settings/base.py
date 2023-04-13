@@ -1,4 +1,4 @@
-from enum import EnumMeta
+from enum import Enum, EnumMeta
 
 from aiogram import types
 
@@ -12,7 +12,7 @@ class UnoSettingsMeta(EnumMeta):
                 return enum
 
 
-class BaseUnoSettings(metaclass=UnoSettingsMeta):
+class UnoSettingsEnum(Enum, metaclass=UnoSettingsMeta):
     @property
     def next(self):
         enums = tuple(self.__class__)

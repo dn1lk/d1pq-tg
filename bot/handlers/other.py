@@ -5,10 +5,11 @@ from aiogram import Bot, Router, F, types, enums, flags
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot import filters
-from bot.middlewares.throttling import ThrottlingEnums
-from bot.utils import markov, sticker, database
-from bot.utils.database.middleware import SQLUpdateMiddleware
+from bot.core import filters
+from bot.core.middlewares.throttling import ThrottlingEnums
+from bot.core.utils import database, sticker
+from bot.core.utils import markov
+from bot.core.utils.database.middleware import SQLUpdateMiddleware
 from . import resolve_text
 
 router = Router(name='other')

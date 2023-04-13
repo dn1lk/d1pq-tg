@@ -3,7 +3,7 @@ from functools import lru_cache
 from aiogram import Router, F, types, html
 from aiogram.utils.i18n import gettext as _, I18n
 
-from bot.utils import database
+from bot.core.utils import database
 from . import SettingsActions, keyboards
 
 router = Router(name="locale")

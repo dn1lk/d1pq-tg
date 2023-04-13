@@ -23,11 +23,6 @@ class UnoActions:
     skipped: UnoPlayer = None
     bluffed: UnoPlayer = None
 
-    uno: UnoPlayer = None
-
-    color: UnoPlayer = None
-    seven: UnoPlayer = None
-
 
 class UnoData(PlayData):
     deck: UnoDeck
@@ -48,7 +43,6 @@ class UnoData(PlayData):
         current_player.remove_card(card)
 
         if len(current_player.cards) == 1:
-            self.actions.uno = current_player
             raise errors.UnoOneCard()
 
         if len(current_player.cards) == 0:
@@ -71,8 +65,6 @@ class UnoData(PlayData):
             raise errors.UnoNoCards()
 
     def update_action(self) -> str | None:
-        self.actions.passed = self.actions.skipped = self.actions.uno = None
-
         match self.deck.last_card.emoji:
             case UnoEmoji.NULL if self.settings.seven_0 and self.players.current_player.cards:
                 return self.answer_null()
@@ -104,8 +96,6 @@ class UnoData(PlayData):
         return answer
 
     def answer_seven(self) -> str | None:
-        self.actions.seven = self.players.current_player
-
         if len(self.players) == 2:
             return self.answer_null()
 
@@ -149,7 +139,6 @@ class UnoData(PlayData):
         return f'{answer_one}\n{answer_two} {answer_three}'
 
     def answer_color(self):
-        self.actions.color = self.players.current_player
         raise errors.UnoColor()
 
     def answer_reverse(self) -> str:

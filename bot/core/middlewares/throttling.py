@@ -8,7 +8,7 @@ from aiogram.dispatcher.flags import get_flag
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.utils import TimerTasks
+from bot.core.utils import TimerTasks
 
 
 class ThrottlingEnums(int, Enum):

@@ -2,9 +2,9 @@ from aiogram import Router, Bot, F, types, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
+from bot.core.utils import TimerTasks
 from bot.handlers.commands import CommandTypes
-from bot.utils import TimerTasks
 from .misc import errors, keyboards
 from .misc.data import UnoData
 from .misc.data.settings.additions import UnoAdd, UnoAddState

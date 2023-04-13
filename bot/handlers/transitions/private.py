@@ -4,7 +4,7 @@ from random import choice
 from aiogram import Bot, Router, types
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
 
 router = Router(name='transitions:private')
 

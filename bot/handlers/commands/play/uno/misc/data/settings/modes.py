@@ -1,12 +1,10 @@
-from enum import Enum
-
 from aiogram import types
 from aiogram.utils.i18n import gettext as _
 
-from .base import BaseUnoSettings
+from .base import UnoSettingsEnum
 
 
-class UnoMode(int, Enum, BaseUnoSettings):
+class UnoMode(int, UnoSettingsEnum):
     FAST = 0
     WITH_POINTS = 1
 

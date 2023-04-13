@@ -3,7 +3,7 @@ from random import choice
 from aiogram import Router, types, F
 from aiogram.utils.i18n import gettext as _
 
-from bot import filters
+from bot.core import filters
 from .. import CommandTypes
 
 router = Router(name='play:other')
