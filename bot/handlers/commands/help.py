@@ -6,7 +6,6 @@ from aiogram.dispatcher.flags import get_flag
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.core import filters
-from bot.core.middlewares.throttling import ThrottlingEnums
 from bot.core.utils import markov
 from . import CommandTypes
 
@@ -66,7 +65,7 @@ async def play_handler(message: types.Message, command: filters.CommandObject):
 
 
 @router.message(filters.MagicData(F.command.args.in_(CommandTypes.QUESTION)))
-@flags.throttling(ThrottlingEnums.GEN)
+@flags.throttling('gen')
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def question_handler(
@@ -81,7 +80,7 @@ async def question_handler(
 
 
 @router.message(filters.MagicData(F.command.args.in_(CommandTypes.CHOOSE)))
-@flags.throttling(ThrottlingEnums.GEN)
+@flags.throttling('gen')
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def choose_handler(
@@ -98,7 +97,7 @@ async def choose_handler(
 
 
 @router.message(filters.MagicData(F.command.args.in_(CommandTypes.WHO)))
-@flags.throttling(ThrottlingEnums.GEN)
+@flags.throttling('gen')
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def who_handler(
@@ -113,7 +112,7 @@ async def who_handler(
 
 
 @router.message(filters.MagicData(F.command.args.in_(CommandTypes.STORY)))
-@flags.throttling(ThrottlingEnums.GEN)
+@flags.throttling('gen')
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def history_handler(
@@ -128,7 +127,7 @@ async def history_handler(
 
 
 @router.message(filters.MagicData(F.command.args))
-@flags.throttling(ThrottlingEnums.GEN)
+@flags.throttling('gen')
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def history_handler(

@@ -12,7 +12,7 @@ from .. import errors
 
 @dataclass
 class UnoPlayer:
-    _player_id: int
+    _id: int
 
     cards: list[UnoCard]
     cards_played: int = 0
@@ -21,7 +21,7 @@ class UnoPlayer:
     is_me: bool = False
 
     def __eq__(self, user_id: int) -> bool:
-        return self._player_id == user_id
+        return self._id == user_id
 
     def get_card(self, sticker: types.Sticker) -> UnoCard:
         for card in self.cards:
@@ -41,7 +41,7 @@ class UnoPlayer:
         if self.is_me:
             return await bot.me()
 
-        member = await bot.get_chat_member(chat_id, self._player_id)
+        member = await bot.get_chat_member(chat_id, self._id)
         return member.user
 
     @staticmethod
@@ -65,7 +65,7 @@ class UnoPlayer:
         return player
 
     async def clear(self, state: FSMContext):
-        key = self.get_key(state.key.bot_id, self._player_id)
+        key = self.get_key(state.key.bot_id, self._id)
 
         storage = state.storage
         await storage.set_state(state.bot, key)
@@ -74,94 +74,89 @@ class UnoPlayer:
 
 @dataclass
 class UnoPlayers:
-    _players_in: list[UnoPlayer]
+    _playing: list[UnoPlayer]
     _current_index: int = None
 
-    players_finished: list[UnoPlayer] = field(default_factory=list)
+    finished: set[UnoPlayer] = field(default_factory=set)
 
     def __post_init__(self):
         if self._current_index is None:
-            self._current_index = randrange(len(self._players_in))
+            self._current_index = randrange(len(self._playing))
 
     def __len__(self):
         """Get number of players"""
 
-        return len(self._players_in)
+        return len(self._playing)
 
     def __iter__(self):
         """Iter players"""
 
-        return self._players_in.__iter__()
+        return self._playing.__iter__()
 
-    def __getitem__(self, user_id: int) -> UnoPlayer | None:
-        """Get player"""
+    def __call__(self, user_id: int) -> UnoPlayer | None:
+        """Get player by id"""
 
-        for player in self._players_in:
+        for player in self:
             if player == user_id:
                 return player
+
+    def __getitem__(self, index: int) -> UnoPlayer:
+        """Get player by index"""
+
+        return self._playing[(self._current_index + index) % len(self)]
+
+    @property
+    def current_player(self) -> UnoPlayer:
+        return self._playing[self._current_index]
+
+    @current_player.setter
+    def current_player(self, player: UnoPlayer):
+        self._current_index = self._playing.index(player)
 
     async def add_player(self, state: FSMContext, user_id: int, cards: list[UnoCard]):
         """Add player"""
 
-        if self[user_id]:
+        if self(user_id):
             raise errors.UnoExistedPlayer()
         elif len(self) == 10:
             raise errors.UnoMaxPlayers()
 
         player = await UnoPlayer.setup(state, user_id, cards)
-        self._players_in.append(player)
+        self._playing.append(player)
 
     async def kick_player(self, state: FSMContext, deck: UnoDeck, player: UnoPlayer):
-        """Remove player and clear him data"""
+        """Remove player and clear player data"""
 
         deck.cards_in.extend(player.cards)
-        self._players_in.remove(player)
+        self._playing.remove(player)
+        self.finished.add(player)
 
         await player.clear(state)
 
-    def finish_player(self, deck: UnoDeck, player: UnoPlayer):
+    def finish_player(self, player: UnoPlayer):
         """Remove player and add to finishers"""
 
-        deck.cards_in.extend(player.cards)
-        self._players_in.remove(player)
+        self._playing.remove(player)
 
-        player.points += sum(sum(player.cards) for player in self._players_in)
-        self.players_finished.append(player)
-
-    def __rshift__(self, number: int) -> UnoPlayer:
-        """Next player by number"""
-
-        return self._players_in[(self._current_index + number) % len(self._players_in)]
-
-    def __lshift__(self, number: int) -> UnoPlayer:
-        """Previous player by number"""
-
-        return self._players_in[(self._current_index - number) % len(self._players_in)]
-
-    @property
-    def current_player(self) -> UnoPlayer:
-        return self._players_in[self._current_index]
-
-    @current_player.setter
-    def current_player(self, player: UnoPlayer):
-        self._current_index = self._players_in.index(player)
+        player.points += sum(sum(player.cards) for player in self._playing)
+        self.finished.add(player)
 
     @classmethod
     async def setup(cls, state: FSMContext, deck: UnoDeck, *user_ids: int) -> "UnoPlayers":
-        return cls([await UnoPlayer.setup(state, user_id, list(deck[7])) for user_id in user_ids])
+        return cls([await UnoPlayer.setup(state, user_id, list(deck(7))) for user_id in user_ids])
 
     def restart(self, deck: UnoDeck):
-        for player in self._players_in.copy():
-            self.finish_player(deck, player)
+        for player in self._playing:
+            self.finish_player(player)
 
-        deck.cards_in.extend(sum([player.cards for player in self._players_in], []))
+        self._playing = list(self.finished)
 
-        for player in self._players_in:
-            player.cards = list(deck[7])
+        for player in self._playing:
+            player.cards = list(deck(7))
 
-    async def clear(self, state: FSMContext, deck: UnoDeck):
-        for player in self._players_in.copy():
-            self.finish_player(deck, player)
+    async def clear(self, state: FSMContext):
+        for player in self._playing.copy():
+            self.finish_player(player)
 
-        for player in self.players_finished:
+        for player in self.finished:
             await player.clear(state)

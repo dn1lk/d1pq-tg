@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from random import choice, random, randint
 
 from aiogram import types, exceptions
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
@@ -26,12 +25,12 @@ class UnoBot:
     data_uno: UnoData
 
     def get_cards(self):
-        player = self.data_uno.players[self.state.bot.id]
+        me_player = self.data_uno.players(self.state.bot.id)
 
-        if player:
-            for card in player.cards:
+        if me_player:
+            for card in me_player.cards:
                 filter_card = self.data_uno.filter()
-                filter_card.get_filter_card(self.data_uno, player)(self.data_uno, card)
+                filter_card.get_filter_card(self.data_uno, me_player)(self.data_uno, card)
 
                 if filter_card.accepted:
                     yield card, filter_card.answer
@@ -52,7 +51,7 @@ class UnoBot:
                 await self.message.delete()
 
             try:
-                self.message = await self.message.answer_sticker(card.file_id)
+                self.message = await self.state.bot.send_sticker(self.state.key.chat_id, card.file_id)
             except exceptions.TelegramRetryAfter as retry:
                 await asyncio.sleep(retry.retry_after)
                 self.message = await retry.method
@@ -82,17 +81,16 @@ class UnoBot:
             await proceed_turn(self.message, self.state, self.timer, self.data_uno, card, answer)
 
         except asyncio.CancelledError:
-            await self.message.delete()
-
             self.data_uno = await UnoData.get_data(self.state)
 
             answer = await self.data_uno.pick_card(
                 self.state,
-                self.data_uno.players[self.state.key.bot_id]
+                self.data_uno.players(self.state.key.bot_id)
             )
 
             await self.data_uno.set_data(self.state)
             await self.message.answer(answer)
+            await self.message.delete()
 
     async def _proceed_pass(self):
         if self.data_uno.actions.bluffed:
@@ -100,8 +98,8 @@ class UnoBot:
 
             d = self.data_uno.settings.difficulty
 
-            prev_player = self.data_uno.players << 1
-            prev_card = self.data_uno.deck.last_card
+            prev_player = self.data_uno.players[-1]
+            prev_card = self.data_uno.deck[-2]
 
             if d is UnoDifficulty.HARD:
                 d *= len([card for card in prev_player.cards if card.color is prev_card.color]) / 4
@@ -133,7 +131,7 @@ class UnoBot:
         else:
             color = choice(player.cards).color
 
-        self.data_uno.deck.last_cards[-1] = last_card.replace(color=color)
+        self.data_uno.deck[-1] = last_card.replace(color=color)
         return _("I choice {color}.").format(color=color)
 
     async def do_seven(self) -> str:
@@ -141,7 +139,6 @@ class UnoBot:
         self.data_uno.do_seven(chosen_player)
 
         chosen_user = await chosen_player.get_user(self.state.bot, self.state.key.chat_id)
-
         return _("I exchange cards with player {chosen_user}.").format(chosen_user=chosen_user.mention_html())
 
     async def gen_uno(self, a: int, b: int):
@@ -150,17 +147,18 @@ class UnoBot:
                 m = self.data_uno.settings.difficulty / len(self.data_uno.players)
                 await asyncio.sleep(randint(a, b) * m)
 
-            if self.message.entities:
+        except asyncio.CancelledError:
+            await self.message.delete_reply_markup()
+
+        else:
+            if self.message.entities:  # if user has one card
                 user = await self.state.bot.me()
                 data_uno = await UnoData.get_data(self.state)
 
                 from .uno import proceed_uno
                 await proceed_uno(self.message, self.state, data_uno, user)
-        finally:
-            try:
+            else:  # if bot has one card
                 await self.message.delete_reply_markup()
-            except TelegramBadRequest:
-                pass
 
     async def gen_poll(self):
         try:

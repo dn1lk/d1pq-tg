@@ -16,8 +16,8 @@ class UnoCard:
     def __add__(self, card: "UnoCard") -> int:
         return self.cost + card.cost
 
-    def __radd__(self, card: "UnoCard") -> int:
-        return self.__add__(card)
+    def __radd__(self, cost: int) -> int:
+        return self.cost + cost
 
     def __eq__(self, card) -> bool:
         return self.file_unique_id == card.file_unique_id

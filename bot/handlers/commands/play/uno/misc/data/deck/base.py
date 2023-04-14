@@ -12,37 +12,51 @@ from .emoji import UnoEmoji
 @dataclass
 class UnoDeck:
     cards_in: list[UnoCard]
-    last_cards: list[UnoCard] = field(default_factory=list)
+    _last_cards: list[UnoCard] = field(default_factory=list)
 
     def __post_init__(self):
-        if not self.last_cards:
-            self.last_cards.append(choice([card for card in self.cards_in if card.emoji is not UnoEmoji.DRAW_FOUR]))
+        if not self._last_cards:
+            self._last_cards.append(choice([card for card in self.cards_in if card.emoji is not UnoEmoji.DRAW_FOUR]))
 
-    def __getitem__(self, count: int) -> Generator[UnoCard, None, None]:
+    def __call__(self, count: int) -> Generator[UnoCard, None, None]:
         """Get cards from the deck"""
 
         for card in sample(self.cards_in, k=count):
             self.cards_in.remove(card)
             yield card
 
-    def __delitem__(self, card: UnoCard):
-        """Remove card from the deck"""
+    def __getitem__(self, index: int):
+        """Get cards from the deck by index"""
 
-        self.cards_in.remove(card)
+        return self._last_cards[index]
+
+    def __len__(self) -> int:
+        return len(self._last_cards)
 
     @property
     def last_card(self) -> UnoCard:
-        return self.last_cards[-1]
+        return self[-1]
 
     @last_card.setter
     def last_card(self, card: UnoCard):
         """Add card to the deck"""
 
         self.cards_in.append(card)
-        self.last_cards.append(card)
+        self._last_cards.append(card)
 
-        if len(self.last_cards) > 3:
-            self.last_cards = self.last_cards[-3:]
+        if len(self._last_cards) > 3:
+            self._last_cards = self._last_cards[-3:]
+
+    def __setitem__(self, index: int, card: UnoCard):
+        if index > 3:
+            raise TypeError('UnoDeck: get last_cards index > 3')
+
+        self._last_cards[index] = card
+
+    def __delitem__(self, card: UnoCard):
+        """Remove card from the deck"""
+
+        self.cards_in.remove(card)
 
     @classmethod
     async def setup(cls, bot: Bot) -> "UnoDeck":

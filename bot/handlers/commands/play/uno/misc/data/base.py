@@ -38,30 +38,27 @@ class UnoData(PlayData):
         return UnoFilter()
 
     async def update_turn(self, state: FSMContext, user_id: int, card: UnoCard):
-        self.players.current_player = current_player = self.players[user_id]
-        self.deck.last_card = card
-        current_player.remove_card(card)
+        player = self.players.current_player = self.players(user_id)
+        player.remove_card(card)
 
-        if len(current_player.cards) == 1:
+        self.deck.last_card = card
+
+        if len(player.cards) == 1:
             raise errors.UnoOneCard()
 
-        if len(current_player.cards) == 0:
+        if len(player.cards) == 0:
             self.update_action()
 
             if self.actions.drawn:
-                self.players.current_player = self.players >> 1
-                await self.do_draw(state)
+                await self.do_draw(state, self.players[1])
 
             if self.settings.mode is UnoMode.WITH_POINTS:
                 self.restart()
-
                 raise errors.UnoRestart()
             if len(self.players) == 2:
                 await self.clear(state)
-
                 raise errors.UnoEnd()
 
-            self.players.finish_player(self.deck, current_player)
             raise errors.UnoNoCards()
 
     def update_action(self) -> str | None:
@@ -145,7 +142,7 @@ class UnoData(PlayData):
         if len(self.players) == 2:
             return self.answer_skip()
 
-        self.players._players_in, self.players.current_player = reversed(self.players), self.players.current_player
+        self.players._playing, self.players.current_player = reversed(self.players), self.players.current_player
 
         answer_one = choice(
             (
@@ -160,7 +157,7 @@ class UnoData(PlayData):
 
     def answer_skip(self) -> str:
         self.actions.skipped = self.players.current_player
-        self.players.current_player = self.players >> 1
+        self.players.current_player = self.players[1]
 
         answer = choice(
             (
@@ -187,7 +184,7 @@ class UnoData(PlayData):
 
         answer_two = ___("a card.", "{amount} cards.", self.actions.drawn).format(amount=self.actions.drawn)
 
-        player.add_card(*self.deck[self.actions.drawn])
+        player.add_card(*self.deck(self.actions.drawn))
         self.actions.drawn = 0
 
         return f"{answer_one} {answer_two}"
@@ -236,7 +233,7 @@ class UnoData(PlayData):
         return answer
 
     async def do_next(self, state: FSMContext) -> str:
-        self.players.current_player = player = self.players >> 1
+        player = self.players.current_player = self.players[1]
         await self.set_data(state)
 
         if player.is_me:
@@ -277,5 +274,5 @@ class UnoData(PlayData):
         self.timer_amount = 3
 
     async def clear(self, state: FSMContext):
-        await self.players.clear(state, self.deck)
+        await self.players.clear(state)
         await state.clear()

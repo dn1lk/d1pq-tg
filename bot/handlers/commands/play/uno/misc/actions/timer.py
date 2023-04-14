@@ -18,10 +18,11 @@ async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks)
     data_uno.timer_amount -= 1
 
     if not data_uno.timer_amount or len(data_uno.players) == 2:
+        data_uno.settings.mode = UnoMode.FAST
+        await data_uno.players.kick_player(state, data_uno.deck, data_uno.players.current_player)
+
         answer = choice(CLOSE).value
         await message.reply(answer)
-
-        data_uno.settings.mode = UnoMode.FAST
 
         from .base import finish
         await finish(state, timer, data_uno)
@@ -43,7 +44,7 @@ async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks)
 
         if last_card.color is UnoColors.BLACK:
             color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
-            data_uno.deck.last_cards[-1] = last_card.replace(color=color)
+            data_uno.deck[-1] = last_card.replace(color=color)
 
             answer = _("Current color: {color}").format(color=color)
 

@@ -16,7 +16,7 @@ router.message.filter(PlayStates.UNO, my_is_not_admin_filter)
 async def kick_user(db: database.SQLContext, state: FSMContext, user: types.User, members: list | None):
     data_uno = await UnoData.get_data(state)
 
-    if data_uno.players[user.id]:
+    if data_uno.players(user.id):
         timer = TimerTasks('play')
 
         from .misc.actions.kick import kick_for_kick

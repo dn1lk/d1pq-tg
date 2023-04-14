@@ -16,7 +16,7 @@ async def update_uno(
         data_uno: UnoData,
         user: types.User
 ):
-    if data_uno.players[user.id].is_me:
+    if data_uno.players(user.id).is_me:
         a, b = 0, 4
 
         answer = choice(
@@ -51,7 +51,7 @@ async def update_uno(
 
 
 async def proceed_uno(message: types.Message, state: FSMContext, data_uno: UnoData, user: types.User):
-    if data_uno.players[user.id].is_me:
+    if data_uno.players(user.id).is_me:
         answer_one = choice(
             (
                 _("I toss"),
@@ -72,14 +72,12 @@ async def proceed_uno(message: types.Message, state: FSMContext, data_uno: UnoDa
 
     if message.entities:  # if user has one card
         uno_user = message.entities[0].user
-
         answer_two = _("player {uno_user}").format(uno_user=uno_user.mention_html())
     else:  # if bot has one card
         uno_user = await state.bot.me()
-
         answer_two = _("me")
 
-    data_uno.players[uno_user.id].add_card(*data_uno.deck[2])
+    data_uno.players(uno_user.id).add_card(*data_uno.deck(2))
     await data_uno.set_data(state)
 
     answer_three = _("2 cards.")

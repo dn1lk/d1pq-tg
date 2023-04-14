@@ -2,7 +2,6 @@ from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.core import filters
-from bot.core.middlewares.throttling import ThrottlingEnums
 from bot.core.utils import Wikipedia
 from . import CommandTypes
 from .. import resolve_text
@@ -31,7 +30,7 @@ async def with_args_handler(
 
 
 @router.message()
-@flags.throttling(ThrottlingEnums.GEN)
+@flags.throttling('gen')
 @flags.sql('messages')
 @flags.chat_action("typing")
 async def without_args_handler(

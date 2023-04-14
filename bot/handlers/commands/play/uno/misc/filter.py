@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from random import choice
 from typing import Callable
 
@@ -6,6 +5,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
+from bot.core.filters import BaseFilter
 from . import errors
 from .data import UnoData
 from .data.deck import UnoCard
@@ -13,10 +13,15 @@ from .data.deck.colors import UnoColors
 from .data.players import UnoPlayer
 
 
-@dataclass(slots=True)
-class UnoFilter:
-    _is_accepted: bool = False
-    answer: str = None
+class UnoFilter(BaseFilter):
+    __slots__ = (
+        "_is_accepted",
+        "answer",
+    )
+
+    def __init__(self):
+        self._is_accepted: bool = False
+        self.answer: str | None = None
 
     @property
     def accepted(self):
@@ -38,7 +43,7 @@ class UnoFilter:
 
     async def __call__(self, message: types.Message, state: FSMContext) -> dict | None:
         data_uno = await UnoData.get_data(state)
-        player = data_uno.players[message.from_user.id]
+        player = data_uno.players(message.from_user.id)
 
         try:
             card = player.get_card(message.sticker)
@@ -54,7 +59,7 @@ class UnoFilter:
                     'answer': self.answer,
                 }
 
-        data_uno.players[message.from_user.id].add_card(*data_uno.deck[2])
+        data_uno.players(message.from_user.id).add_card(*data_uno.deck(2))
         await data_uno.set_data(state)
 
         await message.reply(self.answer.format(user=message.from_user.mention_html()))
@@ -64,13 +69,16 @@ class UnoFilter:
             case data.players.current_player:
                 return self.for_current_player
 
+            case _ if len(data.deck) == 1:
+                return self.for_start_game
+
             case data.actions.passed:
                 return self.for_passed_player
 
             case data.actions.skipped:
                 return self.for_skipped_player
 
-            case _ if player is data.players << 1:
+            case _ if player is data.players[-1]:
                 return self.for_prev_player
 
             case _:
@@ -119,6 +127,15 @@ class UnoFilter:
                     _("Someday {user} will be able to make the right turn.")
                 )
             )
+
+    def for_start_game(self, data: UnoData, card: UnoCard):
+        self.declined = choice(
+            (
+                _("Hey, the game just started and you're already mistaken!"),
+                _("This is not your turn!"),
+                _("Hello, mistake at the beginning of the game."),
+            )
+        )
 
     def for_passed_player(self, data: UnoData, card: UnoCard):
         if card is data.actions.passed.cards[-1]:

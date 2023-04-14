@@ -22,7 +22,7 @@ async def uno_join_handler(message: types.Message, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     try:
-        await data_uno.players.add_player(state, message.from_user.id, list(data_uno.deck[7]))
+        await data_uno.players.add_player(state, message.from_user.id, list(data_uno.deck(7)))
         await data_uno.set_data(state)
 
         await message.answer(_("{user} join to current game.").format(user=message.from_user.mention_html()))

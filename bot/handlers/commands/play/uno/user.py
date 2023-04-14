@@ -9,9 +9,8 @@ from bot.core.utils import TimerTasks
 from . import DRAW_CARD
 from .misc import keyboards
 from .misc.actions import proceed_turn, next_turn, proceed_uno
-from .misc.actions.turn import update_timer
 from .misc.data import UnoData
-from .misc.data.deck import UnoCard, UnoEmoji
+from .misc.data.deck import UnoCard
 from .. import PlayStates
 
 router = Router(name='play:uno:user')
@@ -19,7 +18,7 @@ router.message.filter(PlayStates.UNO)
 router.callback_query.filter(PlayStates.UNO)
 
 
-@router.message(F.sticker.set_name == 'uno_by_d1pq_bot', UnoData.filter().__call__)
+@router.message(F.sticker.set_name == 'uno_by_d1pq_bot', UnoData.filter())
 @flags.timer(name='play')
 async def turn_handler(
         message: types.Message,
@@ -105,7 +104,7 @@ class SevenHandler(MessageHandler):
             if chosen_user:
                 del self.timer[self.state.key]
 
-                answer = data_uno.do_seven(data_uno.players[chosen_user.id])
+                answer = data_uno.do_seven(data_uno.players(chosen_user.id))
                 await next_turn(self.event, self.state, self.timer, data_uno, answer)
 
             else:
@@ -122,7 +121,7 @@ class SevenHandler(MessageHandler):
         if self.event.entities[0].user:
             user = self.event.entities[0].user
 
-            if data_uno.players[user.id]:
+            if data_uno.players(user.id):
                 return user
 
         else:
@@ -142,7 +141,6 @@ async def color_handler(
         callback_data: keyboards.UnoData,
 ):
     data_uno = await UnoData.get_data(state)
-
     user = query.from_user
 
     if user.id == data_uno.players.current_player:
@@ -151,27 +149,18 @@ async def color_handler(
 
         # Update card color
         color = callback_data.value
-        data_uno.deck.last_cards[-1] = data_uno.deck.last_card.replace(color=color)
-
-        answer_one = _("{user} changes the color to {color}!").format(
-            user=user.mention_html(),
-            color=color,
-        )
-
-        if data_uno.deck.last_card.emoji is UnoEmoji.DRAW_FOUR:
-            data_uno.update_action()
-            is_draw_four = True
-        else:
-            is_draw_four = False
-
-        answer_two = await data_uno.do_next(state)
+        data_uno.deck[-1] = data_uno.deck.last_card.replace(color=color)
 
         message = await query.message.edit_text(
-            f'{answer_one}\n{answer_two}',
-            reply_markup=keyboards.show_cards(is_draw_four)
+            _("{user} changes the color to {color}!").format(
+                user=user.mention_html(),
+                color=color,
+            )
         )
 
-        await update_timer(message, state, timer, data_uno)
+        answer = data_uno.update_action()
+        await next_turn(message, state, timer, data_uno, answer or "")
+
         await query.answer()
     else:
         await query.answer(_("When you'll get a BLACK card, choose this color ;)"))
@@ -181,7 +170,7 @@ async def color_handler(
 async def uno_handler(query: types.CallbackQuery, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
-    if data_uno.players[query.from_user.id]:
+    if data_uno.players(query.from_user.id):
         timer_uno = TimerTasks('say_uno')
         tasks = set(timer_uno[state.key])
 
@@ -192,7 +181,7 @@ async def uno_handler(query: types.CallbackQuery, state: FSMContext):
         for task in tasks:
             task.cancel()
 
-        if query.from_user.id != data_uno.players << 1:
+        if query.from_user.id != data_uno.players[-1]:
             await proceed_uno(query.message, state, data_uno, query.from_user)
 
         answer = (

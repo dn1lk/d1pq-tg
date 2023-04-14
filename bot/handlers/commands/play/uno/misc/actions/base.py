@@ -46,7 +46,7 @@ async def finish(
 
     if (
             data_uno.settings.mode is UnoMode.FAST
-            or max(winner.points for winner in data_uno.players) >= 500
+            or max(player.points for player in data_uno.players) >= 500
     ):
         await data_uno.clear(state)
 
@@ -79,12 +79,12 @@ async def _get_results_answer(
         data_uno: UnoData
 ) -> str:
     async def get_results():
-        winners = sorted(data_uno.players.players_finished, key=lambda p: p.points, reverse=True)
+        finished_players = sorted(data_uno.players.finished, key=lambda p: p.points, reverse=True)
 
-        for enum, winner_player in enumerate(winners, start=1):
+        for enum, finished_player in enumerate(finished_players, start=1):
             if (
                     data_uno.settings.mode is UnoMode.FAST
-                    or winner_player.points
+                    or finished_player.points
             ):
                 if enum == 1:
                     enum = _("WINNER")
@@ -92,16 +92,16 @@ async def _get_results_answer(
                 answer_one = ___(
                     "1 card played",
                     "{amount} cards played",
-                    winner_player.cards_played,
-                ).format(amount=winner_player.cards_played)
+                    finished_player.cards_played,
+                ).format(amount=finished_player.cards_played)
 
                 answer_two = ___(
                     "1 point earned",
                     "{points} points earned",
-                    winner_player.points,
-                ).format(points=winner_player.points)
+                    finished_player.points,
+                ).format(points=finished_player.points)
 
-                winner_user = await winner_player.get_user(state.bot, state.key.chat_id)
-                yield f'{enum}: {winner_user.mention_html()} - {answer_one}, {answer_two}.'
+                finished_user = await finished_player.get_user(state.bot, state.key.chat_id)
+                yield f'{enum}: {finished_user.mention_html()} - {answer_one}, {answer_two}.'
 
-    return '\n'.join([winner async for winner in get_results()])
+    return '\n'.join([result async for result in get_results()])

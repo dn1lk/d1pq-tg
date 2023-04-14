@@ -3,7 +3,6 @@ from random import choice
 from aiogram import Router, F, types, flags, html
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.middlewares.throttling import ThrottlingEnums
 from . import RPSValues, keyboards
 
 router = Router(name='play:rps:process')
@@ -16,7 +15,7 @@ def _parse_score(message: types.Message):
 
 
 @router.callback_query(keyboards.RPSData.filter(F.value))
-@flags.throttling(ThrottlingEnums.RPS)
+@flags.throttling('rps')
 async def process_handler(query: types.CallbackQuery, callback_data: keyboards.RPSData):
     message = query.message
 
