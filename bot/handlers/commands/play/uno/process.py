@@ -7,6 +7,7 @@ from aiogram.utils.i18n import gettext as _
 
 from bot.core.utils import TimerTasks
 from .misc import keyboards
+from .misc.data import UnoData
 from .misc.data.settings import UnoSettings
 
 router = Router(name='play:uno:process')
@@ -27,7 +28,7 @@ async def join_handler(query: types.CallbackQuery):
     if any(query.from_user.id == user.id for user in users):
         await query.answer(_("You are already in the list!"))
     elif len(users) == 10:
-        await query.answer(_("The number of players is already 10 people.\nI can't write anymore."))
+        await query.answer(_("There are too many players."))
     else:
         await query.message.edit_text(
             add_user(query.message, query.from_user),
@@ -111,8 +112,11 @@ async def start_handler(
             )
         )
 
+    user_ids = [user.id for user in users]
+    data_uno = await UnoData.setup(bot, state, user_ids, settings)
+
     from .misc.actions.base import start
-    await start(state, timer, [user.id for user in users], settings)
+    await start(bot, state, timer, data_uno)
 
 
 @router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoSetup.START))

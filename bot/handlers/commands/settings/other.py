@@ -13,7 +13,7 @@ async def get_answer(message: types.Message, bot: Bot) -> dict:
     if message.chat.type == enums.ChatType.PRIVATE:
         chat = _("dialogue")
     else:
-        admins = ', '.join(str(admin.user) for admin in await bot.get_chat_administrators(message.chat.id))
+        admins = ', '.join(admin.user.mention_html() for admin in await bot.get_chat_administrators(message.chat.id))
         chat = _("chat - only for {admins}").format(admins=admins or _("admins"))
 
     return {

@@ -7,6 +7,7 @@ from bot.core.utils import TimerTasks
 from bot.handlers.commands import CommandTypes
 from .misc import errors, keyboards
 from .misc.data import UnoData
+from .misc.data.players import UnoPlayerData
 from .misc.data.settings.additions import UnoAdd, UnoAddState
 from .misc.data.settings.difficulties import UnoDifficulty
 from .misc.data.settings.modes import UnoMode
@@ -18,11 +19,13 @@ router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayA
 
 @router.message(PlayStates.UNO)
 @flags.timer(name='play', cancelled=False)
-async def uno_join_handler(message: types.Message, state: FSMContext):
+async def join_handler(message: types.Message, bot: Bot, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     try:
-        await data_uno.players.add_player(state, message.from_user.id, list(data_uno.deck(7)))
+        player_id = message.from_user.id
+
+        data_uno.players[player_id] = await UnoPlayerData.setup(bot, state, player_id, list(data_uno.deck(7)))
         await data_uno.set_data(state)
 
         await message.answer(_("{user} join to current game.").format(user=message.from_user.mention_html()))

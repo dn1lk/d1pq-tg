@@ -16,6 +16,8 @@ class ThrottlingMiddleware(BaseMiddleware):
         'rps': 1,
     }
 
+    __slots__ = {"i18n"}
+
     def __init__(self, i18n: I18n):
         self.i18n = i18n
 

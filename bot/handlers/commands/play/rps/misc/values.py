@@ -3,7 +3,7 @@ from enum import Enum
 from aiogram.utils.i18n import gettext as _
 
 
-class RPSValues(str, Enum):
+class RPSValues(Enum):
     ROCK = "🪨"
     SCISSORS = "✂"
     PAPER = "📜"

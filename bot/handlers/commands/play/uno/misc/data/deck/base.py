@@ -11,24 +11,41 @@ from .emoji import UnoEmoji
 
 @dataclass
 class UnoDeck:
-    cards_in: list[UnoCard]
+    _cards_in: list[UnoCard]
     _last_cards: list[UnoCard] = field(default_factory=list)
 
     def __post_init__(self):
         if not self._last_cards:
-            self._last_cards.append(choice([card for card in self.cards_in if card.emoji is not UnoEmoji.DRAW_FOUR]))
+            self._last_cards.append(choice([card for card in self._cards_in if card.emoji is not UnoEmoji.DRAW_FOUR]))
 
     def __call__(self, count: int) -> Generator[UnoCard, None, None]:
         """Get cards from the deck"""
 
-        for card in sample(self.cards_in, k=count):
-            self.cards_in.remove(card)
+        for card in sample(self._cards_in, k=count):
+            self._cards_in.remove(card)
             yield card
 
+    def add(self, *cards: UnoCard):
+        self._cards_in.extend(cards)
+
     def __getitem__(self, index: int):
-        """Get cards from the deck by index"""
+        """Get last card by index"""
 
         return self._last_cards[index]
+
+    def __setitem__(self, index: int, card: UnoCard):
+        """Set last card by index"""
+
+        assert -3 <= index <= 3
+        self._last_cards[index] = card
+
+    def __delitem__(self, card: UnoCard):
+        """Remove card from the deck"""
+
+        self._cards_in.remove(card)
+
+    def __iter__(self):
+        return self._cards_in.__iter__()
 
     def __len__(self) -> int:
         return len(self._last_cards)
@@ -41,22 +58,13 @@ class UnoDeck:
     def last_card(self, card: UnoCard):
         """Add card to the deck"""
 
-        self.cards_in.append(card)
+        self._cards_in.append(card)
         self._last_cards.append(card)
 
-        if len(self._last_cards) > 3:
-            self._last_cards = self._last_cards[-3:]
+        if len(self) > 3:
+            del self._last_cards[0]
 
-    def __setitem__(self, index: int, card: UnoCard):
-        if index > 3:
-            raise TypeError('UnoDeck: get last_cards index > 3')
-
-        self._last_cards[index] = card
-
-    def __delitem__(self, card: UnoCard):
-        """Remove card from the deck"""
-
-        self.cards_in.remove(card)
+        assert len(self) <= 3
 
     @classmethod
     async def setup(cls, bot: Bot) -> "UnoDeck":
@@ -92,7 +100,8 @@ class UnoDeck:
                 )
 
         cards_in = list(get_cards(await bot.get_sticker_set('uno_by_d1pq_bot')))
-        cards_in.extend(cards_in[-2:])
-        cards_in.extend(cards_in[4:])
+        cards_in.extend(cards_in[-2:])  # double black cards
+        cards_in.extend(cards_in[4:])  # double non-0 cards
 
-        return cls(cards_in=cards_in)
+        assert len(cards_in) == 108
+        return cls(cards_in)

@@ -24,7 +24,7 @@ async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMCont
     next_offset = None
 
     if data_uno:
-        player = data_uno.players(inline.from_user.id)
+        player = data_uno.players.playing[inline.from_user.id]
 
         if player:
             def get_cards():

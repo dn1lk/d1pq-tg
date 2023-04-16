@@ -13,7 +13,7 @@ def rps_keyboard():
     builder = InlineKeyboardBuilder()
 
     for value in RPSValues:
-        builder.button(text=value, callback_data=RPSData(value=value))
+        builder.button(text=str(value), callback_data=RPSData(value=value))
 
     builder.adjust(1)
     return builder.as_markup()

@@ -114,7 +114,7 @@ def show_cards(is_draw_four: bool):
 def choice_color():
     builder = InlineKeyboardBuilder()
 
-    for color in UnoColors.exclude(UnoColors.BLACK):
+    for color in UnoColors:
         builder.button(text=str(color), callback_data=UnoData(action=UnoActions.COLOR, value=color))
 
     builder.adjust(1)
@@ -124,7 +124,7 @@ def choice_color():
 def say_uno():
     builder = InlineKeyboardBuilder()
 
-    from .actions.bot import UNO
+    from . import UNO
     builder.button(text=UNO, callback_data=UnoData(action=UnoActions.UNO))
 
     return builder.as_markup()

@@ -6,7 +6,7 @@ from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
 from aiogram.utils.i18n import I18nMiddleware
 
-from .data.players import UnoPlayer
+from .data.players import UnoPlayerData
 
 
 class UnoMiddleware(BaseMiddleware):
@@ -19,7 +19,7 @@ class UnoMiddleware(BaseMiddleware):
         state: FSMContext = data["state"]
         data_state = await state.storage.get_data(
             bot=state.bot,
-            key=UnoPlayer.get_key(state.key.bot_id, state.key.user_id)
+            key=UnoPlayerData.get_key(state.key.bot_id, state.key.user_id)
         )
 
         if data_state:
@@ -28,7 +28,7 @@ class UnoMiddleware(BaseMiddleware):
             state.key = StorageKey(
                 bot_id=state.key.bot_id,
                 chat_id=chat.id,
-                user_id=state.key.user_id,
+                user_id=chat.id,
                 destiny=state.key.destiny,
             )
             data["state"] = state

@@ -5,17 +5,27 @@ from asyncpg import Pool, Record, Connection, create_pool
 from .column import Column, ArrayColumn
 
 
-@dataclass
+@dataclass(slots=True)
 class SQLContext:
     _pool: Pool
     _defaults: Record
 
-    def __post_init__(self):
-        for column in ('id', 'locale', 'commands', 'chance', 'accuracy'):
-            setattr(self, column, Column(self._pool, self._defaults[column], column))
+    id: Column = Column
+    locale: Column = Column
+    commands: Column = Column
+    chance: Column = Column
+    accuracy: Column = Column
 
-        for column_array in ('messages', 'stickers', 'members'):
-            setattr(self, column_array, ArrayColumn(self._pool, self._defaults[column], column_array))
+    messages: ArrayColumn = ArrayColumn
+    stickers: ArrayColumn = ArrayColumn
+    members: ArrayColumn = ArrayColumn
+
+    def __post_init__(self):
+        for column in self.__slots__:
+            if column.startswith('_'):
+                continue
+
+            setattr(self, column, getattr(self, column)(self._pool, self._defaults[column], column))
 
     def __getitem__(self, item: str) -> Column:
         column = self.__getattribute__(item)

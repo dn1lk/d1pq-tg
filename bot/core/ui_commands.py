@@ -2,6 +2,7 @@ import logging
 
 from aiogram import Bot, types
 from aiogram.utils.i18n import I18n
+
 from bot.handlers.commands import CommandTypes
 
 

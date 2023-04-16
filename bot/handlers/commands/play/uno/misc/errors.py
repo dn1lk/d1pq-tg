@@ -26,9 +26,9 @@ class UnoOneCard(BaseException):
     pass
 
 
-class UnoRestart(BaseException):
+class UnoFinish(BaseException):
     pass
 
 
-class UnoEnd(BaseException):
+class UnoRestart(BaseException):
     pass

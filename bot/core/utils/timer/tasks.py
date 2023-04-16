@@ -10,6 +10,8 @@ class TimerTasks:
     _tasks: set[asyncio.Task] = set()
     _locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
 
+    __slots__ = {"destiny"}
+
     def __init__(self, destiny: str):
         self.destiny = destiny
 

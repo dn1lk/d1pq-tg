@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from random import choice
 from typing import Callable
 
@@ -8,20 +9,14 @@ from aiogram.utils.i18n import gettext as _
 from bot.core.filters import BaseFilter
 from . import errors
 from .data import UnoData
-from .data.deck import UnoCard
+from .data.deck import UnoCard, UnoEmoji
 from .data.deck.colors import UnoColors
-from .data.players import UnoPlayer
 
 
+@dataclass(slots=True)
 class UnoFilter(BaseFilter):
-    __slots__ = (
-        "_is_accepted",
-        "answer",
-    )
-
-    def __init__(self):
-        self._is_accepted: bool = False
-        self.answer: str | None = None
+    _is_accepted: bool = False
+    answer: str = None
 
     @property
     def accepted(self):
@@ -43,15 +38,18 @@ class UnoFilter(BaseFilter):
 
     async def __call__(self, message: types.Message, state: FSMContext) -> dict | None:
         data_uno = await UnoData.get_data(state)
-        player = data_uno.players(message.from_user.id)
+
+        player_id = message.from_user.id
+        player_data = data_uno.players.playing[player_id]
 
         try:
-            card = player.get_card(message.sticker)
+            card = player_data.get_card(message.sticker)
+
         except errors.UnoInvalidSticker:
             self.declined = _("What a joke, this card is not from your hand.")
 
         else:
-            self.get_filter_card(data_uno, player)(data_uno, card)
+            self.get_filter_card(data_uno, player_id)(data_uno, card)
             if self.accepted:
                 return {
                     'data_uno': data_uno,
@@ -59,34 +57,37 @@ class UnoFilter(BaseFilter):
                     'answer': self.answer,
                 }
 
-        data_uno.players(message.from_user.id).add_card(*data_uno.deck(2))
+        player_data.add_card(*data_uno.deck(2))
         await data_uno.set_data(state)
 
         await message.reply(self.answer.format(user=message.from_user.mention_html()))
 
-    def get_filter_card(self, data: UnoData, player: UnoPlayer) -> Callable[[UnoData, UnoCard], None]:
-        match player:
-            case data.players.current_player:
-                return self.for_current_player
+    def get_filter_card(self, data_uno: UnoData, player_id: int) -> Callable[[UnoData, UnoCard], None]:
+        if player_id == data_uno.players.current_id:
+            return self.for_current_player
 
-            case _ if len(data.deck) == 1:
-                return self.for_start_game
+        elif len(data_uno.deck) == 1:
+            return self.for_start_game
 
-            case data.actions.passed:
-                return self.for_passed_player
+        else:
+            if player_id == data_uno.players.by_index(-1):
 
-            case data.actions.skipped:
-                return self.for_skipped_player
+                if data_uno.state.passed:
+                    return self.for_passed_player
+                if data_uno.state.skipped:
+                    return self.for_skipped_player
+                else:
+                    return self.for_prev_player
 
-            case _ if player is data.players[-1]:
-                return self.for_prev_player
-
-            case _:
+            else:
                 return self.for_other_player
 
-    def for_current_player(self, data: UnoData, card: UnoCard):
-        if data.actions.drawn:
-            if data.settings.stacking and card.emoji is data.deck.last_card.emoji:
+    def for_current_player(self, data_uno: UnoData, card: UnoCard):
+        if data_uno.state.drawn:
+            if data_uno.settings.stacking and (
+                    card.emoji is data_uno.deck.last_card.emoji
+                    or card.emoji is UnoEmoji.DRAW_TWO and card.color is data_uno.deck.last_card.color
+            ):
                 self.accepted = choice(
                     (
                         _("{user} doesn't want to take cards."),
@@ -94,13 +95,13 @@ class UnoFilter(BaseFilter):
                     )
                 )
 
-            elif not data.settings.stacking:
+            elif not data_uno.settings.stacking:
                 self.declined = _("Stacking is not allowed.")
 
             else:
                 self.declined = _("{user}, calm down and take the cards!")
 
-        elif card.color is data.deck.last_card.color:
+        elif card.color is data_uno.deck.last_card.color:
             if card.color is UnoColors.BLACK:
                 self.accepted = _("Another black card???")
 
@@ -116,7 +117,7 @@ class UnoFilter(BaseFilter):
         elif card.color is UnoColors.BLACK:
             self.accepted = _("Black card by {user}!")
 
-        elif card.emoji is data.deck.last_card.emoji:
+        elif card.emoji is data_uno.deck.last_card.emoji:
             self.accepted = _("{user} changes color!")
 
         else:
@@ -128,7 +129,7 @@ class UnoFilter(BaseFilter):
                 )
             )
 
-    def for_start_game(self, data: UnoData, card: UnoCard):
+    def for_start_game(self, __: UnoData, ___: UnoCard):
         self.declined = choice(
             (
                 _("Hey, the game just started and you're already mistaken!"),
@@ -137,11 +138,13 @@ class UnoFilter(BaseFilter):
             )
         )
 
-    def for_passed_player(self, data: UnoData, card: UnoCard):
-        if card is data.actions.passed.cards[-1]:
+    def for_passed_player(self, data_uno: UnoData, card: UnoCard):
+        if card is data_uno.players.playing[data_uno.players.by_index(-1)].cards[-1]:
+            # If is received card
+
             if (
-                    card.emoji is data.deck.last_card.emoji
-                    or card.color is data.deck.last_card.color
+                    card.emoji is data_uno.deck.last_card.emoji
+                    or card.color is data_uno.deck.last_card.color
                     or card.color is UnoColors.BLACK
             ):
                 self.accepted = choice(
@@ -162,8 +165,8 @@ class UnoFilter(BaseFilter):
                 )
             )
 
-    def for_skipped_player(self, data: UnoData, card: UnoCard):
-        if card.emoji is data.deck.last_card.emoji:
+    def for_skipped_player(self, data_uno: UnoData, card: UnoCard):
+        if card.emoji is data_uno.deck.last_card.emoji:
             self.accepted = choice(
                 (
                     _("{user} is unskippable!"),
@@ -175,8 +178,17 @@ class UnoFilter(BaseFilter):
         else:
             self.declined = _("{user}, your turn is skipped =(.")
 
-    def for_prev_player(self, data: UnoData, card: UnoCard):
-        if card.emoji is data.deck.last_card.emoji:
+    def for_prev_player(self, data_uno: UnoData, card: UnoCard):
+        if card.emoji in (UnoEmoji.DRAW_TWO, UnoEmoji.DRAW_FOUR):
+            self.declined = choice(
+                (
+                    _("This card cannot be played consecutively."),
+                    _("These cards cannot be stacked."),
+                    _("Yeah, what if we all put all our cards?"),
+                )
+            )
+
+        elif card.emoji is data_uno.deck.last_card.emoji:
             self.accepted = choice(
                 (
                     _("{user} keeps throwing cards..."),
@@ -187,8 +199,8 @@ class UnoFilter(BaseFilter):
         else:
             self.declined = _("{user}, you have already made your turn.")
 
-    def for_other_player(self, data: UnoData, card: UnoCard):
-        if data.settings.jump_in and card == data.deck.last_card:
+    def for_other_player(self, data_uno: UnoData, card: UnoCard):
+        if data_uno.settings.jump_in and card == data_uno.deck.last_card:
             self.accepted = choice(
                 (
                     _("We've been interrupted!"),

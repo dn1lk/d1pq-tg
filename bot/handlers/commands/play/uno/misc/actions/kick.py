@@ -1,63 +1,72 @@
-from aiogram import types
+from typing import Callable
+
+from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.core.utils import TimerTasks
-from .base import finish
+from .. import keyboards
 from ..data import UnoData
-from ..data.settings.modes import UnoMode
 
 
 async def kick_for_cards(
+        bot: Bot,
         state: FSMContext,
         data_uno: UnoData,
         user: types.User
 ):
-    player = data_uno.players(user.id)
-
-    data_uno.players.finish_player(player)
+    data_uno.players.finish_player(user.id)
     await data_uno.set_data(state)
 
-    if player.is_me:
+    player_data = data_uno.players.finished[user.id]
+
+    if player_data.is_me:
         answer = _("Well, I have run out of my hand. I have to remain only an observer =(.")
     else:
         answer = _(
             "{user} puts his last card and leaves the game as the winner."
         ).format(user=user.mention_html())
 
-    await state.bot.send_message(state.key.chat_id, answer)
+    await bot.send_message(state.key.chat_id, answer)
 
 
-async def kick_for_kick(
-        state: FSMContext,
-        timer: TimerTasks,
-        data_uno: UnoData,
-        user: types.User
-):
-    await data_uno.players.kick_player(state, data_uno.deck, data_uno.players(user.id))
-    await data_uno.set_data(state)
+def kick(func: Callable[[types.User], str]):
+    async def kick_decorator(
+            bot: Bot,
+            state: FSMContext,
+            timer: TimerTasks,
+            data_uno: UnoData,
+            user: types.User,
+    ):
+        current_id = data_uno.players.current_id
 
-    answer = _("{user} is kicked from the game for kick out of this chat.").format(user=user.mention_html())
-    await state.bot.send_message(state.key.chat_id, answer)
+        await data_uno.players.kick_player(bot, state, data_uno.deck, user.id)
 
-    if len(data_uno.players) == 1:
-        data_uno.settings.mode = UnoMode.FAST
-        await finish(state, timer, data_uno)
+        answer = func(user)
+
+        if user.id == current_id:
+            answer_next = await data_uno.do_next(bot, state)
+            message = await bot.send_message(state.key.chat_id, f'{answer}\n{answer_next}',
+                                             reply_markup=keyboards.show_cards(data_uno.state.bluffed))
+
+            from .turn import _update_timer
+            await _update_timer(message, bot, state, timer, data_uno)
+        else:
+            await data_uno.set_data(state)
+            await bot.send_message(state.key.chat_id, answer)
+
+    return kick_decorator
 
 
-async def kick_for_idle(
-        message: types.Message,
-        state: FSMContext,
-        timer: TimerTasks,
-        data_uno: UnoData,
-        user: types.User
-):
-    await data_uno.players.kick_player(state, data_uno.deck, data_uno.players(user.id))
-    await data_uno.set_data(state)
+@kick
+def kick_for_kick(user: types.User):
+    """Kick player from the game for kick from the chat"""
 
-    answer = _("{user} is kicked from the game.").format(user=user.mention_html())
-    await message.reply(answer)
+    return _("{user} is also kicked from the game.").format(user=user.mention_html())
 
-    if len(data_uno.players) == 1:
-        data_uno.settings.mode = UnoMode.FAST
-        await finish(state, timer, data_uno)
+
+@kick
+def kick_for_idle(user: types.User):
+    """Kick player from the game for idling"""
+
+    return _("{user} is kicked from the game.").format(user=user.mention_html())

@@ -33,6 +33,7 @@ class Column:
             await connection.execute(f"update data set {self} = $2 where id = $1", chat_id, data)
 
 
+@dataclass(slots=True, frozen=True)
 class ArrayColumn(Column):
     async def cat(self, chat_id: int, data: list):
         async with self._pool.acquire() as connection:

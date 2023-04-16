@@ -1,31 +1,31 @@
 import asyncio
 from random import choice
 
-from aiogram import types
+from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.core.utils import TimerTasks
 from bot.handlers.commands.play import CLOSE
 from .bot import UnoBot
-from ..data import UnoData
+from ..data.base import UnoData, UnoState
 from ..data.deck.colors import UnoColors
-from ..data.settings.modes import UnoMode
 
 
-async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks):
+async def _timeout(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks):
     data_uno = await UnoData.get_data(state)
     data_uno.timer_amount -= 1
 
     if not data_uno.timer_amount or len(data_uno.players) == 2:
-        data_uno.settings.mode = UnoMode.FAST
-        await data_uno.players.kick_player(state, data_uno.deck, data_uno.players.current_player)
-
         answer = choice(CLOSE).value
         await message.reply(answer)
 
+        for player_id, player_data in data_uno.players.playing.items():
+            if player_data.points:
+                data_uno.players.finished[player_id] = player_data
+
         from .base import finish
-        await finish(state, timer, data_uno)
+        await finish(bot, state, timer, data_uno)
 
     else:
         message_poll = await message.answer_poll(
@@ -33,26 +33,32 @@ async def _timeout(message: types.Message, state: FSMContext, timer: TimerTasks)
             options=[_("Yes"), _("No, keep playing")],
         )
 
-        bot_poll = UnoBot(message_poll, state, timer, data_uno)
+        player_id = data_uno.players.current_id
+        last_card = data_uno.deck.last_card
+
+        bot_poll = UnoBot(message_poll, bot, state, data_uno)
 
         timer_poll = TimerTasks('uno_poll')
-        timer_poll[state.key] = bot_poll.gen_poll()
+        timer_poll[state.key] = bot_poll.gen_poll(timer, player_id)
 
         await asyncio.sleep(2)
 
-        last_card = data_uno.deck.last_card
-
         if last_card.color is UnoColors.BLACK:
             color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
-            data_uno.deck[-1] = last_card.replace(color=color)
 
-            answer = _("Current color: {color}").format(color=color)
+            data_uno.do_color(color)
+
+            answer = _("Ok, current color: {color}").format(color=color)
 
         else:
-            answer = f'{_("Time is over.")} {await data_uno.pick_card(state)}'
+            user = await data_uno.players.get_user(bot, state.key.chat_id, player_id)
+            answer = f'{_("Time is over.")} {data_uno.pick_card(user)}'
+
+        # Reset states
+        data_uno.state = UnoState()
 
         from .turn import next_turn
-        await next_turn(message, state, timer, data_uno, answer)
+        await next_turn(message, bot, state, timer, data_uno, answer)
 
 
 async def _finally(message: types.Message, state: FSMContext):
@@ -66,12 +72,20 @@ async def _finally(message: types.Message, state: FSMContext):
 
 async def task(
         message: types.Message,
+        bot: Bot,
         state: FSMContext,
         timer: TimerTasks,
         data_uno: UnoData
 ):
     try:
         await asyncio.sleep(60 * data_uno.timer_amount)
-        await _timeout(message, state, timer)
+        await _timeout(message, bot, state, timer)
     finally:
         await _finally(message, state)
+
+
+def clear(state: FSMContext, timer: TimerTasks):
+    del timer[state.key]
+
+    timer_poll = TimerTasks('uno_poll')
+    del timer_poll[state.key]

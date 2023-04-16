@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from random import randrange
+from random import choice
 
 from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
@@ -11,17 +11,15 @@ from .. import errors
 
 
 @dataclass
-class UnoPlayer:
-    _id: int
-
+class UnoPlayerData:
     cards: list[UnoCard]
+    is_me: bool
+
     cards_played: int = 0
-
     points: int = 0
-    is_me: bool = False
 
-    def __eq__(self, user_id: int) -> bool:
-        return self._id == user_id
+    def add_card(self, *cards: UnoCard):
+        self.cards.extend(cards)
 
     def get_card(self, sticker: types.Sticker) -> UnoCard:
         for card in self.cards:
@@ -30,19 +28,14 @@ class UnoPlayer:
 
         raise errors.UnoInvalidSticker()
 
-    def add_card(self, *cards: UnoCard):
-        self.cards.extend(cards)
-
-    def remove_card(self, card: UnoCard):
+    def del_card(self, card: UnoCard):
         self.cards.remove(card)
         self.cards_played += 1
 
-    async def get_user(self, bot: Bot, chat_id: int) -> types.User:
-        if self.is_me:
-            return await bot.me()
-
-        member = await bot.get_chat_member(chat_id, self._id)
-        return member.user
+        if len(self.cards) == 1:
+            raise errors.UnoOneCard()
+        if len(self.cards) == 0:
+            raise errors.UnoNoCards()
 
     @staticmethod
     def get_key(bot_id: int, player_id: int):
@@ -54,109 +47,126 @@ class UnoPlayer:
         )
 
     @classmethod
-    async def setup(cls, state: FSMContext, user_id: int, cards: list[UnoCard]) -> "UnoPlayer":
-        player = cls(user_id, cards, is_me=user_id == state.key.bot_id)
-        key = cls.get_key(state.key.bot_id, user_id)
+    async def setup(cls, bot: Bot, state: FSMContext, player_id: int, cards: list[UnoCard]) -> "UnoPlayerData":
+        key = cls.get_key(state.key.bot_id, player_id)
 
         storage = state.storage
-        await storage.set_state(state.bot, key, PlayStates.UNO)
-        await storage.set_data(state.bot, key, {'0': state.key.chat_id})
+        await storage.set_state(bot, key, PlayStates.UNO)
+        await storage.set_data(bot, key, {'0': state.key.chat_id})
 
-        return player
+        return cls(cards, is_me=player_id == state.key.bot_id)
 
-    async def clear(self, state: FSMContext):
-        key = self.get_key(state.key.bot_id, self._id)
+    @classmethod
+    async def clear(cls, bot: Bot, state: FSMContext, player_id: int):
+        key = cls.get_key(state.key.bot_id, player_id)
 
         storage = state.storage
-        await storage.set_state(state.bot, key)
-        await storage.set_data(state.bot, key, {})
+        await storage.set_state(bot, key)
+        await storage.set_data(bot, key, {})
 
 
 @dataclass
 class UnoPlayers:
-    _playing: list[UnoPlayer]
+    playing: dict[int, UnoPlayerData]
     _current_index: int = None
 
-    finished: set[UnoPlayer] = field(default_factory=set)
+    finished: dict[int, UnoPlayerData] = field(default_factory=dict)
 
     def __post_init__(self):
-        if self._current_index is None:
-            self._current_index = randrange(len(self._playing))
+        if not self._current_index:
+            self.current_id = choice(tuple(self.playing))
 
     def __len__(self):
-        """Get number of players"""
+        """Get number of all players"""
 
-        return len(self._playing)
+        return len(self.playing | self.finished)
 
-    def __iter__(self):
-        """Iter players"""
+    def by_index(self, index: int) -> int:
+        """Get player id by index"""
 
-        return self._playing.__iter__()
+        return tuple(self.playing)[(self._current_index + index) % len(self.playing)]
 
-    def __call__(self, user_id: int) -> UnoPlayer | None:
-        """Get player by id"""
+    def __getitem__(self, player_id: int) -> UnoPlayerData:
+        """Get player data by id"""
 
-        for player in self:
-            if player == user_id:
-                return player
+        return self.playing.get(player_id) or self.finished[player_id]
 
-    def __getitem__(self, index: int) -> UnoPlayer:
-        """Get player by index"""
-
-        return self._playing[(self._current_index + index) % len(self)]
-
-    @property
-    def current_player(self) -> UnoPlayer:
-        return self._playing[self._current_index]
-
-    @current_player.setter
-    def current_player(self, player: UnoPlayer):
-        self._current_index = self._playing.index(player)
-
-    async def add_player(self, state: FSMContext, user_id: int, cards: list[UnoCard]):
+    def __setitem__(self, player_id: int, player_data: UnoPlayerData):
         """Add player"""
 
-        if self(user_id):
+        if player_id in self.playing | self.finished:
             raise errors.UnoExistedPlayer()
         elif len(self) == 10:
             raise errors.UnoMaxPlayers()
 
-        player = await UnoPlayer.setup(state, user_id, cards)
-        self._playing.append(player)
+        self.playing[player_id] = player_data
 
-    async def kick_player(self, state: FSMContext, deck: UnoDeck, player: UnoPlayer):
-        """Remove player and clear player data"""
+    @property
+    def current_id(self) -> int:
+        return self.by_index(0)
 
-        deck.cards_in.extend(player.cards)
-        self._playing.remove(player)
-        self.finished.add(player)
+    @current_id.setter
+    def current_id(self, player_id: int):
+        self._current_index = tuple(self.playing).index(player_id)
+        assert self.current_data == self.playing[player_id]
 
-        await player.clear(state)
+    @property
+    def current_data(self) -> UnoPlayerData:
+        return self.playing[self.current_id]
 
-    def finish_player(self, player: UnoPlayer):
-        """Remove player and add to finishers"""
+    async def kick_player(self, bot: Bot, state: FSMContext, deck: UnoDeck, player_id: int):
+        """Remove player, return cards and clear player data"""
 
-        self._playing.remove(player)
+        player_data = self.playing.pop(player_id)
+        assert isinstance(player_data, UnoPlayerData)
 
-        player.points += sum(sum(player.cards) for player in self._playing)
-        self.finished.add(player)
+        deck.add(*player_data.cards)
+        await player_data.clear(bot, state, player_id)
+
+    def finish_player(self, player_id: int):
+        """Remove player, add to finished and add points"""
+
+        player_data = self.finished[player_id] = self.playing.pop(player_id)
+        assert isinstance(player_data, UnoPlayerData)
+
+        player_data.points += sum(sum(other_data.cards) for other_data in self.playing.values())
+
+    async def get_user(self, bot: Bot, chat_id: int, player_id: int) -> types.User:
+        player_data = self[player_id]
+        assert isinstance(player_data, UnoPlayerData)
+
+        if player_data.is_me:
+            return await bot.me()
+
+        member = await bot.get_chat_member(chat_id, player_id)
+        return member.user
 
     @classmethod
-    async def setup(cls, state: FSMContext, deck: UnoDeck, *user_ids: int) -> "UnoPlayers":
-        return cls([await UnoPlayer.setup(state, user_id, list(deck(7))) for user_id in user_ids])
+    async def setup(
+            cls,
+            bot: Bot,
+            state: FSMContext,
+            deck: UnoDeck,
+            player_ids: list[int]
+    ) -> "UnoPlayers":
+        return cls(
+            {
+                player_id: await UnoPlayerData.setup(bot, state, player_id, list(deck(7)))
+                for player_id in player_ids
+            }
+        )
 
     def restart(self, deck: UnoDeck):
-        for player in self._playing:
-            self.finish_player(player)
+        """Return finished players, clear finished list and set cards for playing"""
 
-        self._playing = list(self.finished)
+        self.playing.update(self.finished)
+        self.finished.clear()
 
-        for player in self._playing:
-            player.cards = list(deck(7))
+        for player_data in self.playing.values():
+            player_data.cards = list(deck(7))
 
-    async def clear(self, state: FSMContext):
-        for player in self._playing.copy():
-            self.finish_player(player)
+    async def clear(self, bot: Bot, state: FSMContext):
+        """Clear playing and finished players"""
 
-        for player in self.finished:
-            await player.clear(state)
+        for player_id, player_data in (self.playing | self.finished).items():
+            await player_data.clear(bot, state, player_id)

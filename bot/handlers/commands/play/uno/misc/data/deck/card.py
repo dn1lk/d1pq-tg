@@ -23,4 +23,6 @@ class UnoCard:
         return self.file_unique_id == card.file_unique_id
 
     def replace(self, **kwargs) -> "UnoCard":
+        """Create UnoCard with another parameter"""
+
         return replace(self, **kwargs)
