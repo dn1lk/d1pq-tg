@@ -29,7 +29,7 @@ async def start_handler(message: types.Message, state: FSMContext, timer: TimerT
 
     answer = _(
         "Hmm, you're trying your luck!\n"
-        "I guessed a number from one to ten.\n"
+        "I guessed a number from 1 to 10.\n"
         "\n"
         "Guess what number?"
     )

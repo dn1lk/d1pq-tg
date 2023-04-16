@@ -34,7 +34,7 @@ class StartHandler(MessageHandler):
     async def handle(self):
         answer = _(
             "Hmm, {user} is trying their luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
-            "I guessed a number from one to ten.\n"
+            "I guessed a number from 1 to 10.\n"
             "\n"
             "Guess what number?"
         )
@@ -46,7 +46,7 @@ class StartHandler(MessageHandler):
 
             await self.state.set_state(PlayStates.RND)
 
-            data_rnd = {'bot_number': str(randint(1, 11))}
+            data_rnd = {'bot_number': str(randint(1, 10))}
             await self.state.set_data(data_rnd)
 
             self.event = await self.event.answer(_("LET THE BATTLE BEGIN!"))
