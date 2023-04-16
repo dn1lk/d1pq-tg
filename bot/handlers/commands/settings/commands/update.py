@@ -10,7 +10,7 @@ from bot.handlers.commands import CommandTypes
 from .. import SettingsStates
 
 router = Router(name='commands:update')
-router.message.filter(SettingsStates.commands,
+router.message.filter(SettingsStates.COMMANDS,
                       filters.Command(*(command[0] for command in CommandTypes)),
                       filters.IsAdmin(is_admin=True))
 

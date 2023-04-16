@@ -22,7 +22,7 @@ async def start_handler(
         commands: dict[str, str] | None,
         messages: list[str] | None,
 ):
-    await state.set_state(SettingsStates.commands)
+    await state.set_state(SettingsStates.COMMANDS)
 
     from bot.handlers import messages_to_words
     from bot.handlers.commands.help import get_answer
