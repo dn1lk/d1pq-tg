@@ -39,7 +39,8 @@ class UnoBot:
 
     async def gen_turn(self, timer: TimerTasks, *cards: tuple[UnoCard, str]):
         async with ChatActionSender.choose_sticker(chat_id=self.state.key.chat_id):
-            delay = randint(1, 4) * self.data_uno.settings.difficulty
+            d = self.data_uno.settings.difficulty
+            delay = randint(1, 4) * d
 
             if self.message.chat.type is not enums.ChatType.PRIVATE:
                 delay *= 1.5
@@ -48,7 +49,7 @@ class UnoBot:
 
             del timer[self.state.key]
 
-            if not cards:
+            if not cards or random() > d / 3 * 1.2:
                 await self._proceed_pass(timer)
                 return
 
