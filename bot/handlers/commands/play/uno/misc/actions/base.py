@@ -72,7 +72,7 @@ async def _get_results_answer(
         data_uno: UnoData
 ) -> str:
     async def get_results():
-        finished_players = sorted(data_uno.players.finished.items(),
+        finished_players = sorted((data_uno.players.finished | data_uno.players.playing).items(),
                                   key=lambda player: player[1].points,
                                   reverse=True)
 

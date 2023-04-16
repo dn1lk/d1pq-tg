@@ -117,8 +117,13 @@ class UnoBot:
             answer = self.data_uno.do_pass(self.message.from_user)
 
         answer_next = await self.data_uno.do_next(self.bot, self.state)
-        self.message = await self.message.edit_text(f'{answer}\n{answer_next}',
-                                                    reply_markup=keyboards.show_cards(False))
+
+        try:
+            self.message = await self.message.edit_text(f'{answer}\n{answer_next}',
+                                                        reply_markup=keyboards.show_cards(False))
+        except exceptions.TelegramRetryAfter as retry:
+            await asyncio.sleep(retry.retry_after)
+            self.message = await retry.method
 
         from .turn import _update_timer
         await _update_timer(self.message, self.bot, self.state, timer, self.data_uno)
