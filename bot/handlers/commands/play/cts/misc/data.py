@@ -4,7 +4,7 @@ from random import choice
 
 from ... import PlayData
 
-LOCALE_DIR = Path.cwd() / 'bot' / 'locales'
+LOCALE_DIR = Path.cwd() / 'bot' / 'core' / 'locales'
 
 
 class CTSData(PlayData):
