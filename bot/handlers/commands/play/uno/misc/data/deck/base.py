@@ -1,54 +1,49 @@
-from dataclasses import dataclass, field
 from random import choice, sample
 from typing import Generator
 
 from aiogram import Bot, types
+from pydantic import BaseModel
 
 from .card import UnoCard
 from .colors import UnoColors
 from .emoji import UnoEmoji
 
 
-@dataclass
-class UnoDeck:
-    _cards_in: list[UnoCard]
-    _last_cards: list[UnoCard] = field(default_factory=list)
-
-    def __post_init__(self):
-        if not self._last_cards:
-            self._last_cards.append(choice([card for card in self._cards_in if card.emoji is not UnoEmoji.DRAW_FOUR]))
+class UnoDeck(BaseModel):
+    cards_in: list[UnoCard]
+    last_cards: list[UnoCard]
 
     def __call__(self, count: int) -> Generator[UnoCard, None, None]:
         """Get cards from the deck"""
 
-        for card in sample(self._cards_in, k=count):
-            self._cards_in.remove(card)
+        for card in sample(self.cards_in, k=count):
+            self.cards_in.remove(card)
             yield card
 
     def add(self, *cards: UnoCard):
-        self._cards_in.extend(cards)
+        self.cards_in.extend(cards)
 
     def __getitem__(self, index: int):
         """Get last card by index"""
 
-        return self._last_cards[index]
+        return self.last_cards[index]
 
     def __setitem__(self, index: int, card: UnoCard):
         """Set last card by index"""
 
         assert -3 <= index <= 3
-        self._last_cards[index] = card
+        self.last_cards[index] = card
 
     def __delitem__(self, card: UnoCard):
         """Remove card from the deck"""
 
-        self._cards_in.remove(card)
+        self.cards_in.remove(card)
 
     def __iter__(self):
-        return self._cards_in.__iter__()
+        return self.cards_in.__iter__()
 
     def __len__(self) -> int:
-        return len(self._last_cards)
+        return len(self.last_cards)
 
     @property
     def last_card(self) -> UnoCard:
@@ -58,11 +53,11 @@ class UnoDeck:
     def last_card(self, card: UnoCard):
         """Add card to the deck"""
 
-        self._cards_in.append(card)
-        self._last_cards.append(card)
+        self.cards_in.append(card)
+        self.last_cards.append(card)
 
         if len(self) > 3:
-            del self._last_cards[0]
+            del self.last_cards[0]
 
         assert len(self) <= 3
 
@@ -104,4 +99,7 @@ class UnoDeck:
         cards_in.extend(cards_in[4:])  # double non-0 cards
 
         assert len(cards_in) == 108
-        return cls(cards_in)
+
+        last_cards = [choice([card for card in cards_in if card.emoji is not UnoEmoji.DRAW_FOUR])]
+
+        return cls(cards_in=cards_in, last_cards=last_cards)

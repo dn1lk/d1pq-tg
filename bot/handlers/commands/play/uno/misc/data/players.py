@@ -1,17 +1,16 @@
-from dataclasses import dataclass, field
-from random import choice
+from random import randrange
 
 from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
+from pydantic import BaseModel
 
 from bot.handlers.commands.play import PlayStates
 from .deck import UnoCard, UnoDeck
 from .. import errors
 
 
-@dataclass
-class UnoPlayerData:
+class UnoPlayerData(BaseModel):
     cards: list[UnoCard]
     is_me: bool
 
@@ -54,7 +53,7 @@ class UnoPlayerData:
         await storage.set_state(bot, key, PlayStates.UNO)
         await storage.set_data(bot, key, {'0': state.key.chat_id})
 
-        return cls(cards, is_me=player_id == state.key.bot_id)
+        return cls(cards=cards, is_me=player_id == state.key.bot_id)
 
     @classmethod
     async def clear(cls, bot: Bot, state: FSMContext, player_id: int):
@@ -65,16 +64,11 @@ class UnoPlayerData:
         await storage.set_data(bot, key, {})
 
 
-@dataclass
-class UnoPlayers:
+class UnoPlayers(BaseModel):
     playing: dict[int, UnoPlayerData]
-    _current_index: int = None
+    current_index: int
 
-    finished: dict[int, UnoPlayerData] = field(default_factory=dict)
-
-    def __post_init__(self):
-        if not self._current_index:
-            self.current_id = choice(tuple(self.playing))
+    finished: dict[int, UnoPlayerData] = {}
 
     def __len__(self):
         """Get number of all players"""
@@ -84,7 +78,7 @@ class UnoPlayers:
     def by_index(self, index: int) -> int:
         """Get player id by index"""
 
-        return tuple(self.playing)[(self._current_index + index) % len(self.playing)]
+        return tuple(self.playing)[(self.current_index + index) % len(self.playing)]
 
     def __getitem__(self, player_id: int) -> UnoPlayerData:
         """Get player data by id"""
@@ -107,7 +101,7 @@ class UnoPlayers:
 
     @current_id.setter
     def current_id(self, player_id: int):
-        self._current_index = tuple(self.playing).index(player_id)
+        self.current_index = tuple(self.playing).index(player_id)
         assert self.current_data == self.playing[player_id]
 
     @property
@@ -150,10 +144,11 @@ class UnoPlayers:
             player_ids: list[int]
     ) -> "UnoPlayers":
         return cls(
-            {
+            playing={
                 player_id: await UnoPlayerData.setup(bot, state, player_id, list(deck(7)))
                 for player_id in player_ids
-            }
+            },
+            _current_index=randrange(len(player_ids)),
         )
 
     def restart(self, deck: UnoDeck):

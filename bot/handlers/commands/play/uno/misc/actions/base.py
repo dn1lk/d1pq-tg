@@ -73,7 +73,7 @@ async def _get_results_answer(
 ) -> str:
     async def get_results():
         finished_players = sorted((data_uno.players.finished | data_uno.players.playing).items(),
-                                  key=lambda player: player[1].points,
+                                  key=lambda player: (player[1].points, player[1].cards_played),
                                   reverse=True)
 
         for enum, (finished_id, finished_data) in enumerate(finished_players, start=1):
