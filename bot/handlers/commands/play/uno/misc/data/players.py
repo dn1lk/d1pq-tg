@@ -1,16 +1,17 @@
+from dataclasses import dataclass, field
 from random import randrange
 
 from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
-from pydantic import BaseModel
 
 from bot.handlers.commands.play import PlayStates
 from .deck import UnoCard, UnoDeck
 from .. import errors
 
 
-class UnoPlayerData(BaseModel):
+@dataclass
+class UnoPlayerData:
     cards: list[UnoCard]
     is_me: bool
 
@@ -64,11 +65,12 @@ class UnoPlayerData(BaseModel):
         await storage.set_data(bot, key, {})
 
 
-class UnoPlayers(BaseModel):
+@dataclass
+class UnoPlayers:
     playing: dict[int, UnoPlayerData]
-    current_index: int
+    _current_index: int
 
-    finished: dict[int, UnoPlayerData] = {}
+    finished: dict[int, UnoPlayerData] = field(default_factory=dict)
 
     def __len__(self):
         """Get number of all players"""
@@ -78,7 +80,7 @@ class UnoPlayers(BaseModel):
     def by_index(self, index: int) -> int:
         """Get player id by index"""
 
-        return tuple(self.playing)[(self.current_index + index) % len(self.playing)]
+        return tuple(self.playing)[(self._current_index + index) % len(self.playing)]
 
     def __getitem__(self, player_id: int) -> UnoPlayerData:
         """Get player data by id"""
@@ -101,7 +103,7 @@ class UnoPlayers(BaseModel):
 
     @current_id.setter
     def current_id(self, player_id: int):
-        self.current_index = tuple(self.playing).index(player_id)
+        self._current_index = tuple(self.playing).index(player_id)
         assert self.current_data == self.playing[player_id]
 
     @property
@@ -150,7 +152,7 @@ class UnoPlayers(BaseModel):
 
         current_index = randrange(len(player_ids))
 
-        return cls(playing=playing, current_index=current_index)
+        return cls(playing, current_index)
 
     def restart(self, deck: UnoDeck):
         """Return finished players, clear finished list and set cards for playing"""
@@ -160,6 +162,8 @@ class UnoPlayers(BaseModel):
 
         for player_data in self.playing.values():
             player_data.cards = list(deck(7))
+
+        self._current_index = randrange(len(self.playing))
 
     async def clear(self, bot: Bot, state: FSMContext):
         """Clear playing and finished players"""

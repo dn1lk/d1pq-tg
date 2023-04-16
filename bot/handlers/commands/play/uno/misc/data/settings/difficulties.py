@@ -4,7 +4,7 @@ from aiogram.utils.i18n import gettext as _
 from .base import UnoSettingsEnum
 
 
-class UnoDifficulty(int, UnoSettingsEnum):
+class UnoDifficulty(UnoSettingsEnum):
     EASY = 3
     NORMAL = 2
     HARD = 1

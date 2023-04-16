@@ -9,4 +9,5 @@ class PlayData(BaseModel):
     @classmethod
     async def get_data(cls, state: FSMContext) -> "PlayData":
         data = await state.get_data()
-        return cls(**data)
+        if data:
+            return cls(**data)

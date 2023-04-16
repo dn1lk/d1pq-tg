@@ -1,10 +1,11 @@
-from pydantic import BaseModel
+from dataclasses import dataclass, replace
 
 from .colors import UnoColors
 from .emoji import UnoEmoji
 
 
-class UnoCard(BaseModel):
+@dataclass(frozen=True)
+class UnoCard:
     file_unique_id: str
     file_id: str
     emoji: UnoEmoji
@@ -24,4 +25,4 @@ class UnoCard(BaseModel):
     def replace(self, **kwargs) -> "UnoCard":
         """Create UnoCard with another parameter"""
 
-        return self.copy(update=kwargs)
+        return replace(self, **kwargs)

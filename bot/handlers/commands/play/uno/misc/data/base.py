@@ -1,9 +1,9 @@
+from dataclasses import dataclass
 from random import choice
 
 from aiogram import Bot, types, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
-from pydantic import BaseModel
 
 from bot.handlers.commands.play import PlayData
 from bot.handlers.commands.play.misc.states import PlayStates
@@ -14,7 +14,8 @@ from .settings import UnoSettings
 from .. import errors
 
 
-class UnoState(BaseModel):
+@dataclass
+class UnoState:
     drawn: int = 0
 
     passed: bool = False
@@ -281,7 +282,7 @@ class UnoData(PlayData):
     def restart(self):
         self.players.restart(self.deck)
 
-        self.deck = UnoDeck(_cards_in=list(self.deck))
+        self.deck = UnoDeck(list(self.deck))
         self.state = UnoState()
         self.timer_amount = 3
 

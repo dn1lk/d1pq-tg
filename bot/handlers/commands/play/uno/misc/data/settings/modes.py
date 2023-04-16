@@ -4,7 +4,7 @@ from aiogram.utils.i18n import gettext as _
 from .base import UnoSettingsEnum
 
 
-class UnoMode(int, UnoSettingsEnum):
+class UnoMode(UnoSettingsEnum):
     FAST = 0
     WITH_POINTS = 1
 

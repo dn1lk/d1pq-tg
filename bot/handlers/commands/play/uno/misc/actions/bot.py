@@ -2,7 +2,7 @@ import asyncio
 from dataclasses import dataclass
 from random import choice, random, randint
 
-from aiogram import Bot, types, exceptions
+from aiogram import Bot, types, exceptions, enums
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
@@ -39,7 +39,12 @@ class UnoBot:
 
     async def gen_turn(self, timer: TimerTasks, *cards: tuple[UnoCard, str]):
         async with ChatActionSender.choose_sticker(chat_id=self.state.key.chat_id):
-            await asyncio.sleep(randint(1, 4) * self.data_uno.settings.difficulty)
+            delay = randint(1, 4) * self.data_uno.settings.difficulty
+
+            if self.message.chat.type is not enums.ChatType.PRIVATE:
+                delay *= 1.5
+
+            await asyncio.sleep(delay)
 
             del timer[self.state.key]
 

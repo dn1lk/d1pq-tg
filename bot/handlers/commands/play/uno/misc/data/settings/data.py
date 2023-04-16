@@ -1,12 +1,14 @@
+from dataclasses import dataclass
+
 from aiogram import types
-from pydantic import BaseModel
 
 from .additions import UnoAdd, UnoAddState
 from .difficulties import UnoDifficulty
 from .modes import UnoMode
 
 
-class UnoSettings(BaseModel):
+@dataclass(frozen=True)
+class UnoSettings:
     difficulty: UnoDifficulty
     mode: UnoMode
 

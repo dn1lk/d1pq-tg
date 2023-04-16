@@ -4,9 +4,9 @@ from aiogram.utils.i18n import gettext as _
 from .base import UnoSettingsEnum
 
 
-class UnoAddState(str, UnoSettingsEnum):
-    OFF = 'off'
-    ON = 'on'
+class UnoAddState(UnoSettingsEnum):
+    OFF = 0
+    ON = 1
 
     def __str__(self) -> str:
         match self:
@@ -32,7 +32,7 @@ class UnoAddState(str, UnoSettingsEnum):
         return cls.meta_extract(message, index)
 
 
-class UnoAdd(int, UnoSettingsEnum):
+class UnoAdd(UnoSettingsEnum):
     STACKING = 2
     SEVEN_0 = 3
     JUMP_IN = 4
