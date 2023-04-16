@@ -6,7 +6,7 @@ from . import database
 
 
 async def set_stickers(db: database.SQLContext, sticker: str, chat_id: int, stickers: list[str] = None):
-    stickers: list[str] = stickers or await db.stickers.get(chat_id) or []
+    stickers: list[str] = stickers or (await db.stickers.get(chat_id)) + db.stickers.default
 
     if sticker not in stickers:
         sticker = [sticker]

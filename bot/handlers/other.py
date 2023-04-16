@@ -32,7 +32,7 @@ async def get_gen_args(
 
     async def gen_sticker() -> dict:
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id):
-            stickers: list[str] = await db.stickers.get(message.chat.id)
+            stickers: list[str] = (await db.stickers.get(message.chat.id)) + db.stickers.default
             return {'sticker': await sticker.gen(bot, text, stickers)}
 
     text = message.text or message.caption or (message.poll.question if message.poll else "")

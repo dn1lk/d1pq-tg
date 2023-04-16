@@ -6,15 +6,16 @@ from asyncpg import Pool, Record
 @dataclass(slots=True, frozen=True)
 class Column:
     _pool: Pool
-    _default: Record
     _name: str
+
+    default: Record
 
     def __str__(self) -> str:
         return self._name
 
     async def get(self, chat_id: int):
         async with self._pool.acquire() as connection:
-            return await connection.fetchval(f"select {self} from data where id = $1;", chat_id) or self._default
+            return await connection.fetchval(f"select {self} from data where id = $1;", chat_id) or self.default
 
     async def set(self, chat_id: int, data):
         async with self._pool.acquire() as connection:

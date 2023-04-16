@@ -25,7 +25,7 @@ class SQLContext:
             if column.startswith('_'):
                 continue
 
-            setattr(self, column, getattr(self, column)(self._pool, self._defaults[column], column))
+            setattr(self, column, getattr(self, column)(self._pool, column, self._defaults[column]))
 
     def __getitem__(self, item: str) -> Column:
         column = self.__getattribute__(item)

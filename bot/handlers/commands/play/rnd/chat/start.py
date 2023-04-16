@@ -61,7 +61,7 @@ class StartHandler(MessageHandler):
 
     async def wait(self, data_rnd: dict[str, str | set[int]]):
         async def get_stickers():
-            for sticker_set_name in await self.db.stickers.get(self.chat.id):
+            for sticker_set_name in (await self.db.stickers.get(self.chat.id)) + self.db.stickers.default:
                 sticker_set = await self.bot.get_sticker_set(sticker_set_name)
 
                 for sticker in sticker_set.stickers:
