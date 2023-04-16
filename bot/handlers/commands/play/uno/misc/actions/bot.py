@@ -187,7 +187,7 @@ class UnoBot:
                 user = await self.data_uno.players.get_user(self.bot, self.state.key.chat_id, player_id)
 
                 from .kick import kick_for_idle
-                await kick_for_idle(self.bot, self.state, self.data_uno, user)
+                await kick_for_idle(self.bot, self.state, timer, self.data_uno, user)
 
                 if len(self.data_uno.players) == 1:
                     from .base import finish
