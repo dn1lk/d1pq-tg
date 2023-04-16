@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.fsm.strategy import FSMStrategy
 
 logging.basicConfig(
@@ -18,6 +19,7 @@ async def main():
     bot = Bot(token=config.bot.token.get_secret_value(), parse_mode="HTML")
     dp = Dispatcher(
         name='dispatcher',
+        storage=RedisStorage.from_url(config.provider.redis_url) if config.provider.redis_url else None,
         fsm_strategy=FSMStrategy.CHAT
     )
 
