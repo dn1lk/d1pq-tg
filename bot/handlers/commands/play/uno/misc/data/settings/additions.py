@@ -4,7 +4,7 @@ from aiogram.utils.i18n import gettext as _
 from .base import UnoSettingsEnum
 
 
-class UnoAddState(UnoSettingsEnum):
+class UnoAddState(str, UnoSettingsEnum):
     OFF = 'off'
     ON = 'on'
 

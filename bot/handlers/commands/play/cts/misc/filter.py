@@ -35,7 +35,7 @@ class CTSFilter(filters.BaseFilter):
                     ratio(city, user_city) > 0.7 for city in cities
                     if city[0].lower() == user_city[0].lower()
             ):
-                data.used_cities.add(user_city)
+                data.used_cities.append(user_city)
                 data.gen_city(cities, user_city)
 
                 return {'data_cts': data}

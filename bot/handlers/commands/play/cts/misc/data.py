@@ -9,7 +9,7 @@ LOCALE_DIR = Path.cwd() / 'bot' / 'core' / 'locales'
 
 class CTSData(PlayData):
     bot_city: str = None
-    used_cities: set[str] = set()
+    used_cities: list[str] = []
     fail_amount: int = 5
 
     @classmethod
@@ -35,4 +35,4 @@ class CTSData(PlayData):
         self.bot_city = choice(bot_cities)
 
         if self.bot_city:
-            self.used_cities.add(self.bot_city)
+            self.used_cities.append(self.bot_city)
