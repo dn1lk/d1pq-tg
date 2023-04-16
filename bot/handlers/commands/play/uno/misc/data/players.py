@@ -143,13 +143,14 @@ class UnoPlayers(BaseModel):
             deck: UnoDeck,
             player_ids: list[int]
     ) -> "UnoPlayers":
-        return cls(
-            playing={
-                player_id: await UnoPlayerData.setup(bot, state, player_id, list(deck(7)))
-                for player_id in player_ids
-            },
-            _current_index=randrange(len(player_ids)),
-        )
+        playing = {
+            player_id: await UnoPlayerData.setup(bot, state, player_id, list(deck(7)))
+            for player_id in player_ids
+        }
+
+        current_index = randrange(len(player_ids))
+
+        return cls(playing=playing, current_index=current_index)
 
     def restart(self, deck: UnoDeck):
         """Return finished players, clear finished list and set cards for playing"""
