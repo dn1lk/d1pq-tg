@@ -21,13 +21,13 @@ async def retry_after_handler(_, exception: TelegramRetryAfter):
 
 @router.errors()
 async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int):
-    title = f'While event {event.update.event_type}:\n\n'
-    tracback = '\n'.join(traceback.format_exc().splitlines())
+    title = f'While event {event.update.event_type}:'
+    tracback = '\n'.join(traceback.format_exc(limit=10).splitlines())
 
     try:
         await bot.send_message(
             owner_id,
-            html.bold(title) + html.pre_language(html.quote(tracback), language='python'),
+            f"{html.bold(title)}\n\n{html.pre_language(html.quote(tracback), language='python')}",
         )
     except TelegramBadRequest:
         logging.critical("TelegramBadRequest: can't send error message")
