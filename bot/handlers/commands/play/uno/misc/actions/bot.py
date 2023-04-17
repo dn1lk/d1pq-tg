@@ -49,7 +49,7 @@ class UnoBot:
 
             del timer[self.state.key]
 
-            if not cards or random() > d / 3 * 1.2:
+            if not cards or random() > 1 / d * 1.4:
                 await self._proceed_pass(timer)
                 return
 
@@ -114,7 +114,7 @@ class UnoBot:
             else:
                 d *= len(prev_data.cards) / 6
 
-            if random() < 1 / (d or 5):
+            if random() < 1 / (d or 8):
                 answer = await self.data_uno.do_bluff(self.bot, self.state.key.chat_id)
             else:
                 answer = self.data_uno.do_pass(self.message.from_user)
