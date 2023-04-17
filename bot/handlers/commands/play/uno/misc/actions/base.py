@@ -38,11 +38,11 @@ async def restart(
         f'{html.bold(_("Round over."))}\n\n{answer}'
     )
 
-    message = await message.answer(_("New round starts in {delay}...").format(delay=html.bold(10)))
+    message = await message.answer(_("New round starts in {delay}...").format(delay=html.bold(5)))
 
-    for n in range(9, 0, -1):
-        await asyncio.sleep(1)
-        message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
+    for n in range(3, 0, -2):
+        await asyncio.sleep(2)
+        message = await message.edit_text(message.html_text.replace(str(n + 2), str(n)))
 
     await message.delete()
     await start(bot, state, timer, data_uno)

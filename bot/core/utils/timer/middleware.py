@@ -21,6 +21,8 @@ class TimerMiddleware(BaseMiddleware):
             data['timer'] = timer = TimerTasks(flag_timer['name'])
 
             if flag_timer.get('cancelled', True):
+                del timer[state.key]
+            if flag_timer.get('locked', True):
                 async with timer.lock(state.key):
                     return await handler(event, data)
 

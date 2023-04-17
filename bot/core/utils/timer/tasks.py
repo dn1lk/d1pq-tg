@@ -40,6 +40,5 @@ class TimerTasks:
 
     @asynccontextmanager
     async def lock(self, key: StorageKey) -> AsyncGenerator[None, None]:
-        del self[key]
         async with self._locks[self.get_key(key)]:
             yield
