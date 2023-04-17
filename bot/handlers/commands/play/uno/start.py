@@ -38,7 +38,7 @@ async def join_handler(message: types.Message, bot: Bot, state: FSMContext):
 
 
 @router.message()
-@flags.timer(name='play')
+@flags.timer('play')
 async def start_handler(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks):
     answer = _(
         "<b>Let's play UNO?</b>\n\n"

@@ -1,6 +1,6 @@
 from typing import Dict, Any, Callable, Awaitable
 
-from aiogram import Router, BaseMiddleware
+from aiogram import Bot, Router, BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import TelegramObject
@@ -16,14 +16,16 @@ class UnoMiddleware(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any],
     ):
+        bot: Bot = data["bot"]
         state: FSMContext = data["state"]
+
         data_state = await state.storage.get_data(
-            bot=state.bot,
+            bot=bot,
             key=UnoPlayerData.get_key(state.key.bot_id, state.key.user_id)
         )
 
         if data_state:
-            data["event_chat"] = chat = await state.bot.get_chat(data_state['0'])
+            data["event_chat"] = chat = await bot.get_chat(data_state['0'])
 
             state.key = StorageKey(
                 bot_id=state.key.bot_id,

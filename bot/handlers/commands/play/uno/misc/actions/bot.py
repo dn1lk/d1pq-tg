@@ -138,7 +138,7 @@ class UnoBot:
         chosen_id = choice([player[0] for player in self.data_uno.players.playing.items() if not player[1].is_me])
         self.data_uno.do_seven(chosen_id)
 
-        chosen_user = await self.data_uno.players.get_user(self.state.bot, self.state.key.chat_id, chosen_id)
+        chosen_user = await self.data_uno.players.get_user(self.bot, self.state.key.chat_id, chosen_id)
         return _("I exchange cards with player {chosen_user}.").format(chosen_user=chosen_user.mention_html())
 
     async def do_color(self) -> str:
@@ -172,7 +172,7 @@ class UnoBot:
                 data_uno = await UnoData.get_data(self.state)
 
                 from .uno import proceed_uno
-                await proceed_uno(self.message, self.state, data_uno, user)
+                await proceed_uno(self.message, self.bot, self.state, data_uno, user)
             else:  # if bot has one card
                 await self.message.delete_reply_markup()
 

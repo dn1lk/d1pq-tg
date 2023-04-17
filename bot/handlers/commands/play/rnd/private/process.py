@@ -10,7 +10,7 @@ router.message.filter(PlayStates.RND)
 
 
 @router.message(F.text.in_(tuple(map(str, range(1, 11)))))
-@flags.timer(name='play')
+@flags.timer('play')
 async def process_handler(message: types.Message):
     bot_number = str(randint(1, 10))
     user_number = message.text

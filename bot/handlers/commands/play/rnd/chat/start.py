@@ -17,7 +17,7 @@ router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayA
 
 
 @router.message()
-@flags.timer(name='play')
+@flags.timer('play')
 class StartHandler(MessageHandler):
     @property
     def db(self) -> SQLContext:

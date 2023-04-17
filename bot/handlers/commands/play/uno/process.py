@@ -84,7 +84,7 @@ def start_filter(query: types.CallbackQuery):
 
 
 @router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoSetup.START), start_filter)
-@flags.timer(name='play')
+@flags.timer('play')
 async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,

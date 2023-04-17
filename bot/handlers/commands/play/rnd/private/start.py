@@ -23,7 +23,7 @@ async def task(message: types.Message, state: FSMContext):
 
 
 @router.message()
-@flags.timer(name='play')
+@flags.timer('play')
 async def start_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
     await state.set_state(PlayStates.RND)
 

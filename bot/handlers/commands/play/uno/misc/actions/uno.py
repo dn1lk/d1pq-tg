@@ -52,6 +52,7 @@ async def update_uno(
 
 async def proceed_uno(
         message: types.Message,
+        bot: Bot,
         state: FSMContext,
         data_uno: UnoData,
         user: types.User,
@@ -79,7 +80,7 @@ async def proceed_uno(
         uno_user = message.entities[-1].user
         answer_two = _("to player {uno_user}").format(uno_user=uno_user.mention_html())
     else:  # if bot has one card
-        uno_user = await state.bot.me()
+        uno_user = await bot.me()
         answer_two = choice(
             (
                 _("to me"),

@@ -19,7 +19,7 @@ router.callback_query.filter(PlayStates.UNO)
 
 
 @router.message(F.sticker.set_name == 'uno_by_d1pq_bot', UnoData.filter())
-@flags.timer(name='play')
+@flags.timer('play')
 async def turn_handler(
         message: types.Message,
         bot: Bot,
@@ -83,7 +83,7 @@ async def bluff_handler(
         await query.answer()
 
     else:
-        user = await data_uno.players.get_user(state.bot, state.key.chat_id, current_id)
+        user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
         answer = _("Only {user} can do that.")
 
         await query.answer(answer.format(user=user.first_name))
@@ -181,7 +181,7 @@ async def color_handler(
 
 
 @router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO))
-async def uno_handler(query: types.CallbackQuery, state: FSMContext):
+async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     user = query.from_user
@@ -198,7 +198,7 @@ async def uno_handler(query: types.CallbackQuery, state: FSMContext):
             task.cancel()
 
         if not query.message.entities or query.from_user.id != query.message.entities[-1].user.id:
-            await proceed_uno(query.message, state, data_uno, user)
+            await proceed_uno(query.message, bot, state, data_uno, user)
 
         answer = (
             _("Good job!"),

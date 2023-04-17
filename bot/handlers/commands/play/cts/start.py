@@ -15,7 +15,7 @@ router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayA
 
 
 @router.message()
-@flags.timer(name='play')
+@flags.timer('play')
 async def start_handler(message: types.Message, state: FSMContext, i18n: I18n, timer: TimerTasks):
     answer = _(
         "Oh, Geography. Well, let's try!\n"
