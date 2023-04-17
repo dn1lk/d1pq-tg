@@ -18,7 +18,7 @@ async def with_args_handler(message: types.Message):
                 _("Ha! Invalid request, try again."),
                 _("Luck is clearly NOT in your favor. You didn't guess the game!"),
                 _("The game is not recognized. I'll give it another try!"),
-                _("And here it is not. This game has a different name ;)."),
+                _("And here it is not. This game has a different name. 😜"),
             )
         )
     )

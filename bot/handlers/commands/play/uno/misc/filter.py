@@ -123,7 +123,7 @@ class UnoFilter(BaseFilter):
         else:
             self.declined = choice(
                 (
-                    _("{user}, attempt not counted, get a card! =)."),
+                    _("{user}, attempt not counted, get a card! 🧐"),
                     _("Just. Skip. Turn."),
                     _("Someday {user} will be able to make the right turn.")
                 )
@@ -171,12 +171,12 @@ class UnoFilter(BaseFilter):
                 (
                     _("{user} is unskippable!"),
                     _("{user}, you can't be skipped!"),
-                    _("Skips are not for you =).")
+                    _("Skips are not for you. 😎")
                 )
             )
 
         else:
-            self.declined = _("{user}, your turn is skipped =(.")
+            self.declined = _("{user}, your turn is skipped. 🤨")
 
     def for_prev_player(self, data_uno: UnoData, card: UnoCard):
         if card.emoji in (UnoEmoji.DRAW_TWO, UnoEmoji.DRAW_FOUR):

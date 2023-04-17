@@ -52,7 +52,7 @@ async def leave_handler(query: types.CallbackQuery, state: FSMContext, timer: Ti
             await query.message.edit_text(
                 choice(
                     (
-                        _("Nobody wants to play =(."),
+                        _("Nobody wants to play. 😢"),
                         _("And who is there to play with?"),
                     )
                 )

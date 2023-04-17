@@ -93,6 +93,6 @@ async def _get_results_answer(
             ).format(points=finished_data.points)
 
             finished_user = await data_uno.players.get_user(bot, chat_id, finished_id)
-            yield f'{enum}: {finished_user.mention_html()} - {answer_one}, {answer_two}.'
+            yield f'{enum}: {finished_user.mention_html()} — {answer_one}, {answer_two}.'
 
     return '\n'.join([result async for result in get_results()])

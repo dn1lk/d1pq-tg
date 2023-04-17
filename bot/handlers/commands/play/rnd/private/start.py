@@ -28,10 +28,10 @@ async def start_handler(message: types.Message, state: FSMContext, timer: TimerT
     await state.set_state(PlayStates.RND)
 
     answer = _(
-        "Hmm, you're trying your luck!\n"
+        "Hmm, you're trying own luck!\n"
         "I guessed a number from 1 to 10.\n"
         "\n"
-        "Guess what number?"
+        "Guess what?"
     )
 
     message = await message.answer(answer)

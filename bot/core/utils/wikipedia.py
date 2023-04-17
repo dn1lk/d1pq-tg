@@ -29,7 +29,7 @@ class Wikipedia:
                 min_words=5,
             )
         except KeyError:
-            return _("I don't know answer =(")
+            return _("I don't know answer. 😥")
 
     async def close(self):
         await self._session.close()

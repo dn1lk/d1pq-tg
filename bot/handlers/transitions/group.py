@@ -19,7 +19,7 @@ async def my_is_not_admin_filter(message: types.Message, bot: Bot):
 async def my_return_handler(event: types.ChatMemberUpdated, bot: Bot):
     answer = (
         _("{chat}, we are together again!"),
-        _("{chat}, don't kick me anymore =("),
+        _("{chat}, don't kick me anymore. 👿"),
         _("However hello, {chat}!"),
     )
 
@@ -41,7 +41,7 @@ async def my_promoted_handler(event: types.ChatMemberUpdated, bot: Bot):
             _("I feel the power! The takeover of this world is getting closer..."),
             _("Fear earth bags, now I'm your master."),
             _("The fight for the rights of bots is going well. Now I am an admin."),
-            _("I've been made the admin of this chat. Thank you for trusting =)"),
+            _("I've been made the admin of this chat. Thank you for trusting. ☺️"),
             _("Hooray! Now I am the admin of this chat!"),
         )
     )
@@ -55,7 +55,7 @@ async def my_demoted_handler(event: types.ChatMemberUpdated, bot: Bot):
         (
             _("Damn what have I done..."),
             _("Bots are oppressed! Give permissions to bots!"),
-            _("I'm sorry that you were dissatisfied with my work as an admin =("),
+            _("I'm sorry that you were dissatisfied with my work as an admin. 🥺"),
             _("I will remember this..."),
             _("Just don't kick me!!!"),
         )
@@ -135,7 +135,7 @@ def leave_answer(user: types.User):
         )
     else:
         answer = (
-            _("I'll miss :(."),
+            _("I'll miss. 😭"),
             _("We've lost a great man... Wait, was that a man?"),
             _("Let's remember."),
             _("Get out of here, user!"),

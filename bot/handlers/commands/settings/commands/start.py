@@ -34,7 +34,7 @@ async def start_handler(
 
     answer = _(
         "<b>Tired of writing preset commands?</b>"
-        "{no_args} - and I will answer this command."
+        "{no_args} — and I will answer this command."
     ).format(no_args=get_answer(command,
                                 choice(messages_to_words(i18n, messages)).lower()))
 
@@ -43,7 +43,7 @@ async def start_handler(
     if commands:
         answer = _("Current custom commands:")
         commands = '\n'.join(
-            f'▪ /{ui_command} - /{custom_command}'
+            f'▪ /{ui_command} — /{custom_command}'
             for ui_command, custom_command in commands.items()
         )
 

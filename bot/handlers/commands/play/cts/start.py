@@ -20,8 +20,8 @@ async def start_handler(message: types.Message, state: FSMContext, i18n: I18n, t
     answer = _(
         "Oh, Geography. Well, let's try!\n"
         "\n"
-        "You need to answer city that begin with the letter or "
-        "letters that the previous city ended."
+        "You need to answer city that begin with the letter "
+        "that the previous city ended."
     )
 
     message = await message.answer(answer)

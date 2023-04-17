@@ -31,7 +31,7 @@ async def answer_handler(message: types.Message, state: FSMContext, data_cts: CT
             )
         )
 
-        answer_two = _("My word: {bot_city}.").format(bot_city=data_cts.bot_city)
+        answer_two = _("My city: {bot_city}.").format(bot_city=data_cts.bot_city)
         message = await message.reply(f"{answer_one} {answer_two}")
 
         await data_cts.set_data(state)
@@ -62,7 +62,7 @@ async def mistake_handler(message: types.Message, state: FSMContext, timer: Time
                 (
                     _("We have already used this name. Choose another!"),
                     _("I remember exactly that we already used this. Let's try something else."),
-                    _("But no, you can’t fool me - this name was already in the game. Be original!")
+                    _("But no, you can’t fool me — this name was already in the game. Be original!")
                 )
             )
         else:
@@ -70,11 +70,11 @@ async def mistake_handler(message: types.Message, state: FSMContext, timer: Time
                 (
                     _("I do not understand something or your word is WRONG!"),
                     _("And here it is not. Think better, user!"),
-                    _("My algorithms do not deceive me - you are mistaken!"),
+                    _("My algorithms do not deceive me — you are mistaken!"),
                 )
             )
 
-        answer_two = _("<b>Remaining attempts</b>: {fail_amount}").format(fail_amount=data_cts.fail_amount)
+        answer_two = _("<b>Remaining attempts</b>: {fail_amount}.").format(fail_amount=data_cts.fail_amount)
         await message.reply(f"{answer_one}\n{answer_two}")
 
     else:

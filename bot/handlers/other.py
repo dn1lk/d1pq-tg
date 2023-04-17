@@ -53,7 +53,7 @@ async def hello_handler(message: types.Message):
                 _("Hey, {user}."),
                 _("Nice to meet you, {user}."),
                 _("My appreciate, {user}."),
-                _("Yop, {user}"),
+                _("Yop, {user}."),
             )
         ).format(user=message.from_user.mention_html())
     )

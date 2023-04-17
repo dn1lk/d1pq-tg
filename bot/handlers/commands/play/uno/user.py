@@ -56,7 +56,7 @@ async def pass_handler(
         await message.reply(
             _(
                 "Of course, I don't mind, but now it's {user}'s turn.\n"
-                "We'll have to wait =)."
+                "We'll have to wait. 🫠"
             ).format(user=user.mention_html())
         )
 
@@ -202,8 +202,8 @@ async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
 
         answer = (
             _("Good job!"),
-            _("And you don't want to lose =)"),
-            _("On reaction =)."),
+            _("And you don't want to lose. 😎"),
+            _("On reaction. 😎"),
             _("Yep!"),
             _("Like a pro.")
         )

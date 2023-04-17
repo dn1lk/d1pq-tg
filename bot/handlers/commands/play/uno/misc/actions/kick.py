@@ -21,10 +21,10 @@ async def kick_for_cards(
     player_data = data_uno.players.finished[user.id]
 
     if player_data.is_me:
-        answer = _("Well, I have run out of my hand. I have to remain only an observer =(.")
+        answer = _("Well, I have run out of my hand. I have to remain only an observer. 🫣")
     else:
         answer = _(
-            "{user} puts his last card and leaves the game as the winner."
+            "{user} puts last card and leaves the game as the winner."
         ).format(user=user.mention_html())
 
     await bot.send_message(state.key.chat_id, answer)

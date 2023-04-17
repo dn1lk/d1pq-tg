@@ -33,10 +33,10 @@ class StartHandler(MessageHandler):
 
     async def handle(self):
         answer = _(
-            "Hmm, {user} is trying their luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
+            "Hmm, {user} is trying own luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
             "I guessed a number from 1 to 10.\n"
             "\n"
-            "Guess what number?"
+            "Guess what?"
         )
 
         self.event = await self.event.answer(answer.format(user=self.from_user.mention_html()))
@@ -96,7 +96,7 @@ class StartHandler(MessageHandler):
 
     async def finish(self, data_rnd: dict[str, str | set[int]]):
         answer = _(
-            "Nobody guessed right =(.\n"
+            "Nobody guessed right. 😢\n"
             "My number was {bot_number}."
         ).format(bot_number=html.bold(data_rnd['bot_number']))
 

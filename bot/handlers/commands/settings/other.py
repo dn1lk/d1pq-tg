@@ -14,7 +14,7 @@ async def get_answer(message: types.Message, bot: Bot) -> dict:
         chat = _("dialogue")
     else:
         admins = ', '.join(admin.user.mention_html() for admin in await bot.get_chat_administrators(message.chat.id))
-        chat = _("chat - only for {admins}").format(admins=admins or _("admins"))
+        chat = _("chat — only for {admins}").format(admins=admins or _("admins"))
 
     return {
         'text': _("My settings of this {chat}:").format(chat=chat),

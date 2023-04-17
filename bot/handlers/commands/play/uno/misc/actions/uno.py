@@ -37,7 +37,7 @@ async def update_uno(
                 _("{user} is left with one card!"),
                 _("{user} is on the verge of victory!"),
                 _("{user} can get +2 cards right now."),
-                _("I want to note - {user} has the last card left!"),
+                _("I want to note — {user} has the last card left!"),
             )
         ).format(user=user.mention_html())
 
@@ -78,7 +78,7 @@ async def proceed_uno(
 
     if message.entities:  # if user has one card
         uno_user = message.entities[-1].user
-        answer_two = _("to player {uno_user}").format(uno_user=uno_user.mention_html())
+        answer_two = _("to {uno_user}").format(uno_user=uno_user.mention_html())
     else:  # if bot has one card
         uno_user = await bot.me()
         answer_two = choice(

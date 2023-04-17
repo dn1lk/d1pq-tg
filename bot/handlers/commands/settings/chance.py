@@ -33,7 +33,7 @@ async def start_handler(query: types.CallbackQuery, chance: int):
         "<b>Update text generation chance.</b>\n"
         "Current chance: {chance}%.\n"
         "\n"
-        "Available chance options:"
+        "Available options:"
     ).format(chance=html.bold(chance))
 
     await query.message.edit_text(answer, reply_markup=keyboards.chance_keyboard(chance))

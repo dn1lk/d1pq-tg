@@ -201,7 +201,7 @@ class UnoData(PlayData):
             player_data = self.players.current_data
 
             if player_data.is_me:
-                answer = _("Ah, no. There were no suitable cards =(")
+                answer = _("Ah, no. There were no suitable cards. 🙄")
             else:
                 answer = choice(
                     (
@@ -227,7 +227,7 @@ class UnoData(PlayData):
 
         return choice(
             (
-                _("Was this choice beneficial? =)"),
+                _("Was this choice beneficial? 🤓"),
                 _("The exchange happened!"),
                 _("See don't get confused."),
             )

@@ -17,7 +17,7 @@ async def start_handler(query: types.CallbackQuery, db: database.SQLContext):
         datas.append(RecordActions.MEMBERS)
 
     for data in datas:
-        answer += f'▪ {html.bold(data.keyboard)} - {data.description}.\n\n'
+        answer += f'▪ {html.bold(data.keyboard)} — {data.description}.\n\n'
 
     await query.message.edit_text(
         answer,

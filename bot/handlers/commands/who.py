@@ -13,7 +13,7 @@ router.message.filter(filters.Command(*CommandTypes.WHO))
 
 @router.message(F.chat.type == enums.ChatType.PRIVATE)
 async def private_handler(message: types.Message):
-    await message.answer(_("This command only works in <b>chats</b>, alas =("))
+    await message.answer(_("This command only works in <b>chats</b>, alas. 😥"))
 
 
 @router.message(filters.MagicData(F.args))
@@ -51,7 +51,7 @@ async def with_args_handler(
         answer = _(
             "<b>This command requires permission to record chat participants.</b>\n"
             "\n"
-            "/settings - give permission."
+            "/settings — give permission."
         )
 
     await message.answer(answer)

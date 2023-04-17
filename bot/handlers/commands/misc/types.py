@@ -19,7 +19,7 @@ class CommandTypes(tuple, Enum):
     START = 'start', 'начать'
 
     def __str__(self):
-        return f"{PREFIX}{self[0]} - {self.description}"
+        return f"{PREFIX}{self[0]} — {self.description}"
 
     @property
     def description(self):

@@ -27,8 +27,8 @@ async def process_handler(message: types.Message):
     else:
         answer = choice(
             (
-                _("Nope. I chose a number {bot_number}"),
-                _("Alas, I guessed the number {bot_number}"),
+                _("Nope. I chose a number {bot_number}."),
+                _("Alas, I guessed the number {bot_number}."),
                 _("So our numbers... didn't match. I have {bot_number}.")
             )
         ).format(bot_number=html.bold(bot_number))

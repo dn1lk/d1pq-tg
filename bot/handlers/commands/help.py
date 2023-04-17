@@ -7,7 +7,7 @@ from aiogram.utils.i18n import I18n, gettext as _
 
 from bot.core import filters
 from bot.core.utils import markov
-from . import CommandTypes
+from .misc.types import CommandTypes, PREFIX
 
 router = Router(name='help')
 router.message.filter(filters.Command(*CommandTypes.HELP))
@@ -56,7 +56,9 @@ async def play_handler(message: types.Message, command: filters.CommandObject):
     message = await message.answer(html.bold(_("And what do you want to play?")))
 
     if random() > 0.5:
-        answer = _("Try to guess the game by writing /play with the right word.")
+        answer = _(
+            "Try to guess the game by writing {prefix}{command} with its name."
+        ).format(prefix=PREFIX, command=command.command)
     else:
         from .play import PlayActions
         answer = get_answer(command, choice(choice(list(PlayActions))))
@@ -148,7 +150,7 @@ async def history_handler(
 @router.message()
 async def help_handler(message: types.Message):
     answer = _(
-        "List of my main commands - I only accept them together "
+        "List of my main commands — I only accept them together "
         "with the required request, in one message:\n"
     )
     ui_commands = '\n'.join(str(command) for command in list(CommandTypes)[3:-1])

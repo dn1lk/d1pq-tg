@@ -33,8 +33,8 @@ async def start_handler(query: types.CallbackQuery, accuracy: int):
         "<b>Update text generation accuracy.</b>\n"
         "Current accuracy: {accuracy}.\n"
         "\n"
-        "Available accuracy options:\n"
-        "<i>More value - better, but longer generation, less - vice versa.</i>"
+        "Available options:\n"
+        "<i>More value — better, but longer generation, less — vice versa.</i>"
     ).format(accuracy=html.bold(accuracy))
 
     await query.message.edit_text(answer, reply_markup=keyboards.accuracy_keyboard(accuracy))
