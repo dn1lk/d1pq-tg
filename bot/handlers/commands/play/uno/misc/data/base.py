@@ -35,9 +35,9 @@ class UnoData(PlayData):
     timer_amount: int = 3
 
     @classmethod
-    def filter(cls):
+    def filter(cls, action: str):
         from ..filter import UnoFilter
-        return UnoFilter()
+        return UnoFilter(action)
 
     def update_turn(self, player_id: int, card: UnoCard):
         self.deck.last_card = card

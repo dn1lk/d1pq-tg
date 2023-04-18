@@ -72,7 +72,7 @@ async def leave_handler(query: types.CallbackQuery, state: FSMContext, timer: Ti
 
 
 async def start_timer(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks):
-    await asyncio.sleep(60)
+    await asyncio.sleep(180)
     await start_handler(message, bot, state, timer, get_users(message.entities))
 
 

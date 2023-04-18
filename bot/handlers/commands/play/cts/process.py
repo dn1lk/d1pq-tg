@@ -21,7 +21,9 @@ async def finish(message: types.Message, state: FSMContext, data_cts: CTSData, a
 
 @router.message(CTSData.filter())
 @flags.timer('play')
-async def answer_handler(message: types.Message, state: FSMContext, data_cts: CTSData, timer: TimerTasks):
+async def answer_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
+    data_cts = await CTSData.get_data(state)
+
     if data_cts.bot_city:
         answer_one = choice(
             (

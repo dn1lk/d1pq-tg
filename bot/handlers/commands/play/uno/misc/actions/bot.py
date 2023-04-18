@@ -31,7 +31,7 @@ class UnoBot:
             return
 
         for card in me_data.cards:
-            filter_card = self.data_uno.filter()
+            filter_card = self.data_uno.filter('turn')
             filter_card.get_filter_card(self.data_uno, self.bot.id)(self.data_uno, card)
 
             if filter_card.accepted:
@@ -47,8 +47,6 @@ class UnoBot:
 
             await asyncio.sleep(delay)
 
-            del timer[self.state.key]
-
             if not cards or random() > 1 / d * 1.4:
                 await self._proceed_pass(timer)
                 return
@@ -59,13 +57,13 @@ class UnoBot:
                 assert not self.message.sticker
                 await self.message.delete()
 
+        try:
             try:
                 self.message = await self.bot.send_sticker(self.state.key.chat_id, card.file_id)
             except exceptions.TelegramRetryAfter as retry:
                 await asyncio.sleep(retry.retry_after)
                 self.message = await retry.method
 
-        try:
             answer = choice(
                 (
                     answer,
@@ -90,15 +88,16 @@ class UnoBot:
             await proceed_turn(self.message, self.bot, self.state, timer, self.data_uno, card, answer)
 
         except asyncio.CancelledError:
-            assert self.message.sticker
-            await self.message.delete()
+            if self.message.sticker:
+                assert self.message.from_user.id == self.bot.id
+                await self.message.delete()
 
-            self.data_uno = await UnoData.get_data(self.state)
+                self.data_uno = await UnoData.get_data(self.state)
 
-            answer = self.data_uno.pick_card(self.message.from_user)
+                answer = self.data_uno.pick_card(self.message.from_user)
 
-            await self.data_uno.set_data(self.state)
-            await self.bot.send_message(self.state.key.chat_id, answer)
+                await self.data_uno.set_data(self.state)
+                await self.bot.send_message(self.state.key.chat_id, answer)
 
     async def _proceed_pass(self, timer: TimerTasks):
         if self.data_uno.state.bluffed:

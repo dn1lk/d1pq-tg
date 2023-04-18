@@ -1,15 +1,16 @@
-from aiogram import types, filters
+from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import I18n
 
+from bot.core.filters import BaseFilter
 from .data import CTSData
 
 EXCEPTION_LETTERS = 'ь', 'ъ'
 
 
-class CTSFilter(filters.BaseFilter):
-    async def __call__(self, message: types.Message, state: FSMContext, i18n: I18n) -> dict | None:
+class CTSFilter(BaseFilter):
+    async def __call__(self, message: types.Message, state: FSMContext, i18n: I18n) -> bool | None:
         data = await CTSData.get_data(state)
 
         bot_city = data.bot_city
@@ -38,4 +39,4 @@ class CTSFilter(filters.BaseFilter):
                 data.used_cities.append(user_city)
                 data.gen_city(cities, user_city)
 
-                return {'data_cts': data}
+                return True

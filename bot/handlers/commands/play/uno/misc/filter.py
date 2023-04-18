@@ -2,11 +2,12 @@ from dataclasses import dataclass
 from random import choice
 from typing import Callable
 
-from aiogram import types
+from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
 from bot.core.filters import BaseFilter
+from bot.core.utils import TimerTasks
 from . import errors
 from .data import UnoData
 from .data.deck import UnoCard, UnoEmoji
@@ -15,6 +16,8 @@ from .data.deck.colors import UnoColors
 
 @dataclass(slots=True)
 class UnoFilter(BaseFilter):
+    _action: str
+
     _is_accepted: bool = False
     answer: str = None
 
@@ -36,9 +39,22 @@ class UnoFilter(BaseFilter):
         self._is_accepted = False
         self.answer = answer
 
-    async def __call__(self, message: types.Message, state: FSMContext) -> dict | None:
+    async def __call__(self, event: types.Message | types.CallbackQuery, bot: Bot, state: FSMContext):
         data_uno = await UnoData.get_data(state)
 
+        match self._action:
+            case 'turn':
+                return await self.for_turn(event, state, data_uno)
+            case 'pass':
+                return await self.for_pass(event, bot, state, data_uno)
+            case 'bluff':
+                return await self.for_bluff(event, bot, state, data_uno)
+            case 'color':
+                return await self.for_color(event, data_uno)
+            case 'uno':
+                return await self.for_uno(event, state, data_uno)
+
+    async def for_turn(self, message: types.Message, state: FSMContext, data_uno: UnoData) -> dict | None:
         player_id = message.from_user.id
         player_data = data_uno.players.playing[player_id]
 
@@ -52,7 +68,6 @@ class UnoFilter(BaseFilter):
             self.get_filter_card(data_uno, player_id)(data_uno, card)
             if self.accepted:
                 return {
-                    'data_uno': data_uno,
                     'card': card,
                     'answer': self.answer,
                 }
@@ -64,25 +79,25 @@ class UnoFilter(BaseFilter):
 
     def get_filter_card(self, data_uno: UnoData, player_id: int) -> Callable[[UnoData, UnoCard], None]:
         if player_id == data_uno.players.current_id:
-            return self.for_current_player
+            return self._for_current_player
 
         elif len(data_uno.deck) == 1:
-            return self.for_start_game
+            return self._for_start_game
 
         else:
             if player_id == data_uno.players.by_index(-1):
 
                 if data_uno.state.passed:
-                    return self.for_passed_player
+                    return self._for_passed_player
                 if data_uno.state.skipped:
-                    return self.for_skipped_player
+                    return self._for_skipped_player
                 else:
-                    return self.for_prev_player
+                    return self._for_prev_player
 
             else:
-                return self.for_other_player
+                return self._for_other_player
 
-    def for_current_player(self, data_uno: UnoData, card: UnoCard):
+    def _for_current_player(self, data_uno: UnoData, card: UnoCard):
         if data_uno.state.drawn:
             if data_uno.settings.stacking and (
                     card.emoji is data_uno.deck.last_card.emoji
@@ -129,7 +144,7 @@ class UnoFilter(BaseFilter):
                 )
             )
 
-    def for_start_game(self, __: UnoData, ___: UnoCard):
+    def _for_start_game(self, __: UnoData, ___: UnoCard):
         self.declined = choice(
             (
                 _("Hey, the game just started and you're already mistaken!"),
@@ -138,7 +153,7 @@ class UnoFilter(BaseFilter):
             )
         )
 
-    def for_passed_player(self, data_uno: UnoData, card: UnoCard):
+    def _for_passed_player(self, data_uno: UnoData, card: UnoCard):
         if card is data_uno.players.playing[data_uno.players.by_index(-1)].cards[-1]:
             # If is received card
 
@@ -165,7 +180,7 @@ class UnoFilter(BaseFilter):
                 )
             )
 
-    def for_skipped_player(self, data_uno: UnoData, card: UnoCard):
+    def _for_skipped_player(self, data_uno: UnoData, card: UnoCard):
         if card.emoji is data_uno.deck.last_card.emoji:
             self.accepted = choice(
                 (
@@ -178,7 +193,7 @@ class UnoFilter(BaseFilter):
         else:
             self.declined = _("{user}, your turn is skipped. 🤨")
 
-    def for_prev_player(self, data_uno: UnoData, card: UnoCard):
+    def _for_prev_player(self, data_uno: UnoData, card: UnoCard):
         if card.emoji in (UnoEmoji.DRAW_TWO, UnoEmoji.DRAW_FOUR):
             self.declined = choice(
                 (
@@ -199,7 +214,7 @@ class UnoFilter(BaseFilter):
         else:
             self.declined = _("{user}, you have already made your turn.")
 
-    def for_other_player(self, data_uno: UnoData, card: UnoCard):
+    def _for_other_player(self, data_uno: UnoData, card: UnoCard):
         if data_uno.settings.jump_in and card == data_uno.deck.last_card:
             self.accepted = choice(
                 (
@@ -220,3 +235,53 @@ class UnoFilter(BaseFilter):
                     _("I'm betting on {user}'s defeat."),
                 )
             )
+
+    @staticmethod
+    async def for_bluff(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData) -> bool | None:
+        current_id = data_uno.players.current_id
+
+        if query.from_user.id == current_id:
+            return True
+
+        else:
+            user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
+            answer = _("Only {user} can do that.").format(user=user.first_name)
+
+            await query.answer(answer)
+
+    @staticmethod
+    async def for_color(query: types.CallbackQuery, data_uno: UnoData) -> bool | None:
+        current_id = data_uno.players.current_id
+
+        if query.from_user.id == current_id:
+            return True
+
+        await query.answer(_("Nice try."))
+
+    @staticmethod
+    async def for_uno(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData) -> bool | None:
+        if query.from_user.id in data_uno.players.playing:
+            timer_uno = TimerTasks('say_uno')
+
+            if any(timer_uno[state.key]):
+                await query.answer(_("Next time be faster!"))
+            else:
+                return True
+
+        else:
+            await query.answer(_("You are not in the game!"))
+
+    @staticmethod
+    async def for_pass(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData) -> bool | None:
+        current_id = data_uno.players.current_id
+
+        if message.from_user.id == current_id:
+            return True
+
+        user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
+        await message.reply(
+            _(
+                "Of course, I don't mind, but now it's {user}'s turn.\n"
+                "We'll have to wait. 🫠"
+            ).format(user=user.mention_html())
+        )

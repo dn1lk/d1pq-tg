@@ -18,22 +18,28 @@ router.message.filter(PlayStates.UNO)
 router.callback_query.filter(PlayStates.UNO)
 
 
-@router.message(F.sticker.set_name == 'uno_by_d1pq_bot', UnoData.filter())
+@router.message(
+    F.sticker.set_name == 'uno_by_d1pq_bot',
+    UnoData.filter('turn')
+)
 @flags.timer('play')
 async def turn_handler(
         message: types.Message,
         bot: Bot,
         state: FSMContext,
         timer: TimerTasks,
-        data_uno: UnoData,
         card: UnoCard,
         answer: str
 ):
+    data_uno = await UnoData.get_data(state)
     await proceed_turn(message, bot, state, timer, data_uno, card, answer)
 
 
-@router.message(F.text == DRAW_CARD)
-@flags.timer(name='play', cancelled=False)
+@router.message(
+    F.text == DRAW_CARD,
+    UnoData.filter('pass')
+)
+@flags.timer('play')
 async def pass_handler(
         message: types.Message,
         bot: Bot,
@@ -41,28 +47,16 @@ async def pass_handler(
         timer: TimerTasks,
 ):
     data_uno = await UnoData.get_data(state)
+    answer = data_uno.do_pass(message.from_user)
 
-    user = message.from_user
-    current_id = data_uno.players.current_id
-
-    if user.id == current_id:
-        del timer[state.key]
-
-        answer = data_uno.do_pass(user)
-        await next_turn(message, bot, state, timer, data_uno, answer)
-
-    else:
-        user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
-        await message.reply(
-            _(
-                "Of course, I don't mind, but now it's {user}'s turn.\n"
-                "We'll have to wait. 🫠"
-            ).format(user=user.mention_html())
-        )
+    await next_turn(message, bot, state, timer, data_uno, answer)
 
 
-@router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.BLUFF))
-@flags.timer(name='play', cancelled=False)
+@router.callback_query(
+    keyboards.UnoData.filter(F.action == keyboards.UnoActions.BLUFF),
+    UnoData.filter('bluff')
+)
+@flags.timer('play')
 async def bluff_handler(
         query: types.CallbackQuery,
         bot: Bot,
@@ -70,27 +64,14 @@ async def bluff_handler(
         timer: TimerTasks,
 ):
     data_uno = await UnoData.get_data(state)
+    answer = await data_uno.do_bluff(bot, state.key.chat_id)
 
-    user = query.from_user
-    current_id = data_uno.players.current_id
-
-    if user.id == current_id:
-        del timer[state.key]
-
-        answer = await data_uno.do_bluff(bot, state.key.chat_id)
-        await next_turn(query.message, bot, state, timer, data_uno, answer)
-
-        await query.answer()
-
-    else:
-        user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
-        answer = _("Only {user} can do that.")
-
-        await query.answer(answer.format(user=user.first_name))
+    await next_turn(query.message, bot, state, timer, data_uno, answer)
+    await query.answer()
 
 
 @router.message(F.entities.func(lambda entities: entities[0].type in ('mention', 'text_mention')))
-@flags.timer(name='play', cancelled=False)
+@flags.timer(name='play', cancelled=False, locked=False)
 class SevenHandler(MessageHandler):
     @property
     def bot(self) -> Bot:
@@ -106,18 +87,15 @@ class SevenHandler(MessageHandler):
 
     async def handle(self):
         data_uno = await UnoData.get_data(self.state)
-
-        user = self.from_user
         current_id = data_uno.players.current_id
 
-        if user.id == current_id:
-            chosen_user = await self.get_seven_user(data_uno)
+        if self.from_user.id == current_id:
+            chosen_user = await self._get_seven_user(data_uno)
 
             if chosen_user:
                 del self.timer[self.state.key]
-
-                answer = data_uno.do_seven(chosen_user.id)
-                await next_turn(self.event, self.bot, self.state, self.timer, data_uno, answer)
+                async with self.timer.lock(self.state.key):
+                    await self.proceed(chosen_user)
 
             else:
                 answer = _("{user} is not playing with us.").format(user=chosen_user.mention_html())
@@ -125,11 +103,11 @@ class SevenHandler(MessageHandler):
 
         else:
             user = await data_uno.players.get_user(self.bot, self.state.key.chat_id, current_id)
-            answer = _("Only {user} can choose with whom to exchange cards.")
+            answer = _("Only {user} can choose with whom to exchange cards.").format(user=html.quote(user.first_name))
 
-            await self.event.answer(answer.format(user=html.quote(user.first_name)))
+            await self.event.answer(answer)
 
-    async def get_seven_user(self, data_uno: UnoData) -> types.User:
+    async def _get_seven_user(self, data_uno: UnoData) -> types.User:
         if self.event.entities[0].user:
             user = self.event.entities[0].user
 
@@ -143,9 +121,18 @@ class SevenHandler(MessageHandler):
                 if f'@{user.username}' in self.event.text:
                     return user
 
+    async def proceed(self, chosen_user: types.User):
+        data_uno = await UnoData.get_data(self.state)
 
-@router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.COLOR))
-@flags.timer(name='play', cancelled=False)
+        answer = data_uno.do_seven(chosen_user.id)
+        await next_turn(self.event, self.bot, self.state, self.timer, data_uno, answer)
+
+
+@router.callback_query(
+    keyboards.UnoData.filter(F.action == keyboards.UnoActions.COLOR),
+    UnoData.filter('color')
+)
+@flags.timer('play')
 async def color_handler(
         query: types.CallbackQuery,
         bot: Bot,
@@ -155,60 +142,38 @@ async def color_handler(
 ):
     data_uno = await UnoData.get_data(state)
 
-    user = query.from_user
-    current_id = data_uno.players.current_id
+    # Update card color
+    color = callback_data.value
+    answer_color = data_uno.do_color(color)
 
-    if user.id == current_id:
-        # Cancel all current play tasks
-        del timer[state.key]
-
-        # Update card color
-        color = callback_data.value
-        answer_color = data_uno.do_color(color)
-
-        message = await query.message.edit_text(
-            _("{user} changes the color to {color}!").format(
-                user=user.mention_html(),
-                color=color,
-            )
+    message = await query.message.edit_text(
+        _("{user} changes the color to {color}!").format(
+            user=query.from_user.mention_html(),
+            color=color,
         )
+    )
 
-        # Check for DRAW_FOUR card
-        await next_turn(message, bot, state, timer, data_uno, answer_color or "")
-        await query.answer()
-    else:
-        await query.answer(_("Nice try."))
+    await next_turn(message, bot, state, timer, data_uno, answer_color or "")
+    await query.answer()
 
 
-@router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO))
+@router.callback_query(
+    keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO),
+    UnoData.filter('uno')
+)
+@flags.timer('play')
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
-    user = query.from_user
+    if not query.message.entities or query.from_user.id != query.message.entities[-1].user.id:
+        await proceed_uno(query.message, bot, state, data_uno, query.from_user)
 
-    if user.id in data_uno.players.playing:
-        timer_uno = TimerTasks('say_uno')
-        tasks = set(timer_uno[state.key])
+    answer = (
+        _("Good job!"),
+        _("And you don't want to lose. 😎"),
+        _("On reaction. 😎"),
+        _("Yep!"),
+        _("Like a pro.")
+    )
 
-        if not tasks:
-            await query.answer(_("Next time be faster!"))
-            return
-
-        for task in tasks:
-            task.cancel()
-
-        if not query.message.entities or query.from_user.id != query.message.entities[-1].user.id:
-            await proceed_uno(query.message, bot, state, data_uno, user)
-
-        answer = (
-            _("Good job!"),
-            _("And you don't want to lose. 😎"),
-            _("On reaction. 😎"),
-            _("Yep!"),
-            _("Like a pro.")
-        )
-
-        await query.answer(choice(answer))
-
-    else:
-        await query.answer(_("You are not in the game!"))
+    await query.answer(choice(answer))

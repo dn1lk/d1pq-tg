@@ -1,7 +1,7 @@
 import asyncio
 from collections import defaultdict
 from contextlib import asynccontextmanager
-from typing import Coroutine, AsyncGenerator
+from typing import Coroutine, AsyncGenerator, Generator
 
 from aiogram.fsm.storage.base import StorageKey
 
@@ -23,7 +23,7 @@ class TimerTasks:
         task.set_name(key)
         task.add_done_callback(self._tasks.discard)
 
-    def __getitem__(self, key: StorageKey):
+    def __getitem__(self, key: StorageKey) -> Generator[asyncio.Task, None, None]:
         key = self.get_key(key)
 
         for task in self._tasks:

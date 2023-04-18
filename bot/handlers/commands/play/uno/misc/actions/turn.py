@@ -162,8 +162,17 @@ async def _update_timer(
     bot_uno = UnoBot(message, bot, state, data_uno)
     cards = tuple(bot_uno.get_cards())
 
-    if cards or data_uno.players.current_data.is_me:
-        timer[state.key] = bot_uno.gen_turn(timer, *cards)
+    from .timer import task, _timeout, _finally
 
-    from .timer import task
-    timer[state.key] = task(message, bot, state, timer, data_uno)
+    if cards or data_uno.players.current_data.is_me:
+
+        try:
+            async with asyncio.timeout(60 * data_uno.timer_amount):
+                await bot_uno.gen_turn(timer, *cards)
+        except TimeoutError:
+            await _timeout(message, bot, state, timer)
+        finally:
+            await _finally(message, state)
+
+    else:
+        timer[state.key] = task(message, bot, state, timer, data_uno)
