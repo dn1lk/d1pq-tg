@@ -43,7 +43,7 @@ async def restart(
     await asyncio.sleep(1)
 
     for n in range(2, 1, -1):
-        message = await message.edit_text(message.html_text.replace(str(n + 2), str(n)))
+        message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
         await asyncio.sleep(1)
 
     await message.delete()
