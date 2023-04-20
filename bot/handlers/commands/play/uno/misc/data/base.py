@@ -103,6 +103,7 @@ class UnoData(PlayData):
         if self.deck.last_card.emoji == UnoEmoji.DRAW_FOUR:
             answer_one = self.answer_bluff()
         else:
+            self.state.bluffed = False
             self.state.drawn += 2
 
             answer_one = choice(

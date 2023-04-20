@@ -85,7 +85,7 @@ class SevenHandler(MessageHandler):
     def timer(self) -> TimerTasks:
         return self.data['timer']
 
-    async def handle(self):
+    async def filter(self):
         data_uno = await UnoData.get_data(self.state)
         current_id = data_uno.players.current_id
 
@@ -94,20 +94,25 @@ class SevenHandler(MessageHandler):
 
             if chosen_user:
                 del self.timer[self.state.key]
-                async with self.timer.lock(self.state.key):
-                    await self.proceed(chosen_user)
+                return chosen_user
 
             else:
                 answer = _("{user} is not playing with us.").format(user=chosen_user.mention_html())
-                await self.event.answer(answer)
 
         else:
             user = await data_uno.players.get_user(self.bot, self.state.key.chat_id, current_id)
             answer = _("Only {user} can choose with whom to exchange cards.").format(user=html.quote(user.first_name))
 
-            await self.event.answer(answer)
+        await self.event.answer(answer)
 
-    async def _get_seven_user(self, data_uno: UnoData) -> types.User:
+    async def handle(self):
+        chosen_user = await self.filter()
+
+        if chosen_user:
+            async with self.timer.lock(self.state.key):
+                await self.proceed(chosen_user)
+
+    async def _get_seven_user(self, data_uno: UnoData) -> types.User | None:
         if self.event.entities[0].user:
             user = self.event.entities[0].user
 
