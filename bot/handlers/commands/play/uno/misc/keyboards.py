@@ -99,10 +99,10 @@ def settings_keyboard(message: types.Message):
     return builder.as_markup()
 
 
-def show_cards(is_draw_four: bool):
+def show_cards(bluffed: bool):
     builder = InlineKeyboardBuilder()
 
-    if is_draw_four:
+    if bluffed:
         builder.button(text=_("Bluff!"), callback_data=UnoData(action=UnoActions.BLUFF))
 
     builder.button(text=_("Show cards"), switch_inline_query_current_chat="uno")

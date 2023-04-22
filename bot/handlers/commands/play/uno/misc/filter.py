@@ -243,11 +243,10 @@ class UnoFilter(BaseFilter):
         if query.from_user.id == current_id:
             return True
 
-        else:
-            user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
-            answer = _("Only {user} can do that.").format(user=user.first_name)
+        user = await data_uno.players.get_user(bot, state.key.chat_id, current_id)
+        answer = _("Only {user} can do that.").format(user=user.first_name)
 
-            await query.answer(answer)
+        await query.answer(answer)
 
     @staticmethod
     async def for_color(query: types.CallbackQuery, data_uno: UnoData) -> bool | None:

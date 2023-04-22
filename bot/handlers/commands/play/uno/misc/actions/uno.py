@@ -13,6 +13,7 @@ async def update_uno(
         message: types.Message,
         bot: Bot,
         state: FSMContext,
+        timer: TimerTasks,
         data_uno: UnoData,
 ):
     user = message.from_user
@@ -47,7 +48,7 @@ async def update_uno(
     bot_uno = UnoBot(message, bot, state, data_uno)
 
     timer_uno = TimerTasks('say_uno')
-    timer_uno[state.key] = bot_uno.gen_uno(a, b)
+    timer_uno[state.key] = bot_uno.gen_uno(timer, a, b)
 
 
 async def proceed_uno(

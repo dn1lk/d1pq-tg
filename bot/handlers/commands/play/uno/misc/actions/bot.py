@@ -1,6 +1,7 @@
 import asyncio
 from dataclasses import dataclass
 from random import choice, random, randint
+from typing import Generator
 
 from aiogram import Bot, types, exceptions, enums
 from aiogram.fsm.context import FSMContext
@@ -24,7 +25,7 @@ class UnoBot:
 
     data_uno: UnoData
 
-    def get_cards(self):
+    def get_cards(self) -> Generator[None | tuple[UnoCard, str], None, None]:
         me_data = self.data_uno.players.playing.get(self.bot.id)
 
         if not me_data:
@@ -101,8 +102,6 @@ class UnoBot:
 
     async def _proceed_pass(self, timer: TimerTasks):
         if self.data_uno.state.bluffed:
-            # Check if bluffed
-
             d = self.data_uno.settings.difficulty
 
             prev_id = self.data_uno.players.by_index(-1)
@@ -124,14 +123,17 @@ class UnoBot:
         answer_next = await self.data_uno.do_next(self.bot, self.state)
 
         try:
-            self.message = await self.message.edit_text(f'{answer}\n{answer_next}',
-                                                        reply_markup=keyboards.show_cards(False))
+            self.message = await self.message.edit_text(
+                f'{answer}\n{answer_next}',
+                reply_markup=keyboards.show_cards(bluffed=False)
+            )
+
         except exceptions.TelegramRetryAfter as retry:
             await asyncio.sleep(retry.retry_after)
             self.message = await retry.method
 
-        from .turn import _update_timer
-        await _update_timer(self.message, self.bot, self.state, timer, self.data_uno)
+        from .turn import update_timer
+        await update_timer(self.message, self.bot, self.state, timer, self.data_uno)
 
     async def do_seven(self) -> str:
         chosen_id = choice([player[0] for player in self.data_uno.players.playing.items() if not player[1].is_me])
@@ -156,22 +158,24 @@ class UnoBot:
         self.data_uno.do_color(color)
         return _("I choice {color}.").format(color=color)
 
-    async def gen_uno(self, a: int, b: int):
+    async def gen_uno(self, timer: TimerTasks, a: int, b: int):
         try:
             async with ChatActionSender.typing(chat_id=self.state.key.chat_id):
                 m = self.data_uno.settings.difficulty / len(self.data_uno.players)
                 await asyncio.sleep(randint(a, b) * m)
 
-        except asyncio.CancelledError:
+        except asyncio.CancelledError:  # if next turn is started
             await self.message.delete_reply_markup()
 
-        else:
+        else:  # if timeout
             if self.message.entities:  # if user has one card
                 user = self.message.from_user
-                data_uno = await UnoData.get_data(self.state)
 
-                from .uno import proceed_uno
-                await proceed_uno(self.message, self.bot, self.state, data_uno, user)
+                async with timer.lock(self.state.key):
+                    data_uno = await UnoData.get_data(self.state)
+
+                    from .uno import proceed_uno
+                    await proceed_uno(self.message, self.bot, self.state, data_uno, user)
             else:  # if bot has one card
                 await self.message.delete_reply_markup()
 
@@ -180,19 +184,28 @@ class UnoBot:
             await asyncio.sleep(60)
         finally:
             poll = await self.bot.stop_poll(self.state.key.chat_id, self.message.message_id)
-            self.data_uno = await UnoData.get_data(self.state)
 
-            if player_id in self.data_uno.players.playing and poll.options[0].voter_count > poll.options[1].voter_count:
-                user = await self.data_uno.players.get_user(self.bot, self.state.key.chat_id, player_id)
+            async with timer.lock(self.state.key):
+                self.data_uno = await UnoData.get_data(self.state)
 
-                from .kick import kick_for_idle
-                await kick_for_idle(self.bot, self.state, timer, self.data_uno, user)
+                if (
+                        player_id in self.data_uno.players.playing
+                        and poll.options[0].voter_count > poll.options[1].voter_count
+                ):
+                    user = await self.data_uno.players.get_user(self.bot, self.state.key.chat_id, player_id)
 
-                if len(self.data_uno.players) == 1:
-                    from .base import finish
-                    await finish(self.bot, self.state, timer, self.data_uno)
-                elif len(self.data_uno.players.playing) == 1 and self.data_uno.settings.mode is UnoMode.WITH_POINTS:
-                    from .base import restart
-                    await restart(self.bot, self.state, timer, self.data_uno)
+                    from .kick import kick_for_idle
+                    await kick_for_idle(self.bot, self.state, timer, self.data_uno, user)
+
+                    if len(self.data_uno.players) == 1:
+                        from .base import finish
+                        await finish(self.bot, self.state, timer, self.data_uno)
+
+                    elif (
+                            len(self.data_uno.players.playing) == 1
+                            and self.data_uno.settings.mode is UnoMode.WITH_POINTS
+                    ):
+                        from .base import restart
+                        await restart(self.bot, self.state, timer, self.data_uno)
 
             await self.message.delete()

@@ -9,6 +9,7 @@ from bot.core.utils import TimerTasks
 from . import DRAW_CARD
 from .misc import keyboards
 from .misc.actions import proceed_turn, next_turn, proceed_uno
+from .misc.actions.turn import update_timer
 from .misc.data import UnoData
 from .misc.data.deck import UnoCard
 from .. import PlayStates
@@ -64,9 +65,16 @@ async def bluff_handler(
         timer: TimerTasks,
 ):
     data_uno = await UnoData.get_data(state)
-    answer = await data_uno.do_bluff(bot, state.key.chat_id)
 
-    await next_turn(query.message, bot, state, timer, data_uno, answer)
+    answer = await data_uno.do_bluff(bot, state.key.chat_id)
+    answer_next = await data_uno.do_next(bot, state)
+
+    message = await query.message.edit_text(
+        f'{answer}\n{answer_next}',
+        reply_markup=keyboards.show_cards(bluffed=False)
+    )
+
+    await update_timer(message, bot, state, timer, data_uno)
     await query.answer()
 
 

@@ -69,7 +69,7 @@ class StartHandler(MessageHandler):
                         yield sticker
 
         async with ChatActionSender.choose_sticker(chat_id=self.chat.id, interval=10):
-            for i in 10, 20, 30:
+            for i in (10, 20, 30):
                 await asyncio.sleep(i)
                 data_rnd_new = await self.state.get_data()
 

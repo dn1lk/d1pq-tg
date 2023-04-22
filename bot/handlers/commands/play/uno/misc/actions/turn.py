@@ -30,7 +30,7 @@ async def proceed_turn(
 
         except errors.UnoOneCard:
             from .uno import update_uno
-            await update_uno(message, bot, state, data_uno)
+            await update_uno(message, bot, state, timer, data_uno)
 
         except errors.UnoNoCards:
             from .kick import kick_for_cards
@@ -101,7 +101,7 @@ async def _proceed_seven(
     ).format(user=message.from_user.mention_html())
 
     message = await message.answer(answer)
-    await _update_timer(message, bot, state, timer, data_uno)
+    await update_timer(message, bot, state, timer, data_uno)
 
 
 async def _proceed_color(
@@ -121,7 +121,7 @@ async def _proceed_color(
     ).format(user=message.from_user.mention_html())
 
     message = await message.answer(answer, reply_markup=keyboards.choice_color())
-    await _update_timer(message, bot, state, timer, data_uno)
+    await update_timer(message, bot, state, timer, data_uno)
 
 
 async def next_turn(
@@ -143,15 +143,15 @@ async def next_turn(
 
     try:
         message = await message.reply(f'{answer}\n{answer_next}',
-                                      reply_markup=keyboards.show_cards(data_uno.state.bluffed))
+                                      reply_markup=keyboards.show_cards(bluffed=data_uno.state.bluffed))
     except exceptions.TelegramRetryAfter as retry:
         await asyncio.sleep(retry.retry_after)
         message = await retry.method
 
-    await _update_timer(message, bot, state, timer, data_uno)
+    await update_timer(message, bot, state, timer, data_uno)
 
 
-async def _update_timer(
+async def update_timer(
         message: types.Message,
         bot: Bot,
         state: FSMContext,

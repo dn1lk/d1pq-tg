@@ -45,7 +45,6 @@ async def _timeout(message: types.Message, bot: Bot, state: FSMContext, timer: T
 
         if last_card.color is UnoColors.BLACK:
             color = choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
-
             data_uno.do_color(color)
 
             answer = _("Ok, current color: {color}").format(color=color)
@@ -79,7 +78,9 @@ async def task(
 ):
     try:
         await asyncio.sleep(60 * data_uno.timer_amount)
-        await _timeout(message, bot, state, timer)
+
+        async with timer.lock(state.key):
+            await _timeout(message, bot, state, timer)
     finally:
         await _finally(message, state)
 

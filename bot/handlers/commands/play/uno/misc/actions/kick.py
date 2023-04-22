@@ -46,11 +46,13 @@ def kick(func: Callable[[types.User], str]):
 
         if user.id == current_id:
             answer_next = await data_uno.do_next(bot, state)
-            message = await bot.send_message(state.key.chat_id, f'{answer}\n{answer_next}',
-                                             reply_markup=keyboards.show_cards(data_uno.state.bluffed))
+            message = await bot.send_message(
+                state.key.chat_id, f'{answer}\n{answer_next}',
+                reply_markup=keyboards.show_cards(bluffed=data_uno.state.bluffed)
+            )
 
-            from .turn import _update_timer
-            await _update_timer(message, bot, state, timer, data_uno)
+            from .turn import update_timer
+            await update_timer(message, bot, state, timer, data_uno)
         else:
             await data_uno.set_data(state)
             await bot.send_message(state.key.chat_id, answer)
