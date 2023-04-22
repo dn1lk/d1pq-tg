@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-22 12:02+0300\n"
+"POT-Creation-Date: 2023-04-22 12:51+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -904,53 +904,53 @@ msgid_plural "{points} points earned"
 msgstr[0] ""
 msgstr[1] ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:72
+#: handlers/commands/play/uno/misc/actions/bot.py:79
 msgid "My move is made."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:73
+#: handlers/commands/play/uno/misc/actions/bot.py:80
 msgid "Expected? But I don't care."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:74
+#: handlers/commands/play/uno/misc/actions/bot.py:81
 msgid "BA-DUM-TSS!"
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:75
+#: handlers/commands/play/uno/misc/actions/bot.py:82
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:79
+#: handlers/commands/play/uno/misc/actions/bot.py:86
 msgid "I still have cards in my hand."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:80
+#: handlers/commands/play/uno/misc/actions/bot.py:87
 msgid "Curious, but I know all the hands in the game... I dealt them."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:81
+#: handlers/commands/play/uno/misc/actions/bot.py:88
 msgid "Maybe I can even win this game!"
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:82
+#: handlers/commands/play/uno/misc/actions/bot.py:89
 msgid "Oh, I don't envy the next player..."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:83
+#: handlers/commands/play/uno/misc/actions/bot.py:90
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:84
+#: handlers/commands/play/uno/misc/actions/bot.py:91
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:143
+#: handlers/commands/play/uno/misc/actions/bot.py:150
 msgid "I exchange cards with player {chosen_user}."
 msgstr ""
 
-#: handlers/commands/play/uno/misc/actions/bot.py:159
+#: handlers/commands/play/uno/misc/actions/bot.py:166
 msgid "I choice {color}."
 msgstr ""
 
