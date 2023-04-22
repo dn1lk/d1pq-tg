@@ -79,7 +79,7 @@ def settings_keyboard(message: types.Message):
 
     for action in UnoSettings:
         builder.button(
-            text=_("Change {settings}".format(settings=str(action))),
+            text=_("Change {settings}").format(settings=str(action)),
             callback_data=UnoData(action=action)
         )
 
