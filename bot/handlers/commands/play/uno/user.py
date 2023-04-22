@@ -174,7 +174,7 @@ async def color_handler(
     keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO),
     UnoData.filter('uno')
 )
-@flags.timer('play')
+@flags.timer(name='play', cancelled=False)
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 

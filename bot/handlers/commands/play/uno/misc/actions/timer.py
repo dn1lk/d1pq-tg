@@ -1,7 +1,7 @@
 import asyncio
 from random import choice
 
-from aiogram import Bot, types
+from aiogram import Bot, types, exceptions
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
@@ -66,7 +66,12 @@ async def _finally(message: types.Message, state: FSMContext):
 
     if message.reply_markup and len(message.reply_markup.inline_keyboard) == 2:
         del message.reply_markup.inline_keyboard[0]
-        await message.edit_reply_markup(reply_markup=message.reply_markup)
+
+        # todo: remove exception
+        try:
+            await message.edit_reply_markup(reply_markup=message.reply_markup)
+        except exceptions.TelegramBadRequest:
+            pass
 
 
 async def task(

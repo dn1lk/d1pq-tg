@@ -39,24 +39,27 @@ class UnoBot:
                 yield card, filter_card.answer
 
     async def gen_turn(self, timer: TimerTasks, *cards: tuple[UnoCard, str]):
-        async with ChatActionSender.choose_sticker(chat_id=self.state.key.chat_id):
-            d = self.data_uno.settings.difficulty
-            delay = randint(1, 4) * d
+        async with timer.lock(self.state.key):
+            async with ChatActionSender.choose_sticker(chat_id=self.state.key.chat_id):
+                d = self.data_uno.settings.difficulty
+                delay = randint(1, 4) * d
 
-            if self.message.chat.type is not enums.ChatType.PRIVATE:
-                delay *= 1.5
+                if self.message.chat.type is not enums.ChatType.PRIVATE:
+                    delay *= 1.5
 
-            await asyncio.sleep(delay)
+                await asyncio.sleep(delay)
+                del timer[self.state.key]  # cancel current timers
 
-            if not cards or random() > 1 / d * 1.4:
-                await self._proceed_pass(timer)
-                return
+                if not cards or random() > 1 / d * 1.4:
+                    await self._proceed_pass(timer)
+                else:
+                    await self._proceed_turn(timer, *cards)
 
-            card, answer = choice(cards)
+    async def _proceed_turn(self, timer: TimerTasks, *cards: tuple[UnoCard, str]):
+        card, answer = choice(cards)
 
-            if not self.data_uno.players.current_data.is_me:
-                assert not self.message.sticker
-                await self.message.delete()
+        if not self.data_uno.players.current_data.is_me:
+            await self.message.delete()
 
         try:
             try:
@@ -155,8 +158,14 @@ class UnoBot:
         else:
             color = choice(me_data.cards).color
 
-        self.data_uno.do_color(color)
-        return _("I choice {color}.").format(color=color)
+        answer_color = _("I choice {color}.").format(color=color)
+        answer_draw = self.data_uno.do_color(color)
+
+        if answer_draw:
+            await self.message.answer(answer_color)
+            return answer_draw
+
+        return answer_color
 
     async def gen_uno(self, timer: TimerTasks, a: int, b: int):
         try:
@@ -164,20 +173,21 @@ class UnoBot:
                 m = self.data_uno.settings.difficulty / len(self.data_uno.players)
                 await asyncio.sleep(randint(a, b) * m)
 
-        except asyncio.CancelledError:  # if next turn is started
-            await self.message.delete_reply_markup()
+                if self.message.entities:  # if user has one card
+                    user = self.message.from_user
 
-        else:  # if timeout
-            if self.message.entities:  # if user has one card
-                user = self.message.from_user
+                    async with timer.lock(self.state.key):
+                        data_uno = await UnoData.get_data(self.state)
 
-                async with timer.lock(self.state.key):
-                    data_uno = await UnoData.get_data(self.state)
+                        from .uno import proceed_uno
+                        await proceed_uno(self.message, self.bot, self.state, data_uno, user)
 
-                    from .uno import proceed_uno
-                    await proceed_uno(self.message, self.bot, self.state, data_uno, user)
-            else:  # if bot has one card
+        finally:
+            # todo: remove exception
+            try:
                 await self.message.delete_reply_markup()
+            except exceptions.TelegramBadRequest:
+                pass
 
     async def gen_poll(self, timer: TimerTasks, player_id: int):
         try:

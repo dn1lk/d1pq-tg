@@ -263,10 +263,11 @@ class UnoFilter(BaseFilter):
             timer_uno = TimerTasks('say_uno')
 
             if any(timer_uno[state.key]):
-                await query.answer(_("Next time be faster!"))
-            else:
+                del timer_uno[state.key]
+
                 return True
 
+            await query.answer(_("Next time be faster!"))
         else:
             await query.answer(_("You are not in the game!"))
 
