@@ -11,6 +11,11 @@ def setup(parent_router: Router):
 
     parent_router.include_router(router)
 
+    from . import play, settings
+
+    settings.setup(router)
+    play.setup(router)
+
     from . import choose, help, question, start, story, who
     router.include_routers(
         choose.router,
@@ -20,8 +25,3 @@ def setup(parent_router: Router):
         help.router,
         start.router,
     )
-
-    from . import play, settings
-
-    play.setup(router)
-    settings.setup(router)
