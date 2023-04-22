@@ -1,34 +1,34 @@
-class UnoExistedPlayer(BaseException):
+class UnoExistedPlayer(Exception):
     pass
 
 
-class UnoMaxPlayers(BaseException):
+class UnoMaxPlayers(Exception):
     pass
 
 
-class UnoInvalidSticker(BaseException):
+class UnoInvalidSticker(Exception):
     pass
 
 
-class UnoSeven(BaseException):
+class UnoSeven(Exception):
     pass
 
 
-class UnoColor(BaseException):
+class UnoColor(Exception):
     pass
 
 
-class UnoNoCards(BaseException):
+class UnoNoCards(Exception):
     pass
 
 
-class UnoOneCard(BaseException):
+class UnoOneCard(Exception):
     pass
 
 
-class UnoFinish(BaseException):
+class UnoFinish(Exception):
     pass
 
 
-class UnoRestart(BaseException):
+class UnoRestart(Exception):
     pass
