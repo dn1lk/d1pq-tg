@@ -22,10 +22,10 @@ async def main():
     logger.info("Start bot")
 
     await utils.setup(misc.dp)
+    # await ui_info.setup(misc.bot, misc.i18n)
 
     middlewares.setup(misc.dp, misc.i18n)
     handlers.setup(misc.dp)
-    # await ui_info.setup(bot)
 
     if config.WEBHOOK_USE:
         await webhook.start(misc.dp, misc.bot)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     import handlers
     import webhook
     import logs
-    from core import types, utils, middlewares
+    from core import types, utils, middlewares  # , ui_info
 
     logs.setup()
     types.setup()
