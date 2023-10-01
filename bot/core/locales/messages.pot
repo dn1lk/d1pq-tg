@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:32+0300\n"
+"POT-Creation-Date: 2023-10-01 19:49+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -257,85 +257,85 @@ msgstr ""
 msgid "And here it is not. This game has a different name. 😜"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:19
+#: bot/handlers/commands/play/cts/process.py:18
 msgid "<b>Cities guessed</b>: {cities}."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:29
+#: bot/handlers/commands/play/cts/process.py:28
 msgid "Hmm."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:30
+#: bot/handlers/commands/play/cts/process.py:29
 msgid "And you're smarter than you look."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:31
+#: bot/handlers/commands/play/cts/process.py:30
 msgid "Right!"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:35
+#: bot/handlers/commands/play/cts/process.py:34
 msgid "My city: {bot_city}."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:44
+#: bot/handlers/commands/play/cts/process.py:43
 msgid "Okay, I have nothing to write on {letter}... Victory is yours."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:45
+#: bot/handlers/commands/play/cts/process.py:44
 msgid "Can't find the right something on {letter}... My defeat."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:46
+#: bot/handlers/commands/play/cts/process.py:45
 msgid ""
 "VICTORY... yours. I can't remember that name... You know, it also starts "
 "with {letter}..."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:65
+#: bot/handlers/commands/play/cts/process.py:64
 msgid "We have already used this name. Choose another!"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:66
+#: bot/handlers/commands/play/cts/process.py:65
 msgid "I remember exactly that we already used this. Let's try something else."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:67
+#: bot/handlers/commands/play/cts/process.py:66
 msgid ""
 "But no, you can’t fool me — this name was already in the game. Be "
 "original!"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:73
+#: bot/handlers/commands/play/cts/process.py:72
 msgid "I do not understand something or your word is WRONG!"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:74
+#: bot/handlers/commands/play/cts/process.py:73
 msgid "And here it is not. Think better, user!"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:75
+#: bot/handlers/commands/play/cts/process.py:74
 msgid "My algorithms do not deceive me — you are mistaken!"
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:79
+#: bot/handlers/commands/play/cts/process.py:78
 msgid "<b>Remaining attempts</b>: {fail_amount}."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:87
+#: bot/handlers/commands/play/cts/process.py:86
 msgid "You have no attempts left."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:88
+#: bot/handlers/commands/play/cts/process.py:87
 msgid "Looks like all attempts have been spent."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/process.py:89
+#: bot/handlers/commands/play/cts/process.py:88
 msgid ""
 "Where is an ordinary user up to artificial intelligence. All attempts "
 "have ended."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/start.py:21
+#: bot/handlers/commands/play/cts/start.py:20
 msgid ""
 "Oh, Geography. Well, let's try!\n"
 "\n"
@@ -343,11 +343,11 @@ msgid ""
 " ended."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/start.py:36
+#: bot/handlers/commands/play/cts/start.py:35
 msgid "I start! My city: {bot_city}."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/start.py:38
+#: bot/handlers/commands/play/cts/start.py:37
 msgid "You start! Your city?"
 msgstr ""
 
@@ -579,19 +579,19 @@ msgstr ""
 msgid "Only {user} can set up the game."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/start.py:33
+#: bot/handlers/commands/play/uno/start.py:31
 msgid "{user} join to current game."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/start.py:36
+#: bot/handlers/commands/play/uno/start.py:34
 msgid "You already in the game."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/start.py:39
+#: bot/handlers/commands/play/uno/start.py:37
 msgid "Already 10 people are playing in the game."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/start.py:45
+#: bot/handlers/commands/play/uno/start.py:43
 msgid ""
 "<b>Let's play UNO?</b>\n"
 "\n"
@@ -805,23 +805,23 @@ msgstr ""
 msgid "I'm betting on {user}'s defeat."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/filter.py:253
+#: bot/handlers/commands/play/uno/misc/filter.py:258
 msgid "Only {user} can do that."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/filter.py:264
+#: bot/handlers/commands/play/uno/misc/filter.py:272
 msgid "Nice try."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/filter.py:274
+#: bot/handlers/commands/play/uno/misc/filter.py:287
 msgid "Next time be faster!"
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/filter.py:276
+#: bot/handlers/commands/play/uno/misc/filter.py:289
 msgid "You are not in the game!"
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/filter.py:287
+#: bot/handlers/commands/play/uno/misc/filter.py:305
 msgid ""
 "Of course, I don't mind, but now it's {user}'s turn.\n"
 "We'll have to wait. 🫠"
@@ -971,19 +971,19 @@ msgstr ""
 msgid "Ok, current color: {color}"
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/actions/turn.py:99
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:98
 msgid ""
 "{user}, with whom will you exchange cards?\n"
 "Mention (@) this player in your next message."
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/actions/turn.py:119
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:118
 msgid ""
 "Finally, we will change the color.\n"
 "What will {user} choose?"
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/actions/turn.py:120
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:119
 msgid ""
 "New color, new light.\n"
 "by {user}."

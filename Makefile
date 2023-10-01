@@ -66,7 +66,7 @@ deploy: push set_webhook
 		--image '$(IMAGE_NAME):latest' \
 		--core-fraction 5 \
 		--concurrency 10 \
-		--environment '$(shell sed 's|^|,|g' .env *.env | tr -s "\r\n" "," | cut -c2-)' \
+		--environment '$(shell sed 's|^|,|g' *.env .env | tr -s "\r\n" "," | cut -c2-)' \
 		--execution-timeout 10m \
 		--service-account-id $(YC_SERVICE_ACCOUNT_ID)  \
 
