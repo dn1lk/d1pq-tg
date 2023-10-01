@@ -8,7 +8,6 @@ from .card import UnoCard
 from .colors import UnoColors
 from .emoji import UnoEmoji
 
-
 STICKER_SET_NAME = 'uno_by_d1pq_bot'
 
 

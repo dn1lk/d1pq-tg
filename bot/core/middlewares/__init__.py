@@ -7,8 +7,8 @@ from aiogram.utils.i18n import I18n
 from core.locales.middleware import I18nContextMiddleware
 from core.utils.database.middleware import SQLGetMainMiddleware, SQLGetFlagsMiddleware, SQLUpdateMiddleware
 from core.utils.timer.middleware import TimerMiddleware
-from .throttling import ThrottlingMiddleware
 from .destiny import DestinySetMiddleware
+from .throttling import ThrottlingMiddleware
 
 __all__ = (
     "ChatActionMiddleware",

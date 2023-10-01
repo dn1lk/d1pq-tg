@@ -1,4 +1,3 @@
-from dataclasses import replace
 from random import choice
 
 from aiogram import Router, types, flags, html

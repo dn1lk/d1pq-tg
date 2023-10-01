@@ -11,7 +11,6 @@ __all__ = (
     "DEFAULT_STICKER_SET",
 )
 
-
 DEFAULT_STICKER_SET = "TextAnimated"
 
 

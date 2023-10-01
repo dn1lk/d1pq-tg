@@ -8,10 +8,10 @@
 **/coverage
 **/**.env
 **/**.env.example
+**/**.yml
 **/yc_creds.json
 **/api-gw.yaml
 **/api-gw.yaml.example
 Dockerfile
 Makefile
 README.md
-**.yml

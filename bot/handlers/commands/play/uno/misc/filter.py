@@ -1,4 +1,4 @@
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from random import choice
 from typing import Callable
 
@@ -243,7 +243,12 @@ class UnoFilter(BaseFilter):
             )
 
     @staticmethod
-    async def for_bluff(query: types.CallbackQuery, bot: Bot, state: FSMContext, data_uno: UnoData) -> bool | None:
+    async def for_bluff(
+            query: types.CallbackQuery,
+            bot: Bot,
+            state: FSMContext,
+            data_uno: UnoData
+    ) -> bool | None:
         current_id = data_uno.players.current_id
 
         if query.from_user.id == current_id:
@@ -255,7 +260,10 @@ class UnoFilter(BaseFilter):
         await query.answer(answer)
 
     @staticmethod
-    async def for_color(query: types.CallbackQuery, data_uno: UnoData) -> bool | None:
+    async def for_color(
+            query: types.CallbackQuery,
+            data_uno: UnoData
+    ) -> bool | None:
         current_id = data_uno.players.current_id
 
         if query.from_user.id == current_id:
@@ -264,7 +272,12 @@ class UnoFilter(BaseFilter):
         await query.answer(_("Nice try."))
 
     @staticmethod
-    async def for_uno(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData, timer: TimerTasks) -> bool | None:
+    async def for_uno(
+            query: types.CallbackQuery,
+            state: FSMContext,
+            data_uno: UnoData,
+            timer: TimerTasks
+    ) -> bool | None:
         if query.from_user.id in data_uno.players.playing:
             if any(timer[state.key]):
                 del timer[state.key]
@@ -276,7 +289,12 @@ class UnoFilter(BaseFilter):
             await query.answer(_("You are not in the game!"))
 
     @staticmethod
-    async def for_pass(message: types.Message, bot: Bot, state: FSMContext, data_uno: UnoData) -> bool | None:
+    async def for_pass(
+            message: types.Message,
+            bot: Bot,
+            state: FSMContext,
+            data_uno: UnoData
+    ) -> bool | None:
         current_id = data_uno.players.current_id
 
         if message.from_user.id == current_id:

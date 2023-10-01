@@ -19,7 +19,6 @@ CLOSE = (
     __("It's too slow, I won't play with you!"),
 )
 
-
 router = Router(name='play')
 DestinySetMiddleware().setup(router)
 

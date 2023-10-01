@@ -1,5 +1,3 @@
-from dataclasses import replace
-
 from aiogram import Router, Bot, F, types, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _

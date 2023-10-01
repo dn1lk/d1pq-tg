@@ -1,5 +1,4 @@
 import asyncio
-from dataclasses import replace
 from random import choice
 
 from aiogram import Bot, types, exceptions

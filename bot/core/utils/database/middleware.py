@@ -1,7 +1,6 @@
 from typing import Callable, Any, Awaitable
 
-import markovify
-from aiogram import Bot, Router, BaseMiddleware, types, enums
+from aiogram import Bot, Router, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
 
 from core import helpers
@@ -84,7 +83,11 @@ class SQLUpdateMiddleware(BaseMiddleware):
     @staticmethod
     async def update_sql(event: types.Message, data: dict[str, Any]):
         main_settings: models.MainSettings = data['main_settings']
-        gen_settings: models.GenSettings = data.get('gen_settings') or await models.GenSettings.get(chat_id=event.chat.id)
+        gen_settings: models.GenSettings = (
+                data.get('gen_settings')
+                or await models.GenSettings.get(chat_id=event.chat.id)
+        )
+
         updated = False
 
         text = helpers.get_text(event)
