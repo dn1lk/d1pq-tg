@@ -1,9 +1,8 @@
 from aiogram import Router, Bot, F, types, enums
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
-from . import SettingsActions
-from .misc import keyboards
+from core import filters
+from . import SettingsActions, keyboards
 from .. import CommandTypes
 
 router = Router(name='other')

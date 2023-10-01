@@ -5,8 +5,8 @@ from aiogram import Bot, types, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 
-from bot.handlers.commands.play import PlayData
-from bot.handlers.commands.play.misc.states import PlayStates
+from handlers.commands.play import PlayData
+from handlers.commands.play.misc.states import PlayStates
 from .deck import UnoDeck, UnoCard, UnoEmoji
 from .deck.colors import UnoColors
 from .players import UnoPlayers
@@ -276,7 +276,7 @@ class UnoData(PlayData):
         await state.set_state(PlayStates.UNO)
 
         deck = await UnoDeck.setup(bot)
-        players = await UnoPlayers.setup(bot, state, deck, user_ids)
+        players = await UnoPlayers.setup(state, deck, user_ids)
 
         return cls(deck=deck, players=players, settings=settings)
 
@@ -287,6 +287,6 @@ class UnoData(PlayData):
         self.state = UnoState()
         self.timer_amount = 3
 
-    async def clear(self, bot: Bot, state: FSMContext):
-        await self.players.clear(bot, state)
+    async def clear(self, state: FSMContext):
+        await self.players.clear(state)
         await state.clear()

@@ -2,11 +2,11 @@ import logging
 
 from aiogram import Router
 
-from .misc.text_workers import resolve_text, messages_to_words
+logger = logging.getLogger('bot')
 
 
 def setup(parent_router: Router):
-    logging.debug('Setting up handlers...')
+    logger.debug('Setting up handlers...')
 
     from . import commands, transitions
 

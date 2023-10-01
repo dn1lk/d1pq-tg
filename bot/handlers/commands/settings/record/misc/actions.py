@@ -2,11 +2,10 @@ from enum import Enum
 
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import database
-
 
 class RecordActions(str, Enum):
     MESSAGES = 'messages'
+    STICKERS = 'stickers'
     MEMBERS = 'members'
 
     DELETE = 'delete'
@@ -16,6 +15,8 @@ class RecordActions(str, Enum):
         match self:
             case self.MESSAGES:
                 return _("Messages")
+            case self.STICKERS:
+                return _("Stickers")
             case self.MEMBERS:
                 return _("Members")
             case self.DELETE:
@@ -27,19 +28,10 @@ class RecordActions(str, Enum):
     def description(self) -> str:
         match self:
             case self.MESSAGES:
-                return _("for more accurate and relevant message generation")
+                return _("to generate messages")
+            case self.STICKERS:
+                return _("to generate stickers")
             case self.MEMBERS:
                 return _("to execute /who command")
-
-        raise TypeError(f'RecordData: unexpected record data: {self}')
-
-    async def switch(self, dp: database.SQLContext, chat_id: int) -> bool:
-        item = await dp[self.value].get(chat_id)
-
-        match self:
-            case self.MESSAGES:
-                return item != ['disabled']
-            case self.MEMBERS:
-                return item is not None
 
         raise TypeError(f'RecordData: unexpected record data: {self}')

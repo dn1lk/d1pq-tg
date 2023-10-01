@@ -9,6 +9,9 @@ from .colors import UnoColors
 from .emoji import UnoEmoji
 
 
+STICKER_SET_NAME = 'uno_by_d1pq_bot'
+
+
 @dataclass
 class UnoDeck:
     _cards_in: list[UnoCard]
@@ -99,10 +102,10 @@ class UnoDeck:
                     cost=50
                 )
 
-        cards_in = list(get_cards(await bot.get_sticker_set('uno_by_d1pq_bot')))
+        cards_in = [*get_cards(await bot.get_sticker_set(STICKER_SET_NAME))]
         cards_in.extend(cards_in[-2:])  # double black cards
         cards_in.extend(cards_in[4:])  # double non-0 cards
 
-        assert len(cards_in) == 108
+        assert len(cards_in) == 108, 'Wrong len of stickers in sticker pack'
 
         return cls(cards_in)

@@ -1,35 +1,72 @@
 from typing import Callable, Any, Awaitable
 
-from aiogram import Router, BaseMiddleware, types, enums
+import markovify
+from aiogram import Bot, Router, BaseMiddleware, types, enums
 from aiogram.dispatcher.flags import get_flag
 
-from .context import SQLContext
+from core import helpers
+from . import models
 
 
-class SQLGetMiddleware(BaseMiddleware):
+class SQLGetFlagsMiddleware(BaseMiddleware):
     async def __call__(
             self,
             handler: Callable[[types.TelegramObject, dict[str, Any]], Awaitable[Any]],
             event: types.TelegramObject,
             data: dict[str, Any],
     ):
-        sql: str | tuple | None = get_flag(data, 'sql')
+        flag_databases: tuple[str] | str | None = get_flag(data, 'database')
 
-        if sql:
-            db: SQLContext = data['db']
-            chat_id: int = data.get('event_chat', data['event_from_user']).id
+        if flag_databases:
+            bot: Bot = data['bot']
+            chat: types.Chat | types.User | Bot = data.get('event_chat') or data.get('event_from_user') or bot
 
-            if isinstance(sql, str):
-                data[sql] = await db[sql].get(chat_id)
-            else:
-                for key in sql:
-                    data[key] = await db[key].get(chat_id)
+            if isinstance(flag_databases, str):
+                flag_databases = flag_databases,
+
+            await self.update_data(data, chat.id, *flag_databases)
 
         return await handler(event, data)
 
+    async def update_data(self, data: dict[str, Any], chat_id: int, *databases: str):
+        data.update({database: await self.get_data(chat_id, database) for database in databases})
+
+    @staticmethod
+    async def get_data(chat_id: int, database: str = 'main_settings'):
+        match database:
+            case 'main_settings':
+                model = models.MainSettings
+            case 'gen_settings':
+                model = models.GenSettings
+            case _:
+                raise TypeError
+
+        return await model.get(chat_id=chat_id)
+
     def setup(self, router: Router):
-        for observer in router.message, router.callback_query, router.inline_query:
+        for observer in router.observers.values():
             observer.middleware(self)
+
+
+class SQLGetMainMiddleware(SQLGetFlagsMiddleware):
+    async def __call__(
+            self,
+            handler: Callable[[types.TelegramObject, dict[str, Any]], Awaitable[Any]],
+            event: types.TelegramObject,
+            data: dict[str, Any],
+    ):
+        bot: Bot = data['bot']
+        chat: types.Chat | types.User | Bot = data.get('event_chat') or data.get('event_from_user') or bot
+
+        await self.update_data(data, chat.id)
+        return await handler(event, data)
+
+    async def update_data(self, data: dict[str, Any], chat_id: int, *databases: str):
+        await super().update_data(data, chat_id, 'main_settings')
+
+    def setup(self, router: Router):
+        for observer in router.observers.values():
+            observer.outer_middleware(self)
 
 
 class SQLUpdateMiddleware(BaseMiddleware):
@@ -46,22 +83,34 @@ class SQLUpdateMiddleware(BaseMiddleware):
 
     @staticmethod
     async def update_sql(event: types.Message, data: dict[str, Any]):
-        db: SQLContext = data['db']
-        text = event.text or event.caption or (event.poll.question if event.poll else None)
+        main_settings: models.MainSettings = data['main_settings']
+        gen_settings: models.GenSettings = data.get('gen_settings') or await models.GenSettings.get(chat_id=event.chat.id)
+        updated = False
 
-        if text:
-            from .. import markov
-            await markov.set_messages(db, text, event.chat.id, data.get('messages'))
+        text = helpers.get_text(event)
+        if text and gen_settings.messages is not None:
+            gen_settings.messages.append(text)
 
-        elif event.sticker:
-            from .. import sticker
-            await sticker.set_stickers(db, event.sticker.set_name, event.chat.id, data.get('stickers'))
+            if len(gen_settings.messages) > 5000:
+                del gen_settings.messages[:1000]
 
-        if event.chat.type != enums.ChatType.PRIVATE:
-            members: list[int] = data.get('members', await db.members.get(event.chat.id))
+            updated = True
+        elif event.sticker and gen_settings.stickers is not None:
+            if event.sticker.set_name not in main_settings.members:
+                gen_settings.stickers.append(event.sticker.set_name)
 
-            if members and event.from_user.id not in members:
-                await db.members.cat(event.chat.id, [event.from_user.id])
+                if len(gen_settings.stickers) > 5:
+                    del gen_settings.stickers[0]
+
+                updated = True
+
+        if main_settings.members is not None:
+            if event.from_user.id not in main_settings.members:
+                main_settings.members.append(event.from_user.id)
+                updated = True
+
+        if updated:
+            await main_settings.save()
 
     def setup(self, router: Router):
         router.message.outer_middleware(self)

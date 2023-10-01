@@ -7,21 +7,18 @@ from aiogram.handlers import MessageHandler
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
-from bot.core.utils import SQLContext, TimerTasks
-from bot.handlers.commands import CommandTypes
-from bot.handlers.commands.play import PlayActions, PlayStates
+from core import filters
+from core.utils import TimerTasks, database
+from handlers.commands import CommandTypes
+from handlers.commands.play import PlayActions, PlayStates
 
-router = Router(name='play:rnd:chat:start')
+router = Router(name='rnd:chat:start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.RND)))
 
 
 @router.message()
-@flags.timer('play')
+@flags.timer
 class StartHandler(MessageHandler):
-    @property
-    def db(self) -> SQLContext:
-        return self.data['db']
 
     @property
     def state(self) -> FSMContext:
@@ -30,6 +27,10 @@ class StartHandler(MessageHandler):
     @property
     def timer(self) -> TimerTasks:
         return self.data['timer']
+
+    @property
+    def gen_settings(self) -> database.GenSettings:
+        return self.data['gen_settings']
 
     async def handle(self):
         answer = _(
@@ -41,7 +42,7 @@ class StartHandler(MessageHandler):
 
         self.event = await self.event.answer(answer.format(user=self.from_user.mention_html()))
 
-        async with ChatActionSender.typing(chat_id=self.chat.id):
+        async with ChatActionSender.typing(chat_id=self.chat.id, bot=self.bot):
             await asyncio.sleep(2)
 
             await self.state.set_state(PlayStates.RND)
@@ -61,14 +62,14 @@ class StartHandler(MessageHandler):
 
     async def wait(self, data_rnd: dict[str, str | set[int]]):
         async def get_stickers():
-            for sticker_set_name in (await self.db.stickers.get(self.chat.id)) + self.db.stickers.default:
+            for sticker_set_name in (database.DEFAULT_STICKER_SET, *self.gen_settings.stickers):
                 sticker_set = await self.bot.get_sticker_set(sticker_set_name)
 
                 for sticker in sticker_set.stickers:
                     if sticker.emoji in ('⏳', '🙈'):
                         yield sticker
 
-        async with ChatActionSender.choose_sticker(chat_id=self.chat.id, interval=10):
+        async with ChatActionSender.choose_sticker(chat_id=self.chat.id, bot=self.bot, interval=10):
             for i in (10, 20, 30):
                 await asyncio.sleep(i)
                 data_rnd_new = await self.state.get_data()

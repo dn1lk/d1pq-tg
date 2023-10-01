@@ -1,2 +1,9 @@
-/.idea/
 /venv/
+/.idea/
+**/__pycache__
+**/.git
+**/.vscode
+**/coverage
+**/**.env
+**/yc_creds.json
+**/api-gw.yaml

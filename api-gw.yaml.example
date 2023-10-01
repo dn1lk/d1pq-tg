@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: d1pq API
+  version: 1.0.0
+servers:
+  - url: WEBHOOK_URL
+x-yc-apigateway:
+  service_account_id: SERVICE_ACCOUNT_ID
+
+paths:
+  /WEBHOOK_PATH:
+    post:
+      description: telegram update request
+      responses:
+        '200':
+          description: bot response
+        default:
+          description: bot error
+      x-yc-apigateway-integration:
+        type: serverless_containers
+        container_id: SERVERLESS_CONTAINER_ID

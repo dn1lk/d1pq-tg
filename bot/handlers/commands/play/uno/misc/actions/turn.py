@@ -1,11 +1,12 @@
 import asyncio
+from dataclasses import replace
 from random import choice
 
 from aiogram import Bot, types, exceptions
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
 from .bot import UnoBot
 from .. import errors, keyboards
 from ..data import UnoData

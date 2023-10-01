@@ -5,7 +5,7 @@ from .misc.data.settings.additions import UnoAdd, UnoAddState
 from .misc.data.settings.difficulties import UnoDifficulty
 from .misc.data.settings.modes import UnoMode
 
-router = Router(name='play:uno:settings')
+router = Router(name='uno:settings')
 router.callback_query.filter(F.from_user.id == F.message.entities[7].user.id)
 
 

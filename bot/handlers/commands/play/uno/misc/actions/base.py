@@ -4,7 +4,7 @@ from aiogram import Bot, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, ngettext as ___
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
 from ..data import UnoData
 
 
@@ -42,7 +42,7 @@ async def restart(
 
     await asyncio.sleep(1)
 
-    for n in range(2, 0, -1):
+    for n in range(2, 1, -1):
         message = await message.edit_text(message.html_text.replace(str(n + 1), str(n)))
         await asyncio.sleep(1)
 
@@ -60,7 +60,7 @@ async def finish(
     clear(state, timer)
 
     answer = await _get_results_answer(bot, state.key.chat_id, data_uno)
-    await data_uno.clear(bot, state)
+    await data_uno.clear(state)
 
     await bot.send_message(
         state.key.chat_id,

@@ -1,6 +1,7 @@
 from aiogram import Router
 from aiogram.utils.i18n import lazy_gettext as __
 
+from core.middlewares import DestinySetMiddleware
 from .misc.actions import PlayActions
 from .misc.data import PlayData
 from .misc.states import PlayStates
@@ -19,12 +20,18 @@ CLOSE = (
 )
 
 
+router = Router(name='play')
+DestinySetMiddleware().setup(router)
+
+
 def setup(parent_router: Router):
+    parent_router.include_router(router)
+
     from . import cts, rnd, rps, uno, other
 
-    rps.setup(parent_router)
-    uno.setup(parent_router)
-    rnd.setup(parent_router)
-    cts.setup(parent_router)
+    rps.setup(router)
+    uno.setup(router)
+    rnd.setup(router)
+    cts.setup(router)
 
-    parent_router.include_router(other.router)
+    router.include_router(other.router)

@@ -4,7 +4,7 @@ from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
 from .. import keyboards
 from ..data import UnoData
 
@@ -40,7 +40,7 @@ def kick(func: Callable[[types.User], str]):
     ):
         current_id = data_uno.players.current_id
 
-        await data_uno.players.kick_player(bot, state, data_uno.deck, user.id)
+        await data_uno.players.kick_player(state, data_uno.deck, user.id)
 
         answer = func(user)
 

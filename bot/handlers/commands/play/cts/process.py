@@ -1,14 +1,15 @@
+from dataclasses import replace
 from random import choice
 
 from aiogram import Router, types, flags, html
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
+from handlers.commands.play import PlayStates
 from . import CTSData, task
-from .. import PlayStates
 
-router = Router(name='play:cts:process')
+router = Router(name='cts:process')
 router.message.filter(PlayStates.CTS)
 
 
@@ -20,10 +21,8 @@ async def finish(message: types.Message, state: FSMContext, data_cts: CTSData, a
 
 
 @router.message(CTSData.filter())
-@flags.timer('play')
-async def answer_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
-    data_cts = await CTSData.get_data(state)
-
+@flags.timer
+async def answer_handler(message: types.Message, state: FSMContext, timer: TimerTasks, data_cts: CTSData):
     if data_cts.bot_city:
         answer_one = choice(
             (
@@ -37,6 +36,7 @@ async def answer_handler(message: types.Message, state: FSMContext, timer: Timer
         message = await message.reply(f"{answer_one} {answer_two}")
 
         await data_cts.set_data(state)
+
         timer[state.key] = task(message, state)
     else:
         answer = choice(
@@ -51,7 +51,7 @@ async def answer_handler(message: types.Message, state: FSMContext, timer: Timer
 
 
 @router.message()
-@flags.timer(name='play', cancelled=False)
+@flags.timer(cancelled=False)
 async def mistake_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
     data_cts = await CTSData.get_data(state)
     data_cts.fail_amount -= 1

@@ -2,13 +2,15 @@ from aiogram import Router, Bot, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
+from handlers.commands import CommandTypes
+from handlers.commands.misc.types import PREFIX
+from handlers.commands.play import PlayActions
 from . import DRAW_CARD
 from .misc.data import UnoData
+from .misc.data.deck.base import STICKER_SET_NAME
 from .misc.middleware import UnoMiddleware
-from ..misc.actions import PlayActions
-from ...misc.types import CommandTypes, PREFIX
 
-router = Router(name='play:uno:inline')
+router = Router(name='uno:inline')
 router.inline_query.filter(F.query.lower().in_(PlayActions.UNO))
 
 UnoMiddleware().setup(router)
@@ -19,7 +21,7 @@ THUMB_URL = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MK
 
 @router.inline_query()
 async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
-    sticker_set = await bot.get_sticker_set('uno_by_d1pq_bot')
+    sticker_set = await bot.get_sticker_set(STICKER_SET_NAME)
     data_uno = await UnoData.get_data(state)
     next_offset = None
 

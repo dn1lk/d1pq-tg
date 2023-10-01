@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
 from .. import keyboards
 from ..data import UnoData
 from ..data.deck import UnoCard
@@ -40,7 +40,7 @@ class UnoBot:
 
     async def gen_turn(self, timer: TimerTasks, *cards: tuple[UnoCard, str]):
         async with timer.lock(self.state.key):
-            async with ChatActionSender.choose_sticker(chat_id=self.state.key.chat_id):
+            async with ChatActionSender.choose_sticker(chat_id=self.state.key.chat_id, bot=self.bot):
                 d = self.data_uno.settings.difficulty
                 delay = randint(1, 4) * d
 
@@ -169,7 +169,7 @@ class UnoBot:
 
     async def gen_uno(self, timer: TimerTasks, a: int, b: int):
         try:
-            async with ChatActionSender.typing(chat_id=self.state.key.chat_id):
+            async with ChatActionSender.typing(chat_id=self.state.key.chat_id, bot=self.bot):
                 m = self.data_uno.settings.difficulty / len(self.data_uno.players)
                 await asyncio.sleep(randint(a, b) * m)
 

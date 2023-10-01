@@ -5,12 +5,12 @@ from aiogram import Bot, Router, F, types, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
 from .misc import keyboards
 from .misc.data import UnoData
 from .misc.data.settings import UnoSettings
 
-router = Router(name='play:uno:process')
+router = Router(name='uno:process')
 
 
 def get_users(entities: list[types.MessageEntity]) -> list[types.User]:
@@ -39,7 +39,7 @@ async def join_handler(query: types.CallbackQuery):
 
 
 @router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoSetup.LEAVE))
-@flags.timer(name='play', cancelled=False)
+@flags.timer(cancelled=False)
 async def leave_handler(query: types.CallbackQuery, state: FSMContext, timer: TimerTasks):
     users = get_users(query.message.entities)
 
@@ -84,7 +84,7 @@ def start_filter(query: types.CallbackQuery):
 
 
 @router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoSetup.START), start_filter)
-@flags.timer('play')
+@flags.timer
 async def start_handler(
         query: types.CallbackQuery | types.Message,
         bot: Bot,

@@ -1,30 +1,32 @@
 import asyncio
+import logging
 from collections import defaultdict
 from contextlib import asynccontextmanager
+from dataclasses import fields
 from typing import Coroutine, AsyncGenerator, Generator
 
 from aiogram.fsm.storage.base import StorageKey
+
+logger = logging.getLogger('tasks')
 
 
 class TimerTasks:
     _tasks: set[asyncio.Task] = set()
     _locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
 
-    __slots__ = {"destiny"}
-
-    def __init__(self, destiny: str):
-        self.destiny = destiny
-
     def __setitem__(self, key: StorageKey, coro: Coroutine):
-        key = self.get_key(key)
-        task = asyncio.create_task(coro)
+        key = self._get_key(key)
 
+        task = asyncio.create_task(coro)
         self._tasks.add(task)
+
         task.set_name(key)
         task.add_done_callback(self._tasks.discard)
 
+        logger.debug(f'Created task: {task}')
+
     def __getitem__(self, key: StorageKey) -> Generator[asyncio.Task, None, None]:
-        key = self.get_key(key)
+        key = self._get_key(key)
 
         for task in self._tasks:
             if task.get_name() == key:
@@ -35,10 +37,19 @@ class TimerTasks:
             if task is not asyncio.current_task():
                 task.cancel()
 
-    def get_key(self, key: StorageKey) -> str:
-        return f'{key.bot_id}:{key.chat_id}:{key.user_id}:{self.destiny}'
+                logger.debug(f'Stopped task: {task}')
+
+    def update(self, key: StorageKey, coro: Coroutine):
+        """ Stop existed coro by key and add new """
+
+        del self[key]
+        self[key] = coro
+
+    @staticmethod
+    def _get_key(key: StorageKey) -> str:
+        return ':'.join(str(getattr(key, field.name)) for field in fields(key))
 
     @asynccontextmanager
     async def lock(self, key: StorageKey) -> AsyncGenerator[None, None]:
-        async with self._locks[self.get_key(key)]:
+        async with self._locks[self._get_key(key)]:
             yield

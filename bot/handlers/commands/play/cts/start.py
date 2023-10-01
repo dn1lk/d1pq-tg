@@ -1,21 +1,22 @@
+from dataclasses import replace
 from random import random
 
 from aiogram import Router, types, F, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _, I18n
 
-from bot.core import filters
-from bot.core.utils import TimerTasks
-from bot.handlers.commands import CommandTypes
+from core import filters
+from core.utils import TimerTasks
+from handlers.commands import CommandTypes
+from handlers.commands.play import PlayActions, PlayStates
 from . import CTSData, task
-from .. import PlayActions, PlayStates
 
-router = Router(name='play:cts:start')
+router = Router(name='cts:start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.CTS)))
 
 
 @router.message()
-@flags.timer('play')
+@flags.timer
 async def start_handler(message: types.Message, state: FSMContext, i18n: I18n, timer: TimerTasks):
     answer = _(
         "Oh, Geography. Well, let's try!\n"

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from random import choice
 from typing import Callable
 
@@ -6,8 +6,8 @@ from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.filters import BaseFilter
-from bot.core.utils import TimerTasks
+from core.filters import BaseFilter
+from core.utils import TimerTasks
 from . import errors
 from .data import UnoData
 from .data.deck import UnoCard, UnoEmoji
@@ -39,7 +39,13 @@ class UnoFilter(BaseFilter):
         self._is_accepted = False
         self.answer = answer
 
-    async def __call__(self, event: types.Message | types.CallbackQuery, bot: Bot, state: FSMContext):
+    async def __call__(
+            self,
+            event: types.Message | types.CallbackQuery,
+            bot: Bot,
+            state: FSMContext,
+            timer: TimerTasks
+    ):
         data_uno = await UnoData.get_data(state)
 
         match self._action:
@@ -52,7 +58,7 @@ class UnoFilter(BaseFilter):
             case 'color':
                 return await self.for_color(event, data_uno)
             case 'uno':
-                return await self.for_uno(event, state, data_uno)
+                return await self.for_uno(event, state, data_uno, timer)
 
     async def for_turn(self, message: types.Message, state: FSMContext, data_uno: UnoData) -> dict | None:
         player_id = message.from_user.id
@@ -258,12 +264,10 @@ class UnoFilter(BaseFilter):
         await query.answer(_("Nice try."))
 
     @staticmethod
-    async def for_uno(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData) -> bool | None:
+    async def for_uno(query: types.CallbackQuery, state: FSMContext, data_uno: UnoData, timer: TimerTasks) -> bool | None:
         if query.from_user.id in data_uno.players.playing:
-            timer_uno = TimerTasks('say_uno')
-
-            if any(timer_uno[state.key]):
-                del timer_uno[state.key]
+            if any(timer[state.key]):
+                del timer[state.key]
 
                 return True
 

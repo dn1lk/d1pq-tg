@@ -3,14 +3,14 @@ from random import choice, randint
 from aiogram import Router, F, types, html, flags
 from aiogram.utils.i18n import gettext as _
 
-from ... import PlayStates
+from handlers.commands.play import PlayStates
 
 router = Router(name='process')
 router.message.filter(PlayStates.RND)
 
 
 @router.message(F.text.in_(tuple(map(str, range(1, 11)))))
-@flags.timer('play')
+@flags.timer
 async def process_handler(message: types.Message):
     bot_number = str(randint(1, 10))
     user_number = message.text

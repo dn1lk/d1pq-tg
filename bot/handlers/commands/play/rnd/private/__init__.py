@@ -1,11 +1,10 @@
 from aiogram import Router, F, enums
 
-router = Router(name='play:rnd:private')
+router = Router(name='rnd:private')
+router.message.filter(F.chat.type == enums.ChatType.PRIVATE)
 
 
 def setup(parent_router: Router):
-    router.message.filter(F.chat.type == enums.ChatType.PRIVATE)
-
     parent_router.include_router(router)
 
     from . import process, start

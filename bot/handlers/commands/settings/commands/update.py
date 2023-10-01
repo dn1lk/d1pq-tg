@@ -2,40 +2,43 @@ from random import choice
 
 from aiogram import Router, F, types, flags, html
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.i18n import I18n, gettext as _
+from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
-from bot.core.utils import database
-from bot.handlers.commands import CommandTypes
+from core import filters, helpers
+from core.utils import database, TimerTasks
+from handlers.commands import CommandTypes
 from .. import SettingsStates
 
 router = Router(name='commands:update')
 router.message.filter(SettingsStates.COMMANDS,
-                      filters.Command(*(command[0] for command in CommandTypes)),
+                      filters.Command(*(command[0] for command in CommandTypes), with_customs=False),
                       filters.IsAdmin(is_admin=True))
 
 
 @router.message(filters.MagicData(F.command.args.regexp(r'^\w{1,10}$')))
 async def accept_handler(
         message: types.Message,
-        db: database.SQLContext,
         state: FSMContext,
-        commands: dict[str, str] | None,
+        timer: TimerTasks,
         command: filters.CommandObject,
+        main_settings: database.MainSettings,
 ):
-    if commands and command.args in commands.values():
+    if command.args in main_settings.commands.values():
         answer = _("{prefix}{custom_command} is already recorded. Try another.").format(
             prefix=command.prefix,
             custom_command=command.args,
         )
+    elif command.args in sum((enum.value for enum in CommandTypes), ()):
+        answer = _("{prefix}{custom_command} is already taken by me. Choose another.").format(
+            prefix=command.prefix,
+            custom_command=command.args,
+        )
     else:
-        if commands is None:
-            commands = {command.command: command.args}
-        else:
-            commands[command.command] = command.args
+        main_settings.commands[command.command] = command.args
 
-        await state.set_state()
-        await db.commands.set(message.chat.id, commands)
+        del timer[state.key]
+        await main_settings.save()
+        await state.clear()
 
         answer = _(
             "<b>{prefix}{custom_command} added successfully!</b>\n\n"
@@ -50,18 +53,36 @@ async def accept_handler(
 
 
 @router.message()
-@flags.throttling('gen')
-@flags.sql('messages')
+@flags.database('gen_settings')
 async def decline_handler(
         message: types.Message,
-        i18n: I18n,
+        state: FSMContext,
+        timer: TimerTasks,
         command: filters.CommandObject,
-        messages: list | None,
+        gen_settings: database.GenSettings,
 ):
-    message = await message.answer(html.bold(_("Custom command not recognized.")))
+    data = await state.get_data()
+    tries = data.get('tries', 1)
 
-    from bot.handlers import messages_to_words
-    from bot.handlers.commands.help import get_answer
+    if tries > 1:
+        await state.clear()
+        del timer[state.key]
 
-    await message.answer(get_answer(command,
-                                    choice(messages_to_words(i18n, messages)).lower()))
+        answer = _(
+            "<b>Something is not working for you.</b>\n"
+            "{command} - if you decide to set your command again."
+        ).format(command=f'{command.prefix}{CommandTypes.SETTINGS[0]}')
+
+        await message.answer(answer)
+    else:
+        await state.update_data(tries=tries + 1)
+
+        from handlers.commands.help import get_answer
+
+        message = await message.answer(html.bold(_("Custom command not recognized.")))
+        answer = get_answer(
+            command,
+            choice(helpers.get_split_text(gen_settings.messages)).lower()
+        )
+
+        await message.answer(answer)

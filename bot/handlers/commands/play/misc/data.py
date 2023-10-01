@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class PlayData(BaseModel):
     async def set_data(self, state: FSMContext):
-        await state.set_data(self.dict())
+        await state.set_data(self.model_dump())
 
     @classmethod
     async def get_data(cls, state: FSMContext) -> "PlayData":

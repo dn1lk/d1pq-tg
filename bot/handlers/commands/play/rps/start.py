@@ -1,17 +1,17 @@
 from aiogram import Router, types, F
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
+from core import filters
+from handlers.commands import CommandTypes
+from handlers.commands.play import PlayActions
 from . import keyboards
-from .. import PlayActions
-from ... import CommandTypes
 
-router = Router(name='play:rps:start')
+router = Router(name='rps:start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.RPS)))
 
 
 @router.message()
-async def rps_handler(message: types.Message):
+async def start_handler(message: types.Message):
     answer = _(
         "Eh, classic.\n"
         "{user}, press the button:"

@@ -1,37 +1,41 @@
 from random import choice
 
-from aiogram import Bot, Router, F, types, enums, flags
+from aiogram import Bot, Router, F, types, enums
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
-from bot.core.utils import database
+from core import filters
+from core.utils import database
 
 router = Router(name='transitions:group')
 router.my_chat_member.filter(F.chat.type != enums.ChatType.PRIVATE)
 
 
 async def my_is_not_admin_filter(message: types.Message, bot: Bot):
+    """ Filter if bot is not admin """
+
     member = await bot.get_chat_member(message.chat.id, bot.id)
-    return not member.can_manage_chat
+    return not (isinstance(member, types.ChatMemberAdministrator) and member.can_manage_chat)
 
 
 @router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.KICKED >> filters.MEMBER))
 async def my_return_handler(event: types.ChatMemberUpdated, bot: Bot):
-    answer = (
-        _("{chat}, we are together again!"),
-        _("{chat}, don't kick me anymore. 👿"),
-        _("However hello, {chat}!"),
-    )
+    answer = choice(
+        (
+            _("{chat}, we are together again!"),
+            _("{chat}, don't kick me anymore. 👿"),
+            _("However hello, {chat}!"),
+        )
+    ).format(chat=event.chat.mention_html())
 
-    await bot.send_message(event.chat.id, choice(answer).format(chat=event.chat.mention_html()))
+    await bot.send_message(event.chat.id, answer)
 
 
 @router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.JOIN_TRANSITION))
 async def my_join_handler(event: types.ChatMemberUpdated, bot: Bot):
-    chat = event.chat
-
     from ..commands.start import get_answer
-    await bot.send_message(chat.id, get_answer().format(name=chat.mention_html()))
+    answer = get_answer(event.chat)
+
+    await bot.send_message(event.chat.id, answer)
 
 
 @router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.MEMBER >> filters.ADMINISTRATOR))
@@ -64,77 +68,75 @@ async def my_demoted_handler(event: types.ChatMemberUpdated, bot: Bot):
     await bot.send_message(event.chat.id, answer)
 
 
-async def cat_member(db: database.SQLContext, members: list[int] | None, chat_id: int, *users: types.User):
-    if members:
-        user_ids = [user.id for user in users if user.id not in members]
+async def update_members(main_settings: database.MainSettings, *users: types.User):
+    user_ids = [user.id for user in users if user.id not in main_settings.members]
 
-        if user_ids:
-            await db.members.cat(chat_id, user_ids)
+    if user_ids:
+        main_settings.members.extend(user_ids)
+        await main_settings.save()
 
 
 def join_answer(user: types.User):
     if user.is_bot:
-        answer = (
+        answers = (
             _("All bacchanalia, with you {user}!"),
             _("You don't have to clap, {user} is with us."),
             _("Do not meet, now we have {user}!"),
         )
     else:
-        answer = (
+        answers = (
             _("Greetings, {user}!"),
             _("Welcome, {user}!"),
             _("{user}... Who is it?"),
         )
 
-    return choice(answer)
+    return choice(answers)
 
 
 @router.chat_member(filters.ChatMemberUpdatedFilter(filters.JOIN_TRANSITION))
-@flags.sql('members')
 async def join_action_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
-        db: database.SQLContext,
-        members: list[int] | None,
+        main_settings: database.MainSettings,
 ):
     user = event.new_chat_member.user
-    chat = event.chat
 
-    await cat_member(db, members, chat.id, user)
+    await update_members(main_settings, user)
 
-    answer = join_answer(user)
-    await bot.send_message(chat.id, answer.format(user=user.mention_html()))
+    answer = join_answer(user).format(user=user.mention_html())
+    await bot.send_message(event.chat.id, answer)
 
 
 @router.message(F.new_chat_members, my_is_not_admin_filter)
-@flags.sql('members')
 async def join_message_handler(
         message: types.Message,
-        db: database.SQLContext,
-        members: list[int] | None,
+        main_settings: database.MainSettings,
 ):
     users = message.new_chat_members
 
-    await cat_member(db, members, message.chat.id, *users)
+    await update_members(main_settings, *users)
 
-    answer = choice([join_answer(user) for user in users])
-    await message.answer(answer.format(user=', '.join(user.mention_html() for user in users)))
+    answer = choice([join_answer(user) for user in users]) \
+        .format(user=', '.join(user.mention_html() for user in users))
+
+    await message.answer(answer)
 
 
-async def remove_member(db: database.SQLContext, members: list[int] | None, chat_id: int, user_id: int):
-    if members and user_id in members:
-        await db.members.remove(chat_id, user_id)
+async def remove_member(main_settings: database.MainSettings, user_id: int):
+    if user_id in main_settings.members:
+        main_settings.members.remove(user_id)
+        await main_settings.save()
 
 
 def leave_answer(user: types.User):
     if user.is_bot:
-        answer = (
+        answers = (
             _("Ha, and so be it!"),
             _("Nothing to chat here."),
             _("Bye-bye."),
         )
     else:
-        answer = (
+        answers = (
             _("I'll miss. 😭"),
             _("We've lost a great man... Wait, was that a man?"),
             _("Let's remember."),
@@ -142,37 +144,31 @@ def leave_answer(user: types.User):
             _("And it all started so nicely..."),
         )
 
-    return choice(answer)
+    return choice(answers)
 
 
 @router.chat_member(filters.ChatMemberUpdatedFilter(filters.LEAVE_TRANSITION))
-@flags.sql('members')
 async def leave_action_handler(
         event: types.ChatMemberUpdated,
         bot: Bot,
-        db: database.SQLContext,
-        members: list[int] | None,
+        main_settings: database.MainSettings,
 ):
     user = event.new_chat_member.user
-    chat = event.chat
 
-    await remove_member(db, members, chat.id, user.id)
+    await remove_member(main_settings, user.id)
 
     answer = leave_answer(user)
-    await bot.send_message(chat.id, answer)
+    await bot.send_message(event.chat.id, answer)
 
 
 @router.message(F.left_chat_member, filters.MagicData(F.event.left_chat_member.id != F.bot.id), my_is_not_admin_filter)
-@flags.sql('members')
 async def leave_message_handler(
         message: types.Message,
-        db: database.SQLContext,
-        members: list[int] | None,
+        main_settings: database.MainSettings,
 ):
     user = message.left_chat_member
-    chat = message.chat
 
-    await remove_member(db, members, chat.id, user.id)
+    await remove_member(main_settings, user.id)
 
     answer = leave_answer(user)
     await message.answer(answer)

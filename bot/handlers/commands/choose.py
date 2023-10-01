@@ -1,12 +1,12 @@
 from random import choice
 from re import split
 
-from aiogram import Router, F, types, flags, html
-from aiogram.utils.i18n import I18n, gettext as _
+from aiogram import Router, F, types, html, flags
+from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
+from core import filters, helpers
+from core.utils import database
 from . import CommandTypes
-from .. import resolve_text
 
 router = Router(name='choose')
 router.message.filter(filters.Command(*CommandTypes.CHOOSE))
@@ -25,18 +25,15 @@ async def with_args_handler(message: types.Message, command: filters.CommandObje
     )
 
     chosen = choice(split(r'\W+or\W+|\W+или\W+|\W{2,}', command.args))
-    await message.answer(resolve_text(f'{answer} {html.bold(html.quote(chosen))}'))
+    await message.answer(helpers.resolve_text(f'{answer} {html.bold(html.quote(chosen))}'))
 
 
 @router.message()
-@flags.throttling('gen')
-@flags.sql('messages')
-@flags.chat_action("typing")
+@flags.database('gen_settings')
 async def without_args_handler(
         message: types.Message,
-        i18n: I18n,
         command: filters.CommandObject,
-        messages: list[str] | None,
+        gen_settings: database.GenSettings,
 ):
     from .help import choose_handler
-    await choose_handler(message, i18n, command, messages)
+    await choose_handler(message, command, gen_settings)

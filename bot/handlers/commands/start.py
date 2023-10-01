@@ -1,22 +1,24 @@
 from aiogram import Router, types
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
+from core import filters
 from . import CommandTypes
 
 router = Router(name='start')
 
 
-def get_answer():
+def get_answer(subject: types.User | types.Chat):
     answer = _(
-        "{name}, hello! Let's start with answering the obvious questions:\n"
+        "{subject}, hello! Let's start with answering the obvious questions:\n"
         "- What am I? A text-generating bot based on current chat.\n"
         "- What can I do? Some things after which something happens...\n"
-    )
-    ui_commands = '\n'.join(str(command) for command in list(CommandTypes)[:3])
+    ).format(subject=subject.mention_html())
+
+    ui_commands = '\n'.join(str(command) for command in CommandTypes.start_commands)
     return f'{answer}\n{ui_commands}'
 
 
 @router.message(filters.CommandStart())
 async def start_handler(message: types.Message):
-    await message.answer(get_answer().format(name=message.from_user.mention_html()))
+    answer = get_answer(message.from_user)
+    await message.answer(answer)

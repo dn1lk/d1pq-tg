@@ -1,12 +1,13 @@
 import asyncio
+from dataclasses import replace
 from random import choice
 
 from aiogram import Bot, types, exceptions
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
-from bot.handlers.commands.play import CLOSE
+from core.utils import TimerTasks
+from handlers.commands.play import CLOSE
 from .bot import UnoBot
 from ..data.base import UnoData, UnoState
 from ..data.deck.colors import UnoColors
@@ -38,8 +39,8 @@ async def _timeout(message: types.Message, bot: Bot, state: FSMContext, timer: T
 
         bot_poll = UnoBot(message_poll, bot, state, data_uno)
 
-        timer_poll = TimerTasks('uno_poll')
-        timer_poll[state.key] = bot_poll.gen_poll(timer, player_id)
+        key = replace(state.key, destiny='play:uno:poll')
+        timer[key] = bot_poll.gen_poll(timer, player_id)
 
         await asyncio.sleep(2)
 
@@ -60,9 +61,9 @@ async def _timeout(message: types.Message, bot: Bot, state: FSMContext, timer: T
         await next_turn(message, bot, state, timer, data_uno, answer)
 
 
-async def _finally(message: types.Message, state: FSMContext):
-    timer_uno = TimerTasks('say_uno')
-    del timer_uno[state.key]
+async def _finally(message: types.Message, state: FSMContext, timer: TimerTasks):
+    key = replace(state.key, destiny='play:uno:last')
+    del timer[key]
 
     if message.reply_markup and len(message.reply_markup.inline_keyboard) == 2:
         del message.reply_markup.inline_keyboard[0]
@@ -87,11 +88,11 @@ async def task(
         async with timer.lock(state.key):
             await _timeout(message, bot, state, timer)
     finally:
-        await _finally(message, state)
+        await _finally(message, state, timer)
 
 
 def clear(state: FSMContext, timer: TimerTasks):
     del timer[state.key]
 
-    timer_poll = TimerTasks('uno_poll')
-    del timer_poll[state.key]
+    key = replace(state.key, destiny='play:uno:poll')
+    del timer[key]

@@ -1,11 +1,21 @@
-from enum import Enum
+from enum import Enum, EnumMeta
 
 from aiogram.utils.i18n import gettext as _
 
 PREFIX = '/'
 
 
-class CommandTypes(tuple, Enum):
+class CommandTypesMeta(EnumMeta):
+    @property
+    def start_commands(cls) -> list["CommandTypes"]:
+        return list(cls)[:3]
+
+    @property
+    def help_commands(cls) -> list["CommandTypes"]:
+        return list(cls)[3:-1]
+
+
+class CommandTypes(tuple, Enum, metaclass=CommandTypesMeta):
     SETTINGS = 'settings', 'настройки'
     HELP = 'help', 'помощь'
     TERMS = 'terms', 'условия'
@@ -13,8 +23,6 @@ class CommandTypes(tuple, Enum):
     CHOOSE = 'choose', 'выбери'
     WHO = 'who', 'кто'
     PLAY = 'play', 'поиграем'
-    QUESTION = 'question', 'вопросик'
-    STORY = 'story', 'короче'
 
     START = 'start', 'начать'
 
@@ -37,7 +45,3 @@ class CommandTypes(tuple, Enum):
                 return _("find the desired participant")
             case self.PLAY:
                 return _("play in a game")
-            case self.QUESTION:
-                return _("answer the question")
-            case self.STORY:
-                return _("tell a story")

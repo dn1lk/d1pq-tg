@@ -1,11 +1,12 @@
 from aiogram import Router
 
+from .misc.actions import RecordActions
+
 
 def setup(parent_router: Router):
-    from .start import router as start_rt
-    from .update import router as process_rt
+    from . import start, update
 
     parent_router.include_routers(
-        process_rt,
-        start_rt,
+        update.router,
+        start.router,
     )

@@ -1,31 +1,33 @@
+from dataclasses import replace
+
 from aiogram import Router, Bot, F, types, html, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
-from bot.core.utils import TimerTasks
-from bot.handlers.commands import CommandTypes
+from core import filters
+from core.utils import TimerTasks
+from handlers.commands import CommandTypes
+from handlers.commands.play import PlayActions, PlayStates
 from .misc import errors, keyboards
 from .misc.data import UnoData
 from .misc.data.players import UnoPlayerData
 from .misc.data.settings.additions import UnoAdd, UnoAddState
 from .misc.data.settings.difficulties import UnoDifficulty
 from .misc.data.settings.modes import UnoMode
-from .. import PlayActions, PlayStates
 
-router = Router(name='play:uno:start')
+router = Router(name='uno:start')
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.UNO)))
 
 
 @router.message(PlayStates.UNO)
-@flags.timer(name='play', cancelled=False)
-async def join_handler(message: types.Message, bot: Bot, state: FSMContext):
+@flags.timer(cancelled=False)
+async def join_handler(message: types.Message, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 
     try:
         player_id = message.from_user.id
 
-        data_uno.players[player_id] = await UnoPlayerData.setup(bot, state, player_id, list(data_uno.deck(7)))
+        data_uno.players[player_id] = await UnoPlayerData.setup(state, player_id, list(data_uno.deck(7)))
         await data_uno.set_data(state)
 
         await message.answer(_("{user} join to current game.").format(user=message.from_user.mention_html()))
@@ -38,7 +40,7 @@ async def join_handler(message: types.Message, bot: Bot, state: FSMContext):
 
 
 @router.message()
-@flags.timer('play')
+@flags.timer
 async def start_handler(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks):
     answer = _(
         "<b>Let's play UNO?</b>\n\n"

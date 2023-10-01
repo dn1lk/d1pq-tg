@@ -1,17 +1,24 @@
-from aiogram import Router
-from aiogram.utils.i18n import lazy_gettext as __
+from aiogram import Router, F, types
+from aiogram.utils.i18n import gettext as _, lazy_gettext as __
 
+from core import filters
+from core.middlewares import DestinySetMiddleware
 from .misc import keyboards
 from .misc.actions import SettingsActions
 from .misc.states import SettingsStates
 
 UPDATE = __("\n\nUpdate:")
 
+router = Router(name='settings')
+DestinySetMiddleware().setup(router)
+
+
+@router.callback_query(keyboards.SettingsData.filter(F.action), filters.IsAdmin(is_admin=False))
+async def no_admin_handler(query: types.CallbackQuery):
+    await query.answer(_("Only for administrators."))
+
 
 def setup(parent_router: Router):
-    from . import main
-
-    router = main.router
     parent_router.include_router(router)
 
     from . import accuracy, chance, locale, other

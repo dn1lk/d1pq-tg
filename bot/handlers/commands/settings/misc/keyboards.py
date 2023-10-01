@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -9,7 +11,12 @@ from ...misc.types import CommandTypes
 
 class SettingsData(CallbackData, prefix=CommandTypes.SETTINGS[0]):
     action: RecordActions | SettingsActions
-    value: int | str = None
+    value: int | str | None = None
+
+
+class RecordData(CallbackData, prefix=f'{CommandTypes.SETTINGS[0]}_record'):
+    action: RecordActions
+    to_blocked: bool | None = None
 
 
 def add_back_button(builder: InlineKeyboardBuilder):
@@ -29,22 +36,26 @@ def actions_keyboard():
     return builder.as_markup()
 
 
-def record_keyboard(actions: list[tuple[RecordActions, bool]]):
-    text = _('{action} {data} recording')
+def record_keyboard(actions: dict[RecordActions, Any]):
+    text = _('{action} {field} recording')
     builder = InlineKeyboardBuilder()
 
-    for action, switch in actions:
+    for action, field in actions.items():
+        if field is None:
+            action_text = _('Enable')
+            to_blocked = False
+        else:
+            action_text = _('Disable')
+            to_blocked = True
+
         builder.button(
-            text=text.format(
-                action=_('Disable') if switch else _('Enable'),
-                data=action.keyboard.lower()
-            ),
-            callback_data=SettingsData(action=action, value=int(switch))
+            text=text.format(action=action_text, field=action.keyboard.lower()),
+            callback_data=RecordData(action=action, to_blocked=to_blocked)
         )
 
     builder.button(
         text=RecordActions.DELETE.keyboard,
-        callback_data=SettingsData(action=RecordActions.DELETE)
+        callback_data=RecordData(action=RecordActions.DELETE)
     )
 
     add_back_button(builder)
@@ -72,7 +83,7 @@ def accuracy_keyboard(current_accuracy: int):
 def chance_keyboard(current_chance: int):
     builder = InlineKeyboardBuilder()
 
-    for chance in range(5, 40, 5):
+    for chance in range(0, 100, 10):
         if chance != current_chance:
             builder.button(
                 text=f'{chance}%',

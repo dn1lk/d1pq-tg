@@ -1,7 +1,7 @@
 from aiogram import Bot, types
 from aiogram.filters import *
 
-from bot.handlers.commands.settings.commands.misc.filter import CustomCommand
+from handlers.commands.settings.commands.misc.filter import CustomCommand
 
 Command = CustomCommand
 
@@ -45,3 +45,12 @@ class IsAdmin(BaseFilter):
         ):
             return self.is_admin
         return not self.is_admin
+
+
+class IsMentioned(BaseFilter):
+    async def __call__(self, obj: types.Message, bot: Bot, owner_id: int) -> bool:
+        if obj.entities:
+            for entity in obj.entities:
+                if entity.user and entity.user.id == bot.id:
+                    return True
+        return False

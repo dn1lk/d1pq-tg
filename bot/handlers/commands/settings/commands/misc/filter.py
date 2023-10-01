@@ -1,19 +1,21 @@
 from aiogram import Bot, filters, types
 
-from bot.handlers.commands.misc.types import PREFIX
+from core.utils import database
+from handlers.commands.misc.types import PREFIX
 
 
 class CustomCommand(filters.Command):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *values, with_customs: bool = True, **kwargs):
+        super().__init__(*values, **kwargs)
         self.prefix = PREFIX
+        self.with_customs = with_customs
 
     async def __call__(
             self, message: types.Message, bot: Bot,
-            commands: dict[str, list[str]] = None,
+            main_settings: database.MainSettings = None,
     ):
-        if commands:
-            commands = commands.get(self.commands[0])
+        if self.with_customs:
+            commands = main_settings.commands.get(self.commands[0])
 
             if commands:
                 self.commands += commands,

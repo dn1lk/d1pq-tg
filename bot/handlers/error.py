@@ -6,14 +6,15 @@ from aiogram import Bot, Router, html
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 from aiogram.types.error_event import ErrorEvent
 
-from bot.core import filters
+from core import filters
 
+logger = logging.getLogger('bot')
 router = Router(name='error')
 
 
 @router.errors(filters.ExceptionTypeFilter(TelegramRetryAfter))
 async def retry_after_handler(_, exception: TelegramRetryAfter):
-    logging.error(exception.message)
+    logger.error(exception.message)
 
     await asyncio.sleep(exception.retry_after)
     await exception.method
@@ -22,14 +23,14 @@ async def retry_after_handler(_, exception: TelegramRetryAfter):
 @router.errors()
 async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int):
     title = f'While event {event.update.event_type}:'
-    tracback = '\n'.join(traceback.format_exc(limit=10).splitlines())
+    tb = traceback.format_exc(limit=-10)
 
     try:
         await bot.send_message(
             owner_id,
-            f"{html.bold(title)}\n\n{html.pre_language(html.quote(tracback), language='python')}",
+            f"{html.bold(title)}\n\n{html.pre_language(html.quote(tb), language='python')}",
         )
-    except TelegramBadRequest:
-        logging.critical("TelegramBadRequest: can't send error message")
+    except TelegramBadRequest as error:
+        logger.critical(error.message)
     finally:
-        logging.error(title + tracback)
+        logger.error(tb)

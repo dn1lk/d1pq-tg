@@ -1,0 +1,17 @@
+/venv/
+/.idea/
+**/__pycache__
+**/.git
+**/.dockerignore
+**/.gitignore
+**/.vscode
+**/coverage
+**/**.env
+**/**.env.example
+**/yc_creds.json
+**/api-gw.yaml
+**/api-gw.yaml.example
+Dockerfile
+Makefile
+README.md
+**.yml

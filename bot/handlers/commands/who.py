@@ -1,11 +1,11 @@
 from random import choice
 
-from aiogram import Bot, Router, F, types, enums, flags, html
+from aiogram import Bot, Router, F, types, enums, html
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.core import filters
+from core import filters, helpers
+from core.utils import database
 from . import CommandTypes
-from .. import resolve_text
 
 router = Router(name='who')
 router.message.filter(filters.Command(*CommandTypes.WHO))
@@ -17,16 +17,15 @@ async def private_handler(message: types.Message):
 
 
 @router.message(filters.MagicData(F.args))
-@flags.sql('members')
 async def with_args_handler(
         message: types.Message,
         bot: Bot,
         command: filters.CommandObject,
-        members: list[int] | None,
+        main_settings: database.MainSettings,
 ):
-    if members and len(members) > 1:
-        member = await bot.get_chat_member(message.chat.id, choice(members))
-        answer = resolve_text(
+    if len(main_settings.members) > 1:
+        member = await bot.get_chat_member(message.chat.id, choice(main_settings.members))
+        answer = helpers.resolve_text(
             choice(
                 (
                     _("Hmmm, I think"),
@@ -38,7 +37,7 @@ async def with_args_handler(
             ) + f' {member.user.mention_html()} {html.bold(html.quote(command.args))}'
         )
 
-    elif members:
+    elif main_settings.members:
         answer = choice(
             (
                 _("Oh, I don't know you guys... Give me a time."),
@@ -58,14 +57,11 @@ async def with_args_handler(
 
 
 @router.message()
-@flags.throttling('gen')
-@flags.sql('messages')
-@flags.chat_action("typing")
 async def without_args_handler(
         message: types.Message,
         i18n: I18n,
         command: filters.CommandObject,
-        messages: list[str] | None,
+        messages: list[str],
 ):
     from .help import who_handler
     await who_handler(message, i18n, command, messages)

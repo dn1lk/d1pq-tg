@@ -6,9 +6,6 @@ router = Router(name='commands')
 
 
 def setup(parent_router: Router):
-    from .settings.commands.misc.middleware import CustomCommandsMiddleware
-    CustomCommandsMiddleware().setup(router)
-
     parent_router.include_router(router)
 
     from . import play, settings
@@ -16,12 +13,10 @@ def setup(parent_router: Router):
     settings.setup(router)
     play.setup(router)
 
-    from . import choose, help, question, start, story, who
+    from . import choose, help, start, who
     router.include_routers(
         choose.router,
         who.router,
-        question.router,
-        story.router,
         help.router,
         start.router,
     )

@@ -5,7 +5,7 @@ from aiogram.utils.i18n import gettext as _
 
 from . import RPSValues, keyboards
 
-router = Router(name='play:rps:process')
+router = Router(name='rps:process')
 
 
 def _parse_score(message: types.Message):

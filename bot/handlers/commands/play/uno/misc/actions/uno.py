@@ -1,10 +1,11 @@
+from dataclasses import replace
 from random import choice
 
 from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
 from .. import keyboards
 from ..data import UnoData
 
@@ -47,8 +48,8 @@ async def update_uno(
     from .bot import UnoBot
     bot_uno = UnoBot(message, bot, state, data_uno)
 
-    timer_uno = TimerTasks('say_uno')
-    timer_uno[state.key] = bot_uno.gen_uno(timer, a, b)
+    key = replace(state.key, destiny='play:uno:last')
+    timer[key] = bot_uno.gen_uno(timer, a, b)
 
 
 async def proceed_uno(

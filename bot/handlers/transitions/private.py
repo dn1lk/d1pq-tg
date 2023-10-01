@@ -4,7 +4,7 @@ from random import choice
 from aiogram import Bot, Router, types
 from aiogram.utils.i18n import gettext as _
 
-from bot.core import filters
+from core import filters
 
 router = Router(name='transitions:private')
 
@@ -13,12 +13,19 @@ router = Router(name='transitions:private')
 async def my_return_handler(event: types.ChatMemberUpdated, bot: Bot):
     await asyncio.sleep(1)
 
-    answer = (
-        _("Wait, was I kicked, {user}?"),
-        _("Oh, wait. I already wrote this to you..."),
-        _("I am with you again, {user}!"),
-        _("Oh, {user}, I got out of your anger?"),
-        _("Ha! I returned, {user}!"),
-    )
+    answer = choice(
+        (
+            _("Wait, was I kicked, {user}?"),
+            _("Oh, wait. I already wrote this to you..."),
+            _("I am with you again, {user}!"),
+            _("Oh, {user}, I got out of your anger?"),
+            _("Ha! I returned, {user}!"),
+        )
+    ).format(user=event.from_user.mention_html())
 
-    await bot.send_message(event.chat.id, choice(answer).format(user=event.from_user.mention_html()))
+    await bot.send_message(event.chat.id, answer)
+
+
+@router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.JOIN_TRANSITION))
+async def my_join_handler(_):
+    pass

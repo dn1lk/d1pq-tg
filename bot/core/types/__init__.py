@@ -1,10 +1,17 @@
 import logging
 
+from . import chat, message, user
+
+__all__ = (
+    "setup",
+)
+
+logger = logging.getLogger('bot')
+
 
 def setup():
-    logging.debug('Setting up types...')
+    logger.debug('Setting up types...')
 
-    from . import chat, message, user
     chat.setup()
     message.setup()
     user.setup()

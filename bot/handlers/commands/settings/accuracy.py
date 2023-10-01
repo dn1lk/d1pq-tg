@@ -1,41 +1,42 @@
-from aiogram import Router, F, types, flags, html
+from aiogram import Router, F, types, html, flags
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import database
+from core.utils import database
 from . import SettingsActions, keyboards
 
-router = Router(name="accuracy")
+router = Router(name="temperature")
 router.callback_query.filter(keyboards.SettingsData.filter(F.action == SettingsActions.ACCURACY))
 
 
 @router.callback_query(keyboards.SettingsData.filter(F.value))
+@flags.database('gen_settings')
 async def update_handler(
         query: types.CallbackQuery,
-        db: database.SQLContext,
         callback_data: keyboards.SettingsData,
+        gen_settings: database.GenSettings
 ):
-    accuracy: int = callback_data.value
-    await db.accuracy.set(query.message.chat.id, accuracy)
+    gen_settings.accuracy = int(callback_data.value)
+    await gen_settings.save()
 
     answer = _(
         "<b>Text generation accuracy has been successfully updated.</b>\n"
         "Current accuracy: {accuracy}."
-    ).format(accuracy=html.bold(accuracy))
+    ).format(accuracy=html.bold(gen_settings.accuracy))
 
     await query.message.edit_text(answer)
     await query.answer()
 
 
 @router.callback_query()
-@flags.sql('accuracy')
-async def start_handler(query: types.CallbackQuery, accuracy: int):
+@flags.database('gen_settings')
+async def start_handler(query: types.CallbackQuery, gen_settings: database.GenSettings):
     answer = _(
         "<b>Update text generation accuracy.</b>\n"
         "Current accuracy: {accuracy}.\n"
         "\n"
         "Available options:\n"
-        "<i>More value — better, but longer generation, less — vice versa.</i>"
-    ).format(accuracy=html.bold(accuracy))
+        "<i>The higher the value, the more usual the generation will be.</i>"
+    ).format(accuracy=html.bold(gen_settings.accuracy))
 
-    await query.message.edit_text(answer, reply_markup=keyboards.accuracy_keyboard(accuracy))
+    await query.message.edit_text(answer, reply_markup=keyboards.accuracy_keyboard(gen_settings.accuracy))
     await query.answer()

@@ -1,15 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from aiogram.types import Message
 
 
-def date_check(date: datetime):
-    return datetime.now(tz=date.tzinfo) - date > timedelta(seconds=15)
-
-
 def wrapper(answer_func, reply_func):
     def wrapped(self: Message, *args, **kwargs):
-        if date_check(self.date):
+        if datetime.now(tz=timezone(self.date.tzinfo.utcoffset(self.date))) - self.date > timedelta(seconds=15):
             return reply_func(self, *args, **kwargs)
         return answer_func(self, *args, **kwargs)
 

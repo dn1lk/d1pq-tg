@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import replace
 from random import random, choice
 from typing import Callable, Any, Awaitable
 
@@ -7,7 +8,7 @@ from aiogram.dispatcher.flags import get_flag
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.i18n import I18n, gettext as _
 
-from bot.core.utils import TimerTasks
+from ..utils import TimerTasks
 
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -30,15 +31,16 @@ class ThrottlingMiddleware(BaseMiddleware):
         throttling: str | None = get_flag(data, 'throttling')
 
         if throttling:
+            timer: TimerTasks = data['timer']
             state: FSMContext = data['state']
-            timer = TimerTasks(throttling)
+            key = replace(state.key, destiny=f'throttling:{throttling}')
 
-            if any(timer[state.key]):
+            if any(timer[key]):
                 if isinstance(event, types.Message | types.CallbackQuery) and random() < 0.3:
                     await self.answer(event, data)
                 return
 
-            timer[state.key] = asyncio.sleep(self._tags[throttling])
+            timer[key] = asyncio.sleep(self._tags[throttling])
         return await handler(event, data)
 
     async def answer(self, event: types.Message | types.CallbackQuery, data: dict):

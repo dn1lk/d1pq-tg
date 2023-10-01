@@ -7,7 +7,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from .data.deck.colors import UnoColors
 from .data.settings.additions import UnoAdd, UnoAddState
-from ...misc.actions import PlayActions
+from .. import UNO
+from ... import PlayActions
 
 
 class UnoSetup(str, Enum):
@@ -61,7 +62,7 @@ class UnoActions(str, Enum):
 
 class UnoData(CallbackData, prefix=PlayActions.UNO[0]):
     action: UnoActions | UnoSetup | UnoSettings | UnoAdd
-    value: UnoAddState | UnoColors = None
+    value: UnoAddState | UnoColors | None = None
 
 
 def setup_keyboard():
@@ -124,7 +125,6 @@ def choice_color():
 def say_uno():
     builder = InlineKeyboardBuilder()
 
-    from . import UNO
     builder.button(text=UNO, callback_data=UnoData(action=UnoActions.UNO))
 
     return builder.as_markup()

@@ -5,25 +5,26 @@ from aiogram.fsm.context import FSMContext
 from aiogram.handlers import MessageHandler
 from aiogram.utils.i18n import gettext as _
 
-from bot.core.utils import TimerTasks
+from core.utils import TimerTasks
+from handlers.commands.play import PlayStates
 from . import DRAW_CARD
 from .misc import keyboards
 from .misc.actions import proceed_turn, next_turn, proceed_uno
 from .misc.actions.turn import update_timer
 from .misc.data import UnoData
 from .misc.data.deck import UnoCard
-from .. import PlayStates
+from .misc.data.deck.base import STICKER_SET_NAME
 
-router = Router(name='play:uno:user')
+router = Router(name='uno:user')
 router.message.filter(PlayStates.UNO)
 router.callback_query.filter(PlayStates.UNO)
 
 
 @router.message(
-    F.sticker.set_name == 'uno_by_d1pq_bot',
+    F.sticker.set_name == STICKER_SET_NAME,
     UnoData.filter('turn')
 )
-@flags.timer('play')
+@flags.timer
 async def turn_handler(
         message: types.Message,
         bot: Bot,
@@ -40,7 +41,7 @@ async def turn_handler(
     F.text == DRAW_CARD,
     UnoData.filter('pass')
 )
-@flags.timer('play')
+@flags.timer
 async def pass_handler(
         message: types.Message,
         bot: Bot,
@@ -57,7 +58,7 @@ async def pass_handler(
     keyboards.UnoData.filter(F.action == keyboards.UnoActions.BLUFF),
     UnoData.filter('bluff')
 )
-@flags.timer('play')
+@flags.timer
 async def bluff_handler(
         query: types.CallbackQuery,
         bot: Bot,
@@ -79,7 +80,7 @@ async def bluff_handler(
 
 
 @router.message(F.entities.func(lambda entities: entities[0].type in ('mention', 'text_mention')))
-@flags.timer(name='play', cancelled=False, locked=False)
+@flags.timer(cancelled=False, locked=False)
 class SevenHandler(MessageHandler):
     @property
     def bot(self) -> Bot:
@@ -145,7 +146,7 @@ class SevenHandler(MessageHandler):
     keyboards.UnoData.filter(F.action == keyboards.UnoActions.COLOR),
     UnoData.filter('color')
 )
-@flags.timer('play')
+@flags.timer
 async def color_handler(
         query: types.CallbackQuery,
         bot: Bot,
@@ -174,7 +175,7 @@ async def color_handler(
     keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO),
     UnoData.filter('uno')
 )
-@flags.timer(name='play', cancelled=False)
+@flags.timer(cancelled=False)
 async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
     data_uno = await UnoData.get_data(state)
 

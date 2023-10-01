@@ -1,14 +1,14 @@
 from functools import lru_cache
-from pathlib import Path
 from random import choice
 
+import misc
 from ... import PlayData
 
-LOCALE_DIR = Path.cwd() / 'bot' / 'core' / 'locales'
+LOCALE_DIR = f'{misc.BASE_DIR}/core/locales'
 
 
 class CTSData(PlayData):
-    bot_city: str = None
+    bot_city: str | None = None
     used_cities: list[str] = []
     fail_amount: int = 5
 
@@ -20,7 +20,7 @@ class CTSData(PlayData):
     @classmethod
     @lru_cache(maxsize=2)
     def get_cities(cls, locale: str) -> list[str]:
-        with open(LOCALE_DIR / locale / 'cities.txt', 'r', encoding='utf8') as r:
+        with open(f'{LOCALE_DIR}/{locale}/cities.txt', 'r', encoding='utf8') as r:
             return r.read().splitlines()
 
     def gen_city(self, cities: list[str], user_city: str = None) -> None:
