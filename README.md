@@ -7,8 +7,8 @@ A text-generating bot based on current chat with playing functions.
 ### Requirements
 In [requirements.txt](requirements.txt) (:
 
-### Envs
-Before start fill [.env](.env):
+### Environments
+Before start fill [.env](.env.example):
 1. BOT_TOKEN
 2. BOT_OWNER_ID
 3. YC_SERVICE_ACCOUNT_ID
@@ -19,12 +19,14 @@ Before start fill [.env](.env):
 
 ### Makefile
 1. Create YC serverless container: <code>make create</code>
-2. Fill **YC_CATALOG_ID** and **YC_REGISTRY_ID** in [.env](.env)
+2. Fill **YC_CATALOG_ID** and **YC_REGISTRY_ID** in [.env](.env.example)
 3. Create YC API-gateway: <code>make create_gw</code>
-4. Fill WEBHOOK_URL in [.env](.env)
+4. Fill WEBHOOK_URL in [.env](.env.example)
 5. Update YC API-gateway .yaml in the service
-6. Deploy to YC: <code>make deploy</code>
+6. Create YC YDB, fill [database.env](database.env.example) 
+7. (Optional) Create YC Redis, fill [redis.env](redis.env.example)
+8. Deploy to YC: <code>make deploy</code>
 
-It will setup Yandex Cloud serverless container, create Yandex Cloud API-gateway, setup webhook and deploy container.
+It will set up Yandex Cloud serverless container, create Yandex Cloud API-gateway, setup webhook and deploy container.
 
 -- Ready to use!
