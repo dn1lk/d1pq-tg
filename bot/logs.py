@@ -10,7 +10,14 @@ class YcLoggingFormatter(jsonlogger.JsonFormatter):
     def add_fields(self, log_record, record, message_dict):
         super().add_fields(log_record, record, message_dict)
         log_record['logger'] = record.name
-        log_record['level'] = str.replace(str.replace(record.levelname, "WARNING", "WARN"), "CRITICAL", "FATAL")
+
+        match record.levelname:
+            case "WARNING":
+                log_record['level'] = "WARN"
+            case "CRITICAL":
+                log_record['level'] = "FATAL"
+            case _:
+                log_record['level'] = record.levelname
 
 
 def setup_logger(logger_name: str):
@@ -27,7 +34,7 @@ def setup_logger(logger_name: str):
 def setup():
     # Base logging
     stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(YcLoggingFormatter('%(message)s %(level)s %(logger)s'))
+    stream_handler.setFormatter(YcLoggingFormatter('%(level)s %(logger)s %(message)s'))
 
     logging.basicConfig(
         level=logging.DEBUG if config.DEBUG else logging.INFO,

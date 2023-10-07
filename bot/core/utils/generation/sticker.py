@@ -12,7 +12,7 @@ async def gen(
 ) -> str | None:
     stickers = []
     stickers_filtered = []
-    for sticker_set_name in (database.DEFAULT_STICKER_SET, *gen_settings.stickers):
+    for sticker_set_name in (database.DEFAULT_STICKER_SET, *(gen_settings.stickers or [])):
         for sticker in (await bot.get_sticker_set(sticker_set_name)).stickers:
             stickers.append(sticker)
 
