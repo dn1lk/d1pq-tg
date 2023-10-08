@@ -37,7 +37,7 @@ get_webhook:
 	curl --request POST --url "https://api.telegram.org/bot$(BOT_TOKEN)/getWebhookInfo"
 
 set_webhook:
-	cd bot && BOT_TOKEN=$(BOT_TOKEN) WEBHOOK_URL=$(WEBHOOK_URL) WEBHOOK_PATH=$(WEBHOOK_PATH) python webhook.py
+	cd bot && $(shell sed 's|^||g' *.env .env | tr -s "\r\n" " " | cut -c2-) python webhook.py
 
 
 # Locale
