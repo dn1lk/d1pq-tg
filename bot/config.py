@@ -4,7 +4,7 @@ DEBUG = int(os.getenv('DEBUG', 0))
 LOG_TO_FILE = int(os.getenv('LOG_TO_FILE', 0))
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-BOT_OWNER_ID = os.getenv('BOT_OWNER_ID')
+BOT_OWNER_ID = int(os.getenv('BOT_OWNER_ID'))
 BOT_SKIP_UPDATES = int(os.getenv('BOT_SKIP_UPDATES', 0))
 
 WEBHOOK_USE = int(os.getenv('WEBHOOK_USE', 0))
