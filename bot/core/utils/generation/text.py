@@ -33,7 +33,7 @@ def __get_states(model: markovify.Text, accuracy: int, index: int):
         yield items[i: i + model.state_size]
 
 
-def gen(
+def get_answer(
         text: str,
         gen_settings: database.GenSettings,
         **kwargs

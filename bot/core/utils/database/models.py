@@ -62,8 +62,8 @@ class GenSettings(WithDates):
     chat_id: int
     chance: float = 0.1
     accuracy: int = 2
-    messages: list[str] = f'["{DEFAULT_STICKER_SET}"]'
-    stickers: list[str] = field(default_factory=list)
+    messages: list[str] = field(default_factory=list)
+    stickers: list[str] = f'["{DEFAULT_STICKER_SET}"]'
 
     class Meta:
         table_name = 'gen_settings'

@@ -88,7 +88,8 @@ class SQLUpdateMiddleware(BaseMiddleware):
                 or await models.GenSettings.get(chat_id=event.chat.id)
         )
 
-        updated = False
+        main_updated = False
+        gen_updated = False
 
         text = helpers.get_text(event)
         if text and gen_settings.messages is not None:
@@ -97,23 +98,25 @@ class SQLUpdateMiddleware(BaseMiddleware):
             if len(gen_settings.messages) > 5000:
                 del gen_settings.messages[:1000]
 
-            updated = True
+            gen_updated = True
         elif event.sticker and gen_settings.stickers is not None:
-            if event.sticker.set_name not in main_settings.members:
+            if event.sticker.set_name not in gen_settings.stickers:
                 gen_settings.stickers.append(event.sticker.set_name)
 
                 if len(gen_settings.stickers) > 5:
                     del gen_settings.stickers[0]
 
-                updated = True
+                gen_updated = True
 
         if main_settings.members is not None:
             if event.from_user.id not in main_settings.members:
                 main_settings.members.append(event.from_user.id)
-                updated = True
+                main_updated = True
 
-        if updated:
+        if main_updated:
             await main_settings.save()
+        if gen_updated:
+            await gen_settings.save()
 
     def setup(self, router: Router):
         router.message.outer_middleware(self)

@@ -5,7 +5,7 @@ from aiogram import Bot
 from core.utils import database
 
 
-async def gen(
+async def get_answer(
         bot: Bot,
         text: str,
         gen_settings: database.GenSettings

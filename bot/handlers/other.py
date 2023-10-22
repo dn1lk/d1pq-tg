@@ -23,11 +23,11 @@ async def get_gen_kwargs(
 ) -> dict:
     async def gen_text() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id, bot=bot):
-            return {'text': generation.text.gen(text, gen_settings)}
+            return {'text': generation.text.get_answer(text, gen_settings)}
 
     async def gen_sticker() -> dict:
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, bot=bot):
-            return {'sticker': await generation.sticker.gen(bot, text, gen_settings)}
+            return {'sticker': await generation.sticker.get_answer(bot, text, gen_settings)}
 
     text = helpers.get_text(message)
     return await choice((gen_text, gen_sticker))()
