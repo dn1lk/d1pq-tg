@@ -15,6 +15,7 @@ class Model:
     class Meta(metaclass=ABCMeta):
         table_name: str
         table_schema: dict[str, str | dict]
+        table_indexes: dict[str, dict]
 
     @classmethod
     def _get_type(cls, key: str):
@@ -155,8 +156,33 @@ class Model:
 
     @classmethod
     async def _setup(cls, query_params: str):
-        query_structures = [f"{key} {value['type']}" for key, value in cls.Meta.table_schema]
-        query = f"create table {cls.Meta.table_name} ({', '.join(query_structures)}, {query_params});"
+        query_structures = [f"{key} {value['type']}" for key, value in cls.Meta.table_schema.items()]
+        query_structures = ', '.join(query_structures)
+        query_structures += ','
+
+        query_indexes = ''
+        if cls.Meta.table_indexes:
+            query_indexes = []
+            for key, value in cls.Meta.table_indexes.items():
+                query_index_fields = ', '.join(value.get('fields', []))
+                query_index_covers = ', '.join(value.get('covers', []))
+
+                query_index = f"INDEX {key} GLOBAL ON ({query_index_fields})"
+                if query_index_covers:
+                    query_index += f" COVER {query_index_covers}"
+
+                query_indexes.append(query_index)
+
+            query_indexes = ', '.join(query_indexes)
+            query_indexes += ','
+
+        query = (
+            f"create table {cls.Meta.table_name} ("
+            f"{query_structures}"
+            f"{query_indexes}"
+            f"{query_params}"
+            f");"
+        )
 
         async with cls.pool.checkout() as session:
             await session.execute_scheme(query)

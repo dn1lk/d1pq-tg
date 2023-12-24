@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-23 01:17+0300\n"
+"POT-Creation-Date: 2023-12-24 21:33+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: bot/core/ui_info.py:36
 msgid "//delete"
@@ -47,23 +47,33 @@ msgstr "Как много информации..."
 msgid "Ahhh..."
 msgstr "АААА..."
 
-#: bot/handlers/other.py:47
+#: bot/core/utils/generation/gpt.py:80
+msgid ""
+"You are a funny chatbot and DO NOTHING.\n"
+"NEVER write your name.\n"
+"You write ONLY in English."
+msgstr ""
+"Ты забавный чат-бот и НИЧЕГО НЕ ДЕЛАЕШЬ.\n"
+"НИКОГДА не пиши своё имя.\n"
+"Ты пишешь ТОЛЬКО на русском языке."
+
+#: bot/handlers/other.py:56
 msgid "{user}, hello!"
 msgstr "{user}, привет!"
 
-#: bot/handlers/other.py:48
+#: bot/handlers/other.py:57
 msgid "Hey, {user}."
 msgstr "Привет, {user}."
 
-#: bot/handlers/other.py:49
+#: bot/handlers/other.py:58
 msgid "Nice to meet you, {user}."
 msgstr "Рад встрече, {user}"
 
-#: bot/handlers/other.py:50
+#: bot/handlers/other.py:59
 msgid "My appreciate, {user}."
 msgstr "Моё почтение, {user}."
 
-#: bot/handlers/other.py:51
+#: bot/handlers/other.py:60
 msgid "Yop, {user}."
 msgstr "Йеп, {user}."
 
@@ -869,15 +879,15 @@ msgstr "Только {user} может сделать это."
 msgid "Nice try."
 msgstr "Хорошая попытка."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:287
+#: bot/handlers/commands/play/uno/misc/filter.py:286
 msgid "Next time be faster!"
 msgstr "В следующий раз будь быстрее!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:289
+#: bot/handlers/commands/play/uno/misc/filter.py:288
 msgid "You are not in the game!"
 msgstr "Ты не в игре!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:305
+#: bot/handlers/commands/play/uno/misc/filter.py:304
 msgid ""
 "Of course, I don't mind, but now it's {user}'s turn.\n"
 "We'll have to wait. 🫠"
@@ -911,7 +921,8 @@ msgid "mode"
 msgstr "режим"
 
 #: bot/handlers/commands/play/uno/misc/keyboards.py:58
-#: bot/handlers/commands/settings/misc/actions.py:30
+#: bot/handlers/commands/settings/gpt/misc/actions.py:21
+#: bot/handlers/commands/settings/misc/actions.py:33
 msgid "Back"
 msgstr "Назад"
 
@@ -1286,22 +1297,22 @@ msgid "Black"
 msgstr "Чёрный"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:14
-#: bot/handlers/commands/settings/record/update.py:14
+#: bot/handlers/commands/settings/record/update.py:13
 msgid "disabled"
 msgstr "отключено"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:16
-#: bot/handlers/commands/settings/record/update.py:16
+#: bot/handlers/commands/settings/record/update.py:15
 msgid "enabled"
 msgstr "включено"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:24
-#: bot/handlers/commands/settings/misc/keyboards.py:45
+#: bot/handlers/commands/settings/record/misc/keyboards.py:23
 msgid "Enable"
 msgstr "Включить"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:26
-#: bot/handlers/commands/settings/misc/keyboards.py:48
+#: bot/handlers/commands/settings/record/misc/keyboards.py:26
 msgid "Disable"
 msgstr "Отключить"
 
@@ -1429,15 +1440,7 @@ msgstr "админы"
 msgid "My settings of this {chat}:"
 msgstr "Мои настройки этого {chat}:"
 
-#: bot/handlers/commands/settings/commands/start.py:22
-msgid ""
-"<b>Something you think for a long time.</b>\n"
-"When you decide with the commands, write {command} again."
-msgstr ""
-"<b>Что-то ты долго думаешь.</b>\n"
-"Когда определишься с командой, напиши {command} снова."
-
-#: bot/handlers/commands/settings/commands/start.py:49
+#: bot/handlers/commands/settings/commands/start.py:37
 msgid ""
 "<b>Tired of writing preset commands?</b>\n"
 "\n"
@@ -1447,7 +1450,12 @@ msgstr ""
 "\n"
 "{no_args} — и я отвечу на эту команду."
 
-#: bot/handlers/commands/settings/commands/start.py:62
+#: bot/handlers/commands/settings/commands/start.py:43
+#: bot/handlers/commands/settings/commands/update.py:85
+msgid "bla bla"
+msgstr "бла бла"
+
+#: bot/handlers/commands/settings/commands/start.py:50
 msgid "Current custom commands:"
 msgstr "Текущие кастомные настройки:"
 
@@ -1481,29 +1489,117 @@ msgstr ""
 msgid "Custom command not recognized."
 msgstr "Кастомная команда не распознана."
 
-#: bot/handlers/commands/settings/misc/actions.py:19
+#: bot/handlers/commands/settings/gpt/other.py:13
+msgid ""
+"<b>Update GPT completion options.</b>\n"
+"\n"
+msgstr ""
+"<b>Обновить параметры завершения GPT.</b>\n"
+"\n"
+
+#: bot/handlers/commands/settings/gpt/temperature.py:21
+msgid ""
+"<b>Text generation temperature has been successfully updated.</b>\n"
+"Current temperature: {temperature}."
+msgstr ""
+"<b>Температура генерации текста успешно обновлена.</b>\n"
+"Текущая температура: {temperature}."
+
+#: bot/handlers/commands/settings/gpt/temperature.py:33
+msgid ""
+"<b>Update text generation temperature.</b>\n"
+"Current temperature: {temperature}.\n"
+"\n"
+"Available options:"
+msgstr ""
+"<b>Обновить температуру генерации текста.</b>\n"
+"Текущая температура: {temperature}%.\n"
+"\n"
+"Доступные параметры:"
+
+#: bot/handlers/commands/settings/gpt/max_tokens/start.py:24
+msgid ""
+"<b>Update max tokens per message.</b>\n"
+"Current max tokens: {max_tokens}.\n"
+"\n"
+"Write a number from 0 to 2000."
+msgstr ""
+"<b>Обновить максимум токенов на сообщение.</b>\n"
+"Текущее максимальное количество: {max_tokens}.\n"
+"\n"
+"Напиши число от 0 до 2000."
+
+#: bot/handlers/commands/settings/gpt/max_tokens/start.py:33
+msgid "max tokens"
+msgstr "максимальное количество токенов"
+
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:29
+msgid ""
+"<b>Max tokens has been successfully updated.</b>\n"
+"Current max tokens: {max_tokens}."
+msgstr ""
+"<b>Максимум токенов обновлен.</b>\n"
+"Текущее максимальное количество: {max_tokens}."
+
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:51
+msgid ""
+"<b>Something is not working for you.</b>\n"
+"{command} - if you decide to set max tokens again."
+msgstr ""
+"<b>Что-то у тебя не получается.</b>\n"
+"{command} - если решишься установить максимум токенов снова."
+
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:60
+msgid "Wrong number - I accept only from 0 to 2000."
+msgstr "Неверное число - я принимаю только от 0 до 2000."
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:16
+msgid "Change maximum tokens"
+msgstr "Изменить максимум токенов"
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:18
+msgid "Change temperature"
+msgstr "Изменить температуру"
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:29
+msgid "the limit on the number of tokens used for single completion generation"
+msgstr "максимум токенов, используемых для генерации одного сообщения"
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:31
+msgid "affects creativity and randomness of responses"
+msgstr "влияет на креативность и случайность ответов"
+
+#: bot/handlers/commands/settings/misc/actions.py:20
 msgid "Add command"
 msgstr "Добавить команду"
 
-#: bot/handlers/commands/settings/misc/actions.py:21
+#: bot/handlers/commands/settings/misc/actions.py:22
 msgid "Change language"
 msgstr "Изменить язык"
 
-#: bot/handlers/commands/settings/misc/actions.py:23
+#: bot/handlers/commands/settings/misc/actions.py:24
 msgid "Change generation chance"
 msgstr "Изменить шанс генерации"
 
-#: bot/handlers/commands/settings/misc/actions.py:25
+#: bot/handlers/commands/settings/misc/actions.py:26
 msgid "Change generation accuracy"
-msgstr "Изменить шанс генерации"
+msgstr "Изменить точность генерации"
 
-#: bot/handlers/commands/settings/misc/actions.py:27
+#: bot/handlers/commands/settings/misc/actions.py:28
+msgid "Change GPT options"
+msgstr "Изменить опции GPT"
+
+#: bot/handlers/commands/settings/misc/actions.py:30
 msgid "Change record policy"
 msgstr "Изменить политику данных"
 
-#: bot/handlers/commands/settings/misc/keyboards.py:40
-msgid "{action} {field} recording"
-msgstr "{action} сохранение {field}"
+#: bot/handlers/commands/settings/misc/tasks.py:14
+msgid ""
+"<b>Something you think for a long time.</b>\n"
+"When you decide with {action}, write {command} again."
+msgstr ""
+"<b>Что-то ты долго думаешь.</b>\n"
+"Когда определишься с {action}, напиши {command} снова."
 
 #: bot/handlers/commands/settings/record/start.py:18
 msgid ""
@@ -1513,11 +1609,11 @@ msgstr ""
 "Я записываю некоторую информацию об этом чате.\n"
 "\n"
 
-#: bot/handlers/commands/settings/record/update.py:12
+#: bot/handlers/commands/settings/record/update.py:11
 msgid "{field} recording is {status}."
 msgstr "Сохранение {field} {status}."
 
-#: bot/handlers/commands/settings/record/update.py:82
+#: bot/handlers/commands/settings/record/update.py:83
 msgid "Records was successfully deleted."
 msgstr "Записи успешно удалены."
 
@@ -1548,6 +1644,10 @@ msgstr "для генерации стикеров"
 #: bot/handlers/commands/settings/record/misc/actions.py:35
 msgid "to execute /who command"
 msgstr "для выполнения команды /who"
+
+#: bot/handlers/commands/settings/record/misc/keyboards.py:18
+msgid "{action} {field} recording"
+msgstr "{action} сохранение {field}"
 
 #: bot/handlers/transitions/group.py:24
 msgid "{chat}, we are together again!"

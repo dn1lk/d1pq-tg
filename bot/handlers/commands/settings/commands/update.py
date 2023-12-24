@@ -11,7 +11,7 @@ from .. import SettingsStates
 
 router = Router(name='commands:update')
 router.message.filter(SettingsStates.COMMANDS,
-                      filters.Command(*(command[0] for command in CommandTypes), with_customs=False),
+                      filters.Command(*(command[0] for command in list(CommandTypes)[:-1]), with_customs=False),
                       filters.IsAdmin(is_admin=True))
 
 
@@ -82,7 +82,7 @@ async def decline_handler(
         message = await message.answer(html.bold(_("Custom command not recognized.")))
         answer = get_answer(
             command,
-            choice(helpers.get_split_text(gen_settings.messages)).lower()
+            choice(helpers.get_split_text(gen_settings.messages or [_('bla bla')])).lower()
         )
 
         await message.answer(answer)

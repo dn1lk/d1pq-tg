@@ -21,7 +21,7 @@ async def setup(dp: Dispatcher):
     directory: ydb.Directory = await driver.scheme_client.list_directory(config.YDB_DATABASE)
     children_names = [children.name for children in directory.children]
 
-    for model in (MainSettings, GenSettings):
+    for model in (MainSettings, GenSettings, GPTSettings):
         if model.Meta.table_name not in children_names:
             await model.setup()
 

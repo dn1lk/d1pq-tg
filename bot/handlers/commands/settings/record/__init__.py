@@ -1,5 +1,6 @@
 from aiogram import Router
 
+from .misc import keyboards
 from .misc.actions import RecordActions
 
 

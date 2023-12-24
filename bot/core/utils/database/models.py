@@ -8,6 +8,7 @@ __all__ = (
     "Model",
     "MainSettings",
     "GenSettings",
+    "GPTSettings",
     "DEFAULT_STICKER_SET",
 )
 
@@ -47,6 +48,7 @@ class MainSettings(WithDates):
             'updated': {'type': 'Datetime'},
             'created': {'type': 'Datetime'},
         }
+        table_indexes = {}
 
     def __post_init__(self):
         WithDates.__post_init__(self)
@@ -76,6 +78,7 @@ class GenSettings(WithDates):
             'updated': {'type': 'Datetime'},
             'created': {'type': 'Datetime'},
         }
+        table_indexes = {}
 
     def __post_init__(self):
         WithDates.__post_init__(self)
@@ -84,3 +87,53 @@ class GenSettings(WithDates):
             self.messages = json.loads(self.messages)
         if isinstance(self.stickers, str):
             self.stickers = json.loads(self.stickers)
+
+
+@dataclass(slots=True)
+class GPTSettings(WithDates):
+    chat_id: int
+    temperature: float = 0.6
+    max_tokens: int = 100
+    tokens: int = 5000
+    promt: str = None
+
+    class Meta:
+        table_name = 'gpt_settings'
+        table_schema = {
+            'chat_id': {'type': 'Int64', 'not_null': True},
+            'temperature': {'type': 'Float'},
+            'max_tokens': {'type': 'Uint16'},
+            'tokens': {'type': 'Int16'},
+            'promt': {'type': 'Utf8'},
+            'updated': {'type': 'Datetime'},
+            'created': {'type': 'Datetime'},
+        }
+        table_indexes = {}
+
+    async def delete(self):
+        self.temperature = 0.6
+        self.max_tokens = 100
+        return await self.save()
+
+
+@dataclass(slots=True)
+class Transactions(WithDates):
+    id: int
+    user_id: int
+    chat_id: int
+    amount: str
+
+    class Meta:
+        table_name = 'transactions'
+        table_schema = {
+            'id': {'type': 'Uint64', 'not_null': True},
+            'user_id': {'type': 'Int64'},
+            'chat_id': {'type': 'Int64'},
+            'amount': {'type': 'Decimal'},
+        }
+        table_indexes = {
+            'user_chat_ids': {
+                'fields': ['user_id', 'chat_id'],
+                'cover': ['amount'],
+            }
+        }

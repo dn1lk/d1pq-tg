@@ -48,3 +48,6 @@ def setup():
 
     # Tasks logging
     setup_logger('tasks')
+
+    # GPT logging
+    setup_logger('gpt')

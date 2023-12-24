@@ -1,10 +1,9 @@
 /venv/
-/.idea/
+**/.idea/
 **/__pycache__
-**/.git
-**/.vscode
-**/coverage
-**/**.env
-**/yc_creds.json
+**/.git/
+**/coverage/
+**/*.env
 **/api-gw.yaml
 **/docker-compose**.yml
+**/yc_creds.json

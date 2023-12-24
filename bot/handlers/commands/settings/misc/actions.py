@@ -8,6 +8,7 @@ class SettingsActions(str, Enum):
     LOCALE = 'locale'
     CHANCE = 'chance'
     ACCURACY = 'accuracy'
+    GPT = 'gpt'
     RECORD = 'record'
 
     BACK = 'back'
@@ -23,6 +24,8 @@ class SettingsActions(str, Enum):
                 return _('Change generation chance')
             case self.ACCURACY:
                 return _('Change generation accuracy')
+            case self.GPT:
+                return _('Change GPT options')
             case self.RECORD:
                 return _('Change record policy')
 

@@ -281,7 +281,6 @@ class UnoFilter(BaseFilter):
         if query.from_user.id in data_uno.players.playing:
             if any(timer[state.key]):
                 del timer[state.key]
-
                 return True
 
             await query.answer(_("Next time be faster!"))

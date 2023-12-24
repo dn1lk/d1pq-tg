@@ -2,8 +2,7 @@ from aiogram import Router, F, types, html, flags
 from aiogram.utils.i18n import gettext as _
 
 from core.utils import database
-from . import RecordActions
-from .. import keyboards
+from . import RecordActions, keyboards
 
 router = Router(name="record:update")
 
@@ -70,14 +69,16 @@ async def members_handler(
 
 
 @router.callback_query(keyboards.RecordData.filter(F.action == RecordActions.DELETE))
-@flags.database('gen_settings')
+@flags.database(('gen_settings', 'gpt_settings'))
 async def delete_handler(
         query: types.CallbackQuery,
         main_settings: database.MainSettings,
-        gen_settings: database.GenSettings
+        gen_settings: database.GenSettings,
+        gpt_settings: database.GPTSettings,
 ):
     await main_settings.delete()
     await gen_settings.delete()
+    await gpt_settings.delete()
 
     await query.message.edit_text(html.bold(_("Records was successfully deleted.")))
     await query.answer()

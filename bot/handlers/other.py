@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from random import choice, random
+from random import choice, choices, random
 
 from aiogram import Bot, Router, F, types, enums, flags
 from aiogram.fsm.context import FSMContext
@@ -19,18 +19,27 @@ SQLUpdateMiddleware().setup(router)
 async def get_gen_kwargs(
         message: types.Message,
         bot: Bot,
+        owner_id: int,
+        state: FSMContext,
         gen_settings: database.GenSettings,
+        gpt_settings: database.GPTSettings,
+        gpt: generation.YandexGPT,
 ) -> dict:
     async def gen_text() -> dict:
         async with ChatActionSender.typing(chat_id=message.chat.id, bot=bot):
-            return {'text': generation.text.get_answer(text, gen_settings)}
+            answer = await gpt.get_answer(gpt_settings, state.key, owner_id)
+
+            if answer is None:
+                answer = generation.text.get_answer(text, gen_settings)
+
+            return {'text': answer}
 
     async def gen_sticker() -> dict:
         async with ChatActionSender.choose_sticker(chat_id=message.chat.id, bot=bot):
             return {'sticker': await generation.sticker.get_answer(bot, text, gen_settings)}
 
     text = helpers.get_text(message)
-    return await choice((gen_text, gen_sticker))()
+    return await choices((gen_text, gen_sticker), weights=(3, 1), k=1)[0]()
 
 
 async def chance_filter(message: types.Message) -> bool:
@@ -58,15 +67,18 @@ async def hello_handler(message: types.Message):
 @router.message(F.chat.type == enums.ChatType.PRIVATE)
 @router.message(chance_filter)
 @router.message(filters.IsMentioned())
-@flags.database('gen_settings')
+@flags.database(('gen_settings', 'gpt_settings'))
 @flags.throttling('gen')
 async def gen_answer_handler(
         message: types.Message,
         bot: Bot,
+        owner_id: int,
         state: FSMContext,
         gen_settings: database.GenSettings,
+        gpt_settings: database.GPTSettings,
+        gpt: generation.YandexGPT,
 ):
-    answer = await get_gen_kwargs(message, bot, gen_settings)
+    answer = await get_gen_kwargs(message, bot, owner_id, state, gen_settings, gpt_settings, gpt)
 
     if 'text' in answer:
         answer['text'] = helpers.resolve_text(answer['text'])
@@ -77,19 +89,22 @@ async def gen_answer_handler(
         message = await message.answer_voice(**answer)
 
     if random() < 0.2:
-        await gen_answer_handler(message, bot, state, gen_settings)
+        await gen_answer_handler(message, bot, owner_id, state, gen_settings, gpt_settings, gpt)
 
 
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
-@flags.database('gen_settings')
+@flags.database(('gen_settings', 'gpt_settings'))
 @flags.throttling('gen')
 async def gen_reply_handler(
         message: types.Message,
         bot: Bot,
+        owner_id: int,
         state: FSMContext,
         gen_settings: database.GenSettings,
+        gpt_settings: database.GPTSettings,
+        gpt: generation.YandexGPT,
 ):
-    answer = await get_gen_kwargs(message, bot, gen_settings)
+    answer = await get_gen_kwargs(message, bot, owner_id, state, gen_settings, gpt_settings, gpt)
 
     if 'text' in answer:
         answer['text'] = helpers.resolve_text(answer['text'])
@@ -100,4 +115,4 @@ async def gen_reply_handler(
         message = await message.reply_voice(**answer)
 
     if random() < 0.1:
-        await gen_answer_handler(message, bot, state, gen_settings)
+        await gen_answer_handler(message, bot, owner_id, state, gen_settings, gpt_settings, gpt)

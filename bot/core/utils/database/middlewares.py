@@ -2,9 +2,11 @@ from typing import Callable, Any, Awaitable
 
 from aiogram import Bot, Router, BaseMiddleware, types
 from aiogram.dispatcher.flags import get_flag
+from aiogram.fsm.storage.base import StorageKey
 
 from core import helpers
 from . import models
+from ..generation import YandexGPT
 
 
 class SQLGetFlagsMiddleware(BaseMiddleware):
@@ -37,6 +39,8 @@ class SQLGetFlagsMiddleware(BaseMiddleware):
                 model = models.MainSettings
             case 'gen_settings':
                 model = models.GenSettings
+            case 'gpt_settings':
+                model = models.GPTSettings
             case _:
                 raise TypeError
 
@@ -75,8 +79,8 @@ class SQLUpdateMiddleware(BaseMiddleware):
             event: types.Message,
             data: dict[str, Any],
     ):
-        result = await handler(event, data)
         await self.update_sql(event, data)
+        result = await handler(event, data)
 
         return result
 
@@ -87,18 +91,35 @@ class SQLUpdateMiddleware(BaseMiddleware):
                 data.get('gen_settings')
                 or await models.GenSettings.get(chat_id=event.chat.id)
         )
+        gpt_settings: models.GPTSettings = (
+            data.get('gpt_settings')
+            or await models.GPTSettings.get(chat_id=event.chat.id)
+        )
 
         main_updated = False
         gen_updated = False
 
         text = helpers.get_text(event)
-        if text and gen_settings.messages is not None:
-            gen_settings.messages.append(text)
+        if text:
+            if gpt_settings.tokens > 0:
+                gpt: YandexGPT = data['gpt']
+                key: StorageKey = gpt.get_key(data['state'].key)
 
-            if len(gen_settings.messages) > 5000:
-                del gen_settings.messages[:1000]
+                messages = await gpt.get_messages(key)
+                messages.append({
+                    "role": "user",
+                    "text": text
+                })
 
-            gen_updated = True
+                await gpt.update_messages(key, messages)
+
+            if gen_settings.messages is not None:
+                gen_settings.messages.append(text)
+
+                if len(gen_settings.messages) > 5000:
+                    del gen_settings.messages[:1000]
+
+                gen_updated = True
         elif event.sticker and gen_settings.stickers is not None:
             if event.sticker.set_name not in gen_settings.stickers:
                 gen_settings.stickers.append(event.sticker.set_name)

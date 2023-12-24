@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import TelegramObject
 from aiogram.utils.i18n import I18nMiddleware
 
-from core.utils.database.middleware import SQLGetMainMiddleware
+from core.utils.database.middlewares import SQLGetMainMiddleware
 from .data.players import UnoPlayerData
 
 

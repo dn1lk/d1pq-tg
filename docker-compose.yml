@@ -1,15 +1,15 @@
 version: "0.1"
 
 services:
-    bot:
-        container_name: d1pq-bot
-        image: $IMAGE_NAME
-        env_file:
-            - .env
-            - database.env
-            - redis.env
-        build:
-            context: .
-            dockerfile: Dockerfile
-        ports:
-            - 8000:5000
+  bot:
+    container_name: d1pq-bot
+    image: $IMAGE_NAME
+    env_file:
+      - .env
+      - database.env
+      - redis.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:5000

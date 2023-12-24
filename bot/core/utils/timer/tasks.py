@@ -22,6 +22,7 @@ class TimerTasks:
 
         task.set_name(key)
         task.add_done_callback(self._tasks.discard)
+        task.add_done_callback(lambda _: logger.debug(f'Finished task: {task}'))
 
         logger.debug(f'Created task: {task}')
 
@@ -37,7 +38,7 @@ class TimerTasks:
             if task is not asyncio.current_task():
                 task.cancel()
 
-                logger.debug(f'Stopped task: {task}')
+                logger.debug(f'Canceled task: {task}')
 
     def update(self, key: StorageKey, coro: Coroutine):
         """ Stop existed coro by key and add new """
@@ -51,5 +52,7 @@ class TimerTasks:
 
     @asynccontextmanager
     async def lock(self, key: StorageKey) -> AsyncGenerator[None, None]:
-        async with self._locks[self._get_key(key)]:
+        key = self._get_key(key)
+
+        async with self._locks[key]:
             yield

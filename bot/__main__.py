@@ -2,7 +2,6 @@ import logging
 
 from aiogram import Bot
 
-import config
 import misc
 
 logger = logging.getLogger('bot')
@@ -35,6 +34,8 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
+
+    import config
 
     import handlers
     import webhook

@@ -2,7 +2,7 @@ from aiogram import Router, F, types, enums, html, flags
 from aiogram.utils.i18n import gettext as _
 
 from core.utils import database
-from . import RecordActions
+from . import RecordActions, keyboards as record_keyboards
 from .. import SettingsActions, keyboards
 
 router = Router(name="record:start")
@@ -26,8 +26,7 @@ async def start_handler(
             RecordActions.MEMBERS: main_settings.members,
         })
 
-    for action, value in actions.items():
-        answer += f'▪ {html.bold(action.keyboard)} — {action.description}.\n'
+    answer += '\n'.join(f'▪ {html.bold(action.keyboard)} — {action.description}.' for action in actions)
 
-    await query.message.edit_text(answer, reply_markup=keyboards.record_keyboard(actions))
+    await query.message.edit_text(answer, reply_markup=record_keyboards.switch_keyboard(actions))
     await query.answer()

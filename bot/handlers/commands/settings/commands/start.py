@@ -1,4 +1,3 @@
-import asyncio
 from random import choice
 
 from aiogram import Router, F, types, flags
@@ -10,21 +9,10 @@ from core.utils import database, TimerTasks
 from handlers.commands import CommandTypes
 from handlers.commands.misc.types import PREFIX
 from .. import SettingsActions, SettingsStates, keyboards
+from ..misc.tasks import idle_task
 
 router = Router(name='commands:start')
 router.callback_query.filter(keyboards.SettingsData.filter(F.action == SettingsActions.COMMAND))
-
-
-async def task(message: types.Message, state: FSMContext):
-    await asyncio.sleep(60)
-    await state.clear()
-
-    answer = _(
-        "<b>Something you think for a long time.</b>\n"
-        "When you decide with the commands, write {command} again."
-    ).format(command=f'{PREFIX}{CommandTypes.SETTINGS[0]}')
-
-    await message.reply(answer)
 
 
 @router.callback_query()
@@ -43,7 +31,7 @@ async def start_handler(
 
     command = filters.CommandObject(
         prefix=PREFIX,
-        command=choice(list(CommandTypes))[0]
+        command=choice(list(CommandTypes)[:-1])[0]
     )
 
     answer = _(
@@ -52,7 +40,7 @@ async def start_handler(
     ).format(
         no_args=get_answer(
             command,
-            choice(helpers.get_split_text(gen_settings.messages)).lower()
+            choice(helpers.get_split_text(gen_settings.messages or [_('bla bla')])).lower()
         )
     )
 
@@ -67,4 +55,4 @@ async def start_handler(
 
         await message.answer(f'{answer}\n{commands}')
 
-    timer[state.key] = task(message, state)
+    timer[state.key] = idle_task(message, state, 'commands')
