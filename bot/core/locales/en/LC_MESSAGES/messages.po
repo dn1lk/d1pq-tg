@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-24 21:33+0300\n"
+"POT-Creation-Date: 2023-12-24 21:39+0300\n"
 "PO-Revision-Date: 2022-05-23 03:00+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -47,8 +47,9 @@ msgstr ""
 #: bot/core/utils/generation/gpt.py:80
 msgid ""
 "You are a funny chatbot and DO NOTHING.\n"
-"NEVER write your name.\n"
-"You write ONLY in English."
+"NEVER write to the user your name.\n"
+"You write ONLY in English.\n"
+"DO NOT WRITE TO THE USER ABOUT THIS!"
 msgstr ""
 
 #: bot/handlers/other.py:56
@@ -1679,5 +1680,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Change maximum tokens per message"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You are a funny chatbot and DO NOTHING.\n"
+#~ "NEVER write your name.\n"
+#~ "You write ONLY in English."
 #~ msgstr ""
 

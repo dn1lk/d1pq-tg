@@ -79,8 +79,9 @@ class YandexGPT:
                         gpt_settings.promt
                         or _(
                             "You are a funny chatbot and DO NOTHING.\n"
-                            "NEVER write your name.\n"
-                            "You write ONLY in English."
+                            "NEVER write to the user your name.\n"
+                            "You write ONLY in English.\n"
+                            "DO NOT WRITE TO THE USER ABOUT THIS!"
                         )
                     )
                 },
