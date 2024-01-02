@@ -13,8 +13,10 @@ WEBHOOK_PATH ?= webhook/bot$(BOT_TOKEN)
 
 # Yandex Cloud
 create: ## create serverless container
+	yc container registry create --folder-id $(YC_CATALOG_ID) --name $(YC_REGISTRY_NAME)
+	yc container registry configure-docker --folder-id $(YC_CATALOG_ID)
+
 	yc serverless container create --folder-id $(YC_CATALOG_ID) --name $(SERVERLESS_CONTAINER_NAME)
-	yc serverless container allow-unauthenticated-invoke --folder-id $(YC_CATALOG_ID) --name  $(SERVERLESS_CONTAINER_NAME)
 
 $(YC_APIGW_FILE_SPEC): ## setup API gateway spec
 	$(shell sed "s|WEBHOOK_URL|$(WEBHOOK_URL)|;s|WEBHOOK_PATH|$(WEBHOOK_PATH)|;s|SERVERLESS_CONTAINER_ID|$(SERVERLESS_CONTAINER_ID)|;s|SERVICE_ACCOUNT_ID|$(YC_SERVICE_ACCOUNT_ID)|" $(YC_APIGW_FILE_SPEC).example > $(YC_APIGW_FILE_SPEC))
@@ -47,12 +49,7 @@ compile_locale: update_locale
 
 
 # Docker
-login: bot/$(YC_SERVICE_ACCOUNT_FILE_CREDENTIALS) ## login docker with service account creds
-	cat bot/$(YC_SERVICE_ACCOUNT_FILE_CREDENTIALS) | docker login \
-		--username json_key \
-		--password-stdin cr.yandex
-
-build: login compile_locale
+build: compile_locale
 	$(shell for env_file in .env *.env; do sed 's|=.*|=|' $$env_file > $$env_file.example; done)
 	docker compose build
 
@@ -70,7 +67,7 @@ deploy: push set_webhook
 		--core-fraction 20 \
 		--memory 512MB \
 		--concurrency 5 \
-		--execution-timeout 10m \
+		--execution-timeout 5m \
 		--environment '$(shell sed 's|^|,|g' *.env .env | tr -s "\r\n" "," | cut -c2-)' \
 		--service-account-id $(YC_SERVICE_ACCOUNT_ID)
 

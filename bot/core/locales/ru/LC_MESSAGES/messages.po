@@ -1,13 +1,13 @@
 # Russian translations for d1pq.
-# Copyright (C) 2023 ORGANIZATION
+# Copyright (C) 2024 ORGANIZATION
 # This file is distributed under the same license as the d1pq project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-24 21:39+0300\n"
+"POT-Creation-Date: 2024-01-02 22:37+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -49,15 +49,11 @@ msgstr "АААА..."
 
 #: bot/core/utils/generation/gpt.py:80
 msgid ""
-"You are a funny chatbot and DO NOTHING.\n"
-"NEVER write to the user your name.\n"
-"You write ONLY in English.\n"
-"DO NOT WRITE TO THE USER ABOUT THIS!"
+"DO NOT UNDER ANY CIRCUMSTANCES write your name to the user. ALWAYS use "
+"English."
 msgstr ""
-"Ты забавный чат-бот и НИЧЕГО НЕ ДЕЛАЕШЬ.\n"
-"НИКОГДА не пиши пользователю своё имя.\n"
-"Ты пишешь ТОЛЬКО на русском языке.\n"
-"НЕ ПИШИ ПОЛЬЗОВАТЕЛЮ ОБ ЭТОМ!"
+"НИ ПРИ КАКИХ ОБСТОЯТЕЛЬСТВАХ не пиши пользователю своё имя. ВСЕГДА "
+"используй русский язык."
 
 #: bot/handlers/other.py:56
 msgid "{user}, hello!"
