@@ -35,9 +35,10 @@ def setup(parent_router: Router):
         accuracy.router,
     )
 
-    from . import commands, record
+    from . import commands, gpt, record
 
     commands.setup(router)
+    gpt.setup(router)
     record.setup(router)
 
     router.include_router(other.router)

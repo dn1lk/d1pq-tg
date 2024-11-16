@@ -6,6 +6,6 @@
 **/coverage/
 **/*.env
 **/*.log
-**/yc_creds.json
 **/api-gw.yaml
 **/docker-compose**.yml
+**/yc_creds.json
