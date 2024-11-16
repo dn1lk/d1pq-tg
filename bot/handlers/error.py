@@ -5,6 +5,7 @@ from aiogram.types.error_event import ErrorEvent
 from aiogram.utils import formatting
 
 from core import filters
+from handlers.commands.settings.record.misc.helpers import clear_data
 from utils import database
 
 router = Router(name="error")
@@ -16,6 +17,7 @@ async def forbidden_handler(
     event: ErrorEvent,
     main_settings: database.MainSettings,
     gen_settings: database.GenSettings,
+    gpt_settings: database.GPTSettings,
     event_chat: types.Chat | None = None,
 ) -> None:
     loggers.event.error(event.exception)
@@ -23,8 +25,7 @@ async def forbidden_handler(
     if event_chat:
         assert event_chat.id == main_settings.chat_id == gen_settings.chat_id
 
-        await main_settings.delete()
-        await gen_settings.delete()
+        await clear_data(main_settings, gen_settings, gpt_settings)
 
         loggers.event.info("data chat id=%i was deleted", event_chat.id)
 

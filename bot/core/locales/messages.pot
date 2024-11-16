@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-16 17:39+0300\n"
+"POT-Creation-Date: 2024-11-16 18:10+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1292,12 +1292,12 @@ msgid "Black"
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:16
-#: bot/handlers/commands/settings/record/update.py:37
+#: bot/handlers/commands/settings/record/update.py:38
 msgid "disabled"
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:18
-#: bot/handlers/commands/settings/record/update.py:37
+#: bot/handlers/commands/settings/record/update.py:38
 msgid "enabled"
 msgstr ""
 
@@ -1550,11 +1550,11 @@ msgstr ""
 msgid "I am recording some information about this chat."
 msgstr ""
 
-#: bot/handlers/commands/settings/record/update.py:35
+#: bot/handlers/commands/settings/record/update.py:36
 msgid "recording is"
 msgstr ""
 
-#: bot/handlers/commands/settings/record/update.py:88
+#: bot/handlers/commands/settings/record/update.py:87
 msgid "Records was successfully deleted."
 msgstr ""
 
@@ -1642,7 +1642,7 @@ msgstr ""
 msgid "Just don't kick me!!!"
 msgstr ""
 
-#: bot/handlers/transitions/other.py:46
+#: bot/handlers/transitions/other.py:47
 msgid "Ouch, it's just a migrated group..."
 msgstr ""
 

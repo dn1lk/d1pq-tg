@@ -10,6 +10,7 @@ from utils import database
 from utils.database.types import JsonList
 
 from . import RecordActions, keyboards
+from .misc.helpers import clear_data
 from .misc.keyboards import RecordData
 
 router = Router(name="record:update")
@@ -81,9 +82,7 @@ async def delete_handler(
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 
-    await main_settings.delete()
-    await gen_settings.delete()
-    await gpt_settings.delete()
+    await clear_data(main_settings, gen_settings, gpt_settings)
 
     content = formatting.Bold(_("Records was successfully deleted."))
     await query.message.edit_text(**content.as_kwargs())

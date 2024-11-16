@@ -13,8 +13,10 @@ WEBHOOK_PATH ?= webhook/bot$(BOT_TOKEN)
 
 # Yandex Cloud
 create: ## create serverless container
+	yc container registry create --folder-id $(YC_CATALOG_ID) --name $(YC_REGISTRY_NAME)
+	yc container registry configure-docker --folder-id $(YC_CATALOG_ID)
+
 	yc serverless container create --folder-id $(YC_CATALOG_ID) --name $(SERVERLESS_CONTAINER_NAME)
-	yc serverless container allow-unauthenticated-invoke --folder-id $(YC_CATALOG_ID) --name  $(SERVERLESS_CONTAINER_NAME)
 
 $(YC_APIGW_FILE_SPEC): ## setup API gateway spec
 	$(shell sed "s|WEBHOOK_URL|$(WEBHOOK_URL)|;s|WEBHOOK_PATH|$(WEBHOOK_PATH)|;s|SERVERLESS_CONTAINER_ID|$(SERVERLESS_CONTAINER_ID)|;s|SERVICE_ACCOUNT_ID|$(YC_SERVICE_ACCOUNT_ID)|" $(YC_APIGW_FILE_SPEC).example > $(YC_APIGW_FILE_SPEC))

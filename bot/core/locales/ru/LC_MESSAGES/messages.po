@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-16 17:39+0300\n"
+"POT-Creation-Date: 2024-11-16 18:10+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1332,12 +1332,12 @@ msgid "Black"
 msgstr "Чёрный"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:16
-#: bot/handlers/commands/settings/record/update.py:37
+#: bot/handlers/commands/settings/record/update.py:38
 msgid "disabled"
 msgstr "отключено"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:18
-#: bot/handlers/commands/settings/record/update.py:37
+#: bot/handlers/commands/settings/record/update.py:38
 msgid "enabled"
 msgstr "включено"
 
@@ -1560,7 +1560,7 @@ msgstr "Изменить шанс генерации"
 
 #: bot/handlers/commands/settings/misc/actions.py:26
 msgid "Change generation accuracy"
-msgstr "Изменить шанс генерации"
+msgstr "Изменить точность генерации"
 
 #: bot/handlers/commands/settings/misc/actions.py:30
 msgid "Change record policy"
@@ -1590,11 +1590,11 @@ msgstr "Когда определишься с {action}, напиши {command} 
 msgid "I am recording some information about this chat."
 msgstr "Я записываю некоторую информацию об этом чате."
 
-#: bot/handlers/commands/settings/record/update.py:35
+#: bot/handlers/commands/settings/record/update.py:36
 msgid "recording is"
 msgstr "запись"
 
-#: bot/handlers/commands/settings/record/update.py:88
+#: bot/handlers/commands/settings/record/update.py:87
 msgid "Records was successfully deleted."
 msgstr "Записи успешно удалены."
 
@@ -1682,7 +1682,7 @@ msgstr "Я запомню это..."
 msgid "Just don't kick me!!!"
 msgstr "Только не кикайте меня!!!"
 
-#: bot/handlers/transitions/other.py:46
+#: bot/handlers/transitions/other.py:47
 msgid "Ouch, it's just a migrated group..."
 msgstr "Оуч, это просто мигрированная группа..."
 

@@ -5,6 +5,7 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from core import filters
+from handlers.commands.settings.record.misc.helpers import clear_data
 from utils import database
 from utils.database.types.integer import Int64
 
@@ -17,9 +18,9 @@ async def my_leave_handler(
     _: types.Message,
     main_settings: database.MainSettings,
     gen_settings: database.GenSettings,
+    gpt_settings: database.GPTSettings,
 ) -> None:
-    await main_settings.delete()
-    await gen_settings.delete()
+    await clear_data(main_settings, gen_settings, gpt_settings)
 
 
 @router.message(F.new_chat_members | F.left_chat_member)
