@@ -1,15 +1,21 @@
-from aiogram import Router, F, types
-from aiogram.utils.i18n import gettext as _, lazy_gettext as __
+from aiogram import F, Router, types
+from aiogram.utils.i18n import gettext as _
 
 from core import filters
 from core.middlewares import DestinySetMiddleware
+
 from .misc import keyboards
 from .misc.actions import SettingsActions
 from .misc.states import SettingsStates
 
-UPDATE = __("\n\nUpdate:")
+__all__ = (
+    "keyboards",
+    "SettingsActions",
+    "SettingsStates",
+)
 
-router = Router(name='settings')
+
+router = Router(name="settings")
 DestinySetMiddleware().setup(router)
 
 

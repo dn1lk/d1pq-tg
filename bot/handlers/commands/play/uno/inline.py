@@ -1,26 +1,29 @@
-from aiogram import Router, Bot, F, types
+from aiogram import Bot, F, Router, types
 from aiogram.fsm.context import FSMContext
+from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from handlers.commands import CommandTypes
 from handlers.commands.misc.types import PREFIX
 from handlers.commands.play import PlayActions
+
 from . import DRAW_CARD
 from .misc.data import UnoData
 from .misc.data.deck.base import STICKER_SET_NAME
 from .misc.middleware import UnoMiddleware
 
-router = Router(name='uno:inline')
+router = Router(name="uno:inline")
 router.inline_query.filter(F.query.lower().in_(PlayActions.UNO))
 
 UnoMiddleware().setup(router)
 
-COMMAND = f'{PREFIX}{CommandTypes.PLAY[0]} {PlayActions.UNO[0]}'
-THUMB_URL = 'https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png'
+COMMAND = f"{PREFIX}{CommandTypes.PLAY[0]} {PlayActions.UNO[0]}"
+THUMB_URL = "https://image.api.playstation.com/cdn/EP0001/CUSA04040_00/LRI3Rg5MKOi5AkefFaMcChNv5WitM7sz.png"
+PAGE_SIZE = 50
 
 
 @router.inline_query()
-async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext):
+async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMContext) -> None:
     sticker_set = await bot.get_sticker_set(STICKER_SET_NAME)
     data_uno = await UnoData.get_data(state)
     next_offset = None
@@ -29,8 +32,9 @@ async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMCont
         player = data_uno.players.playing[inline.from_user.id]
 
         if player:
+
             def get_cards():
-                for enum, card in enumerate(player.cards[offset:offset + size]):
+                for enum, card in enumerate(player.cards[offset : offset + size]):
                     yield types.InlineQueryResultCachedSticker(
                         id=str(offset + enum),
                         sticker_file_id=card.file_id,
@@ -38,46 +42,51 @@ async def show_cards_handler(inline: types.InlineQuery, bot: Bot, state: FSMCont
 
             if inline.offset:
                 offset = int(inline.offset)
-                size = 50
+                size = PAGE_SIZE
 
-                answer = list(get_cards())
+                content = list(get_cards())
             else:
                 offset = 0
-                size = 49
+                size = PAGE_SIZE - 1
 
-                answer = [
+                content = [
                     types.InlineQueryResultCachedSticker(
-                        id='draw',
+                        id="draw",
                         sticker_file_id=sticker_set.stickers[-1].file_id,
-                        input_message_content=types.InputTextMessageContent(message_text=DRAW_CARD.value),
-                    )
+                        input_message_content=types.InputTextMessageContent(
+                            **formatting.Text(DRAW_CARD).as_kwargs(text_key="message_text"),
+                        ),
+                    ),
+                    *get_cards(),
                 ]
 
-                answer.extend(get_cards())
-
-            if len(answer) == 50:
+            if len(content) == PAGE_SIZE:
                 next_offset = str(offset + min(len(player.cards), size))
 
         else:
-            answer = [
+            content = [
                 types.InlineQueryResultArticle(
-                    id='no_cards',
+                    id="no_cards",
                     title=COMMAND,
-                    input_message_content=types.InputTextMessageContent(message_text=COMMAND),
+                    input_message_content=types.InputTextMessageContent(
+                        **formatting.Text(COMMAND).as_kwargs(text_key="message_text"),
+                    ),
                     description=_("Join to the game."),
                     thumb_url=THUMB_URL,
-                )
+                ),
             ]
 
     else:
-        answer = [
+        content = [
             types.InlineQueryResultArticle(
-                id='no_game',
+                id="no_game",
                 title=COMMAND,
-                input_message_content=types.InputTextMessageContent(message_text=COMMAND),
+                input_message_content=types.InputTextMessageContent(
+                    **formatting.Text(COMMAND).as_kwargs(text_key="message_text"),
+                ),
                 description=_("Start a new game."),
                 thumb_url=THUMB_URL,
-            )
+            ),
         ]
 
-    await inline.answer(answer, cache_time=0, is_personal=True, next_offset=next_offset)
+    await inline.answer(content, cache_time=0, is_personal=True, next_offset=next_offset)

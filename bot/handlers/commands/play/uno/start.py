@@ -1,11 +1,13 @@
-from aiogram import Router, Bot, F, types, html, flags
+from aiogram import Bot, F, Router, flags, types
 from aiogram.fsm.context import FSMContext
+from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from core import filters
-from core.utils import TimerTasks
 from handlers.commands import CommandTypes
 from handlers.commands.play import PlayActions, PlayStates
+from utils import TimerTasks
+
 from .misc import errors, keyboards
 from .misc.data import UnoData
 from .misc.data.players import UnoPlayerData
@@ -13,14 +15,18 @@ from .misc.data.settings.additions import UnoAdd, UnoAddState
 from .misc.data.settings.difficulties import UnoDifficulty
 from .misc.data.settings.modes import UnoMode
 
-router = Router(name='uno:start')
+router = Router(name="uno:start")
 router.message.filter(filters.Command(*CommandTypes.PLAY, magic=F.args.in_(PlayActions.UNO)))
 
 
 @router.message(PlayStates.UNO)
 @flags.timer(cancelled=False)
-async def join_handler(message: types.Message, state: FSMContext):
+async def join_handler(message: types.Message, state: FSMContext) -> None:
+    assert message.from_user is not None, "wrong user"
+
     data_uno = await UnoData.get_data(state)
+    if data_uno is None:
+        return
 
     try:
         player_id = message.from_user.id
@@ -28,37 +34,58 @@ async def join_handler(message: types.Message, state: FSMContext):
         data_uno.players[player_id] = await UnoPlayerData.setup(state, player_id, list(data_uno.deck(7)))
         await data_uno.set_data(state)
 
-        await message.answer(_("{user} join to current game.").format(user=message.from_user.mention_html()))
+        content = formatting.Text(
+            formatting.TextMention(message.from_user.first_name, user=message.from_user),
+            " ",
+            _("join to current game"),
+            ".",
+        )
+
+        await message.answer(**content.as_kwargs())
 
     except errors.UnoExistedPlayer:
-        await message.reply(_("You already in the game."))
+        content = formatting.Text(_("You already in the game."))
+        await message.reply(**content.as_kwargs())
 
     except errors.UnoMaxPlayers:
-        await message.reply(_("Already 10 people are playing in the game."))
+        content = formatting.Text(_("Already 10 people are playing in the game."))
+        await message.reply(**content.as_kwargs())
 
 
 @router.message()
 @flags.timer
-async def start_handler(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks):
-    answer = _(
-        "<b>Let's play UNO?</b>\n\n"
-        "One minute to make a decision!\n"
-        "Difficulty: {difficulty}.\n"
-        "Mode: {mode}.\n\n"
-        "{additives}\n\n"
-        "<b>Already in the game:</b>\n"
-        "{user}"
+async def start_handler(message: types.Message, bot: Bot, state: FSMContext, timer: TimerTasks) -> None:
+    assert message.from_user is not None, "wrong user"
+
+    content = formatting.Text(
+        formatting.Bold("Let's play UNO?"),
+        "\n\n",
+        _("One minute to make a decision!"),
+        "\n",
+        _("Difficulty"),
+        ": ",
+        formatting.Bold(UnoDifficulty.NORMAL),
+        ".\n",
+        _("Mode"),
+        ": ",
+        formatting.Bold(UnoMode.FAST),
+        ".\n\n",
+        _("Additives"),
+        ":\n",
+        formatting.as_marked_list(
+            *(formatting.Text(add, ": ", formatting.Bold(UnoAddState.ON), ".") for add in UnoAdd),
+        ),
+        "\n\n",
+        formatting.Bold(_("Already in the game"), ":"),
+        "\n",
+        formatting.TextMention(message.from_user.first_name, user=message.from_user),
     )
 
     message = await message.answer(
-        answer.format(
-            difficulty=html.bold(UnoDifficulty.NORMAL),
-            mode=html.bold(UnoMode.FAST),
-            additives='\n'.join(f'{add}: {html.bold(UnoAddState.ON)}' for add in UnoAdd),
-            user=message.from_user.mention_html(),
-        ),
         reply_markup=keyboards.setup_keyboard(),
+        **content.as_kwargs(),
     )
 
     from .process import start_timer
+
     timer[state.key] = start_timer(message, bot, state, timer)

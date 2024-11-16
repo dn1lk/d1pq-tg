@@ -1,15 +1,17 @@
+from aiogram import types
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from handlers.commands.play import PlayActions
+
 from .values import RPSValues
-from ... import PlayActions
 
 
 class RPSData(CallbackData, prefix=PlayActions.RPS[0]):
     value: RPSValues
 
 
-def rps_keyboard():
+def rps_keyboard() -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     for value in RPSValues:

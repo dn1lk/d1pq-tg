@@ -1,38 +1,42 @@
 import logging
 
-from aiogram import Router
-from aiogram.utils.chat_action import ChatActionMiddleware
+from aiogram import Bot, Router
 from aiogram.utils.i18n import I18n
 
 from core.locales.middleware import I18nContextMiddleware
-from core.utils.database.middleware import SQLGetMainMiddleware, SQLGetFlagsMiddleware, SQLUpdateMiddleware
-from core.utils.timer.middleware import TimerMiddleware
+from core.middlewares.session import SessionRateLimiterMiddleware, SessionRetryMiddleware
+from utils.database.middlewares import SQLGetFlagsMiddleware, SQLGetMainMiddleware, SQLUpdateMiddleware
+from utils.timer.middleware import TimerMiddleware
+
 from .destiny import DestinySetMiddleware
 from .throttling import ThrottlingMiddleware
 
 __all__ = (
-    "ChatActionMiddleware",
     "I18nContextMiddleware",
+    "SessionRateLimiterMiddleware",
+    "SessionRetryMiddleware",
     "SQLGetMainMiddleware",
     "SQLGetFlagsMiddleware",
     "SQLUpdateMiddleware",
     "TimerMiddleware",
     "ThrottlingMiddleware",
-    "DestinySetMiddleware"
+    "DestinySetMiddleware",
 )
 
-logger = logging.getLogger('bot')
+logger = logging.getLogger("bot")
 
 
-def setup(router: Router, i18n: I18n):
-    logger.debug('Setting up middlewares...')
+def setup(bot: Bot, router: Router, i18n: I18n):
+    logger.debug("setting up middlewares...")
+
+    SessionRateLimiterMiddleware().setup(bot)
+    SessionRetryMiddleware().setup(bot)
 
     # Outer middlewares
     SQLGetMainMiddleware().setup(router)
-    I18nContextMiddleware(i18n=i18n).setup(router)
+    I18nContextMiddleware(i18n=i18n, middleware_key="").setup(router)
 
     # Inner middlewares
     ThrottlingMiddleware(i18n=i18n).setup(router)
-    router.message.middleware(ChatActionMiddleware())
     TimerMiddleware().setup(router)
     SQLGetFlagsMiddleware().setup(router)

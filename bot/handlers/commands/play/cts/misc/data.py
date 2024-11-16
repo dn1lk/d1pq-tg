@@ -1,38 +1,32 @@
+import secrets
 from functools import lru_cache
-from random import choice
+from pathlib import Path
 
-import misc
-from ... import PlayData
+from pydantic import Field
 
-LOCALE_DIR = f'{misc.BASE_DIR}/core/locales'
+import config
+from handlers.commands.play import PlayData
 
 
 class CTSData(PlayData):
     bot_city: str | None = None
-    used_cities: list[str] = []
+    used_cities: list[str] = Field(default_factory=list)
     fail_amount: int = 5
-
-    @classmethod
-    def filter(cls):
-        from .filter import CTSFilter
-        return CTSFilter()
 
     @classmethod
     @lru_cache(maxsize=2)
     def get_cities(cls, locale: str) -> list[str]:
-        with open(f'{LOCALE_DIR}/{locale}/cities.txt', 'r', encoding='utf8') as r:
+        with Path(f"{config.LOCALE_PATH}/{locale}/cities.txt").open(encoding="utf8") as r:
             return r.read().splitlines()
 
-    def gen_city(self, cities: list[str], user_city: str = None) -> None:
+    def gen_city(self, cities: list[str], user_city: str | None = None) -> None:
         if user_city:
             bot_cities = [
-                city for city in cities
-                if city[0].lower() == user_city[-1].lower() and city not in self.used_cities
+                city for city in cities if city[0].lower() == user_city[-1].lower() and city not in self.used_cities
             ]
         else:
             bot_cities = cities
 
-        self.bot_city = choice(bot_cities)
-
+        self.bot_city = secrets.choice(bot_cities)
         if self.bot_city:
             self.used_cities.append(self.bot_city)

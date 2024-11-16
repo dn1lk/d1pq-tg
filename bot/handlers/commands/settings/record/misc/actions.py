@@ -4,34 +4,40 @@ from aiogram.utils.i18n import gettext as _
 
 
 class RecordActions(str, Enum):
-    MESSAGES = 'messages'
-    STICKERS = 'stickers'
-    MEMBERS = 'members'
+    MESSAGES = "messages"
+    STICKERS = "stickers"
+    MEMBERS = "members"
 
-    DELETE = 'delete'
+    DELETE = "delete"
 
     @property
     def keyboard(self) -> str:
         match self:
             case self.MESSAGES:
-                return _("Messages")
+                keyboard = _("Messages")
             case self.STICKERS:
-                return _("Stickers")
+                keyboard = _("Stickers")
             case self.MEMBERS:
-                return _("Members")
+                keyboard = _("Members")
             case self.DELETE:
-                return _('Delete all records')
+                keyboard = _("Delete all records")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        raise TypeError(f'RecordData: unexpected record data: {self}')
+        return keyboard
 
     @property
     def description(self) -> str:
         match self:
             case self.MESSAGES:
-                return _("to generate messages")
+                description = _("to generate messages")
             case self.STICKERS:
-                return _("to generate stickers")
+                description = _("to generate stickers")
             case self.MEMBERS:
-                return _("to execute /who command")
+                description = _("to execute /who command")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        raise TypeError(f'RecordData: unexpected record data: {self}')
+        return description

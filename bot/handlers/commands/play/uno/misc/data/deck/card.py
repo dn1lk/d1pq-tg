@@ -1,4 +1,5 @@
 from dataclasses import dataclass, replace
+from typing import Self
 
 from .colors import UnoColors
 from .emoji import UnoEmoji
@@ -13,16 +14,19 @@ class UnoCard:
     color: UnoColors
     cost: int
 
-    def __add__(self, card: "UnoCard") -> int:
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}(emoji={self.emoji.value}, color={self.color.value})"
+
+    def __add__(self, card: Self) -> int:
         return self.cost + card.cost
 
     def __radd__(self, cost: int) -> int:
         return self.cost + cost
 
-    def __eq__(self, card) -> bool:
+    def __eq__(self, card: Self) -> bool:  # type: ignore[override]
         return self.file_unique_id == card.file_unique_id
 
-    def replace(self, **kwargs) -> "UnoCard":
+    def replace(self, **kwargs) -> Self:
         """Create UnoCard with another parameter"""
 
         return replace(self, **kwargs)

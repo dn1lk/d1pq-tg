@@ -1,36 +1,47 @@
-import asyncio
-import logging
 import traceback
 
-from aiogram import Bot, Router, html
-from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
+from aiogram import Bot, Router, exceptions, flags, loggers, types
 from aiogram.types.error_event import ErrorEvent
+from aiogram.utils import formatting
 
 from core import filters
+from utils import database
 
-logger = logging.getLogger('bot')
-router = Router(name='error')
+router = Router(name="error")
 
 
-@router.errors(filters.ExceptionTypeFilter(TelegramRetryAfter))
-async def retry_after_handler(_, exception: TelegramRetryAfter):
-    logger.error(exception.message)
+@router.errors(filters.ExceptionTypeFilter(exceptions.TelegramForbiddenError))
+@flags.database("gen_settings")
+async def forbidden_handler(
+    event: ErrorEvent,
+    main_settings: database.MainSettings,
+    gen_settings: database.GenSettings,
+    event_chat: types.Chat | None = None,
+) -> None:
+    loggers.event.error(event.exception)
 
-    await asyncio.sleep(exception.retry_after)
-    await exception.method
+    if event_chat:
+        assert event_chat.id == main_settings.chat_id == gen_settings.chat_id
+
+        await main_settings.delete()
+        await gen_settings.delete()
+
+        loggers.event.info("data chat id=%i was deleted", event_chat.id)
 
 
 @router.errors()
-async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int):
-    title = f'While event {event.update.event_type}:'
-    tb = traceback.format_exc(limit=-10)
+async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int) -> None:
+    _title = f"While event {event.update.event_type}:"
+    _tb = traceback.format_exc(limit=-10)
+    content = formatting.Text(
+        formatting.Bold(_title),
+        "\n\n",
+        formatting.Pre(_tb, language="python"),
+    )
 
     try:
-        await bot.send_message(
-            owner_id,
-            f"{html.bold(title)}\n\n{html.pre_language(html.quote(tb), language='python')}",
-        )
-    except TelegramBadRequest as error:
-        logger.critical(error.message)
+        await bot.send_message(owner_id, **content.as_kwargs())
+    except exceptions.TelegramBadRequest as exception:
+        loggers.event.critical(exception.message)
     finally:
-        logger.error(tb)
+        loggers.event.error(_tb)

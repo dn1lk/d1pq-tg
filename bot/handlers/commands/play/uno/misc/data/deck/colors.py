@@ -1,11 +1,11 @@
+from collections.abc import Generator
 from enum import Enum, EnumMeta
-from typing import Generator
 
 from aiogram.utils.i18n import gettext as _
 
 
 class UnoColorsMeta(EnumMeta):
-    def exclude(cls, *excludes: "UnoColors") -> Generator["UnoColors", None, None]:
+    def exclude(cls, *excludes: "UnoColors") -> Generator["UnoColorsMeta", None, None]:
         for color in cls:
             if color in excludes:
                 continue
@@ -13,12 +13,12 @@ class UnoColorsMeta(EnumMeta):
 
 
 class UnoColors(str, Enum, metaclass=UnoColorsMeta):
-    BLUE = '🔵'
-    GREEN = '🟢'
-    RED = '🔴'
-    YELLOW = '🟡'
+    BLUE = "🔵"
+    GREEN = "🟢"
+    RED = "🔴"
+    YELLOW = "🟡"
 
-    BLACK = '⚫'
+    BLACK = "⚫"
 
     def __str__(self) -> str:
         match self:
@@ -33,6 +33,7 @@ class UnoColors(str, Enum, metaclass=UnoColorsMeta):
             case self.BLACK:
                 color = _("Black")
             case _:
-                raise TypeError(f'UnoColors: unexpected card color: {self}')
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        return f'{self.value} {color}'
+        return f"{self.value} {color}"

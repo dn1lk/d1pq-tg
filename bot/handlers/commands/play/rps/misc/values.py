@@ -11,24 +11,28 @@ class RPSValues(str, Enum):
     def __str__(self) -> str:
         match self:
             case self.ROCK:
-                item = _("rock")
+                value = _("rock")
             case self.SCISSORS:
-                item = _("scissors")
+                value = _("scissors")
             case self.PAPER:
-                item = _("paper")
+                value = _("paper")
             case _:
-                raise TypeError(f'RPSData: unexpected rps value: {self}')
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        return f'{self.value} {item.capitalize()}'
+        return f"{self.value} {value.capitalize()}"
 
     @property
-    def resolve(self):
+    def resolve(self) -> "RPSValues":
         match self:
             case self.ROCK:
-                return self.SCISSORS
+                resolve = self.SCISSORS
             case self.SCISSORS:
-                return self.PAPER
+                resolve = self.PAPER
             case self.PAPER:
-                return self.ROCK
+                resolve = self.ROCK
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        raise TypeError(f'RPSData: unexpected rps value: {self}')
+        return resolve

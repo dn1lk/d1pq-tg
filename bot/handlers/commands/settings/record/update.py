@@ -1,83 +1,90 @@
-from aiogram import Router, F, types, html, flags
+from abc import ABCMeta, abstractmethod
+from typing import Any
+
+from aiogram import F, Router, flags, types
+from aiogram.handlers import CallbackQueryHandler
+from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
-from core.utils import database
-from . import RecordActions
-from .. import keyboards
+from utils import database
+from utils.database.types import JsonList
+
+from . import RecordActions, keyboards
+from .misc.keyboards import RecordData
 
 router = Router(name="record:update")
 
 
-async def update(query: types.CallbackQuery, callback_data: keyboards.RecordData):
-    answer = _("{field} recording is {status}.")
-    if callback_data.to_blocked:
-        status_text = _("disabled")
-    else:
-        status_text = _("enabled")
+class UpdateBase(CallbackQueryHandler, metaclass=ABCMeta):
+    @abstractmethod
+    async def update_data(self) -> None:
+        raise NotImplementedError
 
-    await query.message.edit_text(
-        answer.format(field=callback_data.action.keyboard, status=html.bold(status_text))
-    )
+    @property
+    def record_data(self) -> RecordData:
+        return self.data["callback_data"]
 
-    await query.answer()
+    async def handle(self) -> Any:
+        assert isinstance(self.event.message, types.Message), "wrong message"
+
+        await self.update_data()
+
+        content = formatting.Text(
+            self.record_data.action.keyboard,
+            " ",
+            _("recording is"),
+            " ",
+            formatting.Bold(_("disabled") if self.record_data.to_blocked else _("enabled")),
+            ".",
+        )
+
+        await self.event.message.edit_text(**content.as_kwargs())
+        await self.event.answer()
 
 
 @router.callback_query(keyboards.RecordData.filter(F.action == RecordActions.MESSAGES))
-@flags.database('gen_settings')
-async def messages_handler(
-        query: types.CallbackQuery,
-        gen_settings: database.GenSettings,
-        callback_data: keyboards.RecordData
-):
-    if callback_data.to_blocked:
-        gen_settings.messages = None
-    else:
-        gen_settings.messages = []
+@flags.database("gen_settings")
+class UpdateMessagesHandler(UpdateBase):
+    async def update_data(self) -> None:
+        gen_settings: database.GenSettings = self.data["gen_settings"]
 
-    await gen_settings.save()
-    await update(query, callback_data)
+        gen_settings.messages = None if self.record_data.to_blocked else JsonList()
+        await gen_settings.save()
 
 
 @router.callback_query(keyboards.RecordData.filter(F.action == RecordActions.STICKERS))
-@flags.database('gen_settings')
-async def messages_handler(
-        query: types.CallbackQuery,
-        gen_settings: database.GenSettings,
-        callback_data: keyboards.RecordData
-):
-    if callback_data.to_blocked:
-        gen_settings.stickers = None
-    else:
-        gen_settings.stickers = []
+@flags.database("gen_settings")
+class UpdateStickersHandler(UpdateBase):
+    async def update_data(self) -> None:
+        gen_settings: database.GenSettings = self.data["gen_settings"]
 
-    await gen_settings.save()
-    await update(query, callback_data)
+        gen_settings.stickers = None if self.record_data.to_blocked else JsonList()
+        await gen_settings.save()
 
 
 @router.callback_query(keyboards.RecordData.filter(F.action == RecordActions.MEMBERS))
-async def members_handler(
-        query: types.CallbackQuery,
-        main_settings: database.MainSettings,
-        callback_data: keyboards.RecordData
-):
-    if callback_data.to_blocked:
-        main_settings.members = None
-    else:
-        main_settings.members = [query.from_user.id]
+class UpdateMembersHandler(UpdateBase):
+    async def update_data(self) -> None:
+        main_settings: database.MainSettings = self.data["gen_settings"]
 
-    await main_settings.save()
-    await update(query, callback_data)
+        main_settings.members = None if self.record_data.to_blocked else JsonList([self.event.from_user.id])
+        await main_settings.save()
 
 
 @router.callback_query(keyboards.RecordData.filter(F.action == RecordActions.DELETE))
-@flags.database('gen_settings')
+@flags.database(("gen_settings", "gpt_settings"))
 async def delete_handler(
-        query: types.CallbackQuery,
-        main_settings: database.MainSettings,
-        gen_settings: database.GenSettings
-):
+    query: types.CallbackQuery,
+    main_settings: database.MainSettings,
+    gen_settings: database.GenSettings,
+    gpt_settings: database.GPTSettings,
+) -> None:
+    assert isinstance(query.message, types.Message), "wrong message"
+
     await main_settings.delete()
     await gen_settings.delete()
+    await gpt_settings.delete()
 
-    await query.message.edit_text(html.bold(_("Records was successfully deleted.")))
+    content = formatting.Bold(_("Records was successfully deleted."))
+    await query.message.edit_text(**content.as_kwargs())
     await query.answer()

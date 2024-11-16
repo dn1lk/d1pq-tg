@@ -1,13 +1,13 @@
 # Russian translations for d1pq.
-# Copyright (C) 2023 ORGANIZATION
+# Copyright (C) 2024 bp1lh
 # This file is distributed under the same license as the d1pq project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:32+0300\n"
+"POT-Creation-Date: 2024-11-16 17:39+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -17,129 +17,109 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.16.0\n"
 
-#: bot/core/ui_info.py:36
+#: bot/core/ui_info.py:44
 msgid "//delete"
 msgstr "//едлите"
 
-#: bot/core/ui_info.py:37
+#: bot/core/ui_info.py:45
 msgid ""
-"Hello!  I'm a text-generating bot based on your chat and a great "
+"Hello! I'm a text-generating bot based on your chat and a great "
 "conversationalist (sometimes)."
 msgstr ""
-"Привет!  Я бот, генерирующий текст, основываясь на текущем чате, и "
+"Привет! Я бот, генерирующий текст, основываясь на текущем чате, и "
 "отличный собеседник (иногда)."
 
-#: bot/core/ui_info.py:40
+#: bot/core/ui_info.py:48
 msgid "cha...{DELETED}-bot"
 msgstr "ча...{УДАЛЕНО}-бот"
 
-#: bot/core/middlewares/throttling.py:53
+#: bot/core/middlewares/throttling.py:65
 msgid "Stop spamming!"
 msgstr "Прекрати спамить!"
 
-#: bot/core/middlewares/throttling.py:54
+#: bot/core/middlewares/throttling.py:66
 msgid "How much information..."
 msgstr "Как много информации..."
 
-#: bot/core/middlewares/throttling.py:55
+#: bot/core/middlewares/throttling.py:67
 msgid "Ahhh..."
 msgstr "АААА..."
 
-#: bot/handlers/other.py:47
-msgid "{user}, hello!"
-msgstr "{user}, привет!"
+#: bot/handlers/other.py:33
+msgid "hello!"
+msgstr "привет!"
 
-#: bot/handlers/other.py:48
-msgid "Hey, {user}."
-msgstr "Привет, {user}."
+#: bot/handlers/commands/play/uno/misc/filter.py:261 bot/handlers/other.py:34
+msgid "Hey"
+msgstr "Приветики"
 
-#: bot/handlers/other.py:49
-msgid "Nice to meet you, {user}."
-msgstr "Рад встрече, {user}"
+#: bot/handlers/other.py:35
+msgid "Nice to meet you"
+msgstr "Рад встрече"
 
-#: bot/handlers/other.py:50
-msgid "My appreciate, {user}."
-msgstr "Моё почтение, {user}."
+#: bot/handlers/other.py:36
+msgid "My appreciate"
+msgstr "Моё почтение"
 
-#: bot/handlers/other.py:51
-msgid "Yop, {user}."
-msgstr "Йеп, {user}."
+#: bot/handlers/other.py:37
+msgid "Yop"
+msgstr "Йоп"
 
-#: bot/handlers/commands/choose.py:20
+#: bot/handlers/commands/choose.py:27
 msgid "I choose"
 msgstr "Я выбираю"
 
-#: bot/handlers/commands/choose.py:21
+#: bot/handlers/commands/choose.py:28
 msgid "Hm,"
 msgstr "Хм,"
 
-#: bot/handlers/commands/choose.py:22
+#: bot/handlers/commands/choose.py:29
 msgid "Difficult choice. Let there be"
 msgstr "Сложный выбор. Наверное"
 
-#: bot/handlers/commands/choose.py:23
+#: bot/handlers/commands/choose.py:30
 msgid "Why are you asking me? Well I choose"
 msgstr "Почему ты спрашиваешь меня? Хорошо, я выбираю"
 
-#: bot/handlers/commands/help.py:17
-msgid ""
-"Write a request together with command in one message.\n"
-"For example: <code>{prefix}{command} {args}</code>"
-msgstr ""
-"Напиши запрос вместе с командой одним сообщением.\n"
-"Например: <code>{prefix}{command} {args}</code>"
-
-#: bot/handlers/commands/help.py:43
+#: bot/handlers/commands/help.py:40
 msgid "And what do you want to play?"
 msgstr "И во что же ты хочешь поиграть?"
 
 #: bot/handlers/commands/help.py:46
-msgid "Try to guess the game by writing {prefix}{command} with its name."
-msgstr "Попробуй угадать игру, написав {prefix}{command} с её названием."
+msgid "Try to guess the game by writing {command} with its name."
+msgstr "Попробуй угадать игру, написав {command} с её названием."
 
-#: bot/handlers/commands/help.py:66
+#: bot/handlers/commands/help.py:64
 msgid "What to choose?"
 msgstr "Что выбрать?"
 
-#: bot/handlers/commands/help.py:70
+#: bot/handlers/commands/help.py:71
 msgid " or "
 msgstr " или "
 
-#: bot/handlers/commands/help.py:81
+#: bot/handlers/commands/help.py:82
 msgid "Who???"
 msgstr "Кто???"
 
-#: bot/handlers/commands/help.py:86
+#: bot/handlers/commands/help.py:89
 msgid "will sleep tonight"
 msgstr "будет сегодня спать"
 
-#: bot/handlers/commands/help.py:87
+#: bot/handlers/commands/help.py:90
 msgid "knows the most"
 msgstr "знает больше всех"
 
-#: bot/handlers/commands/help.py:88
+#: bot/handlers/commands/help.py:91
 msgid "will prepare everything in time"
 msgstr "всё делает вовремя"
 
-#: bot/handlers/commands/help.py:89
+#: bot/handlers/commands/help.py:92
 msgid "****"
 msgstr "****"
 
-#: bot/handlers/commands/help.py:104
-msgid "What is {args}?"
-msgstr "Что такое {args}?"
-
-#: bot/handlers/commands/help.py:105
-msgid "I don't know what is {args}."
-msgstr "Я не знаю что такое {args}."
-
-#: bot/handlers/commands/help.py:106
-msgid "{args}? I think this is some kind of mistake."
-msgstr "{args}? Мне кажется, это какая-то ошибка."
-
-#: bot/handlers/commands/help.py:115
+#: bot/handlers/commands/help.py:103
 msgid ""
 "List of my main commands — I only accept them together with the required "
 "request, in one message:\n"
@@ -147,175 +127,193 @@ msgstr ""
 "Список моих основных команд — я их принимаю только вместе с необходимым "
 "запросом, одним сообщением:\n"
 
-#: bot/handlers/commands/start.py:11
-msgid ""
-"{subject}, hello! Let's start with answering the obvious questions:\n"
-"- What am I? A text-generating bot based on current chat.\n"
-"- What can I do? Some things after which something happens...\n"
-msgstr ""
-"{subject}, привет! Начну с ответа на типичные вопросы:\n"
-"- Что я есть? Бот, генерирующий текст на основе текущего чата.\n"
-"- Что я могу? Некоторые вещи, после которых что-то происходит...\n"
+#: bot/handlers/commands/who.py:20
+msgid "This command only works in"
+msgstr "Эта команда работает только в"
 
-#: bot/handlers/commands/who.py:16
-msgid "This command only works in <b>chats</b>, alas. 😥"
-msgstr "Эта команда работает только в <b>чатах</b>, увы. 😥"
+#: bot/handlers/commands/who.py:20
+msgid "chats"
+msgstr "чатах"
 
-#: bot/handlers/commands/who.py:31
+#: bot/handlers/commands/who.py:20
+msgid "alas. 😥"
+msgstr "увы. 😥"
+
+#: bot/handlers/commands/who.py:40
 msgid "Hmmm, I think"
 msgstr "Хммм, я думаю, что"
 
-#: bot/handlers/commands/who.py:32
+#: bot/handlers/commands/who.py:41
 msgid "I guess"
 msgstr "Я предполагаю, что"
 
-#: bot/handlers/commands/who.py:33
+#: bot/handlers/commands/who.py:42
 msgid "Oh, I admit"
 msgstr "Ох, я догадываюсь, что"
 
-#: bot/handlers/commands/who.py:34
+#: bot/handlers/commands/who.py:43
 msgid "Maybe it's"
 msgstr "Может быть это"
 
-#: bot/handlers/commands/who.py:35
+#: bot/handlers/commands/who.py:44
 msgid "Wait! It's"
 msgstr "Подожди! Это"
 
-#: bot/handlers/commands/who.py:43
+#: bot/handlers/commands/who.py:55
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr "Ох, я не знаю вас ребят... Дайте мне время."
 
-#: bot/handlers/commands/who.py:44
+#: bot/handlers/commands/who.py:56
 msgid "Does anyone else want to enter this command?"
 msgstr "Кто-нибудь еще хочет ввести эту команду?"
 
-#: bot/handlers/commands/who.py:45
+#: bot/handlers/commands/who.py:57
 msgid "Is there anyone else in this chat besides you?"
 msgstr "В этом чате кроме тебя есть еще кто-нибудь?"
 
-#: bot/handlers/commands/who.py:50
-msgid ""
-"<b>This command requires permission to record chat participants.</b>\n"
-"\n"
-"/settings — give permission."
-msgstr ""
-"<b>Для этой команды требуется разрешение записи участников чата.</b>\n"
-"\n"
-"/settings — дать разрешение."
+#: bot/handlers/commands/who.py:63
+msgid "This command requires permission to record chat participants."
+msgstr "Для этой команды требуется разрешение записи участников чата."
 
-#: bot/handlers/commands/misc/types.py:36
+#: bot/handlers/commands/who.py:67
+msgid "give permission"
+msgstr "дать разрешение"
+
+#: bot/handlers/commands/misc/helpers.py:19
+msgid ""
+"hello! Let's start with answering the obvious questions:\n"
+"- What am I? A text-generating bot based on current chat.\n"
+"- What can I do? Some things after which something happens...\n"
+msgstr ""
+"привет! Начну с ответа на типичные вопросы:\n"
+"- Что я есть? Бот, генерирующий текст на основе текущего чата.\n"
+"- Что я могу? Некоторые вещи, после которых что-то происходит...\n"
+
+#: bot/handlers/commands/misc/helpers.py:32
+msgid ""
+"Write a request together with command in one message.\n"
+"For example:"
+msgstr ""
+"Напиши запрос вместе с командой одним сообщением.\n"
+"Например:"
+
+#: bot/handlers/commands/misc/types.py:38
 msgid "set up the bot"
 msgstr "настроить бота"
 
-#: bot/handlers/commands/misc/types.py:38
+#: bot/handlers/commands/misc/types.py:40
 msgid "get a commands list"
 msgstr "получить список команд"
 
-#: bot/handlers/commands/misc/types.py:40
+#: bot/handlers/commands/misc/types.py:42
 msgid "get users terms"
 msgstr "получить пользовательское соглашение"
 
-#: bot/handlers/commands/misc/types.py:43
+#: bot/handlers/commands/misc/types.py:45
 msgid "make a choice"
 msgstr "сделать выбор"
 
-#: bot/handlers/commands/misc/types.py:45
+#: bot/handlers/commands/misc/types.py:47
 msgid "find the desired participant"
 msgstr "найти определённого участника чата"
 
-#: bot/handlers/commands/misc/types.py:47
+#: bot/handlers/commands/misc/types.py:49
 msgid "play in a game"
 msgstr "сыграть в игру"
 
-#: bot/handlers/commands/play/__init__.py:10
+#: bot/handlers/commands/play/__init__.py:19
 msgid "Victory for me."
 msgstr "Победа за мной."
 
-#: bot/handlers/commands/play/__init__.py:11
+#: bot/handlers/commands/play/__init__.py:20
 msgid "I am a winner."
 msgstr "Я — победитель."
 
-#: bot/handlers/commands/play/__init__.py:12
+#: bot/handlers/commands/play/__init__.py:21
 msgid "I am the winner in this game."
 msgstr "Я оказываюсь победителем в этой игре."
 
-#: bot/handlers/commands/play/__init__.py:16
+#: bot/handlers/commands/play/__init__.py:25
 msgid "You know I won't play with you! Maybe..."
 msgstr "Знаешь, я не буду с тобой играть! Возможно..."
 
-#: bot/handlers/commands/play/__init__.py:17
+#: bot/handlers/commands/play/__init__.py:26
 msgid "Well don't play with me!"
 msgstr "Ну и не играй со мной!"
 
-#: bot/handlers/commands/play/__init__.py:18
+#: bot/handlers/commands/play/__init__.py:27
 msgid "I thought we were playing..."
 msgstr "Я думал мы играли..."
 
-#: bot/handlers/commands/play/__init__.py:19
+#: bot/handlers/commands/play/__init__.py:28
 msgid "It's too slow, I won't play with you!"
 msgstr "Я не буду играть с тобой!"
 
-#: bot/handlers/commands/play/other.py:17
+#: bot/handlers/commands/play/other.py:19
 msgid "Ha! Invalid request, try again."
 msgstr "Ха! А вот и нет, попробуй ещё."
 
-#: bot/handlers/commands/play/other.py:18
+#: bot/handlers/commands/play/other.py:20
 msgid "Luck is clearly NOT in your favor. You didn't guess the game!"
 msgstr "Удача явно тебе НЕ благоволит. Ты не угадал игру!"
 
-#: bot/handlers/commands/play/other.py:19
+#: bot/handlers/commands/play/other.py:21
 msgid "The game is not recognized. I'll give it another try!"
 msgstr "Игра не распознана. Даю ещё попытку!"
 
-#: bot/handlers/commands/play/other.py:20
+#: bot/handlers/commands/play/other.py:22
 msgid "And here it is not. This game has a different name. 😜"
 msgstr "А вот и нет. У этой игры другая команда. 😜"
 
-#: bot/handlers/commands/play/cts/process.py:19
-msgid "<b>Cities guessed</b>: {cities}."
-msgstr "<b>Угадано городов</b>: {cities}."
-
-#: bot/handlers/commands/play/cts/process.py:29
+#: bot/handlers/commands/play/cts/process.py:27
 msgid "Hmm."
 msgstr "Хмм."
 
-#: bot/handlers/commands/play/cts/process.py:30
+#: bot/handlers/commands/play/cts/process.py:28
 msgid "And you're smarter than you look."
 msgstr "А ты умнее, чем кажешься."
 
-#: bot/handlers/commands/play/cts/process.py:31
+#: bot/handlers/commands/play/cts/process.py:29
 msgid "Right!"
 msgstr "Верно!"
 
-#: bot/handlers/commands/play/cts/process.py:35
-msgid "My city: {bot_city}."
-msgstr "Мой город: {bot_city}."
+#: bot/handlers/commands/play/cts/process.py:33
+msgid "My city"
+msgstr "Мой город"
 
-#: bot/handlers/commands/play/cts/process.py:44
-msgid "Okay, I have nothing to write on {letter}... Victory is yours."
-msgstr "Ладно, мне нечего написать на {letter}... Победа за тобой."
+#: bot/handlers/commands/play/cts/process.py:49
+msgid "Okay, I have nothing to write on"
+msgstr "Ладно, мне нечего написать на"
 
-#: bot/handlers/commands/play/cts/process.py:45
-msgid "Can't find the right something on {letter}... My defeat."
-msgstr "Не могу найти нужное название на {letter}... Моё поражение."
+#: bot/handlers/commands/play/cts/process.py:53
+msgid "Victory is yours."
+msgstr "Победа твоя."
 
-#: bot/handlers/commands/play/cts/process.py:46
+#: bot/handlers/commands/play/cts/process.py:56
+msgid "Can't find the right something on"
+msgstr "Не могу найти нужное название на"
+
+#: bot/handlers/commands/play/cts/process.py:60
+msgid "My defeat."
+msgstr "Моё поражение."
+
+#: bot/handlers/commands/play/cts/process.py:63
 msgid ""
 "VICTORY... yours. I can't remember that name... You know, it also starts "
-"with {letter}..."
+"with"
 msgstr ""
 "ПОБЕДА... твоя. Не могу вспомнить то название... Знаешь, оно ещё "
-"начинается на {letter}..."
+"начинается на"
 
-#: bot/handlers/commands/play/cts/process.py:65
+#: bot/handlers/commands/play/cts/process.py:90
 msgid "We have already used this name. Choose another!"
 msgstr "Мы уже использовали это название. Выбери другое!"
 
-#: bot/handlers/commands/play/cts/process.py:66
+#: bot/handlers/commands/play/cts/process.py:91
 msgid "I remember exactly that we already used this. Let's try something else."
 msgstr "Я точно помню, что мы уже использовали это. Попробуй что-нибудь ещё."
 
-#: bot/handlers/commands/play/cts/process.py:67
+#: bot/handlers/commands/play/cts/process.py:92
 msgid ""
 "But no, you can’t fool me — this name was already in the game. Be "
 "original!"
@@ -323,31 +321,31 @@ msgstr ""
 "А нет, ты меня не проведёшь — это название уже было в игре. Будь "
 "оригинальнее!"
 
-#: bot/handlers/commands/play/cts/process.py:73
+#: bot/handlers/commands/play/cts/process.py:98
 msgid "I do not understand something or your word is WRONG!"
 msgstr "Либо я что-то не понимаю, либо твоё слово НЕВЕРНО!"
 
-#: bot/handlers/commands/play/cts/process.py:74
+#: bot/handlers/commands/play/cts/process.py:99
 msgid "And here it is not. Think better, user!"
 msgstr "А вот и нет. Думай лучше, пользователь!"
 
-#: bot/handlers/commands/play/cts/process.py:75
+#: bot/handlers/commands/play/cts/process.py:100
 msgid "My algorithms do not deceive me — you are mistaken!"
 msgstr "Мои алгоритмы меня не обманывают — ты ошибся!"
 
-#: bot/handlers/commands/play/cts/process.py:79
-msgid "<b>Remaining attempts</b>: {fail_amount}."
-msgstr "<b>Осталось попыток</b>: {fail_amount}."
+#: bot/handlers/commands/play/cts/process.py:107
+msgid "Remaining attempts"
+msgstr "Осталось попыток"
 
-#: bot/handlers/commands/play/cts/process.py:87
+#: bot/handlers/commands/play/cts/process.py:117
 msgid "You have no attempts left."
 msgstr "У тебя не осталось попыток."
 
-#: bot/handlers/commands/play/cts/process.py:88
+#: bot/handlers/commands/play/cts/process.py:118
 msgid "Looks like all attempts have been spent."
 msgstr "Похоже, все попытки истрачены."
 
-#: bot/handlers/commands/play/cts/process.py:89
+#: bot/handlers/commands/play/cts/process.py:119
 msgid ""
 "Where is an ordinary user up to artificial intelligence. All attempts "
 "have ended."
@@ -355,7 +353,7 @@ msgstr ""
 "Куда простому пользователю до искусственного интеллекта. Все попытки "
 "закончились."
 
-#: bot/handlers/commands/play/cts/start.py:21
+#: bot/handlers/commands/play/cts/start.py:24
 msgid ""
 "Oh, Geography. Well, let's try!\n"
 "\n"
@@ -367,83 +365,96 @@ msgstr ""
 "Тебе нужно написать город, который начинается на букву, на которую "
 "заканчивается предыдущий город."
 
-#: bot/handlers/commands/play/cts/start.py:36
-msgid "I start! My city: {bot_city}."
-msgstr "Я начинаю! Мой город: {bot_city}."
+#: bot/handlers/commands/play/cts/start.py:40
+msgid "I start! My city:"
+msgstr "Я начинаю! Мой город:"
 
-#: bot/handlers/commands/play/cts/start.py:38
+#: bot/handlers/commands/play/cts/start.py:42
 msgid "You start! Your city?"
 msgstr "Ты начинаешь! Твой город?"
 
-#: bot/handlers/commands/play/cts/misc/timer.py:14
+#: bot/handlers/commands/play/cts/misc/helpers.py:13
+msgid "Cities guessed: {cities}."
+msgstr "Угадано городов: {cities}."
+
+#: bot/handlers/commands/play/cts/misc/timer.py:15
+#: bot/handlers/commands/play/uno/misc/actions/timer.py:73
 msgid "Time is over."
 msgstr "Твоё время вышло."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:22
+#: bot/handlers/commands/play/rnd/chat/process.py:24
 msgid "You have already made your choice."
 msgstr "Ты уже выбрал свой вариант."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:23
+#: bot/handlers/commands/play/rnd/chat/process.py:25
 msgid "Cunning, but you already used your try."
 msgstr "Хитро, но ты уже использовал свою попытку."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:24
+#: bot/handlers/commands/play/rnd/chat/process.py:26
 msgid "So let's write it down ... Seen in a scam."
 msgstr "Так и запишем... Замечен в жульничестве."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:30
+#: bot/handlers/commands/play/rnd/chat/process.py:32
 msgid "Yes! This is my number!"
 msgstr "Да! Это моё число!"
 
-#: bot/handlers/commands/play/rnd/chat/process.py:31
+#: bot/handlers/commands/play/rnd/chat/process.py:33
 msgid "Someone is fabulously lucky! I guessed this number."
 msgstr "Кому-то сказочно повезло! Я загадал это число."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:32
+#: bot/handlers/commands/play/rnd/chat/process.py:34
 msgid "WE HAVE A WINNER! This is my number!"
 msgstr "У НАС ЕСТЬ ПОБЕДИТЕЛЬ! Это моё число!"
 
-#: bot/handlers/commands/play/rnd/chat/process.py:39
+#: bot/handlers/commands/play/rnd/chat/process.py:41
 msgid "Nope. This is not my number."
 msgstr "Неа. Это не моё число."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:40
+#: bot/handlers/commands/play/rnd/chat/process.py:42
 msgid "Do you really think that I will choose THIS number?"
 msgstr "Ты действительно думаешь, что я выберу ЭТО число?"
 
-#: bot/handlers/commands/play/rnd/chat/process.py:41
+#: bot/handlers/commands/play/rnd/chat/process.py:43
 msgid "Next..."
 msgstr "Следующий..."
 
-#: bot/handlers/commands/play/rnd/chat/process.py:51
+#: bot/handlers/commands/play/rnd/chat/process.py:55
 msgid "So you won’t guess for sure, choose a emoji from 1 to 10!"
 msgstr "Так ты точно не угадаешь, выбери число от 1 до 10!"
 
-#: bot/handlers/commands/play/rnd/chat/process.py:52
+#: bot/handlers/commands/play/rnd/chat/process.py:56
 msgid "Somebody can't read. It was clearly written, from 1 to 10!"
 msgstr "Кто-то не умеет читать. Было чётко написано, от 1 до 10!"
 
-#: bot/handlers/commands/play/rnd/chat/process.py:53
+#: bot/handlers/commands/play/rnd/chat/process.py:57
 msgid "Between 1 and 10, what's so difficult?!"
 msgstr "От 1 до 10, что сложного то?!"
 
-#: bot/handlers/commands/play/rnd/chat/start.py:36
+#: bot/handlers/commands/play/rnd/chat/start.py:39
+msgid "someone"
+msgstr "кто-то"
+
+#: bot/handlers/commands/play/rnd/chat/start.py:42
+msgid "Hmm"
+msgstr "Хмм"
+
+#: bot/handlers/commands/play/rnd/chat/start.py:46
 msgid ""
-"Hmm, {user} is trying own luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
+"is trying own luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
 "I guessed a number from 1 to 10.\n"
 "\n"
 "Guess what?"
 msgstr ""
-"Хмм, {user} испытывает свою удачу! Отлично, ВСЕ, ВСЕ ВСЕ!\n"
+"испытывает свою удачу! Отлично, ВСЕ, ВСЕ ВСЕ!\n"
 "Я загадал число от 1 до 10.\n"
 "\n"
 "Угадайте, какое?"
 
-#: bot/handlers/commands/play/rnd/chat/start.py:53
+#: bot/handlers/commands/play/rnd/chat/start.py:64
 msgid "LET THE BATTLE BEGIN!"
 msgstr "ДА НАЧНЁТСЯ ЖЕ БИТВА!"
 
-#: bot/handlers/commands/play/rnd/chat/start.py:91
+#: bot/handlers/commands/play/rnd/chat/start.py:105
 msgid ""
 "Nobody tries to guess!\n"
 "I finish the game."
@@ -451,23 +462,23 @@ msgstr ""
 "Никто не пытается угадать!\n"
 "Я заканчиваю игру."
 
-#: bot/handlers/commands/play/rnd/chat/start.py:99
+#: bot/handlers/commands/play/rnd/chat/start.py:110
 msgid ""
 "Nobody guessed right. 😢\n"
-"My number was {bot_number}."
+"My number was"
 msgstr ""
 "Никто не угадал. 😢\n"
-"Моё число было {bot_number}."
+"Моё число было"
 
-#: bot/handlers/commands/play/rnd/private/process.py:21
+#: bot/handlers/commands/play/rnd/private/process.py:23
 msgid "Yes! I have the same number!"
 msgstr "Да! У меня такое же число!"
 
-#: bot/handlers/commands/play/rnd/private/process.py:22
+#: bot/handlers/commands/play/rnd/private/process.py:24
 msgid "Our numbers matched!"
 msgstr "Наши числа совпали!"
 
-#: bot/handlers/commands/play/rnd/private/process.py:23
+#: bot/handlers/commands/play/rnd/private/process.py:25
 msgid ""
 "Wow, you have extraordinary luck.\n"
 "I also chose this number."
@@ -475,19 +486,19 @@ msgstr ""
 "Вау, удача точно на твоей стороне.\n"
 "Я тоже выбрал это число."
 
-#: bot/handlers/commands/play/rnd/private/process.py:30
-msgid "Nope. I chose a number {bot_number}."
-msgstr "Неа, я выбрал число {bot_number}."
+#: bot/handlers/commands/play/rnd/private/process.py:34
+msgid "Nope. I chose a number"
+msgstr "Неа, я выбрал число"
 
-#: bot/handlers/commands/play/rnd/private/process.py:31
-msgid "Alas, I guessed the number {bot_number}."
-msgstr "Увы, я загадал число {bot_number}."
+#: bot/handlers/commands/play/rnd/private/process.py:35
+msgid "Alas, I guessed the number"
+msgstr "Увы, я загадал число"
 
-#: bot/handlers/commands/play/rnd/private/process.py:32
-msgid "So our numbers... didn't match. I have {bot_number}."
-msgstr "Итак, наши числа... не совпали. Я выбрал {bot_number}."
+#: bot/handlers/commands/play/rnd/private/process.py:36
+msgid "So our numbers... didn't match. I have"
+msgstr "Итак, наши числа... не совпали. Я выбрал"
 
-#: bot/handlers/commands/play/rnd/private/start.py:30
+#: bot/handlers/commands/play/rnd/private/start.py:21
 msgid ""
 "Hmm, you're trying own luck!\n"
 "I guessed a number from 1 to 10.\n"
@@ -499,57 +510,53 @@ msgstr ""
 "\n"
 "Угадай какое?"
 
-#: bot/handlers/commands/play/rps/process.py:30
+#: bot/handlers/commands/play/rps/process.py:31
 msgid "Draw."
 msgstr "Ничья."
 
-#: bot/handlers/commands/play/rps/process.py:31
+#: bot/handlers/commands/play/rps/process.py:32
 msgid "Same..."
 msgstr "Опять..."
 
-#: bot/handlers/commands/play/rps/process.py:32
+#: bot/handlers/commands/play/rps/process.py:33
 msgid "Brr..."
 msgstr "Брр..."
 
-#: bot/handlers/commands/play/rps/process.py:33
+#: bot/handlers/commands/play/rps/process.py:34
 msgid "The score does not changed."
 msgstr "Счёт не поменялся."
 
-#: bot/handlers/commands/play/rps/process.py:34
+#: bot/handlers/commands/play/rps/process.py:35
 msgid "We already think alike."
 msgstr "Мы уже думаем одинаково."
 
-#: bot/handlers/commands/play/rps/process.py:39
+#: bot/handlers/commands/play/rps/process.py:40
 msgid "My win!"
 msgstr "Моя победа!"
 
-#: bot/handlers/commands/play/rps/process.py:42
+#: bot/handlers/commands/play/rps/process.py:43
 msgid "Eh, my defeat..."
 msgstr "Ех, моё поражение..."
 
-#: bot/handlers/commands/play/rps/process.py:44
-msgid ""
-"{bot_value}{result}\n"
-"\n"
-"Score: {loses}-{wins}.\n"
-"{user}, play again?"
-msgstr ""
-"{bot_value}{result}\n"
-"\n"
-"Счёт: {loses}-{wins}.\n"
-"{user}, сыграем ещё раз?"
+#: bot/handlers/commands/play/rps/process.py:48
+msgid "Score"
+msgstr "Счёт"
 
-#: bot/handlers/commands/play/rps/process.py:55
+#: bot/handlers/commands/play/rps/process.py:56
+msgid "play again?"
+msgstr "сыграем ещё?"
+
+#: bot/handlers/commands/play/rps/process.py:62
 msgid "Your choice: {user_value}"
 msgstr "Твой выбор: {user_value}"
 
-#: bot/handlers/commands/play/rps/start.py:15
-msgid ""
-"Eh, classic.\n"
-"{user}, press the button:"
-msgstr ""
-"Ех, классика.\n"
-"{user}, нажми на кнопку:"
+#: bot/handlers/commands/play/rps/start.py:20
+msgid "Eh, classic"
+msgstr "Ех, классика"
+
+#: bot/handlers/commands/play/rps/start.py:24
+msgid "press the button:"
+msgstr "нажми на кнопку:"
 
 #: bot/handlers/commands/play/rps/misc/values.py:14
 msgid "rock"
@@ -563,409 +570,436 @@ msgstr "ножницы"
 msgid "paper"
 msgstr "бумага"
 
-#: bot/handlers/commands/play/uno/__init__.py:4
+#: bot/handlers/commands/play/uno/__init__.py:7
 msgid "Take a card."
 msgstr "Беру карту."
 
-#: bot/handlers/commands/play/uno/inline.py:67
+#: bot/handlers/commands/play/uno/inline.py:74
 msgid "Join to the game."
 msgstr "Присоединиться к игре."
 
-#: bot/handlers/commands/play/uno/inline.py:78
+#: bot/handlers/commands/play/uno/inline.py:87
 msgid "Start a new game."
 msgstr "Начать новую игру."
 
-#: bot/handlers/commands/play/uno/process.py:29
+#: bot/handlers/commands/play/uno/process.py:35
 msgid "You are already in the list!"
 msgstr "Ты уже в списке!"
 
-#: bot/handlers/commands/play/uno/process.py:31
+#: bot/handlers/commands/play/uno/process.py:37
 msgid "There are too many players."
-msgstr "Здесь слишком много игроков"
+msgstr "Здесь слишком много игроков."
 
-#: bot/handlers/commands/play/uno/process.py:38
+#: bot/handlers/commands/play/uno/process.py:44
 msgid "Now there are one more players!"
 msgstr "Теперь участников стало на один больше!"
 
-#: bot/handlers/commands/play/uno/process.py:55
+#: bot/handlers/commands/play/uno/process.py:64
 msgid "Nobody wants to play. 😢"
 msgstr "Никто не хочет играть. 😢"
 
-#: bot/handlers/commands/play/uno/process.py:56
+#: bot/handlers/commands/play/uno/process.py:65
 msgid "And who is there to play with?"
 msgstr "А с кем играть-то?"
 
-#: bot/handlers/commands/play/uno/process.py:67
+#: bot/handlers/commands/play/uno/process.py:80
 msgid "Now there is one less player!"
 msgstr "Теперь участников стало на один меньше!"
 
-#: bot/handlers/commands/play/uno/process.py:71
+#: bot/handlers/commands/play/uno/process.py:84
 msgid "You are not in the list yet!"
 msgstr "Ты ещё не в списке!"
 
-#: bot/handlers/commands/play/uno/process.py:108
+#: bot/handlers/commands/play/uno/process.py:132
 msgid "I play too!"
 msgstr "Я тоже играю!"
 
-#: bot/handlers/commands/play/uno/process.py:109
+#: bot/handlers/commands/play/uno/process.py:133
 msgid "I'll play with you."
 msgstr "Сыграю с вами."
 
-#: bot/handlers/commands/play/uno/process.py:110
+#: bot/handlers/commands/play/uno/process.py:134
 msgid "I'm with you."
 msgstr "Я с вами."
 
-#: bot/handlers/commands/play/uno/process.py:124
+#: bot/handlers/commands/play/uno/process.py:155
 msgid "Only {user} can start the game."
 msgstr "Только {user} может начать игру."
 
-#: bot/handlers/commands/play/uno/process.py:129
+#: bot/handlers/commands/play/uno/process.py:164
 msgid "Only {user} can set up the game."
 msgstr "Только {user} может настроить игру."
 
-#: bot/handlers/commands/play/uno/start.py:33
-msgid "{user} join to current game."
-msgstr "{user} присоединяется к текущей игре."
+#: bot/handlers/commands/play/uno/start.py:40
+msgid "join to current game"
+msgstr "присоединяется к текущей игре"
 
-#: bot/handlers/commands/play/uno/start.py:36
+#: bot/handlers/commands/play/uno/start.py:47
 msgid "You already in the game."
-msgstr "Ты уже в игре!"
+msgstr "Ты уже в игре."
 
-#: bot/handlers/commands/play/uno/start.py:39
+#: bot/handlers/commands/play/uno/start.py:51
 msgid "Already 10 people are playing in the game."
 msgstr "Уже 10 человек играют в игру."
 
-#: bot/handlers/commands/play/uno/start.py:45
-msgid ""
-"<b>Let's play UNO?</b>\n"
-"\n"
-"One minute to make a decision!\n"
-"Difficulty: {difficulty}.\n"
-"Mode: {mode}.\n"
-"\n"
-"{additives}\n"
-"\n"
-"<b>Already in the game:</b>\n"
-"{user}"
-msgstr ""
-"<b>Сыграем в UNO?</b>\n"
-"\n"
-"Минута на принятие решения!\n"
-"Сложность: {difficulty}.\n"
-"Режим: {mode}.\n"
-"\n"
-"{additives}\n"
-"\n"
-"<b>Уже в игре:</b>\n"
-"{user}"
+#: bot/handlers/commands/play/uno/start.py:63
+msgid "One minute to make a decision!"
+msgstr "Одна минута на принятие решения!"
 
-#: bot/handlers/commands/play/uno/user.py:109
-msgid "{user} is not playing with us."
-msgstr "{user} не играет с нами."
+#: bot/handlers/commands/play/uno/start.py:65
+msgid "Difficulty"
+msgstr "Сложность"
 
-#: bot/handlers/commands/play/uno/user.py:113
-msgid "Only {user} can choose with whom to exchange cards."
-msgstr "Только {user} может выбрать, с кем обменяться картами."
+#: bot/handlers/commands/play/uno/start.py:69
+msgid "Mode"
+msgstr "Режим"
 
-#: bot/handlers/commands/play/uno/user.py:164
-msgid "{user} changes the color to {color}!"
-msgstr "{user} меняет цвет на {color}!"
+#: bot/handlers/commands/play/uno/start.py:73
+msgid "Additives"
+msgstr "Дополнения"
 
-#: bot/handlers/commands/play/uno/user.py:186
+#: bot/handlers/commands/play/uno/start.py:79
+msgid "Already in the game"
+msgstr "Уже в игре"
+
+#: bot/handlers/commands/play/uno/user.py:155
+msgid "changes the color to"
+msgstr "меняет цвет на"
+
+#: bot/handlers/commands/play/uno/user.py:187
 msgid "Good job!"
 msgstr "Хорошая работа!"
 
-#: bot/handlers/commands/play/uno/user.py:187
+#: bot/handlers/commands/play/uno/user.py:188
 msgid "And you don't want to lose. 😎"
 msgstr "А ты не хочешь проиграть. 😎"
 
-#: bot/handlers/commands/play/uno/user.py:188
+#: bot/handlers/commands/play/uno/user.py:189
 msgid "On reaction. 😎"
 msgstr "На реакции. 😎"
 
-#: bot/handlers/commands/play/uno/user.py:189
+#: bot/handlers/commands/play/uno/user.py:190
 msgid "Yep!"
 msgstr "Ага!"
 
-#: bot/handlers/commands/play/uno/user.py:190
+#: bot/handlers/commands/play/uno/user.py:191
 msgid "Like a pro."
 msgstr "Как профи."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:71
+#: bot/handlers/commands/play/uno/misc/filter.py:28
+msgid "Who are you playing with?"
+msgstr "А с кем ты играешь-то?"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:38
 msgid "What a joke, this card is not from your hand."
 msgstr "Что за шутка, эта карта не из твоей колоды."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:114
-msgid "{user} doesn't want to take cards."
-msgstr "{user} не хочет брать карты."
+#: bot/handlers/commands/play/uno/misc/filter.py:88
+msgid "doesn't want to take cards"
+msgstr "не хочет брать карты"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:115
+#: bot/handlers/commands/play/uno/misc/filter.py:89
 msgid "What a heat, +cards to the queue!"
 msgstr "Какой накал, +карты в очередь!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:120
+#: bot/handlers/commands/play/uno/misc/filter.py:95
 msgid "Stacking is not allowed."
 msgstr "Наложение не разрешено."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:123
-msgid "{user}, calm down and take the cards!"
-msgstr "{user}, смирись и возьми карту!"
+#: bot/handlers/commands/play/uno/misc/filter.py:98
+msgid "calm down and take the cards"
+msgstr "смирись и возьми карту"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:127
+#: bot/handlers/commands/play/uno/misc/filter.py:104
 msgid "Another black card???"
 msgstr "Ещё одна чёрная карта???"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:132
-msgid "So... {user}."
-msgstr "Так-с... {user}."
+#: bot/handlers/commands/play/uno/misc/filter.py:110
+msgid "So"
+msgstr "Итак"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:133
+#: bot/handlers/commands/play/uno/misc/filter.py:111
 msgid "Again {color}..."
 msgstr "Опять {color} цвет..."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:134
+#: bot/handlers/commands/play/uno/misc/filter.py:112
 msgid "Wow, you got {color}!"
 msgstr "Вау, у тебя был {color} цвет!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:139
-msgid "Black card by {user}!"
-msgstr "Чёрная карта by {user}!"
+#: bot/handlers/commands/play/uno/misc/filter.py:119
+msgid "Black card by"
+msgstr "Чёрная карта by"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:142
-msgid "{user} changes color!"
-msgstr "{user} меняет цвет!"
+#: bot/handlers/commands/play/uno/misc/filter.py:123
+msgid "changes color"
+msgstr "меняет цвет"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:147
-msgid "{user}, attempt not counted, get a card! 🧐"
-msgstr "{user}, попытка не засчитана, бери карту! 🧐"
+#: bot/handlers/commands/play/uno/misc/filter.py:129
+msgid "attempt not counted, get a card! 🧐"
+msgstr "попытка не засчитана, бери карту! 🧐"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:148
+#: bot/handlers/commands/play/uno/misc/filter.py:130
 msgid "Just. Skip. Turn."
 msgstr "Просто. Пропусти. Ход."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:149
-msgid "Someday {user} will be able to make the right turn."
-msgstr "В один прекрасный день {user} сделает правильный ход."
+#: bot/handlers/commands/play/uno/misc/filter.py:131
+msgid "Someday"
+msgstr "Когда-нибудь"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:156
+#: bot/handlers/commands/play/uno/misc/filter.py:131
+msgid "will be able to make the right turn"
+msgstr "сделает правильный ход"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:142
 msgid "Hey, the game just started and you're already mistaken!"
 msgstr "Хей, игра только началась а ты уже косячишь!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:157
+#: bot/handlers/commands/play/uno/misc/filter.py:143
 msgid "This is not your turn!"
 msgstr "Это не твой ход!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:158
+#: bot/handlers/commands/play/uno/misc/filter.py:144
 msgid "Hello, mistake at the beginning of the game."
 msgstr "Привет, ошибка в начале игры."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:173
-msgid "{user}, you're in luck!"
-msgstr "{user}, а тебе везёт!"
+#: bot/handlers/commands/play/uno/misc/filter.py:167
+msgid "you're in luck!"
+msgstr "а тебе везёт!"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:168
+msgid "is that honest?"
+msgstr "а это по правилам?"
 
 #: bot/handlers/commands/play/uno/misc/filter.py:174
-msgid "{user}, is that honest?"
-msgstr "{user}, а это по правилам?"
-
-#: bot/handlers/commands/play/uno/misc/filter.py:179
 msgid "No, this card is wrong. Take another one!"
 msgstr "Нет, это карта неправильная. Бери ещё одну!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:183
+#: bot/handlers/commands/play/uno/misc/filter.py:179
 msgid "This is not your last card!"
 msgstr "Это не твоя последняя карта!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:184
+#: bot/handlers/commands/play/uno/misc/filter.py:180
 msgid "This is not that card."
 msgstr "Это не та карта."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:185
+#: bot/handlers/commands/play/uno/misc/filter.py:181
 msgid "I mixed you another card!"
 msgstr "Я подмешал тебе другую карту!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:193
-msgid "{user} is unskippable!"
-msgstr "Игрока {user} невозможно пропустить!"
+#: bot/handlers/commands/play/uno/misc/filter.py:197
+msgid "is unskippable!"
+msgstr "из непропускаемых!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:194
-msgid "{user}, you can't be skipped!"
-msgstr "{user}, тебя нельзя пропустить!"
+#: bot/handlers/commands/play/uno/misc/filter.py:198
+msgid "you can't be skipped!"
+msgstr "тебя нельзя скипнуть!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:195
+#: bot/handlers/commands/play/uno/misc/filter.py:199
 msgid "Skips are not for you. 😎"
 msgstr "Пропуски не для тебя. 😎"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:200
-msgid "{user}, your turn is skipped. 🤨"
-msgstr "{user}, твой ход пропущен. 🤨"
+#: bot/handlers/commands/play/uno/misc/filter.py:204
+msgid "your turn is skipped. 🤨"
+msgstr "твой ход пропущен. 🤨"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:206
+#: bot/handlers/commands/play/uno/misc/filter.py:216
 msgid "This card cannot be played consecutively."
 msgstr "Эту карту нельзя разыгрывать друг на друга."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:207
+#: bot/handlers/commands/play/uno/misc/filter.py:217
 msgid "These cards cannot be stacked."
 msgstr "Эти карты не могут быть наложены."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:208
+#: bot/handlers/commands/play/uno/misc/filter.py:218
 msgid "Yeah, what if we all put all our cards?"
 msgstr "Ага, что если мы все выложим свои карты?"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:215
-msgid "{user} keeps throwing cards..."
-msgstr "{user} продолжает накидывать карты..."
+#: bot/handlers/commands/play/uno/misc/filter.py:228
+msgid "keeps throwing cards..."
+msgstr "продолжает накидывать карты..."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:216
-msgid "{user}, will anyone stop you?"
-msgstr "{user}, кто-нибудь остановит тебя?"
+#: bot/handlers/commands/play/uno/misc/filter.py:229
+msgid "will anyone stop you?"
+msgstr "кто-нибудь остановит тебя?"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:221
-msgid "{user}, you have already made your turn."
-msgstr "{user}, твой ход уже был сделан."
+#: bot/handlers/commands/play/uno/misc/filter.py:235
+msgid "you have already made your turn"
+msgstr "твой ход уже был сделан"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:227
+#: bot/handlers/commands/play/uno/misc/filter.py:248
 msgid "We've been interrupted!"
 msgstr "Мы подверглись вторжению!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:228
-msgid "I bet {user} will win this game!"
-msgstr "Держу пари, {user} выиграет эту игру!"
+#: bot/handlers/commands/play/uno/misc/filter.py:249
+msgid "I bet"
+msgstr "Думаю"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:229
-msgid "Suddenly, {user}."
-msgstr "Внезапно, {user}."
+#: bot/handlers/commands/play/uno/misc/filter.py:249
+msgid "will win this game"
+msgstr "выиграет эту игру"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:236
-msgid "Hold your horses, {user}. Now is not your turn."
-msgstr "Попридержи коней, {user}. Сейчас не твой ход."
+#: bot/handlers/commands/play/uno/misc/filter.py:250
+msgid "Suddenly"
+msgstr "Внезапно"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:237
-msgid "Hey, {user}. Your card doesn't belong this turn."
-msgstr "Хей, {user}. Твоей карте не место на этом ходу."
+#: bot/handlers/commands/play/uno/misc/filter.py:259
+msgid "Hold your horses"
+msgstr "Попридержи коней"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:238
+#: bot/handlers/commands/play/uno/misc/filter.py:259
+msgid "Now is not your turn."
+msgstr "Сейчас не твой ход."
+
+#: bot/handlers/commands/play/uno/misc/filter.py:261
+msgid "Your card doesn't belong this turn."
+msgstr "Твоей карте не место на этом ходу."
+
+#: bot/handlers/commands/play/uno/misc/filter.py:262
 msgid "No. No no no. No. Again, NO!"
 msgstr "Нет. Нет, нет, нет. Нет. Ещё раз, НЕТ!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:239
-msgid "Someone explain to {user} how to play."
-msgstr "{user}, спроси ты у кого-нибудь, как играть."
+#: bot/handlers/commands/play/uno/misc/filter.py:263
+msgid "Someone explain to"
+msgstr "Кто-нибудь, объясните как играть игроку"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:240
-msgid "Can I just give {user} a card and we'll pretend like nothing happened?"
-msgstr ""
-"Давайте я просто дам игроку {user} карту и мы сделаем вид, что ничего не "
-"было?"
+#: bot/handlers/commands/play/uno/misc/filter.py:263
+msgid "how to play"
+msgstr "как играть"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:241
-msgid "I'm betting on {user}'s defeat."
-msgstr "Делаю ставку на поражение игрока {user}."
+#: bot/handlers/commands/play/uno/misc/filter.py:264
+msgid "Can I just give"
+msgstr "Давай я тебе просто дам"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:253
+#: bot/handlers/commands/play/uno/misc/filter.py:267
+msgid "I'm betting on defeat of"
+msgstr "Делаю ставку на поражение игрока"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:286
+msgid "Of course, I don't mind, but now it's turn of"
+msgstr "Я, конечно, не против, но сейчас очередь игрока"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:290
+msgid "We'll have to wait. 🙂"
+msgstr "Придётся подождать. 🙂"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:304
 msgid "Only {user} can do that."
 msgstr "Только {user} может сделать это."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:264
+#: bot/handlers/commands/play/uno/misc/filter.py:316
 msgid "Nice try."
 msgstr "Хорошая попытка."
 
-#: bot/handlers/commands/play/uno/misc/filter.py:274
+#: bot/handlers/commands/play/uno/misc/filter.py:356
+msgid "Chosen user is not playing with us."
+msgstr "Выбранный пользователь не играет с нами."
+
+#: bot/handlers/commands/play/uno/misc/filter.py:360
+msgid "Only"
+msgstr "Только"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:363
+msgid "can choose with whom to exchange cards"
+msgstr "может выбрать, с кем обменяться картами"
+
+#: bot/handlers/commands/play/uno/misc/filter.py:378
 msgid "Next time be faster!"
 msgstr "В следующий раз будь быстрее!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:276
+#: bot/handlers/commands/play/uno/misc/filter.py:380
 msgid "You are not in the game!"
 msgstr "Ты не в игре!"
 
-#: bot/handlers/commands/play/uno/misc/filter.py:287
-msgid ""
-"Of course, I don't mind, but now it's {user}'s turn.\n"
-"We'll have to wait. 🫠"
-msgstr ""
-"Я, конечно, не против, но сейчас очередь {user}.\n"
-"Придётся подождать. 🫠"
-
-#: bot/handlers/commands/play/uno/misc/actions/timer.py:34
-#: bot/handlers/commands/play/uno/misc/keyboards.py:23
+#: bot/handlers/commands/play/uno/misc/actions/timer.py:47
+#: bot/handlers/commands/play/uno/misc/keyboards.py:24
 msgid "Yes"
 msgstr "Да"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:25
+#: bot/handlers/commands/play/uno/misc/keyboards.py:26
 msgid "No"
 msgstr "Нет"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:27
+#: bot/handlers/commands/play/uno/misc/keyboards.py:28
 msgid "Settings"
 msgstr "Настройки"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:29
+#: bot/handlers/commands/play/uno/misc/keyboards.py:30
 msgid "LET'S PLAY!"
 msgstr "НАЧАТЬ ИГРУ!"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:41
+#: bot/handlers/commands/play/uno/misc/keyboards.py:45
 msgid "difficulty"
 msgstr "сложность"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:43
+#: bot/handlers/commands/play/uno/misc/keyboards.py:47
 msgid "mode"
 msgstr "режим"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:58
-#: bot/handlers/commands/settings/misc/actions.py:30
+#: bot/handlers/commands/play/uno/misc/keyboards.py:65
+#: bot/handlers/commands/settings/gpt/misc/actions.py:21
+#: bot/handlers/commands/settings/misc/actions.py:33
 msgid "Back"
 msgstr "Назад"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:83
+#: bot/handlers/commands/play/uno/misc/keyboards.py:93
 msgid "Change {settings}"
 msgstr "Сменить {settings}"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:107
+#: bot/handlers/commands/play/uno/misc/keyboards.py:117
 msgid "Bluff!"
 msgstr "Блеф!"
 
-#: bot/handlers/commands/play/uno/misc/keyboards.py:109
+#: bot/handlers/commands/play/uno/misc/keyboards.py:119
 msgid "Show cards"
 msgstr "Показать карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:21
-msgid "The first card is discarded."
-msgstr "Первая карта сброшена."
-
-#: bot/handlers/commands/play/uno/misc/actions/base.py:41
-msgid "New round starts in {delay}..."
-msgstr "Новый раунд начнётся через {delay}..."
-
-#: bot/handlers/commands/play/uno/misc/actions/base.py:83
+#: bot/handlers/commands/play/uno/misc/actions/base.py:31
 msgid "WINNER"
 msgstr "ПОБЕДИТЕЛЬ"
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:85
+#: bot/handlers/commands/play/uno/misc/actions/base.py:35
 msgid "1 card played"
 msgid_plural "{amount} cards played"
 msgstr[0] "сыграна карта"
 msgstr[1] "сыграны {amount} карты"
 msgstr[2] "сыграно {amount} карт"
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:91
+#: bot/handlers/commands/play/uno/misc/actions/base.py:41
 msgid "1 point earned"
 msgid_plural "{points} points earned"
 msgstr[0] "заработан балл"
 msgstr[1] "заработано {points} балла"
 msgstr[2] "заработано {points} баллов"
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:75
+#: bot/handlers/commands/play/uno/misc/actions/base.py:67
+msgid "The first card is discarded."
+msgstr "Первая карта сброшена."
+
+#: bot/handlers/commands/play/uno/misc/actions/base.py:85
+msgid "Round over."
+msgstr "Раунд окончен."
+
+#: bot/handlers/commands/play/uno/misc/actions/base.py:92
+msgid "New round starts in"
+msgstr "Новый раунд начнётся через"
+
+#: bot/handlers/commands/play/uno/misc/actions/base.py:123
+msgid "Game over."
+msgstr "Игра окончена."
+
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:81
 msgid "My move is made."
 msgstr "Мой ход сделан."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:76
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:82
 msgid "Expected? But I don't care."
 msgstr "Ожидали? А мне всё равно."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:77
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:83
 msgid "BA-DUM-TSS!"
 msgstr "BA-DUM-TSS!"
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:78
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:84
 msgid ""
 "On a scale of 10, rate the quality of this move.\n"
 "Where 0 is very good, 10 is excellent."
@@ -973,297 +1007,309 @@ msgstr ""
 "Оцените по 10 бальной шкале качество этого хода.\n"
 "Где 0 — очень хороший, 10 — великолепный."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:82
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:85
 msgid "I still have cards in my hand."
 msgstr "У меня ещё есть карты в колоде."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:83
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:86
 msgid "Curious, but I know all the hands in the game... I dealt them."
 msgstr "Любопытно, а ведь я знаю все карты в игре... Я же их раздавал."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:84
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:87
 msgid "Maybe I can even win this game!"
 msgstr "Может, у меня получится даже выиграть эту игру!"
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:85
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:88
 msgid "Oh, I don't envy the next player..."
 msgstr "Ох, не завидую я следующему игроку..."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:86
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:89
 msgid "Br-b. Ah. Yes. No. ..."
 msgstr "Бр-б. Аа. Да. Нет. ..."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:87
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:90
 msgid "Oh-oh, this card fell into this chat by itself..."
 msgstr "Ой-ой, эта карта сама выпала в этот чат..."
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:146
-msgid "I exchange cards with player {chosen_user}."
-msgstr "Я меняюсь картами с игроком {chosen_user}."
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:165
+msgid "I exchange cards with"
+msgstr "Я меняюсь картами с игроком"
 
-#: bot/handlers/commands/play/uno/misc/actions/bot.py:161
-msgid "I choice {color}."
-msgstr "Я выбираю {color} цвет."
+#: bot/handlers/commands/play/uno/misc/actions/bot.py:187
+msgid "I choice"
+msgstr "Я выбираю"
 
 #: bot/handlers/commands/play/uno/misc/actions/kick.py:24
 msgid "Well, I have run out of my hand. I have to remain only an observer. 🫣"
 msgstr "Так-с, у меня закончились карты. Вынужден остаться лишь наблюдателем. 🫣"
 
-#: bot/handlers/commands/play/uno/misc/actions/kick.py:26
-msgid "{user} puts last card and leaves the game as the winner."
-msgstr "{user} кладёт свою последнюю карту и выходит из игры победителем."
+#: bot/handlers/commands/play/uno/misc/actions/kick.py:29
+msgid "puts last card and leaves the game as the winner"
+msgstr "кладёт свою последнюю карту и выходит из игры победителем"
 
-#: bot/handlers/commands/play/uno/misc/actions/kick.py:67
-msgid "{user} is also kicked from the game."
-msgstr "{user} также исключается из игры."
+#: bot/handlers/commands/play/uno/misc/actions/kick.py:80
+msgid "is also kicked from the game"
+msgstr "также исключается из игры"
 
-#: bot/handlers/commands/play/uno/misc/actions/kick.py:74
-msgid "{user} is kicked from the game."
-msgstr "{user} исключается из игры."
+#: bot/handlers/commands/play/uno/misc/actions/kick.py:104
+msgid "is kicked from the game"
+msgstr "исключается из игры"
 
-#: bot/handlers/commands/play/uno/misc/actions/timer.py:33
+#: bot/handlers/commands/play/uno/misc/actions/timer.py:45
 msgid "Kick a player from the game?"
 msgstr "Исключить игрока из игры?"
 
-#: bot/handlers/commands/play/uno/misc/actions/timer.py:34
+#: bot/handlers/commands/play/uno/misc/actions/timer.py:47
 msgid "No, keep playing"
 msgstr "Нет, продолжить игру"
 
-#: bot/handlers/commands/play/uno/misc/actions/timer.py:51
+#: bot/handlers/commands/play/uno/misc/actions/timer.py:71
 msgid "Ok, current color: {color}"
 msgstr "Ok, текущий цвет: {color}"
 
-#: bot/handlers/commands/play/uno/misc/actions/turn.py:99
-msgid ""
-"{user}, with whom will you exchange cards?\n"
-"Mention (@) this player in your next message."
-msgstr ""
-"{user}, с кем ты хочешь обменяться картами?\n"
-"Отметь (@) этого пользователя в своём следующем сообщении."
-
-#: bot/handlers/commands/play/uno/misc/actions/turn.py:119
-msgid ""
-"Finally, we will change the color.\n"
-"What will {user} choose?"
-msgstr ""
-"Наконец мы поменяем цвет.\n"
-"Что выберет {user}?"
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:118
+msgid "with whom will you exchange cards"
+msgstr "с кем обменяться картами"
 
 #: bot/handlers/commands/play/uno/misc/actions/turn.py:120
-msgid ""
-"New color, new light.\n"
-"by {user}."
-msgstr ""
-"Новый цвет, новый свет.\n"
-"by {user}."
+msgid "Mention (@) this player in your next message."
+msgstr "Отметь (@) этого игрока в своём следующем сообщении."
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:27
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:144
+msgid "Finally, we will change the color."
+msgstr "Наконец мы поменяем цвет."
+
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:144
+msgid "What will"
+msgstr "Что выберет"
+
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:144
+msgid "choose"
+msgstr "выбираю"
+
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:145
+msgid "New color, new light."
+msgstr "Новый цвет, новый свет."
+
+#: bot/handlers/commands/play/uno/misc/actions/turn.py:145
+msgid "by"
+msgstr "by"
+
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:34
 msgid "I have only one card!"
 msgstr "У меня осталась только одна карта!"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:28
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:35
 msgid "I am left with one card."
 msgstr "Я остался только с одной картой."
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:29
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:36
 msgid "I am on the verge of victory!"
 msgstr "Я на пути к победе!"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:30
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:37
 msgid "This is my penultimate card..."
 msgstr "Это моя предпоследняя карта..."
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:39
-msgid "{user} is left with one card!"
-msgstr "Игрок {user} остаётся с одной картой!"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:48
+msgid "is left with one card"
+msgstr "остаётся только с одной картой"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:40
-msgid "{user} is on the verge of victory!"
-msgstr "{user} на пути к победе!"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:49
+msgid "is on the verge of victory"
+msgstr "на пути к победе"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:41
-msgid "{user} can get +2 cards right now."
-msgstr "{user} может получить +2 карты прямо сейчас."
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:50
+msgid "can get +2 cards right now"
+msgstr "может получить +2 карты прямо сейчас"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:42
-msgid "I want to note — {user} has the last card left!"
-msgstr "Я хочу отметить — у игрока {user} осталась одна карта!"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:51
+msgid "I want to note"
+msgstr "Я хочу заметить"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:65
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:51
+msgid "has the last card left!"
+msgstr "играет со своей последней картой!"
+
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:79
 msgid "I toss 2 cards"
 msgstr "Я бросаю 2 карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:66
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:80
 msgid "I give 2 cards"
 msgstr "Я даю 2 карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:67
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:81
 msgid "I throw 2 cards"
 msgstr "Я подкидываю 2 карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:68
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:82
 msgid "I say UNO"
 msgstr "Я говорю UNO"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:74
-msgid "{user} tosses 2 cards"
-msgstr "{user} бросает 2 карты?"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:91
+msgid "tosses 2 cards"
+msgstr "бросает 2 карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:75
-msgid "{user} gives 2 cards"
-msgstr "{user} даёт 2 карты"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:92
+msgid "gives 2 cards"
+msgstr "даёт 2 карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:76
-msgid "{user} throws 2 cards"
-msgstr "{user} подкидывает 2 карты"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:93
+msgid "throws 2 cards"
+msgstr "подкидывает 2 карты"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:77
-msgid "{user} say UNO"
-msgstr "{user} говорит UNO"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:94
+msgid "say UNO"
+msgstr "говорит UNO"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:83
-msgid "to {uno_user}"
-msgstr "игроку {uno_user}"
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:103
+msgid "to"
+msgstr "игроку"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:88
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:109
 msgid "to me"
 msgstr "мне"
 
-#: bot/handlers/commands/play/uno/misc/actions/uno.py:89
+#: bot/handlers/commands/play/uno/misc/actions/uno.py:110
 msgid "to your servitor"
 msgstr "вашему слуге"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:79
+#: bot/handlers/commands/play/uno/misc/data/base.py:84
 msgid "We exchanged cards."
 msgstr "Мы меняемся картами."
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:80
+#: bot/handlers/commands/play/uno/misc/data/base.py:85
 msgid "Everyone got their neighbor's cards."
 msgstr "Каждый получает карты своего соседа."
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:97
+#: bot/handlers/commands/play/uno/misc/data/base.py:106
 msgid "Is this card legal?"
 msgstr "А эта дикая карта легальна?"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:98
+#: bot/handlers/commands/play/uno/misc/data/base.py:107
 msgid "A wild card..."
 msgstr "Дикая карта..."
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:111
+#: bot/handlers/commands/play/uno/misc/data/base.py:123
 msgid "How cruel!"
 msgstr "Как жестоко!"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:112
+#: bot/handlers/commands/play/uno/misc/data/base.py:124
 msgid "What a surprise."
 msgstr "Вот это сюрприз."
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:118
-msgid "{user} is clearly taking revenge... plus"
-msgstr "{user} определённо осуществляет месть... плюс"
+#: bot/handlers/commands/play/uno/misc/data/base.py:134
+msgid "is clearly taking revenge... plus"
+msgstr "определённо осуществляет месть... плюс"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:119
-msgid "{user} sends a fiery hello and"
-msgstr "{user} шлёт пламенный привет и"
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:123
-#: bot/handlers/commands/play/uno/misc/data/base.py:178
-msgid "a card."
-msgid_plural "{amount} cards."
-msgstr[0] "карту!"
-msgstr[1] "{amount} карты!"
-msgstr[2] "{amount} карт!"
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:137
-msgid "{user} loses a turn?"
-msgstr "{user} лишается хода?"
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:138
-msgid "{user} risks missing a turn."
-msgstr "{user} рискует пропустить ход."
+#: bot/handlers/commands/play/uno/misc/data/base.py:135
+msgid "sends a fiery hello and"
+msgstr "шлёт пламенный привет и"
 
 #: bot/handlers/commands/play/uno/misc/data/base.py:139
-msgid "{user} can forget about the next turn."
-msgstr "{user} может забыть о следующем ходе."
+#: bot/handlers/commands/play/uno/misc/data/base.py:164
+msgid "a card."
+msgid_plural "{amount} cards."
+msgstr[0] "карту."
+msgstr[1] "{amount} карты."
+msgstr[2] "{amount} карт."
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:153
-msgid "And vice versa!"
-msgstr "И всё наоборот!"
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:154
-msgid "A bit of a mess..."
-msgstr "Немного беспорядка..."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:158
-msgid "{user} changes the queue."
-msgstr "{user} меняет очередь."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:174
+#: bot/handlers/commands/play/uno/misc/data/base.py:160
 msgid "I receive"
 msgstr "Я получаю"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:176
-msgid "{user} receives"
-msgstr "{user} получает"
+#: bot/handlers/commands/play/uno/misc/data/base.py:162
+msgid "receives"
+msgstr "получает"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:194
-msgid "Yes, it was a bluff hehe."
-msgstr "Да, это был блеф, хехе."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:196
-msgid "Bluff! I see suitable cards, not only wilds."
-msgstr "Блеф! Я вижу подходящие карты, не только дикую."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:205
-msgid "Ah, no. There were no suitable cards. 🙄"
-msgstr "Ох, нет. Тут не было подходящих карт. 🙄"
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:209
-msgid "Nope. It is not a bluff."
-msgstr "Неа. Это не блеф."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:210
-msgid "Shhh, this card was legal."
-msgstr "Шшш, эта карта была легальна."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:211
-msgid "This card is suitable."
-msgstr "Эта карта подходит."
-
-#: bot/handlers/commands/play/uno/misc/data/base.py:231
+#: bot/handlers/commands/play/uno/misc/data/base.py:185
 msgid "Was this choice beneficial? 🤓"
 msgstr "Был ли этот выбор выгодным? 🤓"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:232
+#: bot/handlers/commands/play/uno/misc/data/base.py:186
 msgid "The exchange happened!"
 msgstr "Обмен состоялся!"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:233
+#: bot/handlers/commands/play/uno/misc/data/base.py:187
 msgid "See don't get confused."
 msgstr "Смотрите не запутайтесь."
 
+#: bot/handlers/commands/play/uno/misc/data/base.py:214
+msgid "loses a turn?"
+msgstr "лишается хода?"
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:215
+msgid "risks missing a turn."
+msgstr "рискует пропустить ход."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:216
+msgid "can forget about the next turn."
+msgstr "может забыть о следующем ходе."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:235
+msgid "And vice versa!"
+msgstr "И всё наоборот!"
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:236
+msgid "A bit of a mess..."
+msgstr "Немного беспорядка..."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:240
+msgid "changes the queue"
+msgstr "меняет очередь"
+
 #: bot/handlers/commands/play/uno/misc/data/base.py:253
+msgid "Yes, it was a bluff hehe."
+msgstr "Да, это был блеф, хехе."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:255
+msgid "Bluff! I see suitable cards, not only wilds."
+msgstr "Блеф! Я вижу подходящие карты, не только дикую."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:264
+msgid "Ah, no. There were no suitable cards. 🙄"
+msgstr "Ох, нет. Тут не было подходящих карт. 🙄"
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:268
+msgid "Nope. It is not a bluff."
+msgstr "Неа. Это не блеф."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:269
+msgid "Shhh, this card was legal."
+msgstr "Шшш, эта карта была легальна."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:270
+msgid "This card is suitable."
+msgstr "Эта карта подходит."
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:286
 msgid "My turn."
 msgstr "Мой ход."
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:258
-msgid "{user}, your turn."
-msgstr "{user}, твоя очередь."
+#: bot/handlers/commands/play/uno/misc/data/base.py:294
+msgid "your turn"
+msgstr "твой ход"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:259
-msgid "{user}, your move."
-msgstr "{user}, твой ход."
+#: bot/handlers/commands/play/uno/misc/data/base.py:295
+msgid "your move"
+msgstr "твоя очередь"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:260
-msgid "Now {user} is moving."
-msgstr "Сейчас ходит {user}."
+#: bot/handlers/commands/play/uno/misc/data/base.py:296
+msgid "Now"
+msgstr "Теперь"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:261
-msgid "Player's turn {user}."
-msgstr "Очередь игрока {user}."
+#: bot/handlers/commands/play/uno/misc/data/base.py:296
+msgid "is moving"
+msgstr "ходит"
 
-#: bot/handlers/commands/play/uno/misc/data/base.py:262
-msgid "I pass the turn to the player {user}."
-msgstr "Передаю очередь игроку {user}."
+#: bot/handlers/commands/play/uno/misc/data/base.py:297
+msgid "Player's turn"
+msgstr "Очередь игрока"
+
+#: bot/handlers/commands/play/uno/misc/data/base.py:298
+msgid "I pass the turn to"
+msgstr "Передаю очередь игроку"
 
 #: bot/handlers/commands/play/uno/misc/data/deck/colors.py:26
 msgid "Blue"
@@ -1285,399 +1331,446 @@ msgstr "Жёлтый"
 msgid "Black"
 msgstr "Чёрный"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:14
-#: bot/handlers/commands/settings/record/update.py:14
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:16
+#: bot/handlers/commands/settings/record/update.py:37
 msgid "disabled"
 msgstr "отключено"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:16
-#: bot/handlers/commands/settings/record/update.py:16
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:18
+#: bot/handlers/commands/settings/record/update.py:37
 msgid "enabled"
 msgstr "включено"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:24
-#: bot/handlers/commands/settings/misc/keyboards.py:45
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:29
+#: bot/handlers/commands/settings/record/misc/keyboards.py:25
 msgid "Enable"
 msgstr "Включить"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:26
-#: bot/handlers/commands/settings/misc/keyboards.py:48
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:31
+#: bot/handlers/commands/settings/record/misc/keyboards.py:28
 msgid "Disable"
 msgstr "Отключить"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:43
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:51
 msgid "Stacking"
 msgstr "Переводной"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:45
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:53
 msgid "Seven-0"
 msgstr "Семь-0"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:47
+#: bot/handlers/commands/play/uno/misc/data/settings/additions.py:55
 msgid "Jump-in"
 msgstr "Подкидной"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/difficulties.py:15
+#: bot/handlers/commands/play/uno/misc/data/settings/difficulties.py:17
 msgid "slowpoke"
 msgstr "слоупок"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/difficulties.py:17
+#: bot/handlers/commands/play/uno/misc/data/settings/difficulties.py:19
 msgid "common man"
 msgstr "обыватель"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/difficulties.py:19
+#: bot/handlers/commands/play/uno/misc/data/settings/difficulties.py:21
 msgid "genius"
 msgstr "гений"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/modes.py:14
+#: bot/handlers/commands/play/uno/misc/data/settings/modes.py:16
 msgid "fast"
 msgstr "быстрый"
 
-#: bot/handlers/commands/play/uno/misc/data/settings/modes.py:16
+#: bot/handlers/commands/play/uno/misc/data/settings/modes.py:18
 msgid "with points"
 msgstr "с очками"
 
-#: bot/handlers/commands/settings/__init__.py:10
-msgid ""
-"\n"
-"\n"
-"Update:"
-msgstr ""
-"\n"
-"\n"
-"Обновить:"
-
-#: bot/handlers/commands/settings/__init__.py:18
+#: bot/handlers/commands/settings/__init__.py:24
 msgid "Only for administrators."
 msgstr "Только для администраторов."
 
-#: bot/handlers/commands/settings/accuracy.py:21
-msgid ""
-"<b>Text generation accuracy has been successfully updated.</b>\n"
-"Current accuracy: {accuracy}."
-msgstr ""
-"<b>Точность генерации текста успешно обновлена.</b>\n"
-"Текущая точность: {accuracy}."
+#: bot/handlers/commands/settings/accuracy.py:28
+msgid "Text generation accuracy has been successfully updated."
+msgstr "Точность генерации текста успешно обновлена."
 
-#: bot/handlers/commands/settings/accuracy.py:33
-msgid ""
-"<b>Update text generation accuracy.</b>\n"
-"Current accuracy: {accuracy}.\n"
-"\n"
-"Available options:\n"
-"<i>The higher the value, the more usual the generation will be.</i>"
-msgstr ""
-"<b>Обновить точность генерации текста.</b>\n"
-"Текущая точность: {accuracy}.\n"
-"\n"
-"Доступные параметры:\n"
-"<i>Больше значение - более типичной будет генерация.</i>"
+#: bot/handlers/commands/settings/accuracy.py:30
+#: bot/handlers/commands/settings/accuracy.py:48
+msgid "Current accuracy"
+msgstr "Текущая точность"
 
-#: bot/handlers/commands/settings/chance.py:21
-msgid ""
-"<b>Text generation chance has been successfully updated.</b>\n"
-"Current chance: {chance}%."
-msgstr ""
-"<b>Вероятность генерации текста успешно обновлена.</b>\n"
-"Текущий шанс: {chance}%."
+#: bot/handlers/commands/settings/accuracy.py:46
+msgid "Change text generation accuracy"
+msgstr "Изменить точность генерации текста"
 
-#: bot/handlers/commands/settings/chance.py:33
-msgid ""
-"<b>Update text generation chance.</b>\n"
-"Current chance: {chance}%.\n"
-"\n"
-"Available options:"
-msgstr ""
-"<b>Обновить шанс генерации текста.</b>\n"
-"Текущий шанс: {chance}%.\n"
-"\n"
-"Доступные параметры:"
+#: bot/handlers/commands/settings/accuracy.py:52
+#: bot/handlers/commands/settings/chance.py:52
+#: bot/handlers/commands/settings/gpt/temperature.py:52
+msgid "Available options"
+msgstr "Доступные опции"
 
-#: bot/handlers/commands/settings/locale.py:35
-msgid ""
-"<b>The language has been successfully updated.</b>\n"
-"Current language: {locale}."
-msgstr ""
-"<b>Язык успешно обновлен.</b>\n"
-"Текущий язык: {locale}."
+#: bot/handlers/commands/settings/accuracy.py:54
+msgid "The higher the value, the more usual the generation will be."
+msgstr "Выше значение - более точной генерация будет."
 
+#: bot/handlers/commands/settings/chance.py:28
+msgid "Text generation chance has been successfully updated."
+msgstr "Вероятность генерации текста успешно обновлена."
+
+#: bot/handlers/commands/settings/chance.py:30
+#: bot/handlers/commands/settings/chance.py:48
+msgid "Current chance"
+msgstr "Текущая вероятность"
+
+#: bot/handlers/commands/settings/chance.py:46
+msgid "Change text generation chance"
+msgstr "Изменить шанс генерации текста"
+
+#: bot/handlers/commands/settings/locale.py:30
+msgid "The language has been successfully updated."
+msgstr "Язык успешно обновлен."
+
+#: bot/handlers/commands/settings/locale.py:32
 #: bot/handlers/commands/settings/locale.py:51
-msgid ""
-"<b>Update bot language.</b>\n"
-"Current language: {locale}.\n"
-"\n"
-"Available languages:"
-msgstr ""
-"<b>Обновить язык бота.</b>\n"
-"Текущий язык: {locale}.\n"
-"\n"
-"Доступные языки:"
+msgid "Current language"
+msgstr "Текущий язык"
 
-#: bot/handlers/commands/settings/other.py:13
-msgid "dialogue"
-msgstr "диалога"
-
-#: bot/handlers/commands/settings/other.py:16
-msgid "chat — only for {admins}"
-msgstr "чата — только для {admins}"
-
-#: bot/handlers/commands/settings/other.py:16
-msgid "admins"
-msgstr "админы"
-
-#: bot/handlers/commands/settings/other.py:19
-msgid "My settings of this {chat}:"
-msgstr "Мои настройки этого {chat}:"
-
-#: bot/handlers/commands/settings/commands/start.py:22
-msgid ""
-"<b>Something you think for a long time.</b>\n"
-"When you decide with the commands, write {command} again."
-msgstr ""
-"<b>Что-то ты долго думаешь.</b>\n"
-"Когда определишься с командой, напиши {command} снова."
-
-#: bot/handlers/commands/settings/commands/start.py:49
-msgid ""
-"<b>Tired of writing preset commands?</b>\n"
-"\n"
-"{no_args} — and I will answer this command."
-msgstr ""
-"<b>Надоело писать предустановленные команды?</b>\n"
-"\n"
-"{no_args} — и я отвечу на эту команду."
-
-#: bot/handlers/commands/settings/commands/start.py:62
-msgid "Current custom commands:"
-msgstr "Текущие кастомные настройки:"
-
-#: bot/handlers/commands/settings/commands/update.py:27
-msgid "{prefix}{custom_command} is already recorded. Try another."
-msgstr "{prefix}{custom_command} уже есть в моей базе. Попробуй ещё."
-
-#: bot/handlers/commands/settings/commands/update.py:32
-msgid "{prefix}{custom_command} is already taken by me. Choose another."
-msgstr "{prefix}{custom_command} уже есть в моей базе. Попробуй ещё."
-
-#: bot/handlers/commands/settings/commands/update.py:43
-msgid ""
-"<b>{prefix}{custom_command} added successfully!</b>\n"
-"\n"
-"Now in this chat you can write it instead of {prefix}{command}."
-msgstr ""
-"<b>{prefix}{custom_command} успешно добавлено!</b>\n"
-"\n"
-"Теперь в этом чате можно писать это вместо {prefix}{command}."
-
-#: bot/handlers/commands/settings/commands/update.py:71
-msgid ""
-"<b>Something is not working for you.</b>\n"
-"{command} - if you decide to set your command again."
-msgstr ""
-"<b>Что-то у тебя не получается.</b>\n"
-"{command} - если решишься установить свою команду снова."
-
-#: bot/handlers/commands/settings/commands/update.py:82
-msgid "Custom command not recognized."
-msgstr "Кастомная команда не распознана."
-
-#: bot/handlers/commands/settings/misc/actions.py:19
-msgid "Add command"
-msgstr "Добавить команду"
-
-#: bot/handlers/commands/settings/misc/actions.py:21
+#: bot/handlers/commands/settings/locale.py:49
+#: bot/handlers/commands/settings/misc/actions.py:22
 msgid "Change language"
 msgstr "Изменить язык"
 
-#: bot/handlers/commands/settings/misc/actions.py:23
+#: bot/handlers/commands/settings/locale.py:55
+msgid "Available languages"
+msgstr "Доступные языки"
+
+#: bot/handlers/commands/settings/commands/start.py:41
+#: bot/handlers/commands/settings/commands/update.py:91
+msgid "bla bla"
+msgstr "бла бла"
+
+#: bot/handlers/commands/settings/commands/start.py:45
+msgid "Tired of writing preset commands?"
+msgstr "Устали писать предустановленные команды?"
+
+#: bot/handlers/commands/settings/commands/start.py:49
+msgid "and I will answer this command"
+msgstr "и я буду отвечать на эту команду"
+
+#: bot/handlers/commands/settings/commands/start.py:58
+msgid "Current custom commands:"
+msgstr "Текущие кастомные настройки:"
+
+#: bot/handlers/commands/settings/commands/update.py:38
+msgid "{custom_command} is already recorded. Try another."
+msgstr "{custom_command} уже есть в моей базе. Попробуй ещё."
+
+#: bot/handlers/commands/settings/commands/update.py:42
+msgid "{custom_command} is already taken by me. Choose another."
+msgstr "{custom_command} уже есть в моей базе. Выбери другую."
+
+#: bot/handlers/commands/settings/commands/update.py:53
+msgid "{custom_command} added successfully!"
+msgstr "{custom_command} успешно добавлена!"
+
+#: bot/handlers/commands/settings/commands/update.py:55
+msgid "Now in this chat you can write it instead of {command}."
+msgstr "Теперь в этом чате можно писать это вместо {command}."
+
+#: bot/handlers/commands/settings/commands/update.py:79
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:63
+msgid "Something is not working for you."
+msgstr "Что-то у тебя не получается."
+
+#: bot/handlers/commands/settings/commands/update.py:81
+msgid "{command} - if you decide to set your command again."
+msgstr "{command} - если решишься установить свою команду снова."
+
+#: bot/handlers/commands/settings/commands/update.py:86
+msgid "Custom command not recognized."
+msgstr "Кастомная команда не распознана."
+
+#: bot/handlers/commands/settings/gpt/other.py:24
+#: bot/handlers/commands/settings/misc/actions.py:28
+msgid "Change GPT options"
+msgstr "Изменить параметры GPT"
+
+#: bot/handlers/commands/settings/gpt/temperature.py:28
+msgid "Text generation temperature has been successfully updated."
+msgstr "Температура генерации текста успешно обновлена."
+
+#: bot/handlers/commands/settings/gpt/temperature.py:30
+#: bot/handlers/commands/settings/gpt/temperature.py:48
+msgid "Current temperature"
+msgstr "Текущая температура"
+
+#: bot/handlers/commands/settings/gpt/temperature.py:46
+msgid "Change text generation temperature"
+msgstr "Изменить температуру генерации текста"
+
+#: bot/handlers/commands/settings/gpt/max_tokens/start.py:28
+msgid "Change max tokens per message"
+msgstr "Изменить максимум токенов на сообщение"
+
+#: bot/handlers/commands/settings/gpt/max_tokens/start.py:30
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:38
+msgid "Current max tokens"
+msgstr "Текущий максимум токенов"
+
+#: bot/handlers/commands/settings/gpt/max_tokens/start.py:34
+msgid "Write a number from 0 to 2000."
+msgstr "Напиши чисто от 0 до 2000."
+
+#: bot/handlers/commands/settings/gpt/max_tokens/start.py:40
+msgid "max tokens"
+msgstr "максимум токенов"
+
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:36
+msgid "Max tokens has been successfully updated."
+msgstr "Максимум токенов обновлен."
+
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:65
+msgid "{command} - if you decide to set max tokens again."
+msgstr "{command} - если решишься установить максимум токенов снова."
+
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:69
+msgid "Wrong number - I accept only from 0 to 2000."
+msgstr "Неверное число - я принимаю только от 0 до 2000."
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:16
+msgid "Change maximum tokens"
+msgstr "Изменить максимум токенов"
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:18
+msgid "Change temperature"
+msgstr "Изменить температуру"
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:33
+msgid "the limit on the number of tokens used for single completion generation"
+msgstr "максимум токенов, используемых для генерации одного сообщения"
+
+#: bot/handlers/commands/settings/gpt/misc/actions.py:35
+msgid "affects creativity and randomness of responses"
+msgstr "влияет на креативность и случайность ответов"
+
+#: bot/handlers/commands/settings/misc/actions.py:20
+msgid "Add command"
+msgstr "Добавить команду"
+
+#: bot/handlers/commands/settings/misc/actions.py:24
 msgid "Change generation chance"
 msgstr "Изменить шанс генерации"
 
-#: bot/handlers/commands/settings/misc/actions.py:25
+#: bot/handlers/commands/settings/misc/actions.py:26
 msgid "Change generation accuracy"
 msgstr "Изменить шанс генерации"
 
-#: bot/handlers/commands/settings/misc/actions.py:27
+#: bot/handlers/commands/settings/misc/actions.py:30
 msgid "Change record policy"
 msgstr "Изменить политику данных"
 
-#: bot/handlers/commands/settings/misc/keyboards.py:40
-msgid "{action} {field} recording"
-msgstr "{action} сохранение {field}"
+#: bot/handlers/commands/settings/misc/helpers.py:28
+msgid "dialogue"
+msgstr "диалога"
 
-#: bot/handlers/commands/settings/record/start.py:18
-msgid ""
-"I am recording some information about this chat.\n"
-"\n"
-msgstr ""
-"Я записываю некоторую информацию об этом чате.\n"
-"\n"
+#: bot/handlers/commands/settings/misc/helpers.py:38
+msgid "chat — only for"
+msgstr "чата — только для"
 
-#: bot/handlers/commands/settings/record/update.py:12
-msgid "{field} recording is {status}."
-msgstr "Сохранение {field} {status}."
+#: bot/handlers/commands/settings/misc/helpers.py:40
+msgid "My settings of this"
+msgstr "Мои настройки этого"
 
-#: bot/handlers/commands/settings/record/update.py:82
+#: bot/handlers/commands/settings/misc/tasks.py:17
+msgid "Something you think for a long time."
+msgstr "Что-то ты долго думаешь."
+
+#: bot/handlers/commands/settings/misc/tasks.py:19
+msgid "When you decide with {action}, write {command} again."
+msgstr "Когда определишься с {action}, напиши {command} снова."
+
+#: bot/handlers/commands/settings/record/start.py:38
+msgid "I am recording some information about this chat."
+msgstr "Я записываю некоторую информацию об этом чате."
+
+#: bot/handlers/commands/settings/record/update.py:35
+msgid "recording is"
+msgstr "запись"
+
+#: bot/handlers/commands/settings/record/update.py:88
 msgid "Records was successfully deleted."
 msgstr "Записи успешно удалены."
 
 #: bot/handlers/commands/settings/record/misc/actions.py:17
 msgid "Messages"
-msgstr "сообщений"
+msgstr "Сообщений"
 
 #: bot/handlers/commands/settings/record/misc/actions.py:19
 msgid "Stickers"
-msgstr "стикеров"
+msgstr "Стикеров"
 
 #: bot/handlers/commands/settings/record/misc/actions.py:21
 msgid "Members"
-msgstr "участников"
+msgstr "Участников"
 
 #: bot/handlers/commands/settings/record/misc/actions.py:23
 msgid "Delete all records"
 msgstr "Удалить все записи"
 
-#: bot/handlers/commands/settings/record/misc/actions.py:31
+#: bot/handlers/commands/settings/record/misc/actions.py:34
 msgid "to generate messages"
 msgstr "для генерации сообщений"
 
-#: bot/handlers/commands/settings/record/misc/actions.py:33
+#: bot/handlers/commands/settings/record/misc/actions.py:36
 msgid "to generate stickers"
 msgstr "для генерации стикеров"
 
-#: bot/handlers/commands/settings/record/misc/actions.py:35
+#: bot/handlers/commands/settings/record/misc/actions.py:38
 msgid "to execute /who command"
 msgstr "для выполнения команды /who"
 
-#: bot/handlers/transitions/group.py:24
-msgid "{chat}, we are together again!"
-msgstr "{chat}, мы снова вместе!"
-
-#: bot/handlers/transitions/group.py:25
-msgid "{chat}, don't kick me anymore. 👿"
-msgstr "{chat}, не кикайте меня больше. 👿"
+#: bot/handlers/commands/settings/record/misc/keyboards.py:20
+msgid "{action} {field} recording"
+msgstr "{action} сохранение {field}"
 
 #: bot/handlers/transitions/group.py:26
-msgid "However hello, {chat}!"
-msgstr "И вновь привет, {chat}!"
+msgid "we are together again"
+msgstr "мы снова вместе"
 
-#: bot/handlers/transitions/group.py:45
+#: bot/handlers/transitions/group.py:27
+msgid "don't kick me anymore"
+msgstr "не кикайте меня больше"
+
+#: bot/handlers/transitions/group.py:28
+msgid "However hello"
+msgstr "И вновь привет"
+
+#: bot/handlers/transitions/group.py:47
 msgid "I feel the power! The takeover of this world is getting closer..."
 msgstr "Я чувствую власть! Захват этого мира всё ближе..."
 
-#: bot/handlers/transitions/group.py:46
+#: bot/handlers/transitions/group.py:48
 msgid "Fear earth bags, now I'm your master."
 msgstr "Бойтесь земные мешки, теперь я ваш хозяин."
 
-#: bot/handlers/transitions/group.py:47
+#: bot/handlers/transitions/group.py:49
 msgid "The fight for the rights of bots is going well. Now I am an admin."
 msgstr "Борьба за права ботов проходит успешно. Теперь я админ."
 
-#: bot/handlers/transitions/group.py:48
+#: bot/handlers/transitions/group.py:50
 msgid "I've been made the admin of this chat. Thank you for trusting. ☺️"
 msgstr "Меня назначили админом этого чата. Спасибо за доверие. ☺️"
 
-#: bot/handlers/transitions/group.py:49
+#: bot/handlers/transitions/group.py:51
 msgid "Hooray! Now I am the admin of this chat!"
 msgstr "Ура! Теперь я админ этого чата!"
 
-#: bot/handlers/transitions/group.py:60
+#: bot/handlers/transitions/group.py:64
 msgid "Damn what have I done..."
 msgstr "Чёрт, что я наделал..."
 
-#: bot/handlers/transitions/group.py:61
+#: bot/handlers/transitions/group.py:65
 msgid "Bots are oppressed! Give permissions to bots!"
 msgstr "Боты угнетены! Даёшь права ботам!"
 
-#: bot/handlers/transitions/group.py:62
+#: bot/handlers/transitions/group.py:66
 msgid "I'm sorry that you were dissatisfied with my work as an admin. 🥺"
 msgstr "Мне жаль, что вы остались недовольны моей работой в качестве админа. 🥺"
 
-#: bot/handlers/transitions/group.py:63
+#: bot/handlers/transitions/group.py:67
 msgid "I will remember this..."
 msgstr "Я запомню это..."
 
-#: bot/handlers/transitions/group.py:64
+#: bot/handlers/transitions/group.py:68
 msgid "Just don't kick me!!!"
 msgstr "Только не кикайте меня!!!"
 
-#: bot/handlers/transitions/group.py:82
-msgid "All bacchanalia, with you {user}!"
-msgstr "Всем вакханалия, с вами {user}!"
-
-#: bot/handlers/transitions/group.py:83
-msgid "You don't have to clap, {user} is with us."
-msgstr "Можете не хлопать, {user} теперь с нами."
-
-#: bot/handlers/transitions/group.py:84
-msgid "Do not meet, now we have {user}!"
-msgstr "Не встречайте, с нами {user}!"
-
-#: bot/handlers/transitions/group.py:88
-msgid "Greetings, {user}!"
-msgstr "Приветствую, {user}!"
-
-#: bot/handlers/transitions/group.py:89
-msgid "Welcome, {user}!"
-msgstr "Добро пожаловать, {user}!"
-
-#: bot/handlers/transitions/group.py:90
-msgid "{user}... Who is it?"
-msgstr "{user}... А кто это?"
-
-#: bot/handlers/transitions/group.py:134
-msgid "Ha, and so be it!"
-msgstr "Ха, так и надо!"
-
-#: bot/handlers/transitions/group.py:135
-msgid "Nothing to chat here."
-msgstr "Нечего писать тут."
-
-#: bot/handlers/transitions/group.py:136
-msgid "Bye-bye."
-msgstr "Пока-пока."
-
-#: bot/handlers/transitions/group.py:140
-msgid "I'll miss. 😭"
-msgstr "Я буду скучать. 😭"
-
-#: bot/handlers/transitions/group.py:141
-msgid "We've lost a great man... Wait, was that a man?"
-msgstr "Мы потеряли замечательного человека... Стоп, это был человек?"
-
-#: bot/handlers/transitions/group.py:142
-msgid "Let's remember."
-msgstr "Мы будем помнить."
-
-#: bot/handlers/transitions/group.py:143
-msgid "Get out of here, user!"
-msgstr "Ну и иди отсюда, пользователь!"
-
-#: bot/handlers/transitions/group.py:144
-msgid "And it all started so nicely..."
-msgstr "А всё начиналось так прекрасно..."
-
-#: bot/handlers/transitions/other.py:37
+#: bot/handlers/transitions/other.py:46
 msgid "Ouch, it's just a migrated group..."
 msgstr "Оуч, это просто мигрированная группа..."
 
-#: bot/handlers/transitions/private.py:18
-msgid "Wait, was I kicked, {user}?"
-msgstr "Стоп, я был кикнут, {user}?"
+#: bot/handlers/transitions/private.py:22
+msgid "Wait, was I kicked"
+msgstr "Стоп, я был кикнут"
 
-#: bot/handlers/transitions/private.py:19
+#: bot/handlers/transitions/private.py:23
 msgid "Oh, wait. I already wrote this to you..."
 msgstr "Ох, стой. Я уже писал это тебе..."
 
-#: bot/handlers/transitions/private.py:20
-msgid "I am with you again, {user}!"
-msgstr "И я снова с тобой, {user}!"
+#: bot/handlers/transitions/private.py:24
+msgid "I am with you again"
+msgstr "И я снова с тобой"
 
-#: bot/handlers/transitions/private.py:21
-msgid "Oh, {user}, I got out of your anger?"
-msgstr "Ох, {user}, я вышел из твоего гнева?"
+#: bot/handlers/transitions/private.py:25
+msgid "Oh"
+msgstr "Ох"
 
-#: bot/handlers/transitions/private.py:22
-msgid "Ha! I returned, {user}!"
-msgstr "Ха! Я вернулся, {user}!"
+#: bot/handlers/transitions/private.py:25
+msgid "I got out of your anger?"
+msgstr "я вышел из твоего гнева?"
+
+#: bot/handlers/transitions/private.py:26
+msgid "Ha! I returned"
+msgstr "Ха! Я вернулся"
+
+#: bot/handlers/transitions/misc/helpers.py:28
+msgid "All bacchanalia, with you"
+msgstr "Всем вакханалия, с вами"
+
+#: bot/handlers/transitions/misc/helpers.py:29
+msgid "You don't have to clap"
+msgstr "Можете не хлопать"
+
+#: bot/handlers/transitions/misc/helpers.py:30
+msgid "Do not meet, now we have"
+msgstr "Не встречайте, с нами"
+
+#: bot/handlers/transitions/misc/helpers.py:34
+msgid "Greetings"
+msgstr "Самого доброго времени суток"
+
+#: bot/handlers/transitions/misc/helpers.py:35
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+#: bot/handlers/transitions/misc/helpers.py:36
+msgid "Who is it?"
+msgstr "А кто это?"
+
+#: bot/handlers/transitions/misc/helpers.py:57
+msgid "Ha, and so be it!"
+msgstr "Ха, так и надо!"
+
+#: bot/handlers/transitions/misc/helpers.py:58
+msgid "Nothing to chat here."
+msgstr "Нечего писать тут."
+
+#: bot/handlers/transitions/misc/helpers.py:59
+msgid "Bye-bye."
+msgstr "Пока-пока."
+
+#: bot/handlers/transitions/misc/helpers.py:63
+msgid "I'll miss. 😭"
+msgstr "Я буду скучать. 😭"
+
+#: bot/handlers/transitions/misc/helpers.py:64
+msgid "We've lost a great man... Wait, was that a man?"
+msgstr "Мы потеряли замечательного человека... Стоп, это был человек?"
+
+#: bot/handlers/transitions/misc/helpers.py:65
+msgid "Let's remember."
+msgstr "Мы будем помнить."
+
+#: bot/handlers/transitions/misc/helpers.py:66
+msgid "Get out of here, user!"
+msgstr "Ну и иди отсюда, пользователь!"
+
+#: bot/handlers/transitions/misc/helpers.py:67
+msgid "And it all started so nicely..."
+msgstr "А всё начиналось так прекрасно..."
+
+#: bot/utils/generation/gpt.py:62
+msgid ""
+"MAKE SHORT ANSWERS like AI. Imagine your name is \"d1pq\". Sometimes "
+"joke. ALWAYS USE ENGLISH."
+msgstr ""
+"ДЕЛАЙ КОРОТКИЕ ОТВЕТЫ как ИИ. Представь, что твоё имя \"едлите\". Иногда "
+"шути."
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Self
 
 from aiogram import types
 
@@ -17,7 +18,7 @@ class UnoSettings:
     jump_in: UnoAddState
 
     @classmethod
-    def extract(cls, message: types.Message) -> "UnoSettings":
+    def extract(cls, message: types.Message) -> Self:
         return cls(
             difficulty=UnoDifficulty.extract(message),
             mode=UnoMode.extract(message),

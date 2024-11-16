@@ -4,29 +4,36 @@ from aiogram.utils.i18n import gettext as _
 
 
 class SettingsActions(str, Enum):
-    COMMAND = 'command'
-    LOCALE = 'locale'
-    CHANCE = 'chance'
-    ACCURACY = 'accuracy'
-    RECORD = 'record'
+    COMMAND = "command"
+    LOCALE = "locale"
+    CHANCE = "chance"
+    ACCURACY = "accuracy"
+    GPT = "gpt"
+    RECORD = "record"
 
-    BACK = 'back'
+    BACK = "back"
 
     @property
     def keyboard(self) -> str:
         match self:
             case self.COMMAND:
-                return _('Add command')
+                keyboard = _("Add command")
             case self.LOCALE:
-                return _('Change language')
+                keyboard = _("Change language")
             case self.CHANCE:
-                return _('Change generation chance')
+                keyboard = _("Change generation chance")
             case self.ACCURACY:
-                return _('Change generation accuracy')
+                keyboard = _("Change generation accuracy")
+            case self.GPT:
+                keyboard = _("Change GPT options")
             case self.RECORD:
-                return _('Change record policy')
+                keyboard = _("Change record policy")
 
             case self.BACK:
-                return _("Back")
+                keyboard = _("Back")
 
-        raise TypeError(f"SettingsActions: unexpected settings action: {self}")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
+
+        return keyboard

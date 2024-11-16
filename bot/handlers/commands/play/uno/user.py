@@ -1,193 +1,195 @@
-from random import choice
+import secrets
 
-from aiogram import Bot, Router, F, types, flags, html
+from aiogram import Bot, F, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.handlers import MessageHandler
+from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
-from core.utils import TimerTasks
 from handlers.commands.play import PlayStates
+from handlers.commands.play.uno.misc.data.deck.colors import UnoColors
+from utils import TimerTasks
+
 from . import DRAW_CARD
 from .misc import keyboards
-from .misc.actions import proceed_turn, next_turn, proceed_uno
+from .misc.actions import next_turn, proceed_turn, proceed_uno
 from .misc.actions.turn import update_timer
 from .misc.data import UnoData
-from .misc.data.deck import UnoCard
 from .misc.data.deck.base import STICKER_SET_NAME
 
-router = Router(name='uno:user')
+router = Router(name="uno:user")
 router.message.filter(PlayStates.UNO)
 router.callback_query.filter(PlayStates.UNO)
 
 
-@router.message(
-    F.sticker.set_name == STICKER_SET_NAME,
-    UnoData.filter('turn')
-)
-@flags.timer
+@router.message(F.sticker.set_name == STICKER_SET_NAME)
 async def turn_handler(
-        message: types.Message,
-        bot: Bot,
-        state: FSMContext,
-        timer: TimerTasks,
-        card: UnoCard,
-        answer: str
-):
+    message: types.Message,
+    bot: Bot,
+    state: FSMContext,
+    timer: TimerTasks,
+) -> None:
+    assert isinstance(message, types.Message), "wrong message"
+
     data_uno = await UnoData.get_data(state)
-    await proceed_turn(message, bot, state, timer, data_uno, card, answer)
+    if data_uno is None:
+        return
+
+    data = await data_uno.filter.for_turn(message, state, timer)
+    if data:
+        async with timer.lock(state.key):
+            data_uno = await UnoData.get_data(state)
+            assert data_uno is not None, "wrong data uno"
+
+            await proceed_turn(message, bot, state, timer, data_uno, **data)
 
 
-@router.message(
-    F.text == DRAW_CARD,
-    UnoData.filter('pass')
-)
-@flags.timer
+@router.message(F.text == DRAW_CARD)
 async def pass_handler(
-        message: types.Message,
-        bot: Bot,
-        state: FSMContext,
-        timer: TimerTasks,
-):
+    message: types.Message,
+    bot: Bot,
+    state: FSMContext,
+    timer: TimerTasks,
+) -> None:
+    assert isinstance(message, types.Message), "wrong message"
+    assert message.from_user is not None, "wrong user"
+
     data_uno = await UnoData.get_data(state)
-    answer = data_uno.do_pass(message.from_user)
+    if data_uno is None:
+        return
 
-    await next_turn(message, bot, state, timer, data_uno, answer)
+    filtered = await data_uno.filter.for_pass(message, bot, state, timer)
+    if filtered:
+        async with timer.lock(state.key):
+            data_uno = await UnoData.get_data(state)
+            assert data_uno is not None, "wrong data uno"
+
+            content = data_uno.do_pass(message.from_user)
+            await next_turn(message, bot, state, timer, data_uno, content)
 
 
-@router.callback_query(
-    keyboards.UnoData.filter(F.action == keyboards.UnoActions.BLUFF),
-    UnoData.filter('bluff')
-)
-@flags.timer
+@router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.BLUFF))
 async def bluff_handler(
-        query: types.CallbackQuery,
-        bot: Bot,
-        state: FSMContext,
-        timer: TimerTasks,
-):
+    query: types.CallbackQuery,
+    bot: Bot,
+    state: FSMContext,
+    timer: TimerTasks,
+) -> None:
+    assert isinstance(query.message, types.Message), "wrong message"
+
     data_uno = await UnoData.get_data(state)
+    if data_uno is None:
+        return
 
-    answer = await data_uno.do_bluff(bot, state.key.chat_id)
-    answer_next = await data_uno.do_next(bot, state)
+    filtered = await data_uno.filter.for_bluff(query, bot, state, timer)
+    if filtered:
+        async with timer.lock(state.key):
+            data_uno = await UnoData.get_data(state)
+            assert data_uno is not None, "wrong data uno"
 
-    message = await query.message.edit_text(
-        f'{answer}\n{answer_next}',
-        reply_markup=keyboards.show_cards(bluffed=False)
-    )
+            content = formatting.Text(
+                await data_uno.do_bluff(bot, state.key.chat_id),
+                "\n",
+                await data_uno.do_next(bot, state),
+            )
 
-    await update_timer(message, bot, state, timer, data_uno)
-    await query.answer()
+            message = await query.message.edit_text(
+                reply_markup=keyboards.show_cards(bluffed=False),
+                **content.as_kwargs(),
+            )
 
+            assert isinstance(message, types.Message), "wrong message"
 
-@router.message(F.entities.func(lambda entities: entities[0].type in ('mention', 'text_mention')))
-@flags.timer(cancelled=False, locked=False)
-class SevenHandler(MessageHandler):
-    @property
-    def bot(self) -> Bot:
-        return self.data["bot"]
-
-    @property
-    def state(self) -> FSMContext:
-        return self.data['state']
-
-    @property
-    def timer(self) -> TimerTasks:
-        return self.data['timer']
-
-    async def filter(self):
-        data_uno = await UnoData.get_data(self.state)
-        current_id = data_uno.players.current_id
-
-        if self.from_user.id == current_id:
-            chosen_user = await self._get_seven_user(data_uno)
-
-            if chosen_user:
-                del self.timer[self.state.key]
-                return chosen_user
-
-            else:
-                answer = _("{user} is not playing with us.").format(user=chosen_user.mention_html())
-
-        else:
-            user = await data_uno.players.get_user(self.bot, self.state.key.chat_id, current_id)
-            answer = _("Only {user} can choose with whom to exchange cards.").format(user=html.quote(user.first_name))
-
-        await self.event.answer(answer)
-
-    async def handle(self):
-        chosen_user = await self.filter()
-
-        if chosen_user:
-            async with self.timer.lock(self.state.key):
-                await self.proceed(chosen_user)
-
-    async def _get_seven_user(self, data_uno: UnoData) -> types.User | None:
-        if self.event.entities[0].user:
-            user = self.event.entities[0].user
-
-            if user.id in data_uno.players.playing:
-                return user
-
-        else:
-            for player_id in data_uno.players.playing:
-                user = await data_uno.players.get_user(self.bot, self.state.key.chat_id, player_id)
-
-                if f'@{user.username}' in self.event.text:
-                    return user
-
-    async def proceed(self, chosen_user: types.User):
-        data_uno = await UnoData.get_data(self.state)
-
-        answer = data_uno.do_seven(chosen_user.id)
-        await next_turn(self.event, self.bot, self.state, self.timer, data_uno, answer)
+            await update_timer(message, bot, state, timer, data_uno)
+            await query.answer()
 
 
-@router.callback_query(
-    keyboards.UnoData.filter(F.action == keyboards.UnoActions.COLOR),
-    UnoData.filter('color')
-)
-@flags.timer
+@router.message(F.entities.func(lambda entities: entities[0].type in ("mention", "text_mention")))
+async def seven_handler(
+    message: types.Message,
+    bot: Bot,
+    state: FSMContext,
+    timer: TimerTasks,
+) -> None:
+    data_uno = await UnoData.get_data(state)
+    if data_uno is None:
+        return
+
+    data = await data_uno.filter.for_seven(message, bot, state, timer)
+    if data:
+        async with timer.lock(state.key):
+            data_uno = await UnoData.get_data(state)
+            assert data_uno is not None, "wrong data uno"
+
+            content = data_uno.do_seven(**data)
+            await next_turn(message, bot, state, timer, data_uno, content)
+
+
+@router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.COLOR))
 async def color_handler(
-        query: types.CallbackQuery,
-        bot: Bot,
-        state: FSMContext,
-        timer: TimerTasks,
-        callback_data: keyboards.UnoData,
-):
+    query: types.CallbackQuery,
+    bot: Bot,
+    state: FSMContext,
+    timer: TimerTasks,
+    callback_data: keyboards.UnoData,
+) -> None:
+    assert isinstance(query.message, types.Message), "wrong message"
+
     data_uno = await UnoData.get_data(state)
+    if data_uno is None:
+        return
 
-    # Update card color
-    color = callback_data.value
-    answer_color = data_uno.do_color(color)
+    filtered = await data_uno.filter.for_color(query, state, timer)
+    if filtered:
+        async with timer.lock(state.key):
+            data_uno = await UnoData.get_data(state)
+            assert data_uno is not None, "wrong data uno"
 
-    message = await query.message.edit_text(
-        _("{user} changes the color to {color}!").format(
-            user=query.from_user.mention_html(),
-            color=color,
-        )
-    )
+            color = callback_data.value
+            assert isinstance(color, UnoColors), "wrong callback_data"
 
-    await next_turn(message, bot, state, timer, data_uno, answer_color or "")
-    await query.answer()
+            content_color = data_uno.do_color(query.from_user, color)
+
+            content = formatting.Text(
+                formatting.TextMention(query.from_user.first_name, user=query.from_user),
+                " ",
+                _("changes the color to"),
+                " ",
+                color,
+                "!",
+            )
+
+            message = await query.message.edit_text(**content.as_kwargs())
+            assert isinstance(message, types.Message), "wrong message"
+
+            await next_turn(message, bot, state, timer, data_uno, content_color or formatting.Text())
+            await query.answer()
 
 
-@router.callback_query(
-    keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO),
-    UnoData.filter('uno')
-)
-@flags.timer(cancelled=False)
-async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext):
+@router.callback_query(keyboards.UnoData.filter(F.action == keyboards.UnoActions.UNO))
+async def uno_handler(query: types.CallbackQuery, bot: Bot, state: FSMContext, timer: TimerTasks) -> None:
+    assert isinstance(query.message, types.Message), "wrong message"
+
     data_uno = await UnoData.get_data(state)
+    if data_uno is None:
+        return
 
-    if not query.message.entities or query.from_user.id != query.message.entities[-1].user.id:
-        await proceed_uno(query.message, bot, state, data_uno, query.from_user)
+    filtered = await data_uno.filter.for_uno(query, state, timer)
+    if filtered:
+        async with timer.lock(state.key):
+            data_uno = await UnoData.get_data(state)
+            assert data_uno is not None, "wrong data uno"
 
-    answer = (
-        _("Good job!"),
-        _("And you don't want to lose. 😎"),
-        _("On reaction. 😎"),
-        _("Yep!"),
-        _("Like a pro.")
-    )
+            if not query.message.entities or query.from_user.id != query.message.entities[0].user.id:
+                await proceed_uno(query.message, bot, state, data_uno, query.from_user)
 
-    await query.answer(choice(answer))
+            text = secrets.choice(
+                (
+                    _("Good job!"),
+                    _("And you don't want to lose. 😎"),
+                    _("On reaction. 😎"),
+                    _("Yep!"),
+                    _("Like a pro."),
+                ),
+            )
+
+            await query.answer(text)

@@ -2,11 +2,11 @@ import logging
 
 from aiogram import Router
 
-logger = logging.getLogger('bot')
+logger = logging.getLogger("bot")
 
 
-def setup(parent_router: Router):
-    logger.debug('Setting up handlers...')
+def setup(parent_router: Router) -> None:
+    logger.debug("setting up handlers...")
 
     from . import commands, transitions
 
@@ -14,6 +14,7 @@ def setup(parent_router: Router):
     transitions.setup(parent_router)
 
     from . import error, other
+
     parent_router.include_routers(
         error.router,
         other.router,

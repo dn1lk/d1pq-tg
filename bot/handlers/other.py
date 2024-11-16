@@ -1,103 +1,114 @@
-from datetime import datetime, timedelta, timezone
-from random import choice, random
+import secrets
 
-from aiogram import Bot, Router, F, types, enums, flags
+from aiogram import Bot, F, Router, enums, flags, types
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.chat_action import ChatActionSender
+from aiogram.utils import formatting
+from aiogram.utils.i18n import I18n
 from aiogram.utils.i18n import gettext as _
 
-from core import filters, helpers
+from core import filters
 from core.middlewares import SQLUpdateMiddleware
-from core.utils import database, generation
+from utils import database, generation
 
-router = Router(name='other')
+from .misc.filters import gen_chance_filter
+from .misc.helpers import get_gen_kwargs
+
+ANSWER_CHANCE = 0.1
+REPLY_CHANCE = 0.2
+
+router = Router(name="other")
 router.message.filter(~F.from_user.is_bot, filters.StateFilter(None))
 
 SQLUpdateMiddleware().setup(router)
 
 
-async def get_gen_kwargs(
-        message: types.Message,
-        bot: Bot,
-        gen_settings: database.GenSettings,
-) -> dict:
-    async def gen_text() -> dict:
-        async with ChatActionSender.typing(chat_id=message.chat.id, bot=bot):
-            return {'text': generation.text.gen(text, gen_settings)}
+@router.message(gen_chance_filter, filters.Levenshtein("hello", "hey", "здравствуйте", "привет"))
+async def hello_handler(message: types.Message) -> None:
+    assert message.from_user is not None, "wrong user"
 
-    async def gen_sticker() -> dict:
-        async with ChatActionSender.choose_sticker(chat_id=message.chat.id, bot=bot):
-            return {'sticker': await generation.sticker.gen(bot, text, gen_settings)}
+    _user = formatting.TextMention(message.from_user.first_name, user=message.from_user)
+    content = formatting.Text(
+        *secrets.choice(
+            (
+                (_user, ", ", _("hello!")),
+                (_("Hey"), ", ", _user, "."),
+                (_("Nice to meet you", ", ", _user, ".")),
+                (_("My appreciate", ", ", _user, ".")),
+                (_("Yop", ", ", _user, ".")),
+            ),
+        ),
+    )
 
-    text = helpers.get_text(message)
-    return await choice((gen_text, gen_sticker))()
-
-
-async def chance_filter(message: types.Message) -> bool:
-    gen_settings: database.GenSettings = await database.GenSettings.get(chat_id=message.chat.id)
-
-    if datetime.now(tz=timezone(message.date.tzinfo.utcoffset(message.date))) - message.date < timedelta(minutes=5):
-        return random() < gen_settings.chance
-
-
-@router.message(chance_filter, filters.Levenshtein('hello', 'hey', 'здравствуйте', 'привет'))
-async def hello_handler(message: types.Message):
-    answer = choice(
-        (
-            _("{user}, hello!"),
-            _("Hey, {user}."),
-            _("Nice to meet you, {user}."),
-            _("My appreciate, {user}."),
-            _("Yop, {user}."),
-        )
-    ).format(user=message.from_user.mention_html())
-
-    await message.answer(answer)
+    await message.answer(**content.as_kwargs())
 
 
 @router.message(F.chat.type == enums.ChatType.PRIVATE)
-@router.message(chance_filter)
+@router.message(gen_chance_filter)
 @router.message(filters.IsMentioned())
-@flags.database('gen_settings')
-@flags.throttling('gen')
+@flags.database(("gen_settings", "gpt_settings"))
+@flags.throttling("gen")
 async def gen_answer_handler(
-        message: types.Message,
-        bot: Bot,
-        state: FSMContext,
-        gen_settings: database.GenSettings,
-):
-    answer = await get_gen_kwargs(message, bot, gen_settings)
+    message: types.Message,
+    bot: Bot,
+    owner_id: int,
+    state: FSMContext,
+    i18n: I18n,
+    gen_settings: database.GenSettings,
+    gpt_settings: database.GPTSettings,
+    gpt: generation.YandexGPT,
+) -> None:
+    gen_kwargs = await get_gen_kwargs(
+        message,
+        bot,
+        owner_id,
+        state,
+        i18n,
+        gen_settings,
+        gpt_settings,
+        gpt,
+    )
 
-    if 'text' in answer:
-        answer['text'] = helpers.resolve_text(answer['text'])
-        message = await message.answer(**answer)
-    elif 'sticker' in answer:
-        message = await message.answer_sticker(**answer)
-    elif 'voice' in answer:
-        message = await message.answer_voice(**answer)
+    if "text" in gen_kwargs:
+        message = await message.answer(**gen_kwargs)
+    elif "sticker" in gen_kwargs:
+        message = await message.answer_sticker(**gen_kwargs)
+    elif "voice" in gen_kwargs:
+        message = await message.answer_voice(**gen_kwargs)
 
-    if random() < 0.2:
-        await gen_answer_handler(message, bot, state, gen_settings)
+    if secrets.randbelow(10) / 10 < ANSWER_CHANCE:
+        await gen_answer_handler(message, bot, owner_id, state, i18n, gen_settings, gpt_settings, gpt)
 
 
 @router.message(filters.MagicData(F.event.reply_to_message.from_user.id == F.bot.id))
-@flags.database('gen_settings')
-@flags.throttling('gen')
+@flags.database(("gen_settings", "gpt_settings"))
+@flags.throttling("gen")
 async def gen_reply_handler(
-        message: types.Message,
-        bot: Bot,
-        state: FSMContext,
-        gen_settings: database.GenSettings,
-):
-    answer = await get_gen_kwargs(message, bot, gen_settings)
+    message: types.Message,
+    bot: Bot,
+    owner_id: int,
+    state: FSMContext,
+    i18n: I18n,
+    gen_settings: database.GenSettings,
+    gpt_settings: database.GPTSettings,
+    gpt: generation.YandexGPT,
+) -> None:
+    gen_kwargs = await get_gen_kwargs(
+        message,
+        bot,
+        owner_id,
+        state,
+        i18n,
+        gen_settings,
+        gpt_settings,
+        gpt,
+    )
 
-    if 'text' in answer:
-        answer['text'] = helpers.resolve_text(answer['text'])
-        message = await message.reply(**answer)
-    elif 'sticker' in answer:
-        message = await message.reply_sticker(**answer)
-    elif 'voice' in answer:
-        message = await message.reply_voice(**answer)
+    if "text" in gen_kwargs:
+        message = await message.reply(**gen_kwargs)
+    elif "sticker" in gen_kwargs:
+        message = await message.reply_sticker(**gen_kwargs)
+    elif "voice" in gen_kwargs:
+        message = await message.reply_voice(**gen_kwargs)
 
-    if random() < 0.1:
-        await gen_answer_handler(message, bot, state, gen_settings)
+    if secrets.randbelow(10) / 10 < REPLY_CHANCE:
+        await gen_answer_handler(message, bot, owner_id, state, i18n, gen_settings, gpt_settings, gpt)

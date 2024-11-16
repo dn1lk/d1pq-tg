@@ -1,3 +1,5 @@
+from typing import Self
+
 from aiogram import types
 from aiogram.utils.i18n import gettext as _
 
@@ -11,24 +13,30 @@ class UnoAddState(UnoSettingsEnum):
     def __str__(self) -> str:
         match self:
             case self.OFF:
-                return _("disabled")
+                state = _("disabled")
             case self.ON:
-                return _("enabled")
+                state = _("enabled")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        raise TypeError(f'UnoAddState: unexpected additional value: {self}')
+        return state
 
     @property
     def button(self) -> str:
         match self:
             case self.OFF:
-                return _("Enable")
+                button = _("Enable")
             case self.ON:
-                return _("Disable")
+                button = _("Disable")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        raise TypeError(f'UnoAddState: unexpected switcher value: {self}')
+        return button
 
     @classmethod
-    def extract(cls, message: types.Message, index: int) -> "UnoAddState":
+    def extract(cls, message: types.Message, index: int) -> Self:
         return cls.meta_extract(message, index)
 
 
@@ -40,14 +48,16 @@ class UnoAdd(UnoSettingsEnum):
     def __str__(self) -> str:
         match self:
             case self.STACKING:
-                return _('Stacking')
+                add = _("Stacking")
             case self.SEVEN_0:
-                return _('Seven-0')
+                add = _("Seven-0")
             case self.JUMP_IN:
-                return _('Jump-in')
+                add = _("Jump-in")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-    def extract(self, message: types.Message):
-        if not self.value:
-            raise TypeError()
+        return add
 
+    def extract(self, message: types.Message) -> UnoAddState:
         return UnoAddState.extract(message, self.value)

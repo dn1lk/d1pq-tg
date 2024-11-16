@@ -2,46 +2,55 @@ from enum import Enum, EnumMeta
 
 from aiogram.utils.i18n import gettext as _
 
-PREFIX = '/'
+PREFIX = "/"
 
 
 class CommandTypesMeta(EnumMeta):
     @property
-    def start_commands(cls) -> list["CommandTypes"]:
+    def start_commands(cls) -> list["CommandTypesMeta"]:
         return list(cls)[:3]
 
     @property
-    def help_commands(cls) -> list["CommandTypes"]:
+    def help_commands(cls) -> list["CommandTypesMeta"]:
         return list(cls)[3:-1]
 
 
 class CommandTypes(tuple, Enum, metaclass=CommandTypesMeta):
-    SETTINGS = 'settings', 'настройки'
-    HELP = 'help', 'помощь'
-    TERMS = 'terms', 'условия'
+    __slots__ = ()
 
-    CHOOSE = 'choose', 'выбери'
-    WHO = 'who', 'кто'
-    PLAY = 'play', 'поиграем'
+    SETTINGS = "settings", "настройки"
+    HELP = "help", "помощь"
+    TERMS = "terms", "условия"
 
-    START = 'start', 'начать'
+    CHOOSE = "choose", "выбери"
+    WHO = "who", "кто"
+    PLAY = "play", "поиграем"
 
-    def __str__(self):
+    START = "start", "начать"
+
+    def __str__(self) -> str:
         return f"{PREFIX}{self[0]} — {self.description}"
 
     @property
-    def description(self):
+    def description(self) -> str | None:
         match self:
             case self.SETTINGS:
-                return _("set up the bot")
+                description = _("set up the bot")
             case self.HELP:
-                return _("get a commands list")
+                description = _("get a commands list")
             case self.TERMS:
-                return _("get users terms")
+                description = _("get users terms")
 
             case self.CHOOSE:
-                return _("make a choice")
+                description = _("make a choice")
             case self.WHO:
-                return _("find the desired participant")
+                description = _("find the desired participant")
             case self.PLAY:
-                return _("play in a game")
+                description = _("play in a game")
+            case self.START:
+                description = None
+            case _:
+                msg = f"Unknown command: {self}"
+                raise TypeError(msg)
+
+        return description

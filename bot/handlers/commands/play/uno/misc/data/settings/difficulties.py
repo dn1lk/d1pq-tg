@@ -1,3 +1,5 @@
+from typing import Self
+
 from aiogram import types
 from aiogram.utils.i18n import gettext as _
 
@@ -9,17 +11,20 @@ class UnoDifficulty(UnoSettingsEnum):
     NORMAL = 2
     HARD = 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         match self:
             case self.EASY:
-                return _('slowpoke')
+                difficulty = _("slowpoke")
             case self.NORMAL:
-                return _('common man')
+                difficulty = _("common man")
             case self.HARD:
-                return _('genius')
+                difficulty = _("genius")
+            case _:
+                msg = f"{self.__class__.__name__}: unexpected value: {self}"
+                raise TypeError(msg)
 
-        raise TypeError(f'UnoDifficulty: unexpected difficulty value: {self}')
+        return difficulty
 
     @classmethod
-    def extract(cls, message: types.Message) -> "UnoDifficulty":
+    def extract(cls, message: types.Message) -> Self:
         return cls.meta_extract(message, 0)

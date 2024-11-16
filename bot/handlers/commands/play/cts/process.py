@@ -1,92 +1,124 @@
-from random import choice
+import secrets
 
-from aiogram import Router, types, flags, html
+from aiogram import Router, flags, types
 from aiogram.fsm.context import FSMContext
+from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
-from core.utils import TimerTasks
 from handlers.commands.play import PlayStates
-from . import CTSData, task
+from utils import TimerTasks
 
-router = Router(name='cts:process')
+from . import CTSData, CTSFilter, task
+from .misc.helpers import finish_game
+
+router = Router(name="cts:process")
 router.message.filter(PlayStates.CTS)
 
 
-async def finish(message: types.Message, state: FSMContext, data_cts: CTSData, answer_one: str):
-    await state.clear()
-
-    answer_two = _("<b>Cities guessed</b>: {cities}.").format(cities=len(data_cts.used_cities))
-    await message.reply(f"{answer_one}\n{answer_two}")
-
-
-@router.message(CTSData.filter())
+@router.message(CTSFilter())
 @flags.timer
-async def answer_handler(message: types.Message, state: FSMContext, timer: TimerTasks, data_cts: CTSData):
+async def answer_handler(message: types.Message, state: FSMContext, timer: TimerTasks, data_cts: CTSData) -> None:
+    assert message.text is not None, "wrong message object"
+
     if data_cts.bot_city:
-        answer_one = choice(
-            (
-                _("Hmm."),
-                _("And you're smarter than you look."),
-                _("Right!"),
-            )
+        content = formatting.Text(
+            secrets.choice(
+                (
+                    _("Hmm."),
+                    _("And you're smarter than you look."),
+                    _("Right!"),
+                ),
+            ),
+            " ",
+            _("My city"),
+            ": ",
+            formatting.Bold(data_cts.bot_city),
+            ".",
         )
 
-        answer_two = _("My city: {bot_city}.").format(bot_city=data_cts.bot_city)
-        message = await message.reply(f"{answer_one} {answer_two}")
+        message = await message.reply(**content.as_kwargs())
 
         await data_cts.set_data(state)
-
         timer[state.key] = task(message, state)
     else:
-        answer = choice(
-            (
-                _("Okay, I have nothing to write on {letter}... Victory is yours."),
-                _("Can't find the right something on {letter}... My defeat."),
-                _("VICTORY... yours. I can't remember that name... You know, it also starts with {letter}..."),
-            )
-        ).format(letter=html.bold(f'"{message.text[-1]}"'))
+        _last_letter = formatting.Bold(f'"{message.text[-1]}"')
+        content = formatting.Text(
+            *secrets.choice(
+                (
+                    (
+                        _("Okay, I have nothing to write on"),
+                        " ",
+                        _last_letter,
+                        "... ",
+                        _("Victory is yours."),
+                    ),
+                    (
+                        _("Can't find the right something on"),
+                        " ",
+                        _last_letter,
+                        "... ",
+                        _("My defeat."),
+                    ),
+                    (
+                        _("VICTORY... yours. I can't remember that name... You know, it also starts with"),
+                        " ",
+                        _last_letter,
+                        "...",
+                    ),
+                ),
+            ),
+        )
 
-        await finish(message, state, data_cts, answer)
+        await finish_game(message, state, data_cts, content)
 
 
 @router.message()
 @flags.timer(cancelled=False)
-async def mistake_handler(message: types.Message, state: FSMContext, timer: TimerTasks):
+async def mistake_handler(message: types.Message, state: FSMContext, timer: TimerTasks) -> None:
     data_cts = await CTSData.get_data(state)
+    if data_cts is None:
+        return
+
     data_cts.fail_amount -= 1
 
     if data_cts.fail_amount:
         await data_cts.set_data(state)
 
         if message.text in data_cts.used_cities:
-            answer_one = choice(
+            _title = secrets.choice(
                 (
                     _("We have already used this name. Choose another!"),
                     _("I remember exactly that we already used this. Let's try something else."),
-                    _("But no, you can’t fool me — this name was already in the game. Be original!")
-                )
+                    _("But no, you can’t fool me — this name was already in the game. Be original!"),
+                ),
             )
         else:
-            answer_one = choice(
+            _title = secrets.choice(
                 (
                     _("I do not understand something or your word is WRONG!"),
                     _("And here it is not. Think better, user!"),
                     _("My algorithms do not deceive me — you are mistaken!"),
-                )
+                ),
             )
 
-        answer_two = _("<b>Remaining attempts</b>: {fail_amount}.").format(fail_amount=data_cts.fail_amount)
-        await message.reply(f"{answer_one}\n{answer_two}")
+        content = formatting.Text(
+            _title,
+            "\n",
+            formatting.Bold(_("Remaining attempts"), ": ", data_cts.fail_amount),
+        )
 
+        await message.reply(**content.as_kwargs())
     else:
         del timer[state.key]
 
-        answer = choice(
-            (
-                _("You have no attempts left."),
-                _("Looks like all attempts have been spent."),
-                _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
-            )
+        content = formatting.Text(
+            secrets.choice(
+                (
+                    _("You have no attempts left."),
+                    _("Looks like all attempts have been spent."),
+                    _("Where is an ordinary user up to artificial intelligence. All attempts have ended."),
+                ),
+            ),
         )
 
-        await finish(message, state, data_cts, answer)
+        await finish_game(message, state, data_cts, content)

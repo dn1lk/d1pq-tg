@@ -2,7 +2,9 @@ from enum import Enum
 
 
 class PlayActions(tuple, Enum):
-    CTS = 'cts', 'грд'
-    RND = 'rnd', 'рнд'
-    RPS = 'rps', 'кнб'
-    UNO = 'uno', 'уно'
+    __slots__ = ()
+
+    CTS = "cts", "грд"
+    RND = "rnd", "рнд"
+    RPS = "rps", "кнб"
+    UNO = "uno", "уно"

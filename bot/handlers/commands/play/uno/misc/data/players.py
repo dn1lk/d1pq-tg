@@ -1,13 +1,16 @@
+import secrets
 from dataclasses import dataclass, field
-from random import randrange
+from typing import Self
 
 from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 
 from handlers.commands.play import PlayStates
+from handlers.commands.play.uno import MAX_PLAYERS
+from handlers.commands.play.uno.misc import errors
+
 from .deck import UnoCard, UnoDeck
-from .. import errors
 
 
 @dataclass
@@ -18,7 +21,7 @@ class UnoPlayerData:
     cards_played: int = 0
     points: int = 0
 
-    def add_card(self, *cards: UnoCard):
+    def add_card(self, *cards: UnoCard) -> None:
         self.cards.extend(cards)
 
     def get_card(self, sticker: types.Sticker) -> UnoCard:
@@ -26,38 +29,33 @@ class UnoPlayerData:
             if card == sticker:
                 return card
 
-        raise errors.UnoInvalidSticker()
+        raise errors.UnoInvalidSticker
 
-    def del_card(self, card: UnoCard):
+    def del_card(self, card: UnoCard) -> None:
         self.cards.remove(card)
         self.cards_played += 1
 
         if len(self.cards) == 1:
-            raise errors.UnoOneCard()
+            raise errors.UnoOneCard
         if len(self.cards) == 0:
-            raise errors.UnoNoCards()
+            raise errors.UnoNoCards
 
     @staticmethod
-    def get_key(bot_id: int, player_id: int):
-        return StorageKey(
-            bot_id=bot_id,
-            chat_id=player_id,
-            user_id=player_id,
-            destiny='uno_room'
-        )
+    def get_key(bot_id: int, player_id: int) -> StorageKey:
+        return StorageKey(bot_id=bot_id, chat_id=player_id, user_id=player_id, destiny="uno_room")
 
     @classmethod
-    async def setup(cls, state: FSMContext, player_id: int, cards: list[UnoCard]) -> "UnoPlayerData":
+    async def setup(cls, state: FSMContext, player_id: int, cards: list[UnoCard]) -> Self:
         key = cls.get_key(state.key.bot_id, player_id)
 
         storage = state.storage
         await storage.set_state(key, PlayStates.UNO)
-        await storage.set_data(key, {'0': state.key.chat_id})
+        await storage.set_data(key, {"0": state.key.chat_id})
 
         return cls(cards=cards, is_me=player_id == state.key.bot_id)
 
     @classmethod
-    async def clear(cls, state: FSMContext, player_id: int):
+    async def clear(cls, state: FSMContext, player_id: int) -> None:
         key = cls.get_key(state.key.bot_id, player_id)
 
         storage = state.storage
@@ -72,7 +70,7 @@ class UnoPlayers:
 
     finished: dict[int, UnoPlayerData] = field(default_factory=dict)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Get number of all players"""
 
         return len(self.playing | self.finished)
@@ -87,13 +85,13 @@ class UnoPlayers:
 
         return self.playing.get(player_id) or self.finished[player_id]
 
-    def __setitem__(self, player_id: int, player_data: UnoPlayerData):
+    def __setitem__(self, player_id: int, player_data: UnoPlayerData) -> None:
         """Add player"""
 
         if player_id in self.playing | self.finished:
-            raise errors.UnoExistedPlayer()
-        elif len(self) == 10:
-            raise errors.UnoMaxPlayers()
+            raise errors.UnoExistedPlayer
+        if len(self) == MAX_PLAYERS:
+            raise errors.UnoMaxPlayers
 
         self.playing[player_id] = player_data
 
@@ -110,7 +108,7 @@ class UnoPlayers:
     def current_data(self) -> UnoPlayerData:
         return self.playing[self.current_id]
 
-    async def kick_player(self, state: FSMContext, deck: UnoDeck, player_id: int):
+    async def kick_player(self, state: FSMContext, deck: UnoDeck, player_id: int) -> None:
         """Remove player, return cards and clear player data"""
 
         player_data = self.playing.pop(player_id)
@@ -119,7 +117,7 @@ class UnoPlayers:
         deck.add(*player_data.cards)
         await player_data.clear(state, player_id)
 
-    def finish_player(self, player_id: int):
+    def finish_player(self, player_id: int) -> None:
         """Remove player, add to finished and add points"""
 
         player_data = self.finished[player_id] = self.playing.pop(player_id)
@@ -138,22 +136,13 @@ class UnoPlayers:
         return member.user
 
     @classmethod
-    async def setup(
-            cls,
-            state: FSMContext,
-            deck: UnoDeck,
-            player_ids: list[int]
-    ) -> "UnoPlayers":
-        playing = {
-            player_id: await UnoPlayerData.setup(state, player_id, list(deck(7)))
-            for player_id in player_ids
-        }
-
-        current_index = randrange(len(player_ids))
+    async def setup(cls, state: FSMContext, deck: UnoDeck, player_ids: list[int]) -> Self:
+        playing = {player_id: await UnoPlayerData.setup(state, player_id, list(deck(7))) for player_id in player_ids}
+        current_index = secrets.randbelow(len(player_ids))
 
         return cls(playing, current_index)
 
-    def restart(self, deck: UnoDeck):
+    def restart(self, deck: UnoDeck) -> None:
         """Return finished players, clear finished list and set cards for playing"""
 
         self.playing.update(self.finished)
@@ -162,9 +151,9 @@ class UnoPlayers:
         for player_data in self.playing.values():
             player_data.cards = list(deck(7))
 
-        self._current_index = randrange(len(self.playing))
+        self._current_index = secrets.randbelow(len(self.playing))
 
-    async def clear(self, state: FSMContext):
+    async def clear(self, state: FSMContext) -> None:
         """Clear playing and finished players"""
 
         for player_id, player_data in (self.playing | self.finished).items():

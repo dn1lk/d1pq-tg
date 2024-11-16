@@ -1,17 +1,22 @@
+import secrets
 from dataclasses import dataclass
-from random import choice
+from typing import Self
 
-from aiogram import Bot, types, html
+from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.i18n import gettext as _, ngettext as ___
+from aiogram.utils import formatting
+from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import ngettext as ___
 
 from handlers.commands.play import PlayData
 from handlers.commands.play.misc.states import PlayStates
-from .deck import UnoDeck, UnoCard, UnoEmoji
+from handlers.commands.play.uno import MIN_PLAYERS
+from handlers.commands.play.uno.misc import errors
+
+from .deck import UnoCard, UnoDeck, UnoEmoji
 from .deck.colors import UnoColors
 from .players import UnoPlayers
 from .settings import UnoSettings
-from .. import errors
 
 
 @dataclass
@@ -34,132 +39,113 @@ class UnoData(PlayData):
     state: UnoState = UnoState()
     timer_amount: int = 3
 
-    @classmethod
-    def filter(cls, action: str):
-        from ..filter import UnoFilter
-        return UnoFilter(action)
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}(current_id={self.players.current_id}, last_card={self.deck.last_card}, state={self.state})"
 
-    def update_turn(self, player_id: int, card: UnoCard):
+    @property
+    def filter(self):  # noqa: ANN201
+        from handlers.commands.play.uno.misc.filter import UnoFilter
+
+        return UnoFilter(self)
+
+    def update_turn(self, player_id: int, card: UnoCard) -> None:
         self.deck.last_card = card
 
         self.players.current_id = player_id
         self.players.current_data.del_card(card)
 
-    def update_state(self) -> str | None:
+    async def update_state(self, user: types.User, bot: Bot, chat_id: int) -> formatting.Text | None:
         self.state.passed = self.state.skipped = False
 
         match self.deck.last_card.emoji:
             case UnoEmoji.NULL if self.settings.seven_0 and self.players.current_data.cards:
-                return self.answer_null()
-
+                return self.content_null()
             case UnoEmoji.SEVEN if self.settings.seven_0 and self.players.current_data.cards:
-                return self.answer_seven()
-
+                return self.content_seven()
             case UnoEmoji.COLOR | UnoEmoji.DRAW_FOUR:
-                return self.answer_color()
-
+                return self.content_color()
             case UnoEmoji.DRAW_TWO:
-                return self.answer_draw()
-
+                return self.content_draw(user)
             case UnoEmoji.SKIP:
-                return self.answer_skip()
-
+                return await self.do_skip(bot, chat_id)
             case UnoEmoji.REVERSE:
-                return self.answer_reverse()
+                return await self.do_reverse(user, bot, chat_id)
 
-    def answer_null(self) -> str:
+    def content_null(self) -> formatting.Text:
         cards_hands = [player_data.cards for player_data in self.players.playing.values()]
         cards_hands.append(cards_hands.pop(0))
 
-        for player_id, cards in zip(self.players.playing, cards_hands):
+        for player_id, cards in zip(self.players.playing, cards_hands, strict=True):
             self.players.playing[player_id].cards = cards
 
-        return choice(
-            (
-                _("We exchanged cards."),
-                _("Everyone got their neighbor's cards.")
-            )
+        content = formatting.Text(
+            secrets.choice(
+                (
+                    _("We exchanged cards."),
+                    _("Everyone got their neighbor's cards."),
+                ),
+            ),
         )
 
-    def answer_seven(self) -> str | None:
-        if len(self.players) == 2:
-            return self.answer_null()
+        return content
+
+    def content_seven(self) -> formatting.Text | None:
+        if len(self.players) == MIN_PLAYERS:
+            return self.content_null()
 
         self.state.seven = True
-        raise errors.UnoSeven()
+        raise errors.UnoSeven
 
-    def answer_bluff(self) -> str:
+    def content_bluff(self) -> formatting.Text:
         self.state.drawn += 4
         self.state.bluffed = True
 
-        return choice(
-            (
-                _("Is this card legal?"),
-                _("A wild card..."),
-            )
+        content = formatting.Text(
+            secrets.choice(
+                (
+                    _("Is this card legal?"),
+                    _("A wild card..."),
+                ),
+            ),
         )
 
-    def answer_draw(self) -> str:
+        return content
+
+    def content_draw(self, user: types.User) -> formatting.Text:
         if self.deck.last_card.emoji == UnoEmoji.DRAW_FOUR:
-            answer_one = self.answer_bluff()
+            _title = self.content_bluff()
         else:
             self.state.bluffed = False
             self.state.drawn += 2
 
-            answer_one = choice(
+            _title = secrets.choice(
                 (
                     _("How cruel!"),
                     _("What a surprise."),
-                )
+                ),
             )
 
-        answer_two = choice(
-            (
-                _("{user} is clearly taking revenge... plus"),
-                _("{user} sends a fiery hello and"),
-            )
+        _user = formatting.TextMention(user.first_name, user=user)
+        content = formatting.Text(
+            _title,
+            "\n",
+            *secrets.choice(
+                (
+                    (_user, " ", _("is clearly taking revenge... plus")),
+                    (_user, " ", _("sends a fiery hello and")),
+                ),
+            ),
+            " ",
+            ___("a card.", "{amount} cards.", self.state.drawn).format(amount=self.state.drawn),
         )
 
-        answer_three = ___("a card.", "{amount} cards.", self.state.drawn).format(amount=self.state.drawn)
+        return content
 
-        return f'{answer_one}\n{answer_two} {answer_three}'
-
-    def answer_color(self):
+    def content_color(self) -> None:
         self.state.color = True
-        raise errors.UnoColor()
+        raise errors.UnoColor
 
-    def answer_skip(self) -> str:
-        self.players.current_id = self.players.by_index(1)
-        self.state.skipped = True
-
-        return choice(
-            (
-                _("{user} loses a turn?"),
-                _("{user} risks missing a turn."),
-                _("{user} can forget about the next turn."),
-            )
-        )
-
-    def answer_reverse(self) -> str:
-        if len(self.players) == 2:
-            return self.answer_skip()
-
-        self.players.playing, self.players.current_id = (
-            dict(reversed(self.players.playing.items())), self.players.current_id
-        )
-
-        answer_one = choice(
-            (
-                _("And vice versa!"),
-                _("A bit of a mess..."),
-            )
-        )
-
-        answer_two = _("{user} changes the queue.")
-
-        return f'{answer_one} {html.bold(answer_two)}'
-
-    def pick_card(self, user: types.User) -> str:
+    def pick_card(self, user: types.User) -> formatting.Text:
         player_data = self.players.playing[user.id]
 
         if self.state.drawn:
@@ -171,19 +157,92 @@ class UnoData(PlayData):
         player_data.add_card(*self.deck(amount))
 
         if player_data.is_me:
-            answer_one = _("I receive")
+            _title = _("I receive")
         else:
-            answer_one = _("{user} receives").format(user=user.mention_html())
+            _title = formatting.Text(formatting.TextMention(user.first_name, user=user), " ", _("receives"))
 
-        answer_two = ___("a card.", "{amount} cards.", amount).format(amount=amount)
+        content = formatting.Text(_title, " ", ___("a card.", "{amount} cards.", amount).format(amount=amount))
+        return content
 
-        return f"{answer_one} {answer_two}"
-
-    def do_draw(self, user: types.User) -> str:
+    def do_draw(self, user: types.User) -> formatting.Text:
         self.state.bluffed = False
         return self.pick_card(user)
 
-    async def do_bluff(self, bot: Bot, chat_id: int) -> str:
+    def do_pass(self, user: types.User) -> formatting.Text:
+        self.state.passed = True
+        return self.do_draw(user)
+
+    def do_seven(self, chosen_id: int) -> formatting.Text:
+        player_data = self.players.current_data
+        chosen_data = self.players.playing[chosen_id]
+
+        player_data.cards, chosen_data.cards = chosen_data.cards, player_data.cards
+        self.state.seven = False
+
+        content = formatting.Text(
+            secrets.choice(
+                (
+                    _("Was this choice beneficial? 🤓"),
+                    _("The exchange happened!"),
+                    _("See don't get confused."),
+                ),
+            ),
+        )
+
+        return content
+
+    def do_color(self, user: types.User, color: UnoColors) -> formatting.Text | None:
+        last_card = self.deck.last_card
+
+        self.deck[-1] = last_card.replace(color=color)
+        self.state.color = False
+
+        if last_card.emoji is UnoEmoji.DRAW_FOUR:
+            return self.content_draw(user)
+        return None
+
+    async def do_skip(self, bot: Bot, chat_id: int) -> formatting.Text:
+        player_id = self.players.current_id = self.players.by_index(1)
+        self.state.skipped = True
+
+        user = await self.players.get_user(bot, chat_id, player_id)
+        _user = formatting.TextMention(user.first_name, user=user)
+
+        content = formatting.Text(
+            *secrets.choice(
+                (
+                    (_user, " ", _("loses a turn?")),
+                    (_user, " ", _("risks missing a turn.")),
+                    (_user, " ", _("can forget about the next turn.")),
+                ),
+            ),
+        )
+
+        return content
+
+    async def do_reverse(self, user: types.User, bot: Bot, chat_id: int) -> formatting.Text:
+        if len(self.players) == MIN_PLAYERS:
+            return await self.do_skip(bot, chat_id)
+
+        self.players.playing, self.players.current_id = (
+            dict(reversed(self.players.playing.items())),
+            self.players.current_id,
+        )
+
+        content = formatting.Text(
+            secrets.choice(
+                (
+                    _("And vice versa!"),
+                    _("A bit of a mess..."),
+                ),
+            ),
+            " ",
+            formatting.Bold(formatting.TextMention(user.first_name, user=user), " ", _("changes the queue", ".")),
+        )
+
+        return content
+
+    async def do_bluff(self, bot: Bot, chat_id: int) -> formatting.Text:
         player_id = self.players.by_index(-1)
         player_data = self.players.playing[player_id]
 
@@ -191,9 +250,9 @@ class UnoData(PlayData):
 
         if any(card.color is prev_card.color for card in player_data.cards):
             if player_data.is_me:
-                answer = _("Yes, it was a bluff hehe.")
+                _title = _("Yes, it was a bluff hehe.")
             else:
-                answer = _("Bluff! I see suitable cards, not only wilds.")
+                _title = _("Bluff! I see suitable cards, not only wilds.")
 
         else:
             self.state.drawn += 2
@@ -202,77 +261,55 @@ class UnoData(PlayData):
             player_data = self.players.current_data
 
             if player_data.is_me:
-                answer = _("Ah, no. There were no suitable cards. 🙄")
+                _title = _("Ah, no. There were no suitable cards. 🙄")
             else:
-                answer = choice(
+                _title = secrets.choice(
                     (
                         _("Nope. It is not a bluff."),
                         _("Shhh, this card was legal."),
-                        _("This card is suitable.")
-                    )
+                        _("This card is suitable."),
+                    ),
                 )
 
         user = await self.players.get_user(bot, chat_id, player_id)
-        return f'{answer} {self.do_draw(user)}'
 
-    def do_pass(self, user: types.User) -> str:
-        self.state.passed = True
-        return self.do_draw(user)
+        content = formatting.Text(_title, " ", self.do_draw(user))
+        return content
 
-    def do_seven(self, chosen_id: int) -> str:
-        player_data = self.players.current_data
-        chosen_data = self.players.playing[chosen_id]
-
-        player_data.cards, chosen_data.cards = chosen_data.cards, player_data.cards
-        self.state.seven = False
-
-        return choice(
-            (
-                _("Was this choice beneficial? 🤓"),
-                _("The exchange happened!"),
-                _("See don't get confused."),
-            )
-        )
-
-    def do_color(self, color: UnoColors) -> str | None:
-        last_card = self.deck.last_card
-
-        self.deck[-1] = last_card.replace(color=color)
-        self.state.color = False
-
-        if last_card.emoji is UnoEmoji.DRAW_FOUR:
-            return self.answer_draw()
-
-    async def do_next(self, bot: Bot, state: FSMContext) -> str:
+    async def do_next(self, bot: Bot, state: FSMContext) -> formatting.Text:
         player_id = self.players.current_id = self.players.by_index(1)
         await self.set_data(state)
 
         player_data = self.players.current_data
 
         if player_data.is_me:
-            answer = _("My turn.")
+            content = formatting.Text(_("My turn."))
         else:
             user = await self.players.get_user(bot, state.key.chat_id, player_id)
-            answer = choice(
-                (
-                    _("{user}, your turn."),
-                    _("{user}, your move."),
-                    _("Now {user} is moving."),
-                    _("Player's turn {user}."),
-                    _("I pass the turn to the player {user}."),
-                )
-            ).format(user=user.mention_html())
 
-        return answer
+            _user = formatting.TextMention(user.first_name, user=user)
+            content = formatting.Text(
+                *secrets.choice(
+                    (
+                        (_user, ", ", _("your turn"), "."),
+                        (_user, ", ", _("your move"), "."),
+                        (_("Now"), " ", _user, " ", _("is moving"), "."),
+                        (_("Player's turn"), " ", _user, "."),
+                        (_("I pass the turn to"), " ", _user, "."),
+                    ),
+                ),
+            )
+
+        return content
 
     @classmethod
     async def setup(
-            cls,
-            bot: Bot,
-            state: FSMContext,
-            user_ids: list[int],
-            settings: UnoSettings,
-    ) -> "UnoData":
+        cls,
+        bot: Bot,
+        state: FSMContext,
+        user_ids: list[int],
+        settings: UnoSettings,
+    ) -> Self:
         await state.set_state(PlayStates.UNO)
 
         deck = await UnoDeck.setup(bot)
@@ -280,13 +317,13 @@ class UnoData(PlayData):
 
         return cls(deck=deck, players=players, settings=settings)
 
-    def restart(self):
+    def restart(self) -> None:
         self.players.restart(self.deck)
 
         self.deck = UnoDeck(list(self.deck))
         self.state = UnoState()
         self.timer_amount = 3
 
-    async def clear(self, state: FSMContext):
+    async def clear(self, state: FSMContext) -> None:
         await self.players.clear(state)
         await state.clear()

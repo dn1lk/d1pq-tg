@@ -2,7 +2,9 @@ from aiogram import Router
 
 from .misc.types import CommandTypes
 
-router = Router(name='commands')
+__all__ = ("CommandTypes",)
+
+router = Router(name="commands")
 
 
 def setup(parent_router: Router):
@@ -14,6 +16,7 @@ def setup(parent_router: Router):
     play.setup(router)
 
     from . import choose, help, start, who
+
     router.include_routers(
         choose.router,
         who.router,

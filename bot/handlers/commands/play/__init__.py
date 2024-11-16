@@ -2,9 +2,18 @@ from aiogram import Router
 from aiogram.utils.i18n import lazy_gettext as __
 
 from core.middlewares import DestinySetMiddleware
+
 from .misc.actions import PlayActions
 from .misc.data import PlayData
 from .misc.states import PlayStates
+
+__all__ = (
+    "PlayActions",
+    "PlayData",
+    "PlayStates",
+    "WINNER",
+    "CLOSE",
+)
 
 WINNER = (
     __("Victory for me."),
@@ -19,14 +28,14 @@ CLOSE = (
     __("It's too slow, I won't play with you!"),
 )
 
-router = Router(name='play')
+router = Router(name="play")
 DestinySetMiddleware().setup(router)
 
 
 def setup(parent_router: Router):
     parent_router.include_router(router)
 
-    from . import cts, rnd, rps, uno, other
+    from . import cts, other, rnd, rps, uno
 
     rps.setup(router)
     uno.setup(router)

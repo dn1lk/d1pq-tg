@@ -1,18 +1,17 @@
 import asyncio
-from random import randint, choice
+import secrets
 
 from aiogram import types
 from aiogram.fsm.context import FSMContext
+from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
-from ... import WINNER
+from handlers.commands.play import WINNER
 
 
-async def task(message: types.Message, state: FSMContext):
-    await asyncio.sleep(randint(40, 70))
+async def task(message: types.Message, state: FSMContext) -> None:
+    await asyncio.sleep(secrets.randbelow(30) + 40)
 
-    answer_one = _("Time is over.")
-    answer_two = choice(WINNER)
-    await message.answer(f"{answer_one} {answer_two}")
-
+    content = formatting.Text(_("Time is over."), " ", secrets.choice(WINNER))
+    await message.answer(**content.as_kwargs())
     await state.clear()
