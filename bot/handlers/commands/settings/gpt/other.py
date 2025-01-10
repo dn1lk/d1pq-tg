@@ -21,8 +21,7 @@ async def start_handler(query: types.CallbackQuery) -> None:
     }
 
     content = formatting.as_marked_section(
-        formatting.Bold(_("Change GPT options")),
-        ".",
+        formatting.Bold(_("Change GPT options.")),
         *(formatting.Text(formatting.Bold(action.keyboard), " — ", action.description, ".") for action in actions),
     )
 

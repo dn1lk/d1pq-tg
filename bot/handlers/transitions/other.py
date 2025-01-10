@@ -13,7 +13,7 @@ router = Router(name="transitions:other")
 
 
 @router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.LEAVE_TRANSITION))
-@flags.database("gen_settings")
+@flags.database(("gen_settings", "gpt_settings"))
 async def my_leave_handler(
     _: types.Message,
     main_settings: database.MainSettings,

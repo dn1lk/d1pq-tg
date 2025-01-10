@@ -5,9 +5,9 @@ from .misc.actions import GPTOptionsActions
 from .misc.states import GPTSettingsStates
 
 __all__ = (
-    "keyboards",
     "GPTOptionsActions",
     "GPTSettingsStates",
+    "keyboards",
 )
 
 

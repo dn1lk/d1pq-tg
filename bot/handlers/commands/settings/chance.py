@@ -43,11 +43,11 @@ async def start_handler(query: types.CallbackQuery, gen_settings: database.GenSe
     assert isinstance(query.message, types.Message), "wrong message"
 
     content = formatting.Text(
-        formatting.Bold(_("Change text generation chance")),
-        ".\n",
+        formatting.Bold(_("Change text generation chance.")),
+        "\n",
         _("Current chance"),
         ": ",
-        formatting.Bold(int(gen_settings.chance * 100)),
+        formatting.Bold(int(round(gen_settings.chance, 1) * 100)),
         "%.\n\n",
         _("Available options"),
         ":",

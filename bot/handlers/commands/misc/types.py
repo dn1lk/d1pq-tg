@@ -1,17 +1,19 @@
 from enum import Enum, EnumMeta
+from typing import TypeVar
 
 from aiogram.utils.i18n import gettext as _
 
+T = TypeVar("T", "CommandTypes", "Enum")
 PREFIX = "/"
 
 
 class CommandTypesMeta(EnumMeta):
     @property
-    def start_commands(cls) -> list["CommandTypesMeta"]:
+    def start_commands(cls: type[T]) -> list[T]:
         return list(cls)[:3]
 
     @property
-    def help_commands(cls) -> list["CommandTypesMeta"]:
+    def help_commands(cls: type[T]) -> list[T]:
         return list(cls)[3:-1]
 
 

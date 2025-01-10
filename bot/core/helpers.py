@@ -4,9 +4,12 @@ import re
 
 from aiogram import types
 
+_re_sentence = re.compile(r"^\w+|(?<=[.?!]\s)\w+")
+_re_escape = re.compile(r"[\[\]\(\)\~\>\#\+\-\=\|\{\}\.\!]")
+
 
 def resolve_text(text: str, *, screen: bool = False) -> str:
-    text = re.sub(r"^\w+|(?<=[.?!]\s)\w+", lambda m: m.group().capitalize(), text.strip())
+    text = re.sub(_re_sentence, lambda m: m.group().capitalize(), text.strip())
 
     if text[-1] in ":-,":
         text = text[:-1] + "."
@@ -14,7 +17,7 @@ def resolve_text(text: str, *, screen: bool = False) -> str:
         text += "."
 
     if screen:
-        text = re.sub(r"(?<!\\)(\[|\]|\(|\)|\~|>|#|\+|-|=|\||\{|\}|\.|\!)", lambda m: "\\" + m.group(), text)
+        text = re.sub(_re_escape, lambda m: "\\" + m.group(), text)
 
     return text
 

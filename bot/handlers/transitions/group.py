@@ -18,7 +18,7 @@ router.my_chat_member.filter(F.chat.type != enums.ChatType.PRIVATE)
 
 @router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.KICKED >> filters.MEMBER))
 async def my_return_handler(event: types.ChatMemberUpdated, bot: Bot) -> None:
-    _chat = formatting.BlockQuote(event.chat.title)
+    _chat = formatting.Bold(event.chat.title)
 
     content = formatting.Text(
         *secrets.choice(

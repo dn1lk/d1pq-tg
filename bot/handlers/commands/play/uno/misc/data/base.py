@@ -237,7 +237,7 @@ class UnoData(PlayData):
                 ),
             ),
             " ",
-            formatting.Bold(formatting.TextMention(user.first_name, user=user), " ", _("changes the queue", ".")),
+            formatting.Bold(formatting.TextMention(user.first_name, user=user), " ", _("changes the queue"), "."),
         )
 
         return content

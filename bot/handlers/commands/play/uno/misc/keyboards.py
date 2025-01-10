@@ -125,7 +125,7 @@ def show_cards(*, bluffed: bool) -> types.InlineKeyboardMarkup:
 def choice_color() -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
-    for color in UnoColors:
+    for color in UnoColors.exclude(UnoColors.BLACK):
         builder.button(text=str(color), callback_data=UnoData(action=UnoActions.COLOR, value=color))
 
     builder.adjust(1)

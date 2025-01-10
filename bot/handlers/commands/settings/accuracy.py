@@ -43,8 +43,8 @@ async def start_handler(query: types.CallbackQuery, gen_settings: database.GenSe
     assert isinstance(query.message, types.Message), "wrong message"
 
     content = formatting.Text(
-        formatting.Bold(_("Change text generation accuracy")),
-        ".\n",
+        formatting.Bold(_("Change text generation accuracy.")),
+        "\n",
         _("Current accuracy"),
         ": ",
         formatting.Bold(int(gen_settings.accuracy)),

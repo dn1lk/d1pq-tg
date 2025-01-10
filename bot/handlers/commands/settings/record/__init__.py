@@ -4,8 +4,8 @@ from .misc import keyboards
 from .misc.actions import RecordActions
 
 __all__ = (
-    "keyboards",
     "RecordActions",
+    "keyboards",
 )
 
 

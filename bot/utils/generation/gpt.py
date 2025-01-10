@@ -60,10 +60,11 @@ class YandexGPT:
                     "text": (
                         gpt_settings.promt
                         or _(
-                            "MAKE SHORT ANSWERS like AI."
-                            ' Imagine your name is "d1pq".'
-                            " Sometimes joke."
-                            " ALWAYS USE ENGLISH.",
+                            "Imagine you are interacting with a user via Telegram."
+                            " Respond like a AI CHAT BOT."
+                            " ALWAYS USE ENGLISH."
+                            ' If asked your name, CALL YOURSELF "d1pq".'
+                            " Sometimes joke.",
                         )
                     ),
                 },

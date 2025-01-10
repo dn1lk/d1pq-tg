@@ -12,7 +12,7 @@ router = Router(name="error")
 
 
 @router.errors(filters.ExceptionTypeFilter(exceptions.TelegramForbiddenError))
-@flags.database("gen_settings")
+@flags.database(("gen_settings", "gpt_settings"))
 async def forbidden_handler(
     event: ErrorEvent,
     main_settings: database.MainSettings,
@@ -32,10 +32,9 @@ async def forbidden_handler(
 
 @router.errors()
 async def errors_handler(event: ErrorEvent, bot: Bot, owner_id: int) -> None:
-    _title = f"While event {event.update.event_type}:"
     _tb = traceback.format_exc(limit=-10)
     content = formatting.Text(
-        formatting.Bold(_title),
+        formatting.Bold(f"While event {event.update.event_type}:"),
         "\n\n",
         formatting.Pre(_tb, language="python"),
     )

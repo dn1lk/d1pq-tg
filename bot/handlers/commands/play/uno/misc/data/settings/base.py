@@ -1,11 +1,13 @@
-from enum import EnumMeta, IntEnum
-from typing import Self
+from enum import Enum, EnumMeta, IntEnum
+from typing import Self, TypeVar
 
 from aiogram import types
 
+T = TypeVar("T", "UnoSettingsEnum", "Enum")
+
 
 class UnoSettingsMeta(EnumMeta):
-    def meta_extract(cls, message: types.Message, index: int) -> "UnoSettingsMeta":
+    def meta_extract(cls: type[T], message: types.Message, index: int) -> "T":
         assert message.text is not None, "wrong text"
         assert message.entities is not None, "wrong entities"
 

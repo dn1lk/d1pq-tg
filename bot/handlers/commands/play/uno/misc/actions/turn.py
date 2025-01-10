@@ -46,10 +46,8 @@ async def proceed_turn(
         except errors.UnoNoCards as err:
             await kick_for_cards(bot, state, data_uno, message.from_user)
 
-            if (
-                data_uno.settings.mode is UnoMode.FAST
-                and len(data_uno.players.playing) == 1
-                or data_uno.settings.mode is UnoMode.WITH_POINTS
+            if (data_uno.settings.mode is UnoMode.FAST and len(data_uno.players.playing) == 1) or (
+                data_uno.settings.mode is UnoMode.WITH_POINTS
                 and max(player.points for player in data_uno.players.finished.values()) >= MAX_POINTS
             ):
                 raise errors.UnoFinish from err

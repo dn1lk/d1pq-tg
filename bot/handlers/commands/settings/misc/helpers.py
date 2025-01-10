@@ -32,7 +32,8 @@ async def get_start_content(message: types.Message, bot: Bot) -> dict:
                 formatting.TextMention(admin.user.first_name, user=admin.user)
                 for admin in await bot.get_chat_administrators(message.chat.id)
             ),
-            sep=",",
+            sep=", ",
+            end="",
         )
 
         _chat = formatting.Text(_("chat — only for"), " ", _admins)

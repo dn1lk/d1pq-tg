@@ -43,8 +43,8 @@ async def start_handler(query: types.CallbackQuery, gpt_settings: database.GPTSe
     assert isinstance(query.message, types.Message), "wrong message"
 
     content = formatting.Text(
-        formatting.Bold(_("Change text generation temperature")),
-        ".\n",
+        formatting.Bold(_("Change text generation temperature.")),
+        "\n",
         _("Current temperature"),
         ": ",
         formatting.Bold(round(gpt_settings.temperature, 2)),

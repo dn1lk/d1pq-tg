@@ -1,11 +1,14 @@
 from collections.abc import Generator
 from enum import Enum, EnumMeta
+from typing import TypeVar
 
 from aiogram.utils.i18n import gettext as _
 
+T = TypeVar("T", "UnoColors", "Enum")
+
 
 class UnoColorsMeta(EnumMeta):
-    def exclude(cls, *excludes: "UnoColors") -> Generator["UnoColorsMeta", None, None]:
+    def exclude(cls: type[T], *excludes: T) -> Generator[T, None, None]:
         for color in cls:
             if color in excludes:
                 continue
