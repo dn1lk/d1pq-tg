@@ -3,7 +3,7 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from utils import database
-from utils.database.types import Float
+from utils.database.types import Percent
 
 from . import SettingsActions, keyboards
 
@@ -21,7 +21,7 @@ async def update_handler(
     assert isinstance(query.message, types.Message), "wrong message"
     assert isinstance(callback_data.value, str), "wrong callback data"
 
-    gen_settings.chance = Float(int(callback_data.value) / 100)
+    gen_settings.chance = Percent(int(callback_data.value) / 100)
     await gen_settings.save()
 
     content = formatting.Text(
@@ -47,7 +47,7 @@ async def start_handler(query: types.CallbackQuery, gen_settings: database.GenSe
         "\n",
         _("Current chance"),
         ": ",
-        formatting.Bold(int(round(gen_settings.chance, 1) * 100)),
+        formatting.Bold(int(gen_settings.chance * 100)),
         "%.\n\n",
         _("Available options"),
         ":",

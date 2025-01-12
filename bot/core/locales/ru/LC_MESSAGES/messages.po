@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-10 22:22+0300\n"
+"POT-Creation-Date: 2025-01-12 21:51+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1776,13 +1776,15 @@ msgstr "Ну и иди отсюда, пользователь!"
 msgid "And it all started so nicely..."
 msgstr "А всё начиналось так прекрасно..."
 
-#: bot/utils/generation/gpt.py:62
+#: bot/utils/generation/gpt.py:61
 msgid ""
-"Imagine you are interacting with a user via Telegram. Respond like a AI "
-"CHAT BOT. ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."
-" Sometimes joke."
+"Imagine you are interacting with a user via Telegram. Answer naturally. "
+"ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."
 msgstr ""
 "Представь, что ты взаимодействуешь с пользователем через Телеграм. "
-"Отвечай как ИИ ЧАТ БОТ. Если спросят твоё имя, НАЗЫВАЙ СЕБЯ \"едлите\" "
-"Иногда шути."
+"Отвечай естественно. Если спросят твоё имя, НАЗЫВАЙ СЕБЯ \"едлите\" "
+
+#: bot/utils/generation/gpt.py:68
+msgid "Sometimes joke."
+msgstr "Иногда шути."
 

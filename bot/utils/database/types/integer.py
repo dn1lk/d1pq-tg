@@ -1,7 +1,7 @@
 from .base import BaseType
 
 
-class Int16(int, BaseType[int]):
+class Int32(int, BaseType[int]):
     pass
 
 

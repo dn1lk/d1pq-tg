@@ -15,3 +15,12 @@ class Datetime(dt.datetime, BaseType[int]):
     @classmethod
     def now(cls, tz: dt.tzinfo | None = dt.UTC) -> Self:
         return super().now(tz=tz)
+
+
+class Timestamp(Datetime):
+    @classmethod
+    def deserialize(cls, value: int) -> Self:
+        return cls.fromtimestamp(value / 1e6, tz=dt.UTC)
+
+    def serialize(self) -> int:
+        return int(self.timestamp() * 1e6)

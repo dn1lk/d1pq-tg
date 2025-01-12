@@ -60,15 +60,17 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    import logs
+
+    logs.setup()
+
     import logging
 
     import handlers
-    import logs
     import utils
     import webhook
     from core import middlewares, types, ui_info
 
-    logs.setup()
     types.setup()
     logger = logging.getLogger("bot")
 

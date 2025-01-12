@@ -171,6 +171,8 @@ class Model:
         for name, column in self._get_columns().items():
             if column.on_update is not None:
                 setattr(self, name, column.on_update() if callable(column.on_update) else column.on_update)
+            elif column.is_null is False:
+                self.columns_changed.add(name)
 
         if columns_changed:
             self.columns_changed = self.columns_changed.union(columns_changed)
@@ -209,7 +211,15 @@ class Model:
 
     @classmethod
     async def _setup(cls, query_params: str) -> None:
-        query_structure = [f"{name} {column.query_type}" for name, column in cls._get_columns().items()]
+        query_structure = []
+        for name, column in cls._get_columns().items():
+            query_column = f"{name} {column.type.__queryname__()}"
+            query_column += " null" if column.is_null else " not null"
+            if not (column.default is None or callable(column.default)):
+                query_column += f' default {column.type.__queryname__()}("{column.default.serialize()}")'
+
+            query_structure.append(query_column)
+
         query_structure = ", ".join(query_structure)
         query_structure += ","
 

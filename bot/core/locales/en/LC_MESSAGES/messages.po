@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-10 22:22+0300\n"
+"POT-Creation-Date: 2025-01-12 21:51+0300\n"
 "PO-Revision-Date: 2024-11-16 15:55+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -1737,10 +1737,29 @@ msgstr ""
 msgid "And it all started so nicely..."
 msgstr ""
 
-#: bot/utils/generation/gpt.py:62
+#: bot/utils/generation/gpt.py:61
 msgid ""
-"Imagine you are interacting with a user via Telegram. Respond like a AI "
-"CHAT BOT. ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."
-" Sometimes joke."
+"Imagine you are interacting with a user via Telegram. Answer naturally. "
+"ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."
 msgstr ""
+
+#: bot/utils/generation/gpt.py:68
+msgid "Sometimes joke."
+msgstr ""
+
+#~ msgid ""
+#~ "Imagine you are interacting with a "
+#~ "user via Telegram. Respond like a "
+#~ "AI CHAT BOT. ALWAYS USE ENGLISH. "
+#~ "If asked your name, CALL YOURSELF "
+#~ "\"d1pq\". Sometimes joke."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Imagine you are interacting with a "
+#~ "user via Telegram. Respond like an "
+#~ "AI CHAT BOT. ALWAYS USE ENGLISH. "
+#~ "If asked your name, CALL YOURSELF "
+#~ "\"d1pq\"."
+#~ msgstr ""
 
