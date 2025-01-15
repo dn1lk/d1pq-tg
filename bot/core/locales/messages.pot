@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-12 21:51+0300\n"
+"POT-Creation-Date: 2025-01-15 09:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,19 +63,23 @@ msgstr ""
 msgid "Yop"
 msgstr ""
 
-#: bot/handlers/commands/choose.py:27
-msgid "I choose"
-msgstr ""
-
-#: bot/handlers/commands/choose.py:28
-msgid "Hm,"
+#: bot/handlers/other.py:85 bot/handlers/other.py:133
+msgid "Continuing with the previous sentence."
 msgstr ""
 
 #: bot/handlers/commands/choose.py:29
-msgid "Difficult choice. Let there be"
+msgid "I choose"
 msgstr ""
 
 #: bot/handlers/commands/choose.py:30
+msgid "Hm,"
+msgstr ""
+
+#: bot/handlers/commands/choose.py:31
+msgid "Difficult choice. Let there be"
+msgstr ""
+
+#: bot/handlers/commands/choose.py:32
 msgid "Why are you asking me? Well I choose"
 msgstr ""
 

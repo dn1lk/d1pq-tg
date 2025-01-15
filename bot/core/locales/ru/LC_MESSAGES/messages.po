@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-12 21:51+0300\n"
+"POT-Creation-Date: 2025-01-15 09:13+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -67,19 +67,23 @@ msgstr "Моё почтение"
 msgid "Yop"
 msgstr "Йоп"
 
-#: bot/handlers/commands/choose.py:27
+#: bot/handlers/other.py:85 bot/handlers/other.py:133
+msgid "Continuing with the previous sentence."
+msgstr "Продолжая предыдущее предложение."
+
+#: bot/handlers/commands/choose.py:29
 msgid "I choose"
 msgstr "Я выбираю"
 
-#: bot/handlers/commands/choose.py:28
+#: bot/handlers/commands/choose.py:30
 msgid "Hm,"
 msgstr "Хм,"
 
-#: bot/handlers/commands/choose.py:29
+#: bot/handlers/commands/choose.py:31
 msgid "Difficult choice. Let there be"
 msgstr "Сложный выбор. Наверное"
 
-#: bot/handlers/commands/choose.py:30
+#: bot/handlers/commands/choose.py:32
 msgid "Why are you asking me? Well I choose"
 msgstr "Почему ты спрашиваешь меня? Хорошо, я выбираю"
 
@@ -876,7 +880,7 @@ msgstr "Давай я тебе просто дам"
 
 #: bot/handlers/commands/play/uno/misc/filter.py:268
 msgid "a card and we'll pretend like nothing happened"
-msgstr ""
+msgstr "карту и мы сделаем вид, что ничего не произошло"
 
 #: bot/handlers/commands/play/uno/misc/filter.py:289
 msgid "Of course, I don't mind, but now it's turn of"
@@ -1787,4 +1791,16 @@ msgstr ""
 #: bot/utils/generation/gpt.py:68
 msgid "Sometimes joke."
 msgstr "Иногда шути."
+
+#~ msgid "I'll continue..."
+#~ msgstr "Я продолжу..."
+
+#~ msgid ""
+#~ "Next you need to write a text "
+#~ "IN CONTINUATION to the previous text."
+#~ " START IMMEDIATELY WITH THE CONTINUATION"
+#~ msgstr ""
+#~ "Дальше нужно написать текст В "
+#~ "ПРОДОЛЖЕНИЕ к предыдущему тексту. НАЧНИ "
+#~ "СРАЗУ С ПРОДОЛЖЕНИЯ"
 

@@ -76,6 +76,19 @@ async def gen_answer_handler(
         message = await message.answer_voice(**gen_kwargs)
 
     if secrets.randbelow(10) / 10 < ANSWER_CHANCE:
+        key = gpt.prepare_key(state.key)
+
+        messages = await gpt.get_messages(key)
+        messages.append(
+            {
+                "role": "system",
+                "text": _(
+                    "Continuing with the previous sentence.",
+                ),
+            },
+        )
+
+        await gpt.update_messages(key, messages)
         await gen_answer_handler(message, bot, owner_id, state, i18n, gen_settings, gpt_settings, gpt)
 
 
@@ -111,4 +124,17 @@ async def gen_reply_handler(
         message = await message.reply_voice(**gen_kwargs)
 
     if secrets.randbelow(10) / 10 < REPLY_CHANCE:
+        key = gpt.prepare_key(state.key)
+
+        messages = await gpt.get_messages(key)
+        messages.append(
+            {
+                "role": "system",
+                "text": _(
+                    "Continuing with the previous sentence.",
+                ),
+            },
+        )
+
+        await gpt.update_messages(key, messages)
         await gen_answer_handler(message, bot, owner_id, state, i18n, gen_settings, gpt_settings, gpt)
