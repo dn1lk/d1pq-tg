@@ -7,13 +7,13 @@ from aiogram.utils.i18n import gettext as _
 from core import filters
 from handlers.commands.settings.record.misc.helpers import clear_data
 from utils import database
-from utils.database.types.integer import Int64
+from utils.database.types import Int64
 
 router = Router(name="transitions:other")
 
 
 @router.my_chat_member(filters.ChatMemberUpdatedFilter(filters.LEAVE_TRANSITION))
-@flags.database("gen_settings")
+@flags.database(("gen_settings", "gpt_settings"))
 async def my_leave_handler(
     _: types.Message,
     main_settings: database.MainSettings,

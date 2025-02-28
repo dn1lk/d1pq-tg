@@ -9,9 +9,9 @@ from .misc.actions import SettingsActions
 from .misc.states import SettingsStates
 
 __all__ = (
-    "keyboards",
     "SettingsActions",
     "SettingsStates",
+    "keyboards",
 )
 
 

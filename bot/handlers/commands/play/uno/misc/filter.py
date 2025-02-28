@@ -78,8 +78,7 @@ class UnoFilter:
         if self.data.state.drawn:
             if self.data.settings.stacking and (
                 card.emoji is self.data.deck.last_card.emoji
-                or card.emoji is UnoEmoji.DRAW_TWO
-                and card.color is self.data.deck.last_card.color
+                or (card.emoji is UnoEmoji.DRAW_TWO and card.color is self.data.deck.last_card.color)
             ):
                 accepted = True
                 content = formatting.Text(
@@ -257,14 +256,18 @@ class UnoFilter:
                 *secrets.choice(
                     (
                         (_("Hold your horses"), ", ", _user, ". ", _("Now is not your turn.")),
+                        (_("Hey"), ", ", _user, ". ", _("Your card doesn't belong this turn.")),
+                        (_("No. No no no. No. Again, NO!"),),
+                        (_("Someone explain to"), " ", _user, _("how to play"), "."),
+                        (_("I'm betting on defeat of"), " ", _user, "."),
                         (
-                            _("Hey", ", ", _user, ". ", _("Your card doesn't belong this turn.")),
-                            (_("No. No no no. No. Again, NO!"),),
-                            (_("Someone explain to"), " ", _user, _("how to play"), "."),
-                            (_("Can I just give"), " ", _user, " ", "a card and we'll pretend like nothing happened"),
+                            _("Can I just give"),
+                            " ",
+                            _user,
+                            " ",
+                            _("a card and we'll pretend like nothing happened"),
                             "?",
                         ),
-                        (_("I'm betting on defeat of"), " ", _user, "."),
                     ),
                 ),
             )
@@ -301,7 +304,7 @@ class UnoFilter:
             return True
 
         user = await self.data.players.get_user(bot, state.key.chat_id, current_id)
-        text = _("Only {user} can do that.").format(user=formatting.BlockQuote(user.first_name).as_markdown())
+        text = _("Only {user} can do that.").format(user=user.first_name)
 
         await query.answer(text)
         return False

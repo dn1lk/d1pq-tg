@@ -51,7 +51,7 @@ class UnoBot:
             timer.lock(self.state.key),
         ):
             difficulty = self.data_uno.settings.difficulty
-            delay = (secrets.randbelow(3) + 1) * difficulty
+            delay = (secrets.randbelow(3) + 1) * difficulty * 0.6
 
             if self.message.chat.type is not enums.ChatType.PRIVATE:
                 delay *= 1.5
@@ -175,10 +175,10 @@ class UnoBot:
         me_data = self.data_uno.players.current_data
 
         if not me_data.cards:
-            color = secrets.choice(tuple(UnoColors))
+            color = secrets.choice(tuple(UnoColors.exclude(UnoColors.BLACK)))
 
         elif self.data_uno.settings.difficulty is UnoDifficulty.HARD:
-            colors = [card.color for card in me_data.cards]
+            colors = [card.color for card in me_data.cards if card.color is not UnoColors.BLACK]
             color = max(set(colors), key=colors.count)
 
         else:

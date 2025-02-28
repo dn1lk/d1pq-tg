@@ -31,10 +31,7 @@ class Column[T: BaseType[CT]]:
 
     def __call__(self, value: T | Callable[..., T] | None) -> T | None:
         assert issubclass(self.type, BaseType), f"incorrect column type: {self.type}"
-
-        if value is None:
-            return self.default() if callable(self.default) else self.default
-        return self.type.deserialize(value)
+        return value if value is None else self.type.deserialize(value)
 
 
 @dataclass(slots=True, frozen=True)
@@ -66,11 +63,12 @@ class Model:
     @lru_cache
     def _get_columns(cls) -> dict[str, Column[BaseType[CT]]]:
         columns: dict[str, Column[BaseType[CT]]] = {}
-        for name, _field in inspect.get_annotations(cls).items():
-            for column in getattr(_field, "__metadata__", ()):
-                if isinstance(column, Column):
-                    columns[name] = column
-                    break
+        for obj in cls.__mro__:
+            for name, _field in inspect.get_annotations(obj).items():
+                for column in getattr(_field, "__metadata__", ()):
+                    if isinstance(column, Column):
+                        columns[name] = column
+                        break
 
         return columns
 
@@ -139,7 +137,14 @@ class Model:
 
     @classmethod
     async def get(cls, **kwargs: CT) -> Self:
-        data = await cls._get(**kwargs) or kwargs
+        data = await cls._get(**kwargs)
+        if data is None:
+            self = cls(**kwargs)
+            for name, column in cls._get_columns().items():
+                if column.default is not None:
+                    setattr(self, name, column.default() if callable(column.default) else column.default)
+
+            return self
         return cls(**data)
 
     async def _save(self, **kwargs: BaseType[CT] | None) -> ydb.convert.ResultSets:
@@ -157,13 +162,22 @@ class Model:
         )
 
         self._serialize(kwargs)
-        return await self._execute(query, {"$input": [kwargs]})
+        rows = await self._execute(query, {"$input": [kwargs]})
+
+        self.columns_changed.clear()
+        return rows
 
     async def save(self, *columns_changed: str) -> ydb.convert.ResultSets:
-        if not columns_changed:
-            columns_changed = tuple(self.columns_changed)
+        for name, column in self._get_columns().items():
+            if column.on_update is not None:
+                setattr(self, name, column.on_update() if callable(column.on_update) else column.on_update)
+            elif column.is_null is False:
+                self.columns_changed.add(name)
 
-        kwargs = {name: getattr(self, name) for name in columns_changed + tuple(self._get_pks())}
+        if columns_changed:
+            self.columns_changed = self.columns_changed.union(columns_changed)
+
+        kwargs = {name: getattr(self, name) for name in self.columns_changed.union(self._get_pks())}
         return await self._save(**kwargs)
 
     async def _delete(self) -> ydb.convert.ResultSets:
@@ -187,14 +201,25 @@ class Model:
         )
 
         self._serialize(prepared_params)
-        return await self._execute(query, prepared_params)
+        rows = await self._execute(query, prepared_params)
+
+        self.columns_changed.clear()
+        return rows
 
     async def delete(self) -> ydb.convert.ResultSets:
         return await self._delete()
 
     @classmethod
     async def _setup(cls, query_params: str) -> None:
-        query_structure = [f"{name} {column.query_type}" for name, column in cls._get_columns().items()]
+        query_structure = []
+        for name, column in cls._get_columns().items():
+            query_column = f"{name} {column.type.__queryname__()}"
+            query_column += " null" if column.is_null else " not null"
+            if not (column.default is None or callable(column.default)):
+                query_column += f' default {column.type.__queryname__()}("{column.default.serialize()}")'
+
+            query_structure.append(query_column)
+
         query_structure = ", ".join(query_structure)
         query_structure += ","
 

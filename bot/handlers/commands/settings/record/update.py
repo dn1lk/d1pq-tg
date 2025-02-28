@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any
 
 from aiogram import F, Router, flags, types
 from aiogram.handlers import CallbackQueryHandler
@@ -25,7 +24,7 @@ class UpdateBase(CallbackQueryHandler, metaclass=ABCMeta):
     def record_data(self) -> RecordData:
         return self.data["callback_data"]
 
-    async def handle(self) -> Any:
+    async def handle(self) -> None:
         assert isinstance(self.event.message, types.Message), "wrong message"
 
         await self.update_data()

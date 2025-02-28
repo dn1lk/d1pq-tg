@@ -43,10 +43,9 @@ class ThrottlingMiddleware(BaseMiddleware):
             key = replace(state.key, destiny=f"throttling:{throttling}")
 
             if any(timer[key]):
-                if (
-                    isinstance(event, types.Message)
-                    and secrets.randbelow(10) / 10 < ANSWER_CHANCE
-                    or isinstance(event, types.CallbackQuery)
+                if (isinstance(event, types.Message) and secrets.randbelow(10) / 10 < ANSWER_CHANCE) or isinstance(
+                    event,
+                    types.CallbackQuery,
                 ):
                     await self.answer(event, data)
                 return None

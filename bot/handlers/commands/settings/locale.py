@@ -46,8 +46,8 @@ async def start_handler(query: types.CallbackQuery, i18n: I18n) -> None:
     locales = {locale_code: transcript_locale(locale_code) for locale_code in i18n.available_locales}
 
     content = formatting.Text(
-        formatting.Bold(_("Change language")),
-        ".\n",
+        formatting.Bold(_("Change language.")),
+        "\n",
         _("Current language"),
         ": ",
         formatting.Bold(locales[i18n.current_locale]),

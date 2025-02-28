@@ -1,5 +1,5 @@
+import re
 import secrets
-from re import split
 
 from aiogram import F, Router, flags, types
 from aiogram.utils import formatting
@@ -10,6 +10,8 @@ from utils import database
 
 from . import CommandTypes
 
+_re_chosen = re.compile(r"\W+(?:or|или)\W+|\W{2,}")
+
 router = Router(name="choose")
 router.message.filter(filters.Command(*CommandTypes.CHOOSE))
 
@@ -18,8 +20,8 @@ router.message.filter(filters.Command(*CommandTypes.CHOOSE))
 async def with_args_handler(message: types.Message, command: filters.CommandObject) -> None:
     assert command.args is not None, "wrong command args"
 
-    _chosen = secrets.choice(split(r"\W+or\W+|\W+или\W+|\W{2,}", command.args))
-    _chosen = helpers.resolve_text(_chosen)
+    _chosen = secrets.choice(_re_chosen.split(command.args))
+    _chosen = helpers.resolve_text(_chosen, escape=True)
     content = formatting.Text(
         secrets.choice(
             (

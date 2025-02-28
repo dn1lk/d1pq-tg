@@ -46,7 +46,7 @@ async def with_args_handler(
                 ),
                 " ",
                 formatting.TextMention(member.user.first_name, user=member.user),
-                formatting.Bold(helpers.resolve_text(command.args)),
+                formatting.Bold(helpers.resolve_text(command.args, escape=True)),
             )
         else:
             content = formatting.Text(

@@ -12,15 +12,15 @@ from .destiny import DestinySetMiddleware
 from .throttling import ThrottlingMiddleware
 
 __all__ = (
+    "DestinySetMiddleware",
     "I18nContextMiddleware",
+    "SQLGetFlagsMiddleware",
+    "SQLGetMainMiddleware",
+    "SQLUpdateMiddleware",
     "SessionRateLimiterMiddleware",
     "SessionRetryMiddleware",
-    "SQLGetMainMiddleware",
-    "SQLGetFlagsMiddleware",
-    "SQLUpdateMiddleware",
-    "TimerMiddleware",
     "ThrottlingMiddleware",
-    "DestinySetMiddleware",
+    "TimerMiddleware",
 )
 
 logger = logging.getLogger("bot")
@@ -34,7 +34,7 @@ def setup(bot: Bot, router: Router, i18n: I18n):
 
     # Outer middlewares
     SQLGetMainMiddleware().setup(router)
-    I18nContextMiddleware(i18n=i18n, middleware_key="").setup(router)
+    I18nContextMiddleware(i18n=i18n).setup(router)
 
     # Inner middlewares
     ThrottlingMiddleware(i18n=i18n).setup(router)

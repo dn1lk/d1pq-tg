@@ -26,7 +26,7 @@ async def get_gen_kwargs(
             if answer is None:
                 answer = generation.text.get_answer(text, i18n, gen_settings)
 
-            answer = helpers.resolve_text(answer, screen=True)
+            answer = helpers.resolve_text(answer, escape=True)
             return {"text": answer}
 
     async def gen_sticker() -> dict[str, str]:

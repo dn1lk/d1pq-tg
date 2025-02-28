@@ -3,7 +3,7 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from utils import database
-from utils.database.types import Float
+from utils.database.types import Percent
 
 from . import GPTOptionsActions, keyboards
 
@@ -21,7 +21,7 @@ async def update_handler(
     assert isinstance(query.message, types.Message), "wrong message"
     assert callback_data.value is not None, "wrong callback data"
 
-    gpt_settings.temperature = Float(int(callback_data.value) / 10)
+    gpt_settings.temperature = Percent(callback_data.value / 10)
     await gpt_settings.save()
 
     content = formatting.Text(
@@ -43,8 +43,8 @@ async def start_handler(query: types.CallbackQuery, gpt_settings: database.GPTSe
     assert isinstance(query.message, types.Message), "wrong message"
 
     content = formatting.Text(
-        formatting.Bold(_("Change text generation temperature")),
-        ".\n",
+        formatting.Bold(_("Change text generation temperature.")),
+        "\n",
         _("Current temperature"),
         ": ",
         formatting.Bold(round(gpt_settings.temperature, 2)),

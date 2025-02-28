@@ -151,7 +151,7 @@ async def start_no_owner_handler(query: types.CallbackQuery) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
     assert query.message.entities is not None, "wrong entities"
 
-    _user = formatting.BlockQuote(query.message.entities[7].user.first_name).as_markdown()
+    _user = query.message.entities[7].user.first_name
     await query.answer(_("Only {user} can start the game.").format(user=_user))
 
 
@@ -160,5 +160,5 @@ async def settings_no_owner_handler(query: types.CallbackQuery) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
     assert query.message.entities is not None, "wrong entities"
 
-    _user = formatting.BlockQuote(query.message.entities[7].user.first_name).as_markdown()
+    _user = query.message.entities[7].user.first_name
     await query.answer(_("Only {user} can set up the game.").format(user=_user))

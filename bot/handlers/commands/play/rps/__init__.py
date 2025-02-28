@@ -4,8 +4,8 @@ from .misc import keyboards
 from .misc.values import RPSValues
 
 __all__ = (
-    "keyboards",
     "RPSValues",
+    "keyboards",
 )
 
 

@@ -25,8 +25,8 @@ async def start_handler(
     await state.set_state(GPTSettingsStates.MAX_TOKENS)
 
     content = formatting.Text(
-        formatting.Bold(_("Change max tokens per message")),
-        ".\n",
+        formatting.Bold(_("Change max tokens per message.")),
+        "\n",
         _("Current max tokens"),
         ": ",
         formatting.Bold(gpt_settings.max_tokens),

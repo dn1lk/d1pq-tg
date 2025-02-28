@@ -8,11 +8,11 @@ from .misc.data import PlayData
 from .misc.states import PlayStates
 
 __all__ = (
+    "CLOSE",
+    "WINNER",
     "PlayActions",
     "PlayData",
     "PlayStates",
-    "WINNER",
-    "CLOSE",
 )
 
 WINNER = (

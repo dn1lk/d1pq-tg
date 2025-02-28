@@ -1,4 +1,3 @@
-import datetime as dt
 from typing import Annotated, ClassVar
 
 import ydb
@@ -9,20 +8,22 @@ from .base import Column, Index, Model
 DEFAULT_STICKER_SET = "TextAnimated"
 
 
-def _datetime_now():
-    return types.Timestamp.now(tz=dt.UTC)
-
-
 class WithDates(Model):
-    updated: Annotated[types.Timestamp, Column(types.Timestamp, on_update=_datetime_now, default=_datetime_now)]
-    created: Annotated[types.Timestamp, Column(types.Timestamp, default=_datetime_now)]
+    updated: Annotated[
+        types.Timestamp,
+        Column(types.Timestamp, on_update=types.Timestamp.now, default=types.Timestamp.now),
+    ]
+    created: Annotated[
+        types.Timestamp,
+        Column(types.Timestamp, default=types.Timestamp.now),
+    ]
 
 
 class MainSettings(WithDates):
     __tablename__: ClassVar[str] = "main_settings"
 
     chat_id: Annotated[types.Int64, Column(types.Int64, is_primary_key=True)]
-    locale: Annotated[types.Utf8, Column(types.Utf8)]
+    locale: Annotated[types.Utf8 | None, Column(types.Utf8, is_null=True)]
     members: Annotated[types.JsonList[int] | None, Column(types.JsonList, is_null=True)]
     commands: Annotated[types.JsonDict[str, str] | None, Column(types.JsonDict, is_null=True)]
 
@@ -31,24 +32,24 @@ class GenSettings(WithDates):
     __tablename__: ClassVar[str] = "gen_settings"
 
     chat_id: Annotated[types.Int64, Column(types.Int64, is_primary_key=True)]
-    chance: Annotated[types.Float, Column(types.Float, default=types.Float(0.1))]
+    chance: Annotated[types.Percent, Column(types.Percent, default=types.Percent(0.1))]
     accuracy: Annotated[types.Uint8, Column(types.Uint8, default=types.Uint8(2))]
-    messages: Annotated[types.JsonList[str] | None, Column(types.JsonList, is_null=True)]
-    stickers: Annotated[types.JsonList[str] | None, Column(types.JsonList, is_null=True)]
+    messages: Annotated[types.JsonList[str] | None, Column(types.JsonList, is_null=True, default=types.JsonList)]
+    stickers: Annotated[types.JsonList[str] | None, Column(types.JsonList, is_null=True, default=types.JsonList)]
 
 
 class GPTSettings(WithDates):
     __tablename__: ClassVar[str] = "gpt_settings"
 
     chat_id: Annotated[types.Int64, Column(types.Int64, is_primary_key=True)]
-    temperature: Annotated[types.Float, Column(types.Float, default=types.Float(0.6))]
-    max_tokens: Annotated[types.Uint16, Column(types.Uint16, default=types.Uint16(100))]
-    tokens: Annotated[types.Int16, Column(types.Int16, default=types.Int16(5000))]
-    promt: Annotated[types.Utf8, Column(types.Utf8)]
+    temperature: Annotated[types.Percent, Column(types.Percent, default=types.Percent(0.6))]
+    max_tokens: Annotated[types.Int32, Column(types.Int32, default=types.Int32(100))]
+    tokens: Annotated[types.Int32, Column(types.Int32, default=types.Int32(5000))]
+    promt: Annotated[types.Utf8 | None, Column(types.Utf8, is_null=True)]
 
     async def delete(self) -> ydb.convert.ResultSets:
-        self.temperature = types.Float(0.6)
-        self.max_tokens = types.Uint16(100)
+        self.temperature = types.Percent(0.6)
+        self.max_tokens = types.Int32(100)
 
         return await self.save()
 

@@ -11,7 +11,7 @@ def get_start_content(subject: types.User | types.Chat) -> formatting.Text:
         case types.User():
             _mention = formatting.TextMention(subject.first_name, user=subject)
         case types.Chat():
-            _mention = formatting.BlockQuote(subject.title)
+            _mention = formatting.Bold(subject.title)
 
     content = formatting.as_marked_section(
         _mention

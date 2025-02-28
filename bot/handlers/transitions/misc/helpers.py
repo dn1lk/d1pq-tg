@@ -20,7 +20,11 @@ async def update_members(main_settings: database.MainSettings, *users: types.Use
 def get_join_content(*users: types.User) -> formatting.Text:
     total_texts = []
 
-    _users = formatting.as_line(*(formatting.TextMention(user.first_name, user=user) for user in users), sep=",")
+    _users = formatting.as_line(
+        *(formatting.TextMention(user.first_name, user=user) for user in users),
+        sep=", ",
+        end="",
+    )
 
     for user in users:
         if user.is_bot:

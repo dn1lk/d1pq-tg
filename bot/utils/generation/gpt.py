@@ -8,7 +8,7 @@ from aiogram.utils.i18n import gettext as _
 import config
 from utils import database
 from utils.clients import gpt_client as client
-from utils.database.types import Int16
+from utils.database.types import Int32
 from utils.timer.tasks import TimerTasks
 
 logger = logging.getLogger("bot.gpt")
@@ -58,13 +58,14 @@ class YandexGPT:
                 {
                     "role": "system",
                     "text": (
-                        gpt_settings.promt
-                        or _(
-                            "MAKE SHORT ANSWERS like AI."
-                            ' Imagine your name is "d1pq".'
-                            " Sometimes joke."
-                            " ALWAYS USE ENGLISH.",
+                        _(
+                            "Imagine you are interacting with a user via Telegram."
+                            " Answer naturally."
+                            " ALWAYS USE ENGLISH."
+                            ' If asked your name, CALL YOURSELF "d1pq".',
                         )
+                        + " "
+                        + (gpt_settings.promt or _("Sometimes joke."))
                     ),
                 },
                 *messages,
@@ -81,7 +82,7 @@ class YandexGPT:
         messages.append(assistant_message)
 
         if key.user_id != owner_id:
-            gpt_settings.tokens = Int16(gpt_settings.tokens - Int16(data["result"]["usage"]["totalTokens"]))
+            gpt_settings.tokens = Int32(gpt_settings.tokens - int(data["result"]["usage"]["totalTokens"]))
             await gpt_settings.save()
 
         await self.update_messages(key, messages)
