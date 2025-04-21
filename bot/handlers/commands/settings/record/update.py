@@ -63,6 +63,7 @@ class UpdateStickersHandler(UpdateBase):
 
 
 @router.callback_query(keyboards.RecordData.filter(F.action == RecordActions.MEMBERS))
+@flags.database("gen_settings")
 class UpdateMembersHandler(UpdateBase):
     async def update_data(self) -> None:
         main_settings: database.MainSettings = self.data["gen_settings"]
