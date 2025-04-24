@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-15 09:13+0300\n"
+"POT-Creation-Date: 2025-04-24 09:59+0300\n"
 "PO-Revision-Date: 2024-11-16 15:55+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -1569,7 +1569,7 @@ msgstr ""
 msgid "recording is"
 msgstr ""
 
-#: bot/handlers/commands/settings/record/update.py:86
+#: bot/handlers/commands/settings/record/update.py:87
 msgid "Records was successfully deleted."
 msgstr ""
 

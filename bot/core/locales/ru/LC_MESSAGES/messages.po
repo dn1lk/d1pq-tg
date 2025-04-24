@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-15 09:13+0300\n"
+"POT-Creation-Date: 2025-04-24 09:59+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1608,7 +1608,7 @@ msgstr "Я записываю некоторую информацию об эт�
 msgid "recording is"
 msgstr "запись"
 
-#: bot/handlers/commands/settings/record/update.py:86
+#: bot/handlers/commands/settings/record/update.py:87
 msgid "Records was successfully deleted."
 msgstr "Записи успешно удалены."
 
