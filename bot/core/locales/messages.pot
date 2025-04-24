@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-15 09:13+0300\n"
+"POT-Creation-Date: 2025-04-24 09:59+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1568,7 +1568,7 @@ msgstr ""
 msgid "recording is"
 msgstr ""
 
-#: bot/handlers/commands/settings/record/update.py:86
+#: bot/handlers/commands/settings/record/update.py:87
 msgid "Records was successfully deleted."
 msgstr ""
 
