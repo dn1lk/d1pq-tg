@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.12-alpine AS builder
+FROM python:3.12-slim AS builder
 LABEL maintainer="dn1lk <sh.dn1lk@gmail.com>"
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Final stage
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"

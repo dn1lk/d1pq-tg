@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: d1pq VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-24 09:59+0300\n"
+"POT-Creation-Date: 2025-05-05 06:23+0300\n"
 "PO-Revision-Date: 2024-11-16 15:55+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -16,19 +16,20 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: bot/core/ui_info.py:44
 msgid "//delete"
 msgstr ""
 
-#: bot/core/ui_info.py:45
+#: bot/core/ui_info.py:46
 msgid ""
 "Hello! I'm a text-generating bot based on your chat and a great "
 "conversationalist (sometimes)."
 msgstr ""
 
 #: bot/core/ui_info.py:48
+#, python-brace-format
 msgid "cha...{DELETED}-bot"
 msgstr ""
 
@@ -64,7 +65,7 @@ msgstr ""
 msgid "Yop"
 msgstr ""
 
-#: bot/handlers/other.py:85 bot/handlers/other.py:133
+#: bot/handlers/other.py:86 bot/handlers/other.py:134
 msgid "Continuing with the previous sentence."
 msgstr ""
 
@@ -89,6 +90,7 @@ msgid "And what do you want to play?"
 msgstr ""
 
 #: bot/handlers/commands/help.py:46
+#, python-brace-format
 msgid "Try to guess the game by writing {command} with its name."
 msgstr ""
 
@@ -178,7 +180,7 @@ msgstr ""
 msgid "give permission"
 msgstr ""
 
-#: bot/handlers/commands/misc/helpers.py:19
+#: bot/handlers/commands/misc/helpers.py:20
 msgid ""
 "hello! Let's start with answering the obvious questions:\n"
 "- What am I? A text-generating bot based on current chat.\n"
@@ -341,7 +343,7 @@ msgid ""
 "have ended."
 msgstr ""
 
-#: bot/handlers/commands/play/cts/start.py:24
+#: bot/handlers/commands/play/cts/start.py:25
 msgid ""
 "Oh, Geography. Well, let's try!\n"
 "\n"
@@ -358,6 +360,7 @@ msgid "You start! Your city?"
 msgstr ""
 
 #: bot/handlers/commands/play/cts/misc/helpers.py:13
+#, python-brace-format
 msgid "Cities guessed: {cities}."
 msgstr ""
 
@@ -422,7 +425,7 @@ msgstr ""
 msgid "Hmm"
 msgstr ""
 
-#: bot/handlers/commands/play/rnd/chat/start.py:46
+#: bot/handlers/commands/play/rnd/chat/start.py:47
 msgid ""
 "is trying own luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
 "I guessed a number from 1 to 10.\n"
@@ -517,6 +520,7 @@ msgid "play again?"
 msgstr ""
 
 #: bot/handlers/commands/play/rps/process.py:62
+#, python-brace-format
 msgid "Your choice: {user_value}"
 msgstr ""
 
@@ -593,10 +597,12 @@ msgid "I'm with you."
 msgstr ""
 
 #: bot/handlers/commands/play/uno/process.py:155
+#, python-brace-format
 msgid "Only {user} can start the game."
 msgstr ""
 
 #: bot/handlers/commands/play/uno/process.py:164
+#, python-brace-format
 msgid "Only {user} can set up the game."
 msgstr ""
 
@@ -689,10 +695,12 @@ msgid "So"
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/filter.py:110
+#, python-brace-format
 msgid "Again {color}..."
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/filter.py:111
+#, python-brace-format
 msgid "Wow, you got {color}!"
 msgstr ""
 
@@ -857,6 +865,7 @@ msgid "We'll have to wait. 🙂"
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/filter.py:307
+#, python-brace-format
 msgid "Only {user} can do that."
 msgstr ""
 
@@ -916,6 +925,7 @@ msgid "Back"
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/keyboards.py:93
+#, python-brace-format
 msgid "Change {settings}"
 msgstr ""
 
@@ -931,13 +941,15 @@ msgstr ""
 msgid "WINNER"
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:35
+#: bot/handlers/commands/play/uno/misc/actions/base.py:36
+#, python-brace-format
 msgid "1 card played"
 msgid_plural "{amount} cards played"
 msgstr[0] ""
 msgstr[1] ""
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:41
+#: bot/handlers/commands/play/uno/misc/actions/base.py:42
+#, python-brace-format
 msgid "1 point earned"
 msgid_plural "{points} points earned"
 msgstr[0] ""
@@ -1013,7 +1025,7 @@ msgstr ""
 msgid "Well, I have run out of my hand. I have to remain only an observer. 🫣"
 msgstr ""
 
-#: bot/handlers/commands/play/uno/misc/actions/kick.py:29
+#: bot/handlers/commands/play/uno/misc/actions/kick.py:30
 msgid "puts last card and leaves the game as the winner"
 msgstr ""
 
@@ -1034,6 +1046,7 @@ msgid "No, keep playing"
 msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/actions/timer.py:71
+#, python-brace-format
 msgid "Ok, current color: {color}"
 msgstr ""
 
@@ -1179,6 +1192,7 @@ msgstr ""
 
 #: bot/handlers/commands/play/uno/misc/data/base.py:139
 #: bot/handlers/commands/play/uno/misc/data/base.py:164
+#, python-brace-format
 msgid "a card."
 msgid_plural "{amount} cards."
 msgstr[0] ""
@@ -1427,18 +1441,22 @@ msgid "Current custom commands:"
 msgstr ""
 
 #: bot/handlers/commands/settings/commands/update.py:38
+#, python-brace-format
 msgid "{custom_command} is already recorded. Try another."
 msgstr ""
 
 #: bot/handlers/commands/settings/commands/update.py:42
+#, python-brace-format
 msgid "{custom_command} is already taken by me. Choose another."
 msgstr ""
 
 #: bot/handlers/commands/settings/commands/update.py:53
+#, python-brace-format
 msgid "{custom_command} added successfully!"
 msgstr ""
 
 #: bot/handlers/commands/settings/commands/update.py:55
+#, python-brace-format
 msgid "Now in this chat you can write it instead of {command}."
 msgstr ""
 
@@ -1448,6 +1466,7 @@ msgid "Something is not working for you."
 msgstr ""
 
 #: bot/handlers/commands/settings/commands/update.py:81
+#, python-brace-format
 msgid "{command} - if you decide to set your command again."
 msgstr ""
 
@@ -1494,6 +1513,7 @@ msgid "Max tokens has been successfully updated."
 msgstr ""
 
 #: bot/handlers/commands/settings/gpt/max_tokens/update.py:65
+#, python-brace-format
 msgid "{command} - if you decide to set max tokens again."
 msgstr ""
 
@@ -1558,6 +1578,7 @@ msgid "Something you think for a long time."
 msgstr ""
 
 #: bot/handlers/commands/settings/misc/tasks.py:19
+#, python-brace-format
 msgid "When you decide with {action}, write {command} again."
 msgstr ""
 
@@ -1602,6 +1623,7 @@ msgid "to execute /who command"
 msgstr ""
 
 #: bot/handlers/commands/settings/record/misc/keyboards.py:20
+#, python-brace-format
 msgid "{action} {field} recording"
 msgstr ""
 
@@ -1741,7 +1763,7 @@ msgstr ""
 msgid "And it all started so nicely..."
 msgstr ""
 
-#: bot/utils/generation/gpt.py:61
+#: bot/utils/generation/gpt.py:62
 msgid ""
 "Imagine you are interacting with a user via Telegram. Answer naturally. "
 "ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."

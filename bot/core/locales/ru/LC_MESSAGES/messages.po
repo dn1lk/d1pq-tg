@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-24 09:59+0300\n"
+"POT-Creation-Date: 2025-05-05 06:23+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -17,13 +17,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: bot/core/ui_info.py:44
 msgid "//delete"
 msgstr "//едлите"
 
-#: bot/core/ui_info.py:45
+#: bot/core/ui_info.py:46
 msgid ""
 "Hello! I'm a text-generating bot based on your chat and a great "
 "conversationalist (sometimes)."
@@ -32,6 +32,7 @@ msgstr ""
 "отличный собеседник (иногда)."
 
 #: bot/core/ui_info.py:48
+#, python-brace-format
 msgid "cha...{DELETED}-bot"
 msgstr "ча...{УДАЛЕНО}-бот"
 
@@ -67,7 +68,7 @@ msgstr "Моё почтение"
 msgid "Yop"
 msgstr "Йоп"
 
-#: bot/handlers/other.py:85 bot/handlers/other.py:133
+#: bot/handlers/other.py:86 bot/handlers/other.py:134
 msgid "Continuing with the previous sentence."
 msgstr "Продолжая предыдущее предложение."
 
@@ -92,6 +93,7 @@ msgid "And what do you want to play?"
 msgstr "И во что же ты хочешь поиграть?"
 
 #: bot/handlers/commands/help.py:46
+#, python-brace-format
 msgid "Try to guess the game by writing {command} with its name."
 msgstr "Попробуй угадать игру, написав {command} с её названием."
 
@@ -183,7 +185,7 @@ msgstr "Для этой команды требуется разрешение �
 msgid "give permission"
 msgstr "дать разрешение"
 
-#: bot/handlers/commands/misc/helpers.py:19
+#: bot/handlers/commands/misc/helpers.py:20
 msgid ""
 "hello! Let's start with answering the obvious questions:\n"
 "- What am I? A text-generating bot based on current chat.\n"
@@ -357,7 +359,7 @@ msgstr ""
 "Куда простому пользователю до искусственного интеллекта. Все попытки "
 "закончились."
 
-#: bot/handlers/commands/play/cts/start.py:24
+#: bot/handlers/commands/play/cts/start.py:25
 msgid ""
 "Oh, Geography. Well, let's try!\n"
 "\n"
@@ -378,6 +380,7 @@ msgid "You start! Your city?"
 msgstr "Ты начинаешь! Твой город?"
 
 #: bot/handlers/commands/play/cts/misc/helpers.py:13
+#, python-brace-format
 msgid "Cities guessed: {cities}."
 msgstr "Угадано городов: {cities}."
 
@@ -442,7 +445,7 @@ msgstr "кто-то"
 msgid "Hmm"
 msgstr "Хмм"
 
-#: bot/handlers/commands/play/rnd/chat/start.py:46
+#: bot/handlers/commands/play/rnd/chat/start.py:47
 msgid ""
 "is trying own luck! Well, EVERYONE, EVERYONE, EVERYONE!\n"
 "I guessed a number from 1 to 10.\n"
@@ -551,6 +554,7 @@ msgid "play again?"
 msgstr "сыграем ещё?"
 
 #: bot/handlers/commands/play/rps/process.py:62
+#, python-brace-format
 msgid "Your choice: {user_value}"
 msgstr "Твой выбор: {user_value}"
 
@@ -627,10 +631,12 @@ msgid "I'm with you."
 msgstr "Я с вами."
 
 #: bot/handlers/commands/play/uno/process.py:155
+#, python-brace-format
 msgid "Only {user} can start the game."
 msgstr "Только {user} может начать игру."
 
 #: bot/handlers/commands/play/uno/process.py:164
+#, python-brace-format
 msgid "Only {user} can set up the game."
 msgstr "Только {user} может настроить игру."
 
@@ -723,10 +729,12 @@ msgid "So"
 msgstr "Итак"
 
 #: bot/handlers/commands/play/uno/misc/filter.py:110
+#, python-brace-format
 msgid "Again {color}..."
 msgstr "Опять {color} цвет..."
 
 #: bot/handlers/commands/play/uno/misc/filter.py:111
+#, python-brace-format
 msgid "Wow, you got {color}!"
 msgstr "Вау, у тебя был {color} цвет!"
 
@@ -891,6 +899,7 @@ msgid "We'll have to wait. 🙂"
 msgstr "Придётся подождать. 🙂"
 
 #: bot/handlers/commands/play/uno/misc/filter.py:307
+#, python-brace-format
 msgid "Only {user} can do that."
 msgstr "Только {user} может сделать это."
 
@@ -950,6 +959,7 @@ msgid "Back"
 msgstr "Назад"
 
 #: bot/handlers/commands/play/uno/misc/keyboards.py:93
+#, python-brace-format
 msgid "Change {settings}"
 msgstr "Сменить {settings}"
 
@@ -965,14 +975,16 @@ msgstr "Показать карты"
 msgid "WINNER"
 msgstr "ПОБЕДИТЕЛЬ"
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:35
+#: bot/handlers/commands/play/uno/misc/actions/base.py:36
+#, python-brace-format
 msgid "1 card played"
 msgid_plural "{amount} cards played"
 msgstr[0] "сыграна карта"
 msgstr[1] "сыграны {amount} карты"
 msgstr[2] "сыграно {amount} карт"
 
-#: bot/handlers/commands/play/uno/misc/actions/base.py:41
+#: bot/handlers/commands/play/uno/misc/actions/base.py:42
+#, python-brace-format
 msgid "1 point earned"
 msgid_plural "{points} points earned"
 msgstr[0] "заработан балл"
@@ -1051,7 +1063,7 @@ msgstr "Я выбираю"
 msgid "Well, I have run out of my hand. I have to remain only an observer. 🫣"
 msgstr "Так-с, у меня закончились карты. Вынужден остаться лишь наблюдателем. 🫣"
 
-#: bot/handlers/commands/play/uno/misc/actions/kick.py:29
+#: bot/handlers/commands/play/uno/misc/actions/kick.py:30
 msgid "puts last card and leaves the game as the winner"
 msgstr "кладёт свою последнюю карту и выходит из игры победителем"
 
@@ -1072,6 +1084,7 @@ msgid "No, keep playing"
 msgstr "Нет, продолжить игру"
 
 #: bot/handlers/commands/play/uno/misc/actions/timer.py:71
+#, python-brace-format
 msgid "Ok, current color: {color}"
 msgstr "Ok, текущий цвет: {color}"
 
@@ -1217,6 +1230,7 @@ msgstr "шлёт пламенный привет и"
 
 #: bot/handlers/commands/play/uno/misc/data/base.py:139
 #: bot/handlers/commands/play/uno/misc/data/base.py:164
+#, python-brace-format
 msgid "a card."
 msgid_plural "{amount} cards."
 msgstr[0] "карту."
@@ -1466,18 +1480,22 @@ msgid "Current custom commands:"
 msgstr "Текущие кастомные настройки:"
 
 #: bot/handlers/commands/settings/commands/update.py:38
+#, python-brace-format
 msgid "{custom_command} is already recorded. Try another."
 msgstr "{custom_command} уже есть в моей базе. Попробуй ещё."
 
 #: bot/handlers/commands/settings/commands/update.py:42
+#, python-brace-format
 msgid "{custom_command} is already taken by me. Choose another."
 msgstr "{custom_command} уже есть в моей базе. Выбери другую."
 
 #: bot/handlers/commands/settings/commands/update.py:53
+#, python-brace-format
 msgid "{custom_command} added successfully!"
 msgstr "{custom_command} успешно добавлена!"
 
 #: bot/handlers/commands/settings/commands/update.py:55
+#, python-brace-format
 msgid "Now in this chat you can write it instead of {command}."
 msgstr "Теперь в этом чате можно писать это вместо {command}."
 
@@ -1487,6 +1505,7 @@ msgid "Something is not working for you."
 msgstr "Что-то у тебя не получается."
 
 #: bot/handlers/commands/settings/commands/update.py:81
+#, python-brace-format
 msgid "{command} - if you decide to set your command again."
 msgstr "{command} - если решишься установить свою команду снова."
 
@@ -1533,6 +1552,7 @@ msgid "Max tokens has been successfully updated."
 msgstr "Максимум токенов обновлен."
 
 #: bot/handlers/commands/settings/gpt/max_tokens/update.py:65
+#, python-brace-format
 msgid "{command} - if you decide to set max tokens again."
 msgstr "{command} - если решишься установить максимум токенов снова."
 
@@ -1597,6 +1617,7 @@ msgid "Something you think for a long time."
 msgstr "Что-то ты долго думаешь."
 
 #: bot/handlers/commands/settings/misc/tasks.py:19
+#, python-brace-format
 msgid "When you decide with {action}, write {command} again."
 msgstr "Когда определишься с {action}, напиши {command} снова."
 
@@ -1641,6 +1662,7 @@ msgid "to execute /who command"
 msgstr "для выполнения команды /who"
 
 #: bot/handlers/commands/settings/record/misc/keyboards.py:20
+#, python-brace-format
 msgid "{action} {field} recording"
 msgstr "{action} сохранение {field}"
 
@@ -1780,7 +1802,7 @@ msgstr "Ну и иди отсюда, пользователь!"
 msgid "And it all started so nicely..."
 msgstr "А всё начиналось так прекрасно..."
 
-#: bot/utils/generation/gpt.py:61
+#: bot/utils/generation/gpt.py:62
 msgid ""
 "Imagine you are interacting with a user via Telegram. Answer naturally. "
 "ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."
