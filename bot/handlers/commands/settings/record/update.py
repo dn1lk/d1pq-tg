@@ -71,7 +71,7 @@ class UpdateStickersHandler(UpdateBase):
 @flags.database("gen_settings")
 class UpdateMembersHandler(UpdateBase):
     async def update_data(self) -> None:
-        main_settings: database.models.MainSettings = self.data["gen_settings"]
+        main_settings: database.models.MainSettings = self.data["main_settings"]
 
         main_settings.with_members = not self.record_data.to_blocked
         if not main_settings.with_members:
