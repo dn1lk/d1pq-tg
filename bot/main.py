@@ -7,6 +7,7 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import I18n
 
 import config
+import misc
 
 bot = Bot(
     token=config.BOT_TOKEN,
@@ -15,7 +16,7 @@ bot = Bot(
     ),
 )
 
-i18n = I18n(path=config.LOCALE_PATH, domain="messages")
+i18n = I18n(path=misc.LOCALE_PATH, domain="messages")
 
 if config.REDIS_USE:
     storage = RedisStorage.from_url(
@@ -47,6 +48,7 @@ async def on_shutdown(bot: Bot, owner_id: int) -> None:
 
 
 def main() -> None:
+    misc.setup()
     utils.setup(dp)
     middlewares.setup(bot, dp, i18n)
     handlers.setup(dp)

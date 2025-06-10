@@ -29,7 +29,7 @@ class StartHandler(MessageHandler):
         return self.data["timer"]
 
     @property
-    def gen_settings(self) -> database.GenSettings:
+    def gen_settings(self) -> database.models.GenSettings:
         return self.data["gen_settings"]
 
     async def handle(self) -> None:
@@ -74,7 +74,9 @@ class StartHandler(MessageHandler):
 
     async def wait(self, data_rnd: dict[str, str]) -> None:
         async def get_stickers():
-            for sticker_set_name in (database.DEFAULT_STICKER_SET, *(self.gen_settings.stickers or [])):
+            saved_stickers = self.gen_settings.stickers if self.gen_settings.with_stickers else []
+
+            for sticker_set_name in (database.models.DEFAULT_STICKER_SET, *saved_stickers):
                 sticker_set = await self.bot.get_sticker_set(sticker_set_name)
 
                 for sticker in sticker_set.stickers:

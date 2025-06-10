@@ -6,7 +6,6 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from utils import database
-from utils.database.types import JsonList
 
 from . import RecordActions, keyboards
 from .misc.helpers import clear_data
@@ -46,9 +45,12 @@ class UpdateBase(CallbackQueryHandler, metaclass=ABCMeta):
 @flags.database("gen_settings")
 class UpdateMessagesHandler(UpdateBase):
     async def update_data(self) -> None:
-        gen_settings: database.GenSettings = self.data["gen_settings"]
+        gen_settings: database.models.GenSettings = self.data["gen_settings"]
 
-        gen_settings.messages = None if self.record_data.to_blocked else JsonList()
+        gen_settings.with_messages = not self.record_data.to_blocked
+        if not gen_settings.with_messages:
+            del gen_settings.messages
+
         await gen_settings.save()
 
 
@@ -56,9 +58,12 @@ class UpdateMessagesHandler(UpdateBase):
 @flags.database("gen_settings")
 class UpdateStickersHandler(UpdateBase):
     async def update_data(self) -> None:
-        gen_settings: database.GenSettings = self.data["gen_settings"]
+        gen_settings: database.models.GenSettings = self.data["gen_settings"]
 
-        gen_settings.stickers = None if self.record_data.to_blocked else JsonList()
+        gen_settings.with_stickers = not self.record_data.to_blocked
+        if not gen_settings.with_stickers:
+            del gen_settings.stickers
+
         await gen_settings.save()
 
 
@@ -66,9 +71,12 @@ class UpdateStickersHandler(UpdateBase):
 @flags.database("gen_settings")
 class UpdateMembersHandler(UpdateBase):
     async def update_data(self) -> None:
-        main_settings: database.MainSettings = self.data["gen_settings"]
+        main_settings: database.models.MainSettings = self.data["gen_settings"]
 
-        main_settings.members = None if self.record_data.to_blocked else JsonList([self.event.from_user.id])
+        main_settings.with_members = not self.record_data.to_blocked
+        if not main_settings.with_members:
+            del main_settings.members
+
         await main_settings.save()
 
 
@@ -76,9 +84,9 @@ class UpdateMembersHandler(UpdateBase):
 @flags.database(("gen_settings", "gpt_settings"))
 async def delete_handler(
     query: types.CallbackQuery,
-    main_settings: database.MainSettings,
-    gen_settings: database.GenSettings,
-    gpt_settings: database.GPTSettings,
+    main_settings: database.models.MainSettings,
+    gen_settings: database.models.GenSettings,
+    gpt_settings: database.models.GPTSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 

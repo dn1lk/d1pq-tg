@@ -3,9 +3,6 @@ import os
 DEBUG = int(os.getenv("DEBUG", "0"))
 LOG_TO_FILE = int(os.getenv("LOG_TO_FILE", "0"))
 
-LOCALE_PATH = "core/locales"
-LOG_PATH = "logs"
-
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 BOT_OWNER_ID = int(os.environ["BOT_OWNER_ID"])
 BOT_SKIP_UPDATES = bool(int(os.getenv("BOT_SKIP_UPDATES", "0")))

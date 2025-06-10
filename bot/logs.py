@@ -3,6 +3,7 @@ import logging
 from pythonjsonlogger import jsonlogger
 
 import config
+import misc
 
 
 class YcLoggingFormatter(jsonlogger.JsonFormatter):
@@ -33,7 +34,7 @@ def setup() -> None:
             "bot.gpt",
             "bot.uno",
         ):
-            file_handler = logging.FileHandler(f"{config.LOG_PATH}/{logger_name}.log")
+            file_handler = logging.FileHandler(misc.LOG_PATH / f"{logger_name}.log")
             file_handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s - %(name)s - %(message)s"))
 
             logger = logging.getLogger(logger_name)

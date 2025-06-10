@@ -1,5 +1,3 @@
-from typing import Any
-
 from aiogram import types
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.i18n import gettext as _
@@ -16,17 +14,17 @@ class RecordData(CallbackData, prefix=f"{CommandTypes.SETTINGS[0]}_record"):
     to_blocked: bool | None = None
 
 
-def switch_keyboard(actions: dict[RecordActions, Any]) -> types.InlineKeyboardMarkup:
+def switch_keyboard(actions: dict[RecordActions, bool]) -> types.InlineKeyboardMarkup:
     text = _("{action} {field} recording")
     builder = InlineKeyboardBuilder()
 
-    for action, field in actions.items():
-        if field is None:
-            _action = _("Enable")
-            to_blocked = False
-        else:
+    for action, is_enabled in actions.items():
+        if is_enabled:
             _action = _("Disable")
             to_blocked = True
+        else:
+            _action = _("Enable")
+            to_blocked = False
 
         builder.button(
             text=text.format(action=_action, field=action.keyboard.lower()),

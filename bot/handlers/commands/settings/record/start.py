@@ -1,5 +1,3 @@
-from typing import Any
-
 from aiogram import F, Router, enums, flags, types
 from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
@@ -17,20 +15,20 @@ router = Router(name="record:start")
 @flags.database("gen_settings")
 async def start_handler(
     query: types.CallbackQuery,
-    main_settings: database.MainSettings,
-    gen_settings: database.GenSettings,
+    main_settings: database.models.MainSettings,
+    gen_settings: database.models.GenSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 
-    actions: dict[RecordActions, Any] = {
-        RecordActions.MESSAGES: gen_settings.messages,
-        RecordActions.STICKERS: gen_settings.stickers,
+    actions: dict[RecordActions, bool] = {
+        RecordActions.MESSAGES: gen_settings.with_messages,
+        RecordActions.STICKERS: gen_settings.with_stickers,
     }
 
     if query.message.chat.type != enums.ChatType.PRIVATE:
         actions.update(
             {
-                RecordActions.MEMBERS: main_settings.members,
+                RecordActions.MEMBERS: main_settings.with_members,
             },
         )
 

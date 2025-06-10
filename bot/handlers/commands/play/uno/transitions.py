@@ -21,7 +21,7 @@ async def kick_user(
     state: FSMContext,
     timer: TimerTasks,
     user: types.User,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     data_uno = await UnoData.get_data(state)
     if data_uno is None:
@@ -45,7 +45,7 @@ async def leave_action_handler(
     bot: Bot,
     state: FSMContext,
     timer: TimerTasks,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     await kick_user(bot, state, timer, event.new_chat_member.user, main_settings)
 
@@ -57,7 +57,7 @@ async def leave_message_handler(
     bot: Bot,
     state: FSMContext,
     timer: TimerTasks,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     assert message.left_chat_member is not None, "wrong user"
     await kick_user(bot, state, timer, message.left_chat_member, main_settings)

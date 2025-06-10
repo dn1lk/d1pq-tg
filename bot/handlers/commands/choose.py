@@ -44,7 +44,7 @@ async def with_args_handler(message: types.Message, command: filters.CommandObje
 async def without_args_handler(
     message: types.Message,
     command: filters.CommandObject,
-    gen_settings: database.GenSettings,
+    gen_settings: database.models.GenSettings,
 ) -> None:
     from .help import choose_handler
 

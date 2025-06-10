@@ -59,13 +59,15 @@ async def play_handler(message: types.Message, command: filters.CommandObject) -
 async def choose_handler(
     message: types.Message,
     command: filters.CommandObject,
-    gen_settings: database.GenSettings,
+    gen_settings: database.models.GenSettings,
 ) -> None:
     content = formatting.Bold(_("What to choose?"))
     message = await message.answer(**content.as_kwargs())
 
-    if gen_settings.messages:
-        to_choice = helpers.get_split_text(gen_settings.messages)
+    if gen_settings.with_messages:
+        saved_messages = gen_settings.messages
+        to_choice = helpers.get_split_text(saved_messages)
+
         content = get_help_content(
             command,
             _(" or ").join((secrets.choice(to_choice), secrets.choice(to_choice))),

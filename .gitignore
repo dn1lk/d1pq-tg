@@ -4,6 +4,7 @@
 **/.git/
 **/__pycache__
 **/coverage/
+**/mnt/
 **/*.log
 **/*.env
 **/dev.env.example

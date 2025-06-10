@@ -1,5 +1,5 @@
 from .base import BaseType
 
 
-class Utf8(BaseType[str]):
+class Bool(BaseType[bool]):
     pass

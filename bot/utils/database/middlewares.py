@@ -1,13 +1,12 @@
 from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING, Any
 
-from aiogram import BaseMiddleware, Bot, Router, types
+from aiogram import BaseMiddleware, Bot, Router, enums, types
 from aiogram.dispatcher.flags import get_flag
 
 from core import helpers
-from utils.database.types import JsonList
 
-from . import models
+from . import Model, models
 
 if TYPE_CHECKING:
     from utils.generation import YandexGPT
@@ -34,10 +33,14 @@ class SQLGetFlagsMiddleware(BaseMiddleware):
         return await handler(event, data)
 
     async def update_data(self, data: dict[str, Any], chat_id: int, *databases: str) -> None:
-        data.update({database: await self.get_data(chat_id, database) for database in databases})
+        for database in databases:
+            if database in data:
+                continue
+
+            data[database] = await self.get_data(chat_id, database)
 
     @staticmethod
-    async def get_data(chat_id: int, database: str = "main_settings") -> models.Model:
+    async def get_data(chat_id: int, database: str = "main_settings") -> Model:
         match database:
             case "main_settings":
                 model = models.MainSettings
@@ -107,22 +110,29 @@ class SQLUpdateMiddleware(BaseMiddleware):
 
             await gpt.update_messages(key, messages)
 
-        if gen_settings.messages is not None:
-            gen_settings.messages = JsonList((*gen_settings.messages[-5000:], text))
+        if gen_settings.with_messages:
+            gen_settings.messages = [*gen_settings.messages[-5000:], text]
 
     @staticmethod
     async def _update_stickers(sticker: types.Sticker, gen_settings: models.GenSettings) -> None:
-        if gen_settings.stickers is None:
+        if not (gen_settings.with_stickers and sticker.set_name):
             return
 
-        if sticker.set_name and sticker.set_name not in gen_settings.stickers:
-            gen_settings.stickers = JsonList((*gen_settings.stickers[-4:], sticker.set_name))
+        saved_stickers = gen_settings.stickers
+        if sticker.set_name not in saved_stickers:
+            gen_settings.stickers = [*saved_stickers[-4:], sticker.set_name]
 
     @classmethod
     async def update_query(cls, event: types.Message, data: dict[str, Any]) -> None:
         main_settings: models.MainSettings = data["main_settings"]
-        gen_settings = data.get("gen_settings") or await models.GenSettings.get(chat_id=event.chat.id)
-        gpt_settings = data.get("gpt_settings") or await models.GPTSettings.get(chat_id=event.chat.id)
+        gen_settings: models.GenSettings = data.setdefault(
+            "gen_settings",
+            await models.GenSettings.get(chat_id=event.chat.id),
+        )
+        gpt_settings: models.GPTSettings = data.setdefault(
+            "gpt_settings",
+            await models.GPTSettings.get(chat_id=event.chat.id),
+        )
 
         text = helpers.get_text(event)
         if text:
@@ -130,9 +140,11 @@ class SQLUpdateMiddleware(BaseMiddleware):
         elif event.sticker:
             await cls._update_stickers(event.sticker, gen_settings)
 
-        if main_settings.members is not None and event.from_user.id not in main_settings.members:
-            main_settings.members.append(event.from_user.id)
-            main_settings.columns_changed.add("members")
+        if main_settings.with_members and event.chat.type != enums.ChatType.PRIVATE:
+            saved_members = main_settings.members
+
+            if event.from_user.id not in saved_members:
+                main_settings.members = [*saved_members, event.from_user.id]
 
         if main_settings.columns_changed:
             await main_settings.save()

@@ -1,25 +1,25 @@
 import json
-from typing import Self
 
 from .base import BaseType
 
 
-class JsonBase(BaseType[str]):
+class JsonBase[T](BaseType[T]):
     @classmethod
     def __queryname__(cls) -> str:
         return "Json"
 
     @classmethod
-    def deserialize(cls, value: str) -> Self:
-        return cls(json.loads(value))  # type: ignore[args]
+    def deserialize(cls, value: str) -> T:
+        return json.loads(value)
 
-    def serialize(self) -> str:
-        return json.dumps(self)
+    @classmethod
+    def serialize(cls, value: T) -> str:
+        return json.dumps(value)
 
 
-class JsonList[T](list[T], JsonBase):
+class JsonList[T](JsonBase[list[T]]):
     pass
 
 
-class JsonDict[KT, VT](dict[KT, VT], JsonBase):
+class JsonDict[KT, VT](JsonBase[dict[KT, VT]]):
     pass

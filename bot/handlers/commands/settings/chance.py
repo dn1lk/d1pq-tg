@@ -3,7 +3,6 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from utils import database
-from utils.database.types import Percent
 
 from . import SettingsActions, keyboards
 
@@ -16,12 +15,12 @@ router.callback_query.filter(keyboards.SettingsData.filter(F.action == SettingsA
 async def update_handler(
     query: types.CallbackQuery,
     callback_data: keyboards.SettingsData,
-    gen_settings: database.GenSettings,
+    gen_settings: database.models.GenSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
     assert isinstance(callback_data.value, str), "wrong callback data"
 
-    gen_settings.chance = Percent(int(callback_data.value) / 100)
+    gen_settings.chance = int(callback_data.value) / 100
     await gen_settings.save()
 
     content = formatting.Text(
@@ -39,7 +38,7 @@ async def update_handler(
 
 @router.callback_query()
 @flags.database("gen_settings")
-async def start_handler(query: types.CallbackQuery, gen_settings: database.GenSettings) -> None:
+async def start_handler(query: types.CallbackQuery, gen_settings: database.models.GenSettings) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 
     content = formatting.Text(

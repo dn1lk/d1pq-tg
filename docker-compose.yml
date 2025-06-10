@@ -16,3 +16,5 @@ services:
           target: /bot
     ports:
       - 8000:8000
+    volumes:
+      - ./bot/mnt:/bot/mnt

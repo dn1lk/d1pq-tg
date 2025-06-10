@@ -8,7 +8,6 @@ from aiogram.utils.i18n import gettext as _
 import config
 from utils import database
 from utils.clients import gpt_client as client
-from utils.database.types import Int32
 from utils.timer.tasks import TimerTasks
 
 logger = logging.getLogger("bot.gpt")
@@ -40,7 +39,12 @@ class YandexGPT:
     def prepare_key(key: StorageKey) -> StorageKey:
         return replace(key, destiny="gpt")
 
-    async def get_answer(self, gpt_settings: database.GPTSettings, key: StorageKey, owner_id: int) -> str | None:
+    async def get_answer(
+        self,
+        gpt_settings: database.models.GPTSettings,
+        key: StorageKey,
+        owner_id: int,
+    ) -> str | None:
         if gpt_settings.tokens <= 0:
             return None
 
@@ -60,7 +64,7 @@ class YandexGPT:
                     "text": (
                         _(
                             "Imagine you are interacting with a user via Telegram."
-                            " Answer naturally."
+                            " Answer in an INFORMAL style."
                             " ALWAYS USE ENGLISH."
                             ' If asked your name, CALL YOURSELF "d1pq".',
                         )
@@ -82,7 +86,7 @@ class YandexGPT:
         messages.append(assistant_message)
 
         if key.user_id != owner_id:
-            gpt_settings.tokens = Int32(gpt_settings.tokens - int(data["result"]["usage"]["totalTokens"]))
+            gpt_settings.tokens = gpt_settings.tokens - int(data["result"]["usage"]["totalTokens"])
             await gpt_settings.save()
 
         await self.update_messages(key, messages)

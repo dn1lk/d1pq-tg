@@ -3,7 +3,14 @@ from aiogram import Dispatcher
 
 import config
 
-from .models import *
+from . import models
+from .base import Model
+
+__all__ = (
+    "Model",
+    "models",
+    "setup",
+)
 
 
 async def setup(dispatcher: Dispatcher) -> None:
@@ -22,7 +29,7 @@ async def setup(dispatcher: Dispatcher) -> None:
     # directory: ydb.Directory = await driver.scheme_client.list_directory(config.YDB_DATABASE)
     # children_names = [children.name for children in directory.children]
 
-    # for model in (MainSettings, GenSettings, GPTSettings):
+    # for model in (models.MainSettings, models.GenSettings, models.GPTSettings):
     #     if model.__tablename__ not in children_names:
     #         await model.setup()
 

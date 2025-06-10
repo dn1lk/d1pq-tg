@@ -10,7 +10,6 @@ from handlers.commands import CommandTypes
 from handlers.commands.misc.helpers import get_help_content
 from handlers.commands.settings import SettingsStates
 from utils import TimerTasks, database
-from utils.database.types import JsonDict
 
 router = Router(name="commands:update")
 router.message.filter(
@@ -26,14 +25,13 @@ async def accept_handler(
     state: FSMContext,
     timer: TimerTasks,
     command: filters.CommandObject,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     assert command.args is not None, "wrong command args"
-    if main_settings.commands is None:
-        main_settings.commands = JsonDict()
+    saved_commands = main_settings.commands
 
     _custom_command = f"{command.prefix}{command.args}"
-    if command.args in main_settings.commands.values():
+    if command.args in saved_commands.values():
         content = formatting.Text(
             _("{custom_command} is already recorded. Try another.").format(custom_command=_custom_command),
         )
@@ -42,10 +40,10 @@ async def accept_handler(
             _("{custom_command} is already taken by me. Choose another.").format(custom_command=_custom_command),
         )
     else:
-        main_settings.commands[command.command] = command.args
-
+        saved_commands[command.command] = command.args
         del timer[state.key]
-        await main_settings.save("commands")
+
+        main_settings.commands = saved_commands
         await state.clear()
 
         _command = f"{command.prefix}{command.command}"
@@ -65,7 +63,7 @@ async def decline_handler(
     state: FSMContext,
     timer: TimerTasks,
     command: filters.CommandObject,
-    gen_settings: database.GenSettings,
+    gen_settings: database.models.GenSettings,
 ) -> None:
     data = await state.get_data()
     tries = data.get("tries", 1)
@@ -86,9 +84,10 @@ async def decline_handler(
         content = formatting.Bold(_("Custom command not recognized."))
         message = await message.answer(**content.as_kwargs())
 
+        messages = gen_settings.messages if gen_settings.with_messages else [_("bla bla")]
         content = get_help_content(
             command,
-            secrets.choice(helpers.get_split_text(gen_settings.messages or [_("bla bla")])).lower(),
+            secrets.choice(helpers.get_split_text(messages)).lower(),
         )
 
     await message.answer(**content.as_kwargs())

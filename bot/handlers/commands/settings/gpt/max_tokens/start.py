@@ -18,7 +18,7 @@ async def start_handler(
     query: types.CallbackQuery,
     state: FSMContext,
     timer: TimerTasks,
-    gpt_settings: database.GPTSettings,
+    gpt_settings: database.models.GPTSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 

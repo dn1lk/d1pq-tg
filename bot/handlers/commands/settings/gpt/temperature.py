@@ -3,7 +3,6 @@ from aiogram.utils import formatting
 from aiogram.utils.i18n import gettext as _
 
 from utils import database
-from utils.database.types import Percent
 
 from . import GPTOptionsActions, keyboards
 
@@ -16,12 +15,12 @@ router.callback_query.filter(keyboards.GPTOptionsData.filter(F.action == GPTOpti
 async def update_handler(
     query: types.CallbackQuery,
     callback_data: keyboards.GPTOptionsData,
-    gpt_settings: database.GPTSettings,
+    gpt_settings: database.models.GPTSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
     assert callback_data.value is not None, "wrong callback data"
 
-    gpt_settings.temperature = Percent(callback_data.value / 10)
+    gpt_settings.temperature = callback_data.value / 10
     await gpt_settings.save()
 
     content = formatting.Text(
@@ -39,7 +38,7 @@ async def update_handler(
 
 @router.callback_query()
 @flags.database("gpt_settings")
-async def start_handler(query: types.CallbackQuery, gpt_settings: database.GPTSettings) -> None:
+async def start_handler(query: types.CallbackQuery, gpt_settings: database.models.GPTSettings) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 
     content = formatting.Text(

@@ -1,10 +1,9 @@
 import secrets
 from functools import lru_cache
-from pathlib import Path
 
 from pydantic import Field
 
-import config
+import misc
 from handlers.commands.play import PlayData
 
 
@@ -16,8 +15,8 @@ class CTSData(PlayData):
     @classmethod
     @lru_cache(maxsize=2)
     def get_cities(cls, locale: str) -> list[str]:
-        with Path(f"{config.LOCALE_PATH}/{locale}/cities.txt").open(encoding="utf8") as r:
-            return r.read().splitlines()
+        path = misc.LOCALE_PATH / locale / "cities.txt"
+        return path.read_text(encoding="UTF-8").splitlines()
 
     def gen_city(self, cities: list[str], user_city: str | None = None) -> None:
         if user_city:

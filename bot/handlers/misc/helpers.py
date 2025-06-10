@@ -16,8 +16,8 @@ async def get_gen_kwargs(
     owner_id: int,
     state: FSMContext,
     i18n: I18n,
-    gen_settings: database.GenSettings,
-    gpt_settings: database.GPTSettings,
+    gen_settings: database.models.GenSettings,
+    gpt_settings: database.models.GPTSettings,
     gpt: generation.YandexGPT,
 ) -> dict[str, Any]:
     async def gen_text() -> dict[str, str]:

@@ -16,10 +16,11 @@ class CustomCommand(filters.Command):
         self,
         message: types.Message,
         bot: Bot,
-        main_settings: database.MainSettings | None = None,
+        main_settings: database.models.MainSettings | None = None,
     ) -> Any:
-        if self.with_customs and main_settings.commands:
-            commands = main_settings.commands.get(self.commands[0])
+        if self.with_customs and main_settings.with_commands:
+            saved_commands = main_settings.commands
+            commands = saved_commands.get(self.commands[0])
 
             if commands:
                 self.commands += (commands,)

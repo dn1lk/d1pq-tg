@@ -15,9 +15,9 @@ router = Router(name="error")
 @flags.database(("gen_settings", "gpt_settings"))
 async def forbidden_handler(
     event: ErrorEvent,
-    main_settings: database.MainSettings,
-    gen_settings: database.GenSettings,
-    gpt_settings: database.GPTSettings,
+    main_settings: database.models.MainSettings,
+    gen_settings: database.models.GenSettings,
+    gpt_settings: database.models.GPTSettings,
     event_chat: types.Chat | None = None,
 ) -> None:
     loggers.event.error(event.exception)

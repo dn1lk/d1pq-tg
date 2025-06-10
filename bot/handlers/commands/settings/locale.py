@@ -4,7 +4,6 @@ from aiogram.utils.i18n import I18n
 from aiogram.utils.i18n import gettext as _
 
 from utils import database
-from utils.database.types import Utf8
 
 from . import SettingsActions, keyboards
 from .misc.helpers import transcript_locale
@@ -18,11 +17,12 @@ async def update_handler(
     query: types.CallbackQuery,
     i18n: I18n,
     callback_data: keyboards.SettingsData,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
+    assert isinstance(callback_data.value, str), f"wrong callback data value: {callback_data.value}"
 
-    main_settings.locale = Utf8(callback_data.value)
+    main_settings.locale = callback_data.value
     await main_settings.save()
 
     with i18n.use_locale(main_settings.locale):

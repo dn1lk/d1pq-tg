@@ -7,7 +7,6 @@ from aiogram.utils.i18n import gettext as _
 from core import filters
 from handlers.commands.settings.record.misc.helpers import clear_data
 from utils import database
-from utils.database.types import Int64
 
 router = Router(name="transitions:other")
 
@@ -16,9 +15,9 @@ router = Router(name="transitions:other")
 @flags.database(("gen_settings", "gpt_settings"))
 async def my_leave_handler(
     _: types.Message,
-    main_settings: database.MainSettings,
-    gen_settings: database.GenSettings,
-    gpt_settings: database.GPTSettings,
+    main_settings: database.models.MainSettings,
+    gen_settings: database.models.GenSettings,
+    gpt_settings: database.models.GPTSettings,
 ) -> None:
     await clear_data(main_settings, gen_settings, gpt_settings)
 
@@ -29,12 +28,15 @@ async def join_leave_message_handler(_: types.Message) -> None:
 
 
 @router.message(F.migrate_to_chat_id)
-async def my_migrated_from_message_handler(message: types.Message, main_settings: database.MainSettings) -> None:
+async def my_migrated_from_message_handler(
+    message: types.Message,
+    main_settings: database.models.MainSettings,
+) -> None:
     """In old chat after migration"""
 
     assert message.migrate_to_chat_id is not None, "wrong chat id"
 
-    main_settings.chat_id = Int64(message.migrate_to_chat_id)
+    main_settings.chat_id = message.migrate_to_chat_id
     await main_settings.save()
 
 

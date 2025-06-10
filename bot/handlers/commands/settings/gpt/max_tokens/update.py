@@ -8,7 +8,6 @@ from handlers.commands import CommandTypes
 from handlers.commands.misc.types import PREFIX
 from handlers.commands.settings.gpt import GPTSettingsStates
 from utils import TimerTasks, database
-from utils.database.types import Uint16
 
 MAX_TOKENS = 2000
 
@@ -22,11 +21,11 @@ async def accept_handler(
     message: types.Message,
     state: FSMContext,
     timer: TimerTasks,
-    gpt_settings: database.GPTSettings,
+    gpt_settings: database.models.GPTSettings,
 ) -> None:
     assert message.text is not None, "wrong text"
 
-    gpt_settings.max_tokens = Uint16(message.text)
+    gpt_settings.max_tokens = int(message.text)
 
     del timer[state.key]
     await gpt_settings.save()

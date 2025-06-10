@@ -26,13 +26,15 @@ async def with_args_handler(
     message: types.Message,
     bot: Bot,
     command: filters.CommandObject,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     assert command.args is not None, "wrong command args"
 
-    if main_settings.members:
-        if len(main_settings.members) > 1:
-            member = await bot.get_chat_member(message.chat.id, secrets.choice(main_settings.members))
+    if main_settings.with_members:
+        saved_members = main_settings.members
+
+        if len(saved_members) > 1:
+            member = await bot.get_chat_member(message.chat.id, secrets.choice(saved_members))
 
             content = formatting.Text(
                 secrets.choice(

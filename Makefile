@@ -71,6 +71,7 @@ deploy: push set_webhook
 		--concurrency 6 \
 		--execution-timeout 5m \
 		--environment '$(shell sed 's|^|,|g' database.env redis.env .env | tr -s "\r\n" "," | cut -c2-)' \
+		--mount type=object-storage,mount-point=/bot/mnt,bucket=$(YC_BUCKET_NAME),mode=rw \
 		--service-account-id $(YC_SERVICE_ACCOUNT_ID)
 
 all: create create_gw deploy

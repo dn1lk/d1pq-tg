@@ -7,14 +7,16 @@ from aiogram.utils.i18n import gettext as _
 from utils import database
 
 
-async def update_members(main_settings: database.MainSettings, *users: types.User) -> None:
-    if main_settings.members is None:
+async def update_members(main_settings: database.models.MainSettings, *users: types.User) -> None:
+    if not main_settings.with_members:
         return
 
-    user_ids = [user.id for user in users if user.id not in main_settings.members]
+    saved_members = main_settings.members
+
+    user_ids = [user.id for user in users if user.id not in saved_members]
     if user_ids:
-        main_settings.members.extend(user_ids)
-        await main_settings.save("members")
+        saved_members.extend(user_ids)
+        main_settings.members = saved_members
 
 
 def get_join_content(*users: types.User) -> formatting.Text:
@@ -46,13 +48,15 @@ def get_join_content(*users: types.User) -> formatting.Text:
     return content
 
 
-async def remove_member(main_settings: database.MainSettings, user_id: int) -> None:
-    if main_settings.members is None:
+async def remove_member(main_settings: database.models.MainSettings, user_id: int) -> None:
+    if not main_settings.with_members:
         return
 
-    if user_id in main_settings.members:
-        main_settings.members.remove(user_id)
-        await main_settings.save("members")
+    saved_members = main_settings.members
+
+    if user_id in saved_members:
+        saved_members.remove(user_id)
+        main_settings.members = saved_members
 
 
 def get_leave_content(user: types.User) -> formatting.Text:

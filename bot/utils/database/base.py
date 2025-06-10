@@ -11,6 +11,7 @@ import config
 from .types.base import BaseType
 
 type CT = Any
+type DBT = Any
 
 
 @dataclass(slots=True, frozen=True)
@@ -18,8 +19,8 @@ class Column[T: BaseType[CT]]:
     type: type[T]
     is_primary_key: bool = False
     is_null: bool = False
-    default: T | Callable[..., T] | None = None
-    on_update: T | Callable[..., T] | None = None
+    default: CT | Callable[..., CT] | None = None
+    on_update: CT | Callable[..., CT] | None = None
 
     @property
     def query_type(self) -> str:
@@ -29,9 +30,11 @@ class Column[T: BaseType[CT]]:
             return f"Optional<{_type}>"
         return _type
 
-    def __call__(self, value: T | Callable[..., T] | None) -> T | None:
-        assert issubclass(self.type, BaseType), f"incorrect column type: {self.type}"
-        return value if value is None else self.type.deserialize(value)
+    def serialize(self, value: CT | None) -> DBT:
+        return None if value is None else self.type.serialize(value)
+
+    def deserialize(self, value: DBT) -> CT | None:
+        return None if value is None else self.type.deserialize(value)
 
 
 @dataclass(slots=True, frozen=True)
@@ -47,13 +50,21 @@ class Model:
     __tablename__: ClassVar[str] = ""
     __indices__: ClassVar[list[Index]] = []
 
+    __slots__ = ("columns_changed",)
+
     def __init__(self, **kwargs: CT) -> None:
         self.columns_changed: set[str] = set()
         for name, column in self._get_columns().items():
-            value = kwargs.get(name)
-            super().__setattr__(name, column(value))
+            if name not in kwargs and column.default is not None:
+                value = column.default() if callable(column.default) else column.default
+                self.columns_changed.add(name)
+            else:
+                value = kwargs.get(name)
+                value = column.type.deserialize(value)
 
-    def __setattr__(self, name: str, value: BaseType[CT] | None) -> None:
+            super().__setattr__(name, value)
+
+    def __setattr__(self, name: str, value: CT | None) -> None:
         if name in self._get_columns():
             self.columns_changed.add(name)
 
@@ -79,11 +90,6 @@ class Model:
         return pks
 
     @classmethod
-    def _serialize(cls, params: dict[str, BaseType[CT] | None]) -> None:
-        for param, value in params.items():
-            params[param] = None if value is None else value.serialize()
-
-    @classmethod
     async def _execute(
         cls,
         query: str,
@@ -106,7 +112,7 @@ class Model:
             if name in kwargs:
                 query_structures.append(f"declare ${name} as {column.query_type};")
                 query_filters.append(f"{name} == ${name}")
-                prepared_params[f"${name}"] = column(kwargs[name])
+                prepared_params[f"${name}"] = column.serialize(kwargs[name])
 
         query_structure = "\n".join(query_structures)
         query_filter = " and ".join(query_filters)
@@ -118,9 +124,7 @@ class Model:
             f" where {query_filter};"
         )
 
-        cls._serialize(prepared_params)
         queryset = await cls._execute(query, prepared_params)
-
         return queryset[0].rows
 
     @classmethod
@@ -139,12 +143,8 @@ class Model:
     async def get(cls, **kwargs: CT) -> Self:
         data = await cls._get(**kwargs)
         if data is None:
-            self = cls(**kwargs)
-            for name, column in cls._get_columns().items():
-                if column.default is not None:
-                    setattr(self, name, column.default() if callable(column.default) else column.default)
+            data = kwargs
 
-            return self
         return cls(**data)
 
     async def _save(self, **kwargs: BaseType[CT] | None) -> ydb.convert.ResultSets:
@@ -161,13 +161,12 @@ class Model:
             f" upsert into {self.__class__.__tablename__} select * from AS_TABLE($input);"
         )
 
-        self._serialize(kwargs)
         rows = await self._execute(query, {"$input": [kwargs]})
 
         self.columns_changed.clear()
         return rows
 
-    async def save(self, *columns_changed: str) -> ydb.convert.ResultSets:
+    async def save(self, *columns_changed: str) -> ydb.convert.ResultSets | None:
         for name, column in self._get_columns().items():
             if column.on_update is not None:
                 setattr(self, name, column.on_update() if callable(column.on_update) else column.on_update)
@@ -175,9 +174,15 @@ class Model:
                 self.columns_changed.add(name)
 
         if columns_changed:
-            self.columns_changed = self.columns_changed.union(columns_changed)
+            self.columns_changed |= set(columns_changed)
 
-        kwargs = {name: getattr(self, name) for name in self.columns_changed.union(self._get_pks())}
+        columns = self._get_columns()
+
+        kwargs = {}
+        for name in self.columns_changed | set(self._get_pks()):
+            column = columns[name]
+            kwargs[name] = column.serialize(getattr(self, name))
+
         return await self._save(**kwargs)
 
     async def _delete(self) -> ydb.convert.ResultSets:
@@ -186,9 +191,11 @@ class Model:
         prepared_params = {}
 
         for name, column in self._get_pks().items():
+            value = getattr(self, name)
+
             query_structures.append(f"declare ${name} as {column.query_type};")
             query_filters.append(f"{name} == ${name}")
-            prepared_params[f"${name}"] = getattr(self, name)
+            prepared_params[f"${name}"] = column.serialize(value)
 
         query_structure = "\n".join(query_structures)
         query_filter = " and ".join(query_filters)
@@ -200,13 +207,12 @@ class Model:
             f" where {query_filter};"
         )
 
-        self._serialize(prepared_params)
         rows = await self._execute(query, prepared_params)
 
         self.columns_changed.clear()
         return rows
 
-    async def delete(self) -> ydb.convert.ResultSets:
+    async def delete(self) -> ydb.convert.ResultSets | None:
         return await self._delete()
 
     @classmethod
@@ -216,7 +222,7 @@ class Model:
             query_column = f"{name} {column.type.__queryname__()}"
             query_column += " null" if column.is_null else " not null"
             if not (column.default is None or callable(column.default)):
-                query_column += f' default {column.type.__queryname__()}("{column.default.serialize()}")'
+                query_column += f' default {column.type.__queryname__()}("{column.type.serialize(column.default)}")'
 
             query_structure.append(query_column)
 

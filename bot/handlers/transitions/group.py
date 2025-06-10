@@ -77,7 +77,7 @@ async def my_demoted_handler(event: types.ChatMemberUpdated, bot: Bot) -> None:
 async def join_action_handler(
     event: types.ChatMemberUpdated,
     bot: Bot,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     await update_members(main_settings, event.new_chat_member.user)
 
@@ -88,7 +88,7 @@ async def join_action_handler(
 @router.message(F.new_chat_members)
 async def join_message_handler(
     message: types.Message,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     assert message.new_chat_members is not None, "wrong users"
 
@@ -102,7 +102,7 @@ async def join_message_handler(
 async def leave_action_handler(
     event: types.ChatMemberUpdated,
     bot: Bot,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     await remove_member(main_settings, event.new_chat_member.user.id)
 
@@ -113,7 +113,7 @@ async def leave_action_handler(
 @router.message(F.left_chat_member, filters.MagicData(F.event.left_chat_member.id != F.bot.id))
 async def leave_message_handler(
     message: types.Message,
-    main_settings: database.MainSettings,
+    main_settings: database.models.MainSettings,
 ) -> None:
     assert message.left_chat_member is not None, "wrong users"
 

@@ -1,26 +1,23 @@
 import datetime as dt
-from typing import Self
 
 from .base import BaseType
 
 
-class Datetime(dt.datetime, BaseType[int]):
+class Datetime(BaseType[dt.datetime]):
     @classmethod
-    def deserialize(cls, value: int) -> Self:
-        return cls.fromtimestamp(value, tz=dt.UTC)
-
-    def serialize(self) -> int:
-        return int(self.timestamp())
+    def deserialize(cls, value: int) -> dt.datetime:
+        return dt.datetime.fromtimestamp(value, tz=dt.UTC)
 
     @classmethod
-    def now(cls, tz: dt.tzinfo | None = dt.UTC) -> Self:
-        return super().now(tz=tz)
+    def serialize(cls, value: dt.datetime) -> int:
+        return int(value.timestamp())
 
 
 class Timestamp(Datetime):
     @classmethod
-    def deserialize(cls, value: int) -> Self:
-        return cls.fromtimestamp(value / 1e6, tz=dt.UTC)
+    def deserialize(cls, value: int) -> dt.datetime:
+        return dt.datetime.fromtimestamp(value / 1e6, tz=dt.UTC)
 
-    def serialize(self) -> int:
-        return int(self.timestamp() * 1e6)
+    @classmethod
+    def serialize(cls, value: dt.datetime) -> int:
+        return int(value.timestamp() * 1e6)

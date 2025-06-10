@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-05-05 06:23+0300\n"
+"POT-Creation-Date: 2025-06-11 00:02+0300\n"
 "PO-Revision-Date: 2022-05-14 13:14+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -68,7 +68,7 @@ msgstr "Моё почтение"
 msgid "Yop"
 msgstr "Йоп"
 
-#: bot/handlers/other.py:86 bot/handlers/other.py:134
+#: bot/handlers/other.py:86 bot/handlers/other.py:135
 msgid "Continuing with the previous sentence."
 msgstr "Продолжая предыдущее предложение."
 
@@ -101,31 +101,31 @@ msgstr "Попробуй угадать игру, написав {command} с е
 msgid "What to choose?"
 msgstr "Что выбрать?"
 
-#: bot/handlers/commands/help.py:71
+#: bot/handlers/commands/help.py:73
 msgid " or "
 msgstr " или "
 
-#: bot/handlers/commands/help.py:82
+#: bot/handlers/commands/help.py:84
 msgid "Who???"
 msgstr "Кто???"
 
-#: bot/handlers/commands/help.py:89
+#: bot/handlers/commands/help.py:91
 msgid "will sleep tonight"
 msgstr "будет сегодня спать"
 
-#: bot/handlers/commands/help.py:90
+#: bot/handlers/commands/help.py:92
 msgid "knows the most"
 msgstr "знает больше всех"
 
-#: bot/handlers/commands/help.py:91
+#: bot/handlers/commands/help.py:93
 msgid "will prepare everything in time"
 msgstr "всё делает вовремя"
 
-#: bot/handlers/commands/help.py:92
+#: bot/handlers/commands/help.py:94
 msgid "****"
 msgstr "****"
 
-#: bot/handlers/commands/help.py:103
+#: bot/handlers/commands/help.py:105
 msgid ""
 "List of my main commands — I only accept them together with the required "
 "request, in one message:\n"
@@ -145,43 +145,43 @@ msgstr "чатах"
 msgid "alas. 😥"
 msgstr "увы. 😥"
 
-#: bot/handlers/commands/who.py:40
+#: bot/handlers/commands/who.py:42
 msgid "Hmmm, I think"
 msgstr "Хммм, я думаю, что"
 
-#: bot/handlers/commands/who.py:41
+#: bot/handlers/commands/who.py:43
 msgid "I guess"
 msgstr "Я предполагаю, что"
 
-#: bot/handlers/commands/who.py:42
+#: bot/handlers/commands/who.py:44
 msgid "Oh, I admit"
 msgstr "Ох, я догадываюсь, что"
 
-#: bot/handlers/commands/who.py:43
+#: bot/handlers/commands/who.py:45
 msgid "Maybe it's"
 msgstr "Может быть это"
 
-#: bot/handlers/commands/who.py:44
+#: bot/handlers/commands/who.py:46
 msgid "Wait! It's"
 msgstr "Подожди! Это"
 
-#: bot/handlers/commands/who.py:55
+#: bot/handlers/commands/who.py:57
 msgid "Oh, I don't know you guys... Give me a time."
 msgstr "Ох, я не знаю вас ребят... Дайте мне время."
 
-#: bot/handlers/commands/who.py:56
+#: bot/handlers/commands/who.py:58
 msgid "Does anyone else want to enter this command?"
 msgstr "Кто-нибудь еще хочет ввести эту команду?"
 
-#: bot/handlers/commands/who.py:57
+#: bot/handlers/commands/who.py:59
 msgid "Is there anyone else in this chat besides you?"
 msgstr "В этом чате кроме тебя есть еще кто-нибудь?"
 
-#: bot/handlers/commands/who.py:63
+#: bot/handlers/commands/who.py:65
 msgid "This command requires permission to record chat participants."
 msgstr "Для этой команды требуется разрешение записи участников чата."
 
-#: bot/handlers/commands/who.py:67
+#: bot/handlers/commands/who.py:69
 msgid "give permission"
 msgstr "дать разрешение"
 
@@ -461,7 +461,7 @@ msgstr ""
 msgid "LET THE BATTLE BEGIN!"
 msgstr "ДА НАЧНЁТСЯ ЖЕ БИТВА!"
 
-#: bot/handlers/commands/play/rnd/chat/start.py:105
+#: bot/handlers/commands/play/rnd/chat/start.py:107
 msgid ""
 "Nobody tries to guess!\n"
 "I finish the game."
@@ -469,7 +469,7 @@ msgstr ""
 "Никто не пытается угадать!\n"
 "Я заканчиваю игру."
 
-#: bot/handlers/commands/play/rnd/chat/start.py:110
+#: bot/handlers/commands/play/rnd/chat/start.py:112
 msgid ""
 "Nobody guessed right. 😢\n"
 "My number was"
@@ -1354,22 +1354,22 @@ msgid "Black"
 msgstr "Чёрный"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:16
-#: bot/handlers/commands/settings/record/update.py:37
+#: bot/handlers/commands/settings/record/update.py:36
 msgid "disabled"
 msgstr "отключено"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:18
-#: bot/handlers/commands/settings/record/update.py:37
+#: bot/handlers/commands/settings/record/update.py:36
 msgid "enabled"
 msgstr "включено"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:29
-#: bot/handlers/commands/settings/record/misc/keyboards.py:25
+#: bot/handlers/commands/settings/record/misc/keyboards.py:26
 msgid "Enable"
 msgstr "Включить"
 
 #: bot/handlers/commands/play/uno/misc/data/settings/additions.py:31
-#: bot/handlers/commands/settings/record/misc/keyboards.py:28
+#: bot/handlers/commands/settings/record/misc/keyboards.py:23
 msgid "Disable"
 msgstr "Отключить"
 
@@ -1409,39 +1409,39 @@ msgstr "с очками"
 msgid "Only for administrators."
 msgstr "Только для администраторов."
 
-#: bot/handlers/commands/settings/accuracy.py:28
+#: bot/handlers/commands/settings/accuracy.py:27
 msgid "Text generation accuracy has been successfully updated."
 msgstr "Точность генерации текста успешно обновлена."
 
-#: bot/handlers/commands/settings/accuracy.py:30
-#: bot/handlers/commands/settings/accuracy.py:48
+#: bot/handlers/commands/settings/accuracy.py:29
+#: bot/handlers/commands/settings/accuracy.py:47
 msgid "Current accuracy"
 msgstr "Текущая точность"
 
-#: bot/handlers/commands/settings/accuracy.py:46
+#: bot/handlers/commands/settings/accuracy.py:45
 msgid "Change text generation accuracy."
 msgstr "Изменить точность генерации текста."
 
-#: bot/handlers/commands/settings/accuracy.py:52
-#: bot/handlers/commands/settings/chance.py:52
-#: bot/handlers/commands/settings/gpt/temperature.py:52
+#: bot/handlers/commands/settings/accuracy.py:51
+#: bot/handlers/commands/settings/chance.py:51
+#: bot/handlers/commands/settings/gpt/temperature.py:51
 msgid "Available options"
 msgstr "Доступные опции"
 
-#: bot/handlers/commands/settings/accuracy.py:54
+#: bot/handlers/commands/settings/accuracy.py:53
 msgid "The higher the value, the more usual the generation will be."
 msgstr "Выше значение - более точной генерация будет."
 
-#: bot/handlers/commands/settings/chance.py:28
+#: bot/handlers/commands/settings/chance.py:27
 msgid "Text generation chance has been successfully updated."
 msgstr "Вероятность генерации текста успешно обновлена."
 
-#: bot/handlers/commands/settings/chance.py:30
-#: bot/handlers/commands/settings/chance.py:48
+#: bot/handlers/commands/settings/chance.py:29
+#: bot/handlers/commands/settings/chance.py:47
 msgid "Current chance"
 msgstr "Текущая вероятность"
 
-#: bot/handlers/commands/settings/chance.py:46
+#: bot/handlers/commands/settings/chance.py:45
 msgid "Change text generation chance."
 msgstr "Изменить шанс генерации текста."
 
@@ -1462,54 +1462,54 @@ msgstr "Изменить язык."
 msgid "Available languages"
 msgstr "Доступные языки"
 
-#: bot/handlers/commands/settings/commands/start.py:41
-#: bot/handlers/commands/settings/commands/update.py:91
+#: bot/handlers/commands/settings/commands/start.py:39
+#: bot/handlers/commands/settings/commands/update.py:87
 msgid "bla bla"
 msgstr "бла бла"
 
-#: bot/handlers/commands/settings/commands/start.py:45
+#: bot/handlers/commands/settings/commands/start.py:46
 msgid "Tired of writing preset commands?"
 msgstr "Устали писать предустановленные команды?"
 
-#: bot/handlers/commands/settings/commands/start.py:49
+#: bot/handlers/commands/settings/commands/start.py:50
 msgid "and I will answer this command"
 msgstr "и я буду отвечать на эту команду"
 
-#: bot/handlers/commands/settings/commands/start.py:58
+#: bot/handlers/commands/settings/commands/start.py:61
 msgid "Current custom commands:"
 msgstr "Текущие кастомные настройки:"
 
-#: bot/handlers/commands/settings/commands/update.py:38
+#: bot/handlers/commands/settings/commands/update.py:36
 #, python-brace-format
 msgid "{custom_command} is already recorded. Try another."
 msgstr "{custom_command} уже есть в моей базе. Попробуй ещё."
 
-#: bot/handlers/commands/settings/commands/update.py:42
+#: bot/handlers/commands/settings/commands/update.py:40
 #, python-brace-format
 msgid "{custom_command} is already taken by me. Choose another."
 msgstr "{custom_command} уже есть в моей базе. Выбери другую."
 
-#: bot/handlers/commands/settings/commands/update.py:53
+#: bot/handlers/commands/settings/commands/update.py:51
 #, python-brace-format
 msgid "{custom_command} added successfully!"
 msgstr "{custom_command} успешно добавлена!"
 
-#: bot/handlers/commands/settings/commands/update.py:55
+#: bot/handlers/commands/settings/commands/update.py:53
 #, python-brace-format
 msgid "Now in this chat you can write it instead of {command}."
 msgstr "Теперь в этом чате можно писать это вместо {command}."
 
-#: bot/handlers/commands/settings/commands/update.py:79
-#: bot/handlers/commands/settings/gpt/max_tokens/update.py:63
+#: bot/handlers/commands/settings/commands/update.py:77
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:62
 msgid "Something is not working for you."
 msgstr "Что-то у тебя не получается."
 
-#: bot/handlers/commands/settings/commands/update.py:81
+#: bot/handlers/commands/settings/commands/update.py:79
 #, python-brace-format
 msgid "{command} - if you decide to set your command again."
 msgstr "{command} - если решишься установить свою команду снова."
 
-#: bot/handlers/commands/settings/commands/update.py:86
+#: bot/handlers/commands/settings/commands/update.py:84
 msgid "Custom command not recognized."
 msgstr "Кастомная команда не распознана."
 
@@ -1517,16 +1517,16 @@ msgstr "Кастомная команда не распознана."
 msgid "Change GPT options."
 msgstr "Изменить параметры GPT."
 
-#: bot/handlers/commands/settings/gpt/temperature.py:28
+#: bot/handlers/commands/settings/gpt/temperature.py:27
 msgid "Text generation temperature has been successfully updated."
 msgstr "Температура генерации текста успешно обновлена."
 
-#: bot/handlers/commands/settings/gpt/temperature.py:30
-#: bot/handlers/commands/settings/gpt/temperature.py:48
+#: bot/handlers/commands/settings/gpt/temperature.py:29
+#: bot/handlers/commands/settings/gpt/temperature.py:47
 msgid "Current temperature"
 msgstr "Текущая температура"
 
-#: bot/handlers/commands/settings/gpt/temperature.py:46
+#: bot/handlers/commands/settings/gpt/temperature.py:45
 msgid "Change text generation temperature."
 msgstr "Изменить температуру генерации текста."
 
@@ -1535,7 +1535,7 @@ msgid "Change max tokens per message."
 msgstr "Изменить максимум токенов на сообщение."
 
 #: bot/handlers/commands/settings/gpt/max_tokens/start.py:30
-#: bot/handlers/commands/settings/gpt/max_tokens/update.py:38
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:37
 msgid "Current max tokens"
 msgstr "Текущий максимум токенов"
 
@@ -1547,16 +1547,16 @@ msgstr "Напиши чисто от 0 до 2000."
 msgid "max tokens"
 msgstr "максимум токенов"
 
-#: bot/handlers/commands/settings/gpt/max_tokens/update.py:36
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:35
 msgid "Max tokens has been successfully updated."
 msgstr "Максимум токенов обновлен."
 
-#: bot/handlers/commands/settings/gpt/max_tokens/update.py:65
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:64
 #, python-brace-format
 msgid "{command} - if you decide to set max tokens again."
 msgstr "{command} - если решишься установить максимум токенов снова."
 
-#: bot/handlers/commands/settings/gpt/max_tokens/update.py:69
+#: bot/handlers/commands/settings/gpt/max_tokens/update.py:68
 msgid "Wrong number - I accept only from 0 to 2000."
 msgstr "Неверное число - я принимаю только от 0 до 2000."
 
@@ -1621,15 +1621,15 @@ msgstr "Что-то ты долго думаешь."
 msgid "When you decide with {action}, write {command} again."
 msgstr "Когда определишься с {action}, напиши {command} снова."
 
-#: bot/handlers/commands/settings/record/start.py:38
+#: bot/handlers/commands/settings/record/start.py:36
 msgid "I am recording some information about this chat."
 msgstr "Я записываю некоторую информацию об этом чате."
 
-#: bot/handlers/commands/settings/record/update.py:35
+#: bot/handlers/commands/settings/record/update.py:34
 msgid "recording is"
 msgstr "запись"
 
-#: bot/handlers/commands/settings/record/update.py:87
+#: bot/handlers/commands/settings/record/update.py:95
 msgid "Records was successfully deleted."
 msgstr "Записи успешно удалены."
 
@@ -1661,7 +1661,7 @@ msgstr "для генерации стикеров"
 msgid "to execute /who command"
 msgstr "для выполнения команды /who"
 
-#: bot/handlers/commands/settings/record/misc/keyboards.py:20
+#: bot/handlers/commands/settings/record/misc/keyboards.py:18
 #, python-brace-format
 msgid "{action} {field} recording"
 msgstr "{action} сохранение {field}"
@@ -1718,7 +1718,7 @@ msgstr "Я запомню это..."
 msgid "Just don't kick me!!!"
 msgstr "Только не кикайте меня!!!"
 
-#: bot/handlers/transitions/other.py:47
+#: bot/handlers/transitions/other.py:49
 msgid "Ouch, it's just a migrated group..."
 msgstr "Оуч, это просто мигрированная группа..."
 
@@ -1746,83 +1746,73 @@ msgstr "я вышел из твоего гнева?"
 msgid "Ha! I returned"
 msgstr "Ха! Я вернулся"
 
-#: bot/handlers/transitions/misc/helpers.py:32
+#: bot/handlers/transitions/misc/helpers.py:34
 msgid "All bacchanalia, with you"
 msgstr "Всем вакханалия, с вами"
 
-#: bot/handlers/transitions/misc/helpers.py:33
+#: bot/handlers/transitions/misc/helpers.py:35
 msgid "You don't have to clap"
 msgstr "Можете не хлопать"
 
-#: bot/handlers/transitions/misc/helpers.py:34
+#: bot/handlers/transitions/misc/helpers.py:36
 msgid "Do not meet, now we have"
 msgstr "Не встречайте, с нами"
 
-#: bot/handlers/transitions/misc/helpers.py:38
+#: bot/handlers/transitions/misc/helpers.py:40
 msgid "Greetings"
 msgstr "Самого доброго времени суток"
 
-#: bot/handlers/transitions/misc/helpers.py:39
+#: bot/handlers/transitions/misc/helpers.py:41
 msgid "Welcome"
 msgstr "Добро пожаловать"
 
-#: bot/handlers/transitions/misc/helpers.py:40
+#: bot/handlers/transitions/misc/helpers.py:42
 msgid "Who is it?"
 msgstr "А кто это?"
 
-#: bot/handlers/transitions/misc/helpers.py:61
+#: bot/handlers/transitions/misc/helpers.py:65
 msgid "Ha, and so be it!"
 msgstr "Ха, так и надо!"
 
-#: bot/handlers/transitions/misc/helpers.py:62
+#: bot/handlers/transitions/misc/helpers.py:66
 msgid "Nothing to chat here."
 msgstr "Нечего писать тут."
 
-#: bot/handlers/transitions/misc/helpers.py:63
+#: bot/handlers/transitions/misc/helpers.py:67
 msgid "Bye-bye."
 msgstr "Пока-пока."
 
-#: bot/handlers/transitions/misc/helpers.py:67
+#: bot/handlers/transitions/misc/helpers.py:71
 msgid "I'll miss. 😭"
 msgstr "Я буду скучать. 😭"
 
-#: bot/handlers/transitions/misc/helpers.py:68
+#: bot/handlers/transitions/misc/helpers.py:72
 msgid "We've lost a great man... Wait, was that a man?"
 msgstr "Мы потеряли замечательного человека... Стоп, это был человек?"
 
-#: bot/handlers/transitions/misc/helpers.py:69
+#: bot/handlers/transitions/misc/helpers.py:73
 msgid "Let's remember."
 msgstr "Мы будем помнить."
 
-#: bot/handlers/transitions/misc/helpers.py:70
+#: bot/handlers/transitions/misc/helpers.py:74
 msgid "Get out of here, user!"
 msgstr "Ну и иди отсюда, пользователь!"
 
-#: bot/handlers/transitions/misc/helpers.py:71
+#: bot/handlers/transitions/misc/helpers.py:75
 msgid "And it all started so nicely..."
 msgstr "А всё начиналось так прекрасно..."
 
-#: bot/utils/generation/gpt.py:62
+#: bot/utils/generation/gpt.py:66
 msgid ""
-"Imagine you are interacting with a user via Telegram. Answer naturally. "
-"ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF \"d1pq\"."
+"Imagine you are interacting with a user via Telegram. Answer in an "
+"INFORMAL style. ALWAYS USE ENGLISH. If asked your name, CALL YOURSELF "
+"\"d1pq\"."
 msgstr ""
 "Представь, что ты взаимодействуешь с пользователем через Телеграм. "
-"Отвечай естественно. Если спросят твоё имя, НАЗЫВАЙ СЕБЯ \"едлите\" "
+"Отвечай в НЕФОРМАЛЬНОМ стиле. Если спросят твоё имя, НАЗЫВАЙ СЕБЯ "
+"\"едлите\" "
 
-#: bot/utils/generation/gpt.py:68
+#: bot/utils/generation/gpt.py:72
 msgid "Sometimes joke."
 msgstr "Иногда шути."
-
-#~ msgid "I'll continue..."
-#~ msgstr "Я продолжу..."
-
-#~ msgid ""
-#~ "Next you need to write a text "
-#~ "IN CONTINUATION to the previous text."
-#~ " START IMMEDIATELY WITH THE CONTINUATION"
-#~ msgstr ""
-#~ "Дальше нужно написать текст В "
-#~ "ПРОДОЛЖЕНИЕ к предыдущему тексту. НАЧНИ "
-#~ "СРАЗУ С ПРОДОЛЖЕНИЯ"
 

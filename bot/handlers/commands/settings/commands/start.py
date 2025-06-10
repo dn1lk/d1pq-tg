@@ -24,8 +24,8 @@ async def start_handler(
     query: types.CallbackQuery,
     state: FSMContext,
     timer: TimerTasks,
-    main_settings: database.MainSettings,
-    gen_settings: database.GenSettings,
+    main_settings: database.models.MainSettings,
+    gen_settings: database.models.GenSettings,
 ) -> None:
     assert isinstance(query.message, types.Message), "wrong message"
 
@@ -36,9 +36,10 @@ async def start_handler(
         command=secrets.choice(list(CommandTypes)[:-1])[0],
     )
 
+    messages = gen_settings.messages if gen_settings.with_messages else [_("bla bla")]
     _no_args = get_help_content(
         command,
-        secrets.choice(helpers.get_split_text(gen_settings.messages or [_("bla bla")])).lower(),
+        secrets.choice(helpers.get_split_text(messages)).lower(),
     )
 
     content = formatting.Text(
@@ -53,11 +54,14 @@ async def start_handler(
     message = await query.message.edit_text(**content.as_kwargs())
     assert isinstance(message, types.Message), "wrong message"
 
-    if main_settings.commands:
-        content = formatting.as_marked_section(
-            _("Current custom commands:"),
-            *(f"/{ui} — /{command}" for ui, command in main_settings.commands.items()),
-        )
+    if main_settings.with_commands:
+        saved_commands = main_settings.commands
+        if saved_commands:
+            content = formatting.as_marked_section(
+                _("Current custom commands:"),
+                *(f"/{ui} — /{command}" for ui, command in saved_commands.items()),
+            )
 
-        await message.answer(**content.as_kwargs())
+            await message.answer(**content.as_kwargs())
+
         timer[state.key] = idle_task(message, state, "commands")

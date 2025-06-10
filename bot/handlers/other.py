@@ -53,8 +53,8 @@ async def gen_answer_handler(
     owner_id: int,
     state: FSMContext,
     i18n: I18n,
-    gen_settings: database.GenSettings,
-    gpt_settings: database.GPTSettings,
+    gen_settings: database.models.GenSettings,
+    gpt_settings: database.models.GPTSettings,
     gpt: generation.YandexGPT,
 ) -> None:
     gen_kwargs = await get_gen_kwargs(
@@ -101,8 +101,8 @@ async def gen_reply_handler(
     owner_id: int,
     state: FSMContext,
     i18n: I18n,
-    gen_settings: database.GenSettings,
-    gpt_settings: database.GPTSettings,
+    gen_settings: database.models.GenSettings,
+    gpt_settings: database.models.GPTSettings,
     gpt: generation.YandexGPT,
 ) -> None:
     gen_kwargs = await get_gen_kwargs(
@@ -124,17 +124,19 @@ async def gen_reply_handler(
         message = await message.reply_voice(**gen_kwargs)
 
     if secrets.randbelow(10) / 10 < REPLY_CHANCE:
-        key = gpt.prepare_key(state.key)
+        if "text" in gen_kwargs:
+            key = gpt.prepare_key(state.key)
 
-        messages = await gpt.get_messages(key)
-        messages.append(
-            {
-                "role": "system",
-                "text": _(
-                    "Continuing with the previous sentence.",
-                ),
-            },
-        )
+            messages = await gpt.get_messages(key)
+            messages.append(
+                {
+                    "role": "system",
+                    "text": _(
+                        "Continuing with the previous sentence.",
+                    ),
+                },
+            )
 
-        await gpt.update_messages(key, messages)
+            await gpt.update_messages(key, messages)
+
         await gen_answer_handler(message, bot, owner_id, state, i18n, gen_settings, gpt_settings, gpt)

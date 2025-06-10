@@ -1,13 +1,12 @@
 import random as rnd
 import secrets
 from functools import lru_cache
-from pathlib import Path
 
 import markovify
 from aiogram.utils.i18n import I18n
 from Levenshtein import ratio
 
-import config
+import misc
 from utils import database
 
 ALIGN_RATIO = 0.9
@@ -15,8 +14,8 @@ ALIGN_RATIO = 0.9
 
 @lru_cache(maxsize=2)
 def _get_none(locale: str) -> markovify.Text:
-    with Path(f"{config.LOCALE_PATH}/{locale}/none.txt").open(encoding="UTF-8") as f:
-        return markovify.Text(f.read(), retain_original=False)
+    path = misc.LOCALE_PATH / locale / "none.txt"
+    return markovify.Text(path.read_text(encoding="UTF-8"), retain_original=False)
 
 
 def _get_states(model: markovify.Text, accuracy: int, index: int):
@@ -32,12 +31,13 @@ def _make_sentence(model: markovify.Text, accuracy: int, tries: int = 10, **kwar
     return model.make_sentence(tries=accuracy * tries, **kwargs)
 
 
-def get_answer(text: str, i18n: I18n, gen_settings: database.GenSettings, **kwargs) -> str:
-    if gen_settings.messages:
+def get_answer(text: str, i18n: I18n, gen_settings: database.models.GenSettings, **kwargs) -> str:
+    if gen_settings.with_messages:
         kwargs.setdefault("test_output", False)
         kwargs.setdefault("max_words", secrets.randbelow(gen_settings.accuracy * 4) + 2)
 
-        model = markovify.Text(gen_settings.messages, state_size=gen_settings.accuracy, well_formed=False)
+        saved_messages = gen_settings.messages
+        model = markovify.Text(saved_messages, state_size=gen_settings.accuracy, well_formed=False)
 
         words = set(text.split())
 
@@ -57,4 +57,7 @@ def get_answer(text: str, i18n: I18n, gen_settings: database.GenSettings, **kwar
         if answer:
             return answer
 
-    return _get_none(i18n.current_locale).make_sentence()
+    answer = _get_none(i18n.current_locale).make_sentence()
+    assert answer is not None, "answer is None"
+
+    return answer
