@@ -63,13 +63,13 @@ class YandexGPT:
                     "role": "system",
                     "text": (
                         _(
-                            "Imagine you are interacting with a user via Telegram."
-                            " Answer in an INFORMAL style."
-                            " ALWAYS USE ENGLISH."
-                            ' If asked your name, CALL YOURSELF "d1pq".',
+                            "You are communicating with a USER via Telegram."
+                            " If USER asked your name, introduce yourself as d1pq."
+                            " Answer SHORTLY in an INFORMAL style."
+                            " ALWAYS USE ENGLISH.",
                         )
                         + " "
-                        + (gpt_settings.promt or _("Sometimes joke."))
+                        + (gpt_settings.promt or _("SOMETIMES joke."))
                     ),
                 },
                 *messages,
